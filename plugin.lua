@@ -5117,6 +5117,7 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
     end
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
     toolTip("Press ' T ' on your keyboard to do the same thing as this button")
+    if (hideNoteReq) then return end
     executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
 end
 
