@@ -2201,7 +2201,7 @@ function placeSpecialSVMenu(globalVars)
     end
 
     if currentSVType == "Stutter" then stutterMenu(settingVars) end
-    if currentSVType == "Teleport Stutter" then telportStutterMenu(settingVars) end
+    if currentSVType == "Teleport Stutter" then teleportStutterMenu(settingVars) end
     if currentSVType == "Splitscroll (Basic)" then splitScrollBasicMenu(settingVars) end
     if currentSVType == "Splitscroll (Advanced)" then splitScrollAdvancedMenu(settingVars) end
     if currentSVType == "Splitscroll (Adv v2)" then splitScrollAdvancedV2Menu(settingVars) end
@@ -2480,12 +2480,13 @@ function stutterMenu(settingVars)
 
     addSeparator()
     simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, nil, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, nil, settingVars, true)
 end
 
 -- Creates the menu for teleport stutter SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
-function telportStutterMenu(settingVars)
+function teleportStutterMenu(settingVars)
     if settingVars.useDistance then
         chooseDistance(settingVars)
         helpMarker("Start SV teleport distance")
@@ -2499,8 +2500,8 @@ function telportStutterMenu(settingVars)
     chooseLinearlyChange(settingVars)
 
     addSeparator()
-    local label = "Place SVs between selected notes"
-    simpleActionMenu(label, 2, placeTeleportStutterSVs, nil, settingVars)
+    simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, nil, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, nil, settingVars, true)
 end
 
 -- Creates the menu for basic splitscroll SV
@@ -6768,7 +6769,6 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
 function placeSSFs(globalVars, menuVars)
-    local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
     local firstOffset = offsets[1]
@@ -6885,6 +6885,45 @@ function placeStutterSVs(settingVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
+function placeStutterSSFs(settingVars)
+    local lastFirstStutter = settingVars.startSV
+    local lastMultiplier = settingVars.svMultipliers[3]
+    if settingVars.linearlyChange then
+        lastFirstStutter = settingVars.endSV
+        lastMultiplier = settingVars.svMultipliers2[3]
+    end
+    local offsets = uniqueSelectedNoteOffsets()
+    local firstOffset = offsets[1]
+    local lastOffset = offsets[#offsets]
+    local totalNumStutters = (#offsets - 1) * settingVars.stuttersPerSection
+    local firstStutterSVs = generateLinearSet(settingVars.startSV, lastFirstStutter,
+        totalNumStutters)
+    local ssfsToAdd = {}
+    local ssfsToRemove = getSSFsBetweenOffsets(firstOffset, lastOffset)
+    local stutterIndex = 1
+    for i = 1, #offsets - 1 do
+        local startOffset = offsets[i]
+        local endOffset = offsets[i + 1]
+        local stutterOffsets = generateLinearSet(startOffset, endOffset,
+            settingVars.stuttersPerSection + 1)
+        for j = 1, #stutterOffsets - 1 do
+            local ssfMultipliers = generateStutterSet(firstStutterSVs[stutterIndex],
+                settingVars.stutterDuration,
+                settingVars.avgSV,
+                settingVars.controlLastSV)
+            local stutterStart = stutterOffsets[j]
+            local stutterEnd = stutterOffsets[j + 1]
+            local timeInterval = stutterEnd - stutterStart
+            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration / 100
+            addSSFToList(ssfsToAdd, stutterStart, ssfMultipliers[1], true)
+            addSSFToList(ssfsToAdd, secondSVOffset, ssfMultipliers[2], true)
+            stutterIndex = stutterIndex + 1
+        end
+    end
+    addFinalSSF(ssfsToAdd, lastOffset, lastMultiplier)
+    removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
+end
+
 -- Places teleport stutter SVs between selected notes
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -6934,6 +6973,57 @@ function placeTeleportStutterSVs(settingVars)
     end
     addFinalSV(svsToAdd, lastOffset, finalMultiplier)
     removeAndAddSVs(svsToRemove, svsToAdd)
+end
+
+-- Places teleport stutter SVs between selected notes
+-- Parameters
+--    settingVars : list of variables used for the current menu [Table]
+function placeTeleportStutterSSFs(settingVars)
+    local svPercent = settingVars.svPercent / 100
+    local lastSVPercent = svPercent
+    local lastMainSV = settingVars.mainSV
+    if settingVars.linearlyChange then
+        lastSVPercent = settingVars.svPercent2 / 100
+        lastMainSV = settingVars.mainSV2
+    end
+    local offsets = uniqueNoteOffsetsBetweenSelected()
+    local firstOffset = offsets[1]
+    local lastOffset = offsets[#offsets]
+    local numTeleportSets = #offsets - 1
+    local ssfsToAdd = {}
+    local ssfsToRemove = getSSFsBetweenOffsets(firstOffset, lastOffset)
+    local ssfPercents = generateLinearSet(svPercent, lastSVPercent, numTeleportSets)
+    local mainSSFs = generateLinearSet(settingVars.mainSV, lastMainSV, numTeleportSets)
+
+    removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
+    for i = 1, numTeleportSets do
+        local thisMainSSF = mainSSFs[i]
+        local startOffset = offsets[i]
+        local endOffset = offsets[i + 1]
+        local offsetInterval = endOffset - startOffset
+        local startMultiplier = getUsableDisplacementMultiplier(startOffset)
+        local startDuration = 1 / startMultiplier
+        local endMultiplier = getUsableDisplacementMultiplier(endOffset)
+        local endDuration = 1 / endMultiplier
+        local startDistance = offsetInterval * ssfPercents[i]
+        if settingVars.useDistance then startDistance = settingVars.distance end
+        local expectedDistance = offsetInterval * settingVars.avgSV
+        local traveledDistance = offsetInterval * thisMainSSF
+        local endDistance = expectedDistance - startDistance - traveledDistance
+        local ssf1 = thisMainSSF + startDistance * startMultiplier
+        local ssf2 = thisMainSSF
+        local ssf3 = thisMainSSF + endDistance * endMultiplier
+        addSSFToList(ssfsToAdd, startOffset, ssf1, true)
+        if ssf2 ~= ssf1 then addSSFToList(ssfsToAdd, startOffset + startDuration, ssf2, true) end
+        if ssf3 ~= ssf2 then addSSFToList(ssfsToAdd, endOffset - endDuration, ssf3, true) end
+    end
+    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
+    local finalMultiplier = settingVars.avgSV
+    if finalSVType == "Custom" then
+        finalMultiplier = settingVars.customSV
+    end
+    addFinalSSF(ssfsToAdd, lastOffset, finalMultiplier)
+    removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end
 
 -- Places split scroll SVs
