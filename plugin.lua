@@ -44,7 +44,7 @@ BEEG_BUTTON_SIZE = {255, 24}        -- beeg button
 
 ------------------------------------------------------------------------------- Number restrictions
 
-MIN_RGB_CYCLE_TIME = 6              -- minimum seconds for one complete RGB color cycle
+MIN_RGB_CYCLE_TIME = 0.1              -- minimum seconds for one complete RGB color cycle
 MAX_RGB_CYCLE_TIME = 300            -- maximum seconds for one complete RGB color cycle
 MAX_CURSOR_TRAIL_POINTS = 100       -- maximum number of points for cursor trail effects
 MAX_SV_POINTS = 1000                -- maximum number of SV points allowed
@@ -1926,16 +1926,16 @@ function draw()
         keyboardMode = false,
         dontReplaceSV = false,
         upscroll = false,
-        colorThemeIndex = 3,
+        colorThemeIndex = 9,
         styleThemeIndex = 1,
-        effectFPS = 60,
+        effectFPS = 90,
         cursorTrailIndex = 1,
         cursorTrailShapeIndex = 1,
         cursorTrailPoints = 10,
         cursorTrailSize = 5,
         snakeSpringConstant = 1,
         cursorTrailGhost = false,
-        rgbPeriod = 60,
+        rgbPeriod = 2,
         drawCapybara = false,
         drawCapybara2 = false,
         drawCapybara312 = false,
@@ -1945,7 +1945,7 @@ function draw()
         importData = "",
         exportCustomSVData = "",
         exportData = "",
-        debugText = "debuggy capybara"
+        debugText = "ballscunt"
     }
     getVariables("globalVars", globalVars)
     
@@ -2120,7 +2120,8 @@ function placeStandardSVMenu(globalVars)
     
     addSeparator()
     simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
-    
+    simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, globalVars, menuVars, true)
+
     local labelText = table.concat({currentSVType, "SettingsStandard"})
     saveVariables(labelText, settingVars)
     saveVariables("placeStandardMenu", menuVars)
@@ -4259,6 +4260,13 @@ function addFinalSV(svsToAdd, endOffset, svMultiplier)
     
     addSVToList(svsToAdd, endOffset, svMultiplier, true)
 end
+function addFinalSSF(ssfsToAdd, endOffset, ssfMultiplier)
+    local ssf = map.GetScrollSpeedFactorAt(endOffset) 
+    local ssfExistsAtEndOffset = ssf and (ssf.StartTime == endOffset)
+    if ssfExistsAtEndOffset then return end
+    
+    addSSFToList(ssfsToAdd, endOffset, ssfMultiplier, true)
+end
 -- Adds an SV with the start offset into the list if there isn't an SV there already
 -- Parameters
 --    svs         : list of SVs [Table]
@@ -4277,6 +4285,11 @@ function addSVToList(svList, offset, multiplier, endOfList)
     local newSV = utils.CreateScrollVelocity(offset, multiplier)
     if endOfList then table.insert(svList, newSV) return end
     table.insert(svList, 1, newSV)
+end
+function addSSFToList(ssfList, offset, multiplier, endOfList)
+    local newSSF = utils.CreateScrollSpeedFactor(offset, multiplier)
+    if endOfList then table.insert(ssfList, newSSF) return end
+    table.insert(ssfList, 1, newSSF)
 end
 -- Calculates the total msx displacements over time at offsets
 -- Returns a table of total displacements [Table]
@@ -4410,6 +4423,20 @@ function getSVsBetweenOffsets(startOffset, endOffset)
     end
     return table.sort(svsBetweenOffsets, sortAscendingStartTime)
 end
+
+function getSSFsBetweenOffsets(startOffset, endOffset)
+    local ssfsBetweenOffsets = {}
+    local ssfs = map.ScrollSpeedFactors
+    if (ssfs == nil) then 
+	ssfs = {}
+	else
+    for _, ssf in pairs(map.ScrollSpeedFactors) do
+        local ssfIsInRange = ssf.StartTime >= startOffset and ssf.StartTime < endOffset
+        if ssfIsInRange then table.insert(ssfsBetweenOffsets, ssf) end
+    end
+end
+    return table.sort(ssfsBetweenOffsets, sortAscendingStartTime)
+end
 -- Returns a usable displacement multiplier for a given offset [Int/Float]
 --[[
 -- Current implementation:
@@ -4480,6 +4507,14 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
     }
     actions.PerformBatch(editorActions)
 end
+function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
+    if #ssfsToAdd == 0 then return end
+    local editorActions = {
+        utils.CreateEditorAction(action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove),
+        utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd)
+    }
+    actions.PerformBatch(editorActions)
+end
 -- Finds and returns a list of all unique offsets of notes between a start and an end time [Table]
 -- Parameters
 --    startOffset : start time in milliseconds [Int/Float]
@@ -4489,6 +4524,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
     for _, hitObject in pairs(map.HitObjects) do
         if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
+	    if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then table.insert(noteOffsetsBetween, hitObject.EndTime) end
         end
     end
     noteOffsetsBetween = removeDuplicateValues(noteOffsetsBetween)
@@ -4841,11 +4877,10 @@ end
 --    actionfunc   : function to execute once button is pressed [Function]
 --    globalVars   : list of variables used globally across all menus [Table]
 --    menuVars     : list of variables used for the current menu [Table]
-function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars)    
+function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq)    
     local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
     local infoText = table.concat({"Select ", minimumNotes, " or more notes"})
-    if not enoughSelectedNotes then imgui.Text(infoText) return end
-    
+    if (not enoughSelectedNotes) then if (not hideNoteReq) then imgui.Text(infoText) end return end
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
     toolTip("Press ' T ' on your keyboard to do the same thing as this button")
     executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
@@ -5408,7 +5443,6 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseMSPF(settingVars)
     local _, newMSPF = imgui.InputFloat("ms Per Frame", settingVars.msPerFrame, 0.5, 0.5, "%.1f")
-    newMSPF = forceHalf(newMSPF)
     newMSPF = clampToInterval(newMSPF, 4, 1000)
     settingVars.msPerFrame = newMSPF
     helpMarker("Number of milliseconds splitscroll will display a set of SVs before jumping to "..
@@ -6391,6 +6425,35 @@ function placeSVs(globalVars, menuVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
     if placingStillSVs then placeStillSVs(menuVars) end
 end
+-- Places standard SVs between selected notes
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+--    menuVars   : list of variables used for the current menu [Table]
+function placeSSFs(globalVars, menuVars)
+    local placingStillSVs = menuVars.noteSpacing ~= nil
+    local numMultipliers = #menuVars.svMultipliers
+    local offsets = uniqueSelectedNoteOffsets()
+    local firstOffset = offsets[1]
+    local lastOffset = offsets[#offsets]
+    local ssfsToAdd = {}
+    local ssfsToRemove = getSSFsBetweenOffsets(firstOffset, lastOffset)
+    if globalVars.dontReplaceSV then
+        ssfsToRemove = {}
+    end
+    for i = 1, #offsets - 1 do
+        local startOffset = offsets[i]
+        local endOffset = offsets[i + 1]
+        local ssfOffsets = generateLinearSet(startOffset, endOffset, #menuVars.svDistances)
+        for j = 1, #ssfOffsets - 1 do
+            local offset = ssfOffsets[j]
+            local multiplier = menuVars.svMultipliers[j]
+            addSSFToList(ssfsToAdd, offset, multiplier, true)
+        end
+    end
+    local lastMultiplier = menuVars.svMultipliers[numMultipliers]
+    addFinalSSF(ssfsToAdd, lastOffset, lastMultiplier)
+    removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
+end
 -- Places still SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -7184,7 +7247,7 @@ function fixFlippedLNEnds(menuVars)
     for _, hitObject in pairs(map.HitObjects) do
         local lnEndTime = hitObject.EndTime
         local isLN = lnEndTime ~= 0 
-        local endHasNegativeSV = (getSVMultiplierAt(lnEndTime) < 0)
+        local endHasNegativeSV = (getSVMultiplierAt(lnEndTime) <= 0)
         local hasntAlreadyBeenFixed = lnEndTimeFixed[lnEndTime] == nil
         if isLN and endHasNegativeSV and hasntAlreadyBeenFixed then
             lnEndTimeFixed[lnEndTime] = true
@@ -7199,7 +7262,7 @@ function fixFlippedLNEnds(menuVars)
             local svMultiplierAt = getSVMultiplierAt(timeAt)
             local svMultiplierAfter = getSVMultiplierAt(timeAfter)
             local svMultiplierAfterAfter = getSVMultiplierAt(timeAfterAfter)
-            local newMultiplierAt = 0
+            local newMultiplierAt = 0.001
             local newMultiplierAfter = svMultiplierAt + svMultiplierAfter
             local newMultiplierAfterAfter = svMultiplierAfterAfter
             addSVToList(svsToAdd, timeAt, newMultiplierAt, true)
