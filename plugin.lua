@@ -3833,14 +3833,13 @@ function importPlaceSVButton(globalVars)
     for str in string.gmatch(globalVars.importData, "([^|]+)") do
         local num = tonumber(str)
         if num ~= nil then
-            str = num
+            table.insert(settingsTable, num)
         end
         if str == "false" then
-            str = false
+            table.insert(settingsTable, false)
         elseif str == "true" then
-            str = true
+            table.insert(settingsTable, true)
         end
-        table.insert(settingsTable, str)
     end
     if #settingsTable < 2 then return end
 
@@ -7574,7 +7573,7 @@ function displaceViewSVs(menuVars)
         local noteOffset = offsets[i]
         local beforeDisplacement = nil
         local atDisplacement = displaceAmount
-        local afterDisplacement = 0
+        local afterDisplacement = 0 ---@type number|nil
         if i ~= 1 then beforeDisplacement = -displaceAmount end
         if i == #offsets then
             atDisplacement = 0
