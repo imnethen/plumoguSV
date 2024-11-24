@@ -2706,10 +2706,12 @@ end
 -- Creates the add teleport menu
 function addTeleportMenu()
     local menuVars = {
-        distance = 10727
+        distance = 10727,
+        teleportBeforeHand = false
     }
     getVariables("addTeleportMenu", menuVars)
     chooseDistance(menuVars)
+    chooseHand(menuVars)
     saveVariables("addTeleportMenu", menuVars)
 
     addSeparator()
@@ -6214,6 +6216,14 @@ function chooseUseDistance(settingVars)
     _, settingVars.useDistance = imgui.Checkbox(label, settingVars.useDistance)
 end
 
+-- Lets you choose whether to use distance or not
+-- Parameters
+--    settingVars : list of variables used for the current menu [Table]
+function chooseHand(settingVars)
+    local label = "Add teleport before note"
+    _, settingVars.teleportBeforeHand = imgui.Checkbox(label, settingVars.teleportBeforeHand)
+end
+
 ---------------------------------------------------------------------------------------------------
 -- Doing SV Stuff ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------
@@ -7566,6 +7576,9 @@ function addTeleportSVs(menuVars)
     local displaceAmount = menuVars.distance
     for i = 1, #offsets do
         local noteOffset = offsets[i]
+        if (menuVars.teleportBeforeHand) then
+            noteOffset = noteOffset - 1 / getUsableDisplacementMultiplier(noteOffset)
+        end
         local beforeDisplacement = nil
         local atDisplacement = displaceAmount
         local afterDisplacement = 0
