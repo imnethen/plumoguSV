@@ -2102,7 +2102,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function deleteSVTab(globalVars)
-    simpleActionMenu("Delete SVs between selected notes", 2, deleteSVs, nil, nil)
+    simpleActionMenu("Delete SVs and SSFs between selected notes", 2, deleteSVsAndSSFs, nil, nil)
 end
 
 -- Creates the menu tabs for quick keyboard access for "keyboard" mode
@@ -7963,10 +7963,15 @@ function verticalShiftSVs(menuVars)
 end
 
 -- Deletes SVs between selected notes
-function deleteSVs()
+function deleteSVsAndSSFs()
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
-    if #svsToRemove > 0 then actions.RemoveScrollVelocityBatch(svsToRemove) end
+    local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endOffset)
+    if (#svsToRemove > 0 or #ssfsToRemove > 0) then
+        actions.PerformBatch({ utils.CreateEditorAction(
+            action_type.RemoveScrollVelocityBatch, svsToRemove), utils.CreateEditorAction(
+            action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove) })
+    end
 end
