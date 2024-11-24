@@ -1,6 +1,6 @@
 ---@diagnostic disable: need-check-nil, param-type-mismatch
--- amoguSV v6.6 (1 April 2024)
--- by kloi34
+-- plumoguSV v6.6.2 (1 April 2024)
+-- by kloi34, plummyyummy
 
 -- Many SV tool ideas were stolen from other plugins, so here is credit to those plugins and the
 -- creators behind them:
@@ -23,7 +23,7 @@
 -- quickly and efficiently when making maps.
 
 -- If you have any feature suggestions or issues with the plugin, please open an issue at
--- https://github.com/kloi34/amoguSV/issues
+-- https://github.com/ESV-Sweetplum/plumoguSV/issues
 
 ---------------------------------------------------------------------------------------------------
 -- Global Constants -------------------------------------------------------------------------------
@@ -1889,7 +1889,7 @@ function centerWindowIfHotkeysPressed()
     local centeringX = (windowWidth - pluginWidth) / 2
     local centeringY = (windowHeight - pluginHeight) / 2
     local coordinatesToCenter = { centeringX, centeringY }
-    imgui.SetWindowPos("amoguSV", coordinatesToCenter)
+    imgui.SetWindowPos("plumoguSV", coordinatesToCenter)
 end
 
 --[[
@@ -2003,11 +2003,11 @@ function draw()
     drawCapybara312(globalVars)
     drawCursorTrail(globalVars)
     setPluginAppearance(globalVars)
-    startNextWindowNotCollapsed("amoguSVAutoOpen")
+    startNextWindowNotCollapsed("plumoguSVAutoOpen")
     focusWindowIfHotkeysPressed()
     centerWindowIfHotkeysPressed()
 
-    imgui.Begin("amoguSV", imgui_window_flags.AlwaysAutoResize)
+    imgui.Begin("plumoguSV", imgui_window_flags.AlwaysAutoResize)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
     if globalVars.keyboardMode then
         imgui.BeginTabBar("Quick tabs")
@@ -2720,24 +2720,26 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function copyNPasteMenu(globalVars)
     local menuVars = {
-        copiedSVs = {}
+        copiedSVs = {},
+        copiedSSFs = {}
     }
     getVariables("copyMenu", menuVars)
     local noSVsCopiedInitially = #menuVars.copiedSVs == 0
     imgui.Text(table.concat({ #menuVars.copiedSVs, " SVs copied" }))
+    imgui.Text(table.concat({ #menuVars.copiedSSFs, " SSFs copied" }))
 
     addSeparator()
     if noSVsCopiedInitially then
-        simpleActionMenu("Copy SVs between selected notes", 2, copySVs, nil, menuVars)
+        simpleActionMenu("Copy SVs and SSFs between selected notes", 2, copySVsAndSSFs, nil, menuVars)
     else
-        button("Clear copied SVs", ACTION_BUTTON_SIZE, clearCopiedSVs, nil, menuVars)
+        button("Clear copied SVs and SSFs", ACTION_BUTTON_SIZE, clearCopiedSVsAndSSFs, nil, menuVars)
     end
     saveVariables("copyMenu", menuVars)
 
     if noSVsCopiedInitially then return end
 
     addSeparator()
-    simpleActionMenu("Paste SVs at selected notes", 1, pasteSVs, globalVars, menuVars)
+    simpleActionMenu("Paste SVs + SSFs at selected notes", 1, pasteSVsAndSSFs, globalVars, menuVars)
 end
 
 -- Creates the displace note menu
@@ -3010,7 +3012,7 @@ end
 
 -- Gives basic info about how to use the plugin
 function provideBasicPluginInfo()
-    imgui.Text("Steps to use amoguSV:")
+    imgui.Text("Steps to use plumoguSV:")
     imgui.BulletText("Choose an SV tool")
     imgui.BulletText("Adjust the SV tool's settings")
     imgui.BulletText("Select notes to use the tool at/between")
@@ -3024,7 +3026,7 @@ function provideMorePluginInfo()
     addPadding()
     linkBox("Goofy SV mapping guide",
         "https://docs.google.com/document/d/1ug_WV_BI720617ybj4zuHhjaQMwa0PPekZyJoa17f-I")
-    linkBox("GitHub repository", "https://github.com/kloi34/amoguSV")
+    linkBox("GitHub repository", "https://github.com/ESV-Sweetplum/plumoguSV")
 end
 
 -- Lists keyboard shortcuts for the plugin
@@ -3080,9 +3082,9 @@ function displayMeasuredStatsRounded(menuVars)
     helpMarker("The actual distance between the start and the end, calculated with SVs")
     imgui.Text(table.concat({ menuVars.roundedAvgSV, "x" }))
     imgui.Text(table.concat({ menuVars.roundedStartDisplacement, " msx" }))
-    helpMarker("Calculated using amoguSV displacement metrics, so might not always work")
+    helpMarker("Calculated using plumoguSV displacement metrics, so might not always work")
     imgui.Text(table.concat({ menuVars.roundedEndDisplacement, " msx" }))
-    helpMarker("Calculated using amoguSV displacement metrics, so might not always work")
+    helpMarker("Calculated using plumoguSV displacement metrics, so might not always work")
     imgui.Text(table.concat({ menuVars.roundedAvgSVDisplaceless, "x" }))
     helpMarker("Average SV calculated ignoring the start and end displacement")
     imgui.Columns(1)
@@ -5499,7 +5501,7 @@ function chooseEditTool(globalVars)
 
     local svTool = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if svTool == "Add Teleport" then toolTip("Add a large teleport SV to move far away") end
-    if svTool == "Copy & Paste" then toolTip("Copy SVs and paste them somewhere else") end
+    if svTool == "Copy & Paste" then toolTip("Copy SVs and SSFs and paste them somewhere else") end
     if svTool == "Displace Note" then toolTip("Move where notes are hit on the screen") end
     if svTool == "Displace View" then toolTip("Temporarily displace the playfield view") end
     if svTool == "Dynamic Scale" then toolTip("Dynamically scale SVs across notes") end
@@ -7487,12 +7489,14 @@ end
 -- Copies SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function copySVs(menuVars)
+function copySVsAndSSFs(menuVars)
     menuVars.copiedSVs = {}
+    menuVars.copiedSSFs = {}
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
+    local ssfsBetweenOffsets = getSSFsBetweenOffsets(startOffset, endOffset)
     for _, sv in ipairs(svsBetweenOffsets) do
         local relativeTime = sv.StartTime - startOffset
         local copiedSV = {
@@ -7501,38 +7505,55 @@ function copySVs(menuVars)
         }
         table.insert(menuVars.copiedSVs, copiedSV)
     end
+    for _, ssf in ipairs(ssfsBetweenOffsets) do
+        local relativeTime = ssf.StartTime - startOffset
+        local copiedSSF = {
+            relativeOffset = relativeTime,
+            multiplier = ssf.Multiplier
+        }
+        table.insert(menuVars.copiedSSFs, copiedSSF)
+    end
 end
 
 -- Clears all copied SVs
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function clearCopiedSVs(menuVars)
+function clearCopiedSVsAndSSFs(menuVars)
     menuVars.copiedSVs = {}
+    menuVars.copiedSSFs = {}
 end
 
 -- Pastes copied SVs at selected notes
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function pasteSVs(globalVars, menuVars)
+function pasteSVsAndSSFs(globalVars, menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local lastCopiedSV = menuVars.copiedSVs[#menuVars.copiedSVs]
     local endRemoveOffset = endOffset + lastCopiedSV.relativeOffset + 1 / 128
     local svsToRemove = getSVsBetweenOffsets(startOffset, endRemoveOffset)
+    local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endRemoveOffset)
     if globalVars.dontReplaceSV then
         svsToRemove = {}
+        ssfsToRemove = {}
     end
     local svsToAdd = {}
+    local ssfsToAdd = {}
     for i = 1, #offsets do
         local pasteOffset = offsets[i]
         for _, sv in ipairs(menuVars.copiedSVs) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
             addSVToList(svsToAdd, timeToPasteSV, sv.multiplier, true)
         end
+        for _, ssf in ipairs(menuVars.copiedSSFs) do
+            local timeToPasteSSF = pasteOffset + ssf.relativeOffset
+            addSVToList(ssfsToAdd, timeToPasteSSF, ssf.multiplier, true)
+        end
     end
     removeAndAddSVs(svsToRemove, svsToAdd)
+    removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end
 
 -- Displaces selected notes with SVs
