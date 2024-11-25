@@ -1994,8 +1994,9 @@ function draw()
         importData = "",
         exportCustomSVData = "",
         exportData = "",
-        debugText = "ballscunt"
+        debugText = "debug"
     }
+
     getVariables("globalVars", globalVars)
 
     drawCapybara(globalVars)
@@ -2901,7 +2902,7 @@ end
 
 -- Creates the merge menu
 function mergeMenu()
-    simpleActionMenu("Merge SVs between selected notes", 2, mergeSVs, nil, nil)
+    simpleActionMenu("Merge duplicate SVs between selected notes", 2, mergeSVs, nil, nil)
 end
 
 -- Creates the reverse scroll menu
@@ -4435,6 +4436,15 @@ function addFinalSSF(ssfsToAdd, endOffset, ssfMultiplier)
     addSSFToList(ssfsToAdd, endOffset, ssfMultiplier, true)
 end
 
+function addInitialSSF(ssfsToAdd, startOffset)
+    local ssf = map.GetScrollSpeedFactorAt(startOffset)
+    if (ssf == nil) then return end
+    local ssfExistsAtStartOffset = ssf and (ssf.StartTime == startOffset)
+    if ssfExistsAtStartOffset then return end
+
+    addSSFToList(ssfsToAdd, startOffset, ssf.Multiplier, true)
+end
+
 -- Adds an SV with the start offset into the list if there isn't an SV there already
 -- Parameters
 --    svs         : list of SVs [Table]
@@ -5119,7 +5129,7 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         return
     end
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
-    toolTip("Press ' T ' on your keyboard to do the same thing as this button")
+    toolTip("Press 'T' on your keyboard to do the same thing as this button")
     if (hideNoteReq) then return end
     executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
 end
@@ -6800,6 +6810,7 @@ function placeSSFs(globalVars, menuVars)
     end
     local lastMultiplier = menuVars.svMultipliers[numMultipliers]
     addFinalSSF(ssfsToAdd, lastOffset, lastMultiplier)
+    addInitialSSF(ssfsToAdd, firstOffset - 1 / getUsableDisplacementMultiplier(firstOffset))
     removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end
 
