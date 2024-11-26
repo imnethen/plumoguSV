@@ -6291,10 +6291,12 @@ function chooseStartEndSVs(settingVars)
     end
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
+    toolTip("Swap Start/End SV Values")
     local oldValues = { settingVars.startSV, settingVars.endSV }
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
+    toolTip("Negate Start/End SV Values")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
