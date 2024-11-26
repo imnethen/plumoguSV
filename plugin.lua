@@ -2919,18 +2919,19 @@ function copyNPasteMenu(globalVars)
     }
     getVariables("copyMenu", menuVars)
     local noSVsCopiedInitially = #menuVars.copiedSVs == 0
+    local noSSFsCopiedInitially = #menuVars.copiedSSFs == 0
     imgui.Text(table.concat({ #menuVars.copiedSVs, " SVs copied" }))
     imgui.Text(table.concat({ #menuVars.copiedSSFs, " SSFs copied" }))
 
     addSeparator()
-    if noSVsCopiedInitially then
+    if (noSVsCopiedInitially and noSSFsCopiedInitially) then
         simpleActionMenu("Copy SVs and SSFs between selected notes", 2, copySVsAndSSFs, nil, menuVars)
     else
         button("Clear copied SVs and SSFs", ACTION_BUTTON_SIZE, clearCopiedSVsAndSSFs, nil, menuVars)
     end
     saveVariables("copyMenu", menuVars)
 
-    if noSVsCopiedInitially then return end
+    if noSVsCopiedInitially and noSSFsCopiedInitially then return end
 
     addSeparator()
     simpleActionMenu("Paste SVs + SSFs at selected notes", 1, pasteSVsAndSSFs, globalVars, menuVars)
@@ -8001,7 +8002,12 @@ function pasteSVsAndSSFs(globalVars, menuVars)
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local lastCopiedSV = menuVars.copiedSVs[#menuVars.copiedSVs]
-    local endRemoveOffset = endOffset + lastCopiedSV.relativeOffset + 1 / 128
+    local lastCopiedSSF = menuVars.copiedSSFs[#menuVars.copiedSSFs]
+
+    local lastCopiedValue = lastCopiedSV
+    if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedSSF end
+
+    local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128
     local svsToRemove = getSVsBetweenOffsets(startOffset, endRemoveOffset)
     local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endRemoveOffset)
     if globalVars.dontReplaceSV then
@@ -8018,11 +8024,11 @@ function pasteSVsAndSSFs(globalVars, menuVars)
         end
         for _, ssf in ipairs(menuVars.copiedSSFs) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
-            addSVToList(ssfsToAdd, timeToPasteSSF, ssf.multiplier, true)
+            addSSFToList(ssfsToAdd, timeToPasteSSF, ssf.multiplier, true)
         end
     end
-    removeAndAddSVs(svsToRemove, svsToAdd)
-    removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
+    if (#svsToAdd ~= 0) then removeAndAddSVs(svsToRemove, svsToAdd) end
+    if (#ssfsToAdd ~= 0) then removeAndAddSSFs(ssfsToRemove, ssfsToAdd) end
 end
 
 -- Displaces selected notes with SVs
