@@ -5397,7 +5397,7 @@ function chooseAverageSV(menuVars)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     _, menuVars.avgSV = imgui.InputFloat("Average SV", menuVars.avgSV, 0, 0, "%.2fx")
     imgui.PopItemWidth()
-    if (negateButtonPressed) then
+    if (negateButtonPressed and menuVars.avgSV ~= 0) then
         menuVars.avgSV = -menuVars.avgSV
     end
     return oldAvg ~= menuVars.avgSV
@@ -5525,7 +5525,7 @@ function chooseConstantShift(settingVars, defaultShift)
     imgui.PopItemWidth()
     settingVars.verticalShift = newShift
 
-    if (negateButtonPressed) then
+    if (negateButtonPressed and settingVars.verticalShift ~= 0) then
         settingVars.verticalShift = -settingVars.verticalShift
     end
 
@@ -6333,7 +6333,7 @@ function chooseStartEndSVs(settingVars)
         settingVars.startSV = oldValues[2]
         settingVars.endSV = oldValues[1]
     end
-    if negateButtonPressed then
+    if (negateButtonPressed) then
         settingVars.startSV = -oldValues[1]
         settingVars.endSV = -oldValues[2]
     end
