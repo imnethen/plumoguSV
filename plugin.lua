@@ -5389,7 +5389,17 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseAverageSV(menuVars)
     local oldAvg = menuVars.avgSV
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
+    toolTip("Negate start/end SV values")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     _, menuVars.avgSV = imgui.InputFloat("Average SV", menuVars.avgSV, 0, 0, "%.2fx")
+    imgui.PopItemWidth()
+    if (negateButtonPressed) then
+        menuVars.avgSV = -menuVars.avgSV
+    end
     return oldAvg ~= menuVars.avgSV
 end
 
@@ -5495,15 +5505,30 @@ end
 --    defaultShift : default value for the shift when reset [Int/Float]
 function chooseConstantShift(settingVars, defaultShift)
     local oldShift = settingVars.verticalShift
-    if imgui.Button("Reset##verticalShift", SECONDARY_BUTTON_SIZE) then
+
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
+    if imgui.Button("R##verticalShift", TERTIARY_BUTTON_SIZE) then
         settingVars.verticalShift = defaultShift
     end
+    toolTip("Reset vertical shift to initial values")
     imgui.SameLine(0, SAMELINE_SPACING)
+
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
+    toolTip("Negate start/end SV values")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local inputText = "Vertical Shift"
     local _, newShift = imgui.InputFloat(inputText, settingVars.verticalShift, 0, 0, "%.3fx")
     imgui.PopItemWidth()
     settingVars.verticalShift = newShift
+
+    if (negateButtonPressed) then
+        settingVars.verticalShift = -settingVars.verticalShift
+    end
+
     return oldShift ~= newShift
 end
 
@@ -6291,12 +6316,12 @@ function chooseStartEndSVs(settingVars)
     end
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
-    toolTip("Swap Start/End SV Values")
+    toolTip("Swap start/end SV values")
     local oldValues = { settingVars.startSV, settingVars.endSV }
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
-    toolTip("Negate Start/End SV Values")
+    toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
