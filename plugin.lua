@@ -7981,6 +7981,7 @@ function copySVsAndSSFs(menuVars)
         }
         table.insert(menuVars.copiedSSFs, copiedSSF)
     end
+    print("S!", "Copied " .. #menuVars.copiedSVs .. " SVs and " .. #menuVars.copiedSSFs .. " SSFs")
 end
 
 -- Clears all copied SVs
@@ -8116,6 +8117,12 @@ function fixFlippedLNEnds(menuVars)
     if endOffset == 0 then endOffset = map.HitObjects[#map.HitObjects].StartTime end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
+
+    local type = "S!"
+
+    if (fixedLNEndsCount == 0) then type = "I!" end
+
+    print(type, "Fixed " .. fixedLNEndsCount .. " flipped LN ends")
 
     menuVars.fixedText = table.concat({ "Fixed ", fixedLNEndsCount, " flipped LN ends" })
 end
@@ -8436,9 +8443,21 @@ function deleteSVsAndSSFs()
     local endOffset = offsets[#offsets]
     local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
     local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endOffset)
+    local counts = { #svsToRemove, #ssfsToRemove }
     if (#svsToRemove > 0 or #ssfsToRemove > 0) then
         actions.PerformBatch({ utils.CreateEditorAction(
             action_type.RemoveScrollVelocityBatch, svsToRemove), utils.CreateEditorAction(
             action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove) })
     end
+    local type = "S!"
+    if (counts[1] == 0 and counts[2] == 0) then
+        type = "I!"
+    elseif (counts[1] > 2000 or counts[2] > 2000) then
+        type =
+        "E!"
+    elseif (counts[1] > 1000 or counts[2] > 1000) then
+        type =
+        "W!"
+    end -- Cascading Severity Levels
+    print(type, counts[1] .. " SVs removed and " .. counts[2] .. " SSFs removed")
 end
