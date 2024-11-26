@@ -40,6 +40,7 @@ ACTION_BUTTON_SIZE = { 255, 42 }      -- dimensions of the button that does impo
 PLOT_GRAPH_SIZE = { 255, 100 }        -- dimensions of the plot graph for SVs and note motion
 HALF_ACTION_BUTTON_SIZE = { 125, 42 } -- dimensions of a button that does kinda important things
 SECONDARY_BUTTON_SIZE = { 48, 24 }    -- dimensions of a button that does less important things
+TERTIARY_BUTTON_SIZE = { 21.5, 24 }   -- dimensions of a button that does much less important things
 EXPORT_BUTTON_SIZE = { 40, 24 }       -- dimensions of the export menu settings button
 BEEG_BUTTON_SIZE = { 255, 24 }        -- beeg button
 
@@ -6288,19 +6289,28 @@ function chooseStartEndSVs(settingVars)
         settingVars.startSV = newValue
         return oldValue ~= newValue
     end
-    local buttonPressed = imgui.Button("Swap", SECONDARY_BUTTON_SIZE)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
+    local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
     local oldValues = { settingVars.startSV, settingVars.endSV }
     imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2("Start/End SV", oldValues, "%.2fx")
     imgui.PopItemWidth()
     settingVars.startSV = newValues[1]
     settingVars.endSV = newValues[2]
-    if buttonPressed then
+    if swapButtonPressed then
         settingVars.startSV = oldValues[2]
         settingVars.endSV = oldValues[1]
     end
-    return buttonPressed or oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+    if negateButtonPressed then
+        settingVars.startSV = -oldValues[1]
+        settingVars.endSV = -oldValues[2]
+    end
+    return swapButtonPressed or negateButtonPressed or oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 
 -- Lets you choose a start SV percent
