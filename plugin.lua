@@ -214,13 +214,17 @@ SV_BEHAVIORS = { -- behaviors of SVs
 }
 TAB_MENUS = { -- names of the tab menus
     "Info",
-    "Place SVs",
-    "Edit SVs",
-    "Delete SVs"
+    "Select",
+    "Create",
+    "Edit",
+    "Delete"
 }
 TRAIL_SHAPES = { -- shapes for cursor trails
     "Circles",
     "Triangles"
+}
+SELECT_TOOLS = {
+    "Alternating"
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -1951,6 +1955,23 @@ end
 -- Changes the edit tool if certain keys are pressed
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
+function changeSelectToolIfKeysPressed(globalVars)
+    local altPressedDown = utils.IsKeyDown(keys.LeftAlt) or
+        utils.IsKeyDown(keys.RightAlt)
+    local shiftPressedDown = utils.IsKeyDown(keys.LeftShift) or
+        utils.IsKeyDown(keys.RightShift)
+    local xPressed = utils.IsKeyPressed(keys.X)
+    local zPressed = utils.IsKeyPressed(keys.Z)
+    if not (altPressedDown and shiftPressedDown and (xPressed or zPressed)) then return end
+
+    if xPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex + 1 end
+    if zPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex - 1 end
+    globalVars.selectTypeIndex = wrapToInterval(globalVars.selectTypeIndex, 1, #SELECT_TOOLS)
+end
+
+-- Changes the edit tool if certain keys are pressed
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
 function changeEditToolIfKeysPressed(globalVars)
     local altPressedDown = utils.IsKeyDown(keys.LeftAlt) or
         utils.IsKeyDown(keys.RightAlt)
@@ -1988,6 +2009,7 @@ function draw()
         drawCapybara = false,
         drawCapybara2 = false,
         drawCapybara312 = false,
+        selectTypeIndex = 1,
         placeTypeIndex = 1,
         editToolIndex = 1,
         showExportImportMenu = false,
@@ -2037,9 +2059,10 @@ function createMenuTab(globalVars, tabName)
     if not imgui.BeginTabItem(tabName) then return end
     addPadding()
     if tabName == "Info" then infoTab(globalVars) end
-    if tabName == "Place SVs" then placeSVTab(globalVars) end
-    if tabName == "Edit SVs" then editSVTab(globalVars) end
-    if tabName == "Delete SVs" then deleteSVTab(globalVars) end
+    if tabName == "Select" then selectTab(globalVars) end
+    if tabName == "Create" then placeSVTab(globalVars) end
+    if tabName == "Edit" then editSVTab(globalVars) end
+    if tabName == "Delete" then deleteSVTab(globalVars) end
     imgui.EndTabItem()
 end
 
@@ -2062,6 +2085,35 @@ function infoTabKeyboard(globalVars)
     listKeyboardShortcuts()
     choosePluginBehaviorSettings(globalVars)
     choosePluginAppearance(globalVars)
+end
+
+function selectTab(globalVars)
+    chooseSelectTool(globalVars)
+    changeSelectToolIfKeysPressed(globalVars)
+    addSeparator()
+    local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
+    if toolName == "Alternating" then selectAlternatingMenu() end
+end
+
+function editSVTab(globalVars)
+    chooseEditTool(globalVars)
+    changeEditToolIfKeysPressed(globalVars)
+    addSeparator()
+    local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
+    if toolName == "Add Teleport" then addTeleportMenu() end
+    if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
+    if toolName == "Displace Note" then displaceNoteMenu() end
+    if toolName == "Displace View" then displaceViewMenu() end
+    if toolName == "Dynamic Scale" then dynamicScaleMenu(globalVars) end
+    if toolName == "Fix LN Ends" then fixLNEndsMenu() end
+    if toolName == "Flicker" then flickerMenu() end
+    if toolName == "Measure" then measureMenu() end
+    if toolName == "Merge" then mergeMenu() end
+    if toolName == "Reverse Scroll" then reverseScrollMenu() end
+    if toolName == "Scale (Displace)" then scaleDisplaceMenu() end
+    if toolName == "Scale (Multiply)" then scaleMultiplyMenu() end
+    if toolName == "Swap Notes" then swapNotesMenu() end
+    if toolName == "Vertical Shift" then verticalShiftMenu() end
 end
 
 -- Creates the "Place SVs" tab
@@ -2702,6 +2754,27 @@ function exportImportSettingsMenu(globalVars, menuVars, settingVars)
             multilineWidgetSize, imgui_input_text_flags.ReadOnly)
         exportPlaceSVButton(globalVars, menuVars, settingVars)
     end
+end
+
+-- Creates the select alternating menu
+function selectAlternatingMenu()
+    local menuVars = {
+        every = 1,
+        offset = 0
+    }
+    getVariables("selectAlternatingMenu", menuVars)
+    chooseEvery(menuVars)
+    chooseOffset(menuVars)
+    saveVariables("selectAlternatingMenu", menuVars)
+
+    local text = ""
+    if (menuVars.every > 1) then text = "s" end
+
+    addSeparator()
+    simpleActionMenu(
+        "Select a note every " .. menuVars.every .. " note" .. text .. ", from note #" .. (menuVars.offset + 1),
+        2,
+        selectAlternating, nil, menuVars)
 end
 
 -- Creates the add teleport menu
@@ -4605,6 +4678,15 @@ function getSVMultiplierAt(offset)
     return 1
 end
 
+function getNotesBetweenOffsets(startOffset, endOffset)
+    local notesBetweenOffsets = {}
+    for _, note in pairs(map.HitObjects) do
+        local noteIsInRange = note.StartTime >= startOffset and note.StartTime <= endOffset
+        if noteIsInRange then table.insert(notesBetweenOffsets, note) end
+    end
+    return table.sort(notesBetweenOffsets, sortAscendingStartTime)
+end
+
 function getSVsBetweenOffsets(startOffset, endOffset)
     local svsBetweenOffsets = {}
     for _, sv in pairs(map.ScrollVelocities) do
@@ -5445,6 +5527,16 @@ function chooseDistance(menuVars)
     _, menuVars.distance = imgui.InputFloat("Distance", menuVars.distance, 0, 0, "%.3f msx")
 end
 
+function chooseEvery(menuVars)
+    _, menuVars.every = imgui.InputInt("Every __ notes", menuVars.every)
+    menuVars.every = clampToInterval(menuVars.every, 1, MAX_SV_POINTS)
+end
+
+function chooseOffset(menuVars)
+    _, menuVars.offset = imgui.InputInt("From note #__", menuVars.offset)
+    menuVars.offset = clampToInterval(menuVars.offset, 0, menuVars.every - 1)
+end
+
 -- Lets you choose the distance back for splitscroll between scroll1 and scroll2
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -5502,6 +5594,19 @@ end
 function chooseDrawCapybara312(globalVars)
     _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", globalVars.drawCapybara312)
     helpMarker("Draws a capybara???!?!??!!!!?")
+end
+
+-- Lets you choose which select tool to use
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function chooseSelectTool(globalVars)
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Current Type:")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    globalVars.selectTypeIndex = combo("##selecttool", SELECT_TOOLS, globalVars.selectTypeIndex)
+
+    local selectTool = SELECT_TOOLS[globalVars.selectTypeIndex]
+    -- SELECT BOOKMARK
 end
 
 -- Lets you choose which edit tool to use
@@ -7572,6 +7677,37 @@ function displaceNotesForAnimationFrames(settingVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
     -- Maybe add in future: use svbeforebefore + isnotetimeadded to
     -- account for displacement discrepancies (if discrepancy is above certain amount)
+end
+
+function selectAlternating(menuVars)
+    local offsets = uniqueSelectedNoteOffsets()
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+    local notes = getNotesBetweenOffsets(startOffset, endOffset)
+    local times = {}
+    for _, v in pairs(notes) do
+        table.insert(times, v.StartTime)
+    end
+    times = removeDuplicateValues(times)
+    local allowedTimes = {}
+    for i, time in pairs(times) do
+        if ((i - 1 + menuVars.offset) % menuVars.every == 0) then
+            table.insert(allowedTimes, time)
+        end
+    end
+    local allowedNotes = {}
+    local currentTime = allowedTimes[1]
+    local index = 2
+    for _, note in pairs(notes) do
+        if (note.StartTime > currentTime and index <= #allowedTimes) then
+            currentTime = allowedTimes[index]
+            index = index + 1
+        end
+        if (note.StartTime == currentTime) then
+            table.insert(allowedNotes, note)
+        end
+    end
+    actions.SetHitObjectSelection(allowedNotes)
 end
 
 -- Adds teleport SVs at selected notes
