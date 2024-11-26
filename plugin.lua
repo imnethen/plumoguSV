@@ -5727,7 +5727,9 @@ function chooseSelectTool(globalVars)
     globalVars.selectTypeIndex = combo("##selecttool", SELECT_TOOLS, globalVars.selectTypeIndex)
 
     local selectTool = SELECT_TOOLS[globalVars.selectTypeIndex]
-    -- SELECT BOOKMARK
+    if selectTool == "Alternating" then toolTip("Skip over notes then select one, and repeat") end
+    if selectTool == "By Snap" then toolTip("Select all notes with a certain snap color") end
+    if selectTool == "Bookmark" then toolTip("Jump to a bookmark") end
 end
 
 -- Lets you choose which edit tool to use
