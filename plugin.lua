@@ -224,7 +224,8 @@ TRAIL_SHAPES = { -- shapes for cursor trails
     "Triangles"
 }
 SELECT_TOOLS = {
-    "Alternating"
+    "Alternating",
+    "By Snap"
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -2093,6 +2094,7 @@ function selectTab(globalVars)
     addSeparator()
     local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
     if toolName == "Alternating" then selectAlternatingMenu() end
+    if toolName == "By Snap" then selectBySnapMenu() end
 end
 
 function editSVTab(globalVars)
@@ -2772,9 +2774,25 @@ function selectAlternatingMenu()
 
     addSeparator()
     simpleActionMenu(
-        "Select a note every " .. menuVars.every .. " note" .. text .. ", from note #" .. (menuVars.offset + 1),
+        "Select a note every " .. menuVars.every .. " note" .. text .. ", from note #" .. menuVars.offset,
         2,
         selectAlternating, nil, menuVars)
+end
+
+-- Creates the select by snap menu
+function selectBySnapMenu()
+    local menuVars = {
+        snap = 1,
+    }
+    getVariables("selectBySnapMenu", menuVars)
+    chooseSnap(menuVars)
+    saveVariables("selectBySnapMenu", menuVars)
+
+    addSeparator()
+    simpleActionMenu(
+        "Select notes with 1/" .. menuVars.snap .. " snap",
+        2,
+        selectBySnap, nil, menuVars)
 end
 
 -- Creates the add teleport menu
@@ -5534,7 +5552,12 @@ end
 
 function chooseOffset(menuVars)
     _, menuVars.offset = imgui.InputInt("From note #__", menuVars.offset)
-    menuVars.offset = clampToInterval(menuVars.offset, 0, menuVars.every - 1)
+    menuVars.offset = clampToInterval(menuVars.offset, 1, menuVars.every)
+end
+
+function chooseSnap(menuVars)
+    _, menuVars.snap = imgui.InputInt("Snap", menuVars.snap)
+    menuVars.snap = clampToInterval(menuVars.snap, 1, 100)
 end
 
 -- Lets you choose the distance back for splitscroll between scroll1 and scroll2
@@ -7691,7 +7714,7 @@ function selectAlternating(menuVars)
     times = removeDuplicateValues(times)
     local allowedTimes = {}
     for i, time in pairs(times) do
-        if ((i - 1 + menuVars.offset) % menuVars.every == 0) then
+        if ((i - 2 + menuVars.offset) % menuVars.every == 0) then
             table.insert(allowedTimes, time)
         end
     end
@@ -7707,6 +7730,63 @@ function selectAlternating(menuVars)
             table.insert(allowedNotes, note)
         end
     end
+    actions.SetHitObjectSelection(allowedNotes)
+end
+
+function selectBySnap(menuVars)
+    local offsets = uniqueSelectedNoteOffsets()
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+    local notes = getNotesBetweenOffsets(startOffset, endOffset)
+
+    local timingPoint = map.GetTimingPointAt(startOffset)
+    local bpm = timingPoint.Bpm
+    local times = {}
+    local disallowedTimes = {}
+    local pointer = timingPoint.StartTime
+    local counter = 0
+
+    local factors = {}
+
+    for i = 2, (menuVars.snap - 1) do
+        if (menuVars.snap % i == 0) then table.insert(factors, i) end
+    end
+
+    for _, factor in pairs(factors) do
+        while (pointer <= endOffset + 10) do
+            if ((counter ~= 0 or factor == 1) and pointer >= startOffset) then table.insert(disallowedTimes, pointer) end
+            counter = (counter + 1) % factor
+            pointer = pointer + (60000 / bpm) / (factor)
+        end
+        pointer = timingPoint.StartTime
+        counter = 0
+    end
+
+    while (pointer <= endOffset + 10) do
+        if ((counter ~= 0 or menuVars.snap == 1) and pointer >= startOffset) then table.insert(times, pointer) end
+        counter = (counter + 1) % menuVars.snap
+        pointer = pointer + (60000 / bpm) / (menuVars.snap)
+    end
+
+    for _, bannedTime in pairs(disallowedTimes) do
+        for idx, time in pairs(times) do
+            if (math.abs(time - bannedTime) < 10) then table.remove(times, idx) end
+        end
+    end
+
+    local allowedNotes = {}
+    local currentTime = times[1]
+    local index = 2
+    for _, note in pairs(notes) do
+        if (note.StartTime > currentTime + 10 and index <= #times) then
+            currentTime = times[index]
+            index = index + 1
+        end
+        if (math.abs(note.StartTime - currentTime) < 10) then
+            table.insert(allowedNotes, note)
+        end
+    end
+
     actions.SetHitObjectSelection(allowedNotes)
 end
 
