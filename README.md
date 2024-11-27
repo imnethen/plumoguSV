@@ -1,5 +1,5 @@
-# amoguSV
-<img src="https://user-images.githubusercontent.com/53842237/126182216-381a7104-7814-4661-8f80-fcb3a5034398.png" alt="amoguSV Logo" width=320px height=160px>
+# plumoguSV
+<img src="https://user-images.githubusercontent.com/53842237/126182216-381a7104-7814-4661-8f80-fcb3a5034398.png" alt="plumoguSV Logo" width=320px height=160px>
 
 > "The ultimate community-driven and open-source competitive SV plugin"
 
@@ -7,12 +7,12 @@ This is a plugin for [Quaver](https://github.com/Quaver), the ultimate community
 The plugin provides various tools to place, edit, and delete SVs (Scroll Velocities) quickly and efficiently when making maps.
 
 ## Installation
-1. Click on the green Code button, then click Download ZIP
-2. Extract the downloaded ZIP file to get the amoguSV-main folder
-3. Move the amoguSV-main folder into the Plugins folder (located in the Quaver folder)
+1. Go to the releases tab on the right, and download the latest release zip file
+2. Extract the downloaded ZIP file to get the plumoguSV-main folder
+3. Move the plumoguSV-main folder into the Plugins folder (located in the Quaver folder)
 
 ## Plugin Overview 
-amoguSV makes working with SVs quick and easy!
+plumoguSV makes working with SVs quick and easy!
 
 Once you open the plugin in the map editor you
 1. Choose an SV tool
@@ -20,10 +20,10 @@ Once you open the plugin in the map editor you
 3. Select notes you want to use the tool at/between
 4. Use the SV tool by pressing 'T' on your keyboard (or hitting the big button that appears)
 
-amoguSV lets you do 3 general SV actions: place SVs, edit SVs, and delete SVs.
+plumoguSV lets you do 4 general SV actions: select, create, edit, and delete.
 
-### Place SVs
-Standard or "Still" sets SV of different shapes:
+### Create
+Standard or "Still" sets of SV with different shapes:
 * Linear
 * Exponential
 * Bezier
@@ -41,7 +41,7 @@ Special types of SVs:
 * Splitscroll (Advanced)
 * Frames Setup
 
-### Edit SVs
+### Edit
 * Add Teleport
 * Copy & Paste
 * Displace Note
@@ -55,14 +55,15 @@ Special types of SVs:
 * Scale (Displace)
 * Scale (Multiply)
 * Swap Notes
+* Vertical Shift
 
-### Delete SVs
-Remove SVs between notes.
+### Delete
+Remove SVs and SSFs between notes.
 
 ## Special Note
 Most of the core ideas and base functionality were taken (stolen) from [iceSV](https://github.com/IceDynamix/iceSV) by [IceDynamix](https://github.com/IceDynamix).
 Other SV ideas also taken (stolen) from [Illuminati-CRAZ](https://github.com/Illuminati-CRAZ)’s SV plugins.
-Without these two people’s contributions to SV plugins in general, amoguSV would not be as good as it is today or even exist in the first place, so huge thanks to them.
+Without these two people’s contributions to SV plugins in general, plumoguSV would not be as good as it is today or even exist in the first place, so huge thanks to them.
 
 Also, some cursor effects were inspired (stolen) from https://github.com/tholman/cursor-effects
 
@@ -74,4 +75,3 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * [Displacer](https://github.com/Illuminati-CRAZ/Displacer) by Illuminati-CRAZ
 * [AFFINE](https://github.com/ESV-Sweetplum/AFFINE) by ESV-Sweetplum
 * [mulch](https://github.com/Emik03/mulch) by Emik03
-* [Goofy SV mapping guide](https://docs.google.com/document/d/1ug_WV_BI720617ybj4zuHhjaQMwa0PPekZyJoa17f-I)
