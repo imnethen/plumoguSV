@@ -963,17 +963,22 @@ function drawCapybara(globalVars)
     local eyeCoords1 = relativePoint(headCoords1, -10, -10)
     local eyeCoords2 = relativePoint(eyeCoords1, -eyeWidth, 0)
     local earCoords = relativePoint(headCoords1, 12, -headRadius + 5)
-    local brownBodyColor = rgbaToUint(220, 150, 80, 255)
-    local blackEyeColor = rgbaToUint(30, 20, 35, 255)
-    local darkBrownEarColor = rgbaToUint(150, 100, 50, 255)
+    local stemCoords = relativePoint(headCoords1, 50, -headRadius + 5)
+    local bodyColor = rgbaToUint(122, 70, 212, 255)
+    local eyeColor = rgbaToUint(30, 20, 35, 255)
+    local earColor = rgbaToUint(62, 10, 145, 255)
+    local stemColor = rgbaToUint(0, 255, 0, 255)
     -- draws capybara ear
-    o.AddCircleFilled(earCoords, earRadius, darkBrownEarColor)
+    o.AddCircleFilled(earCoords, earRadius, earColor)
     -- draws capybara head
-    drawHorizontalPillShape(o, headCoords1, headCoords2, headRadius, brownBodyColor, 12)
+    drawHorizontalPillShape(o, headCoords1, headCoords2, headRadius, bodyColor, 12)
     -- draw capybara eyes
-    drawHorizontalPillShape(o, eyeCoords1, eyeCoords2, eyeRadius, blackEyeColor, 12)
+    drawHorizontalPillShape(o, eyeCoords1, eyeCoords2, eyeRadius, eyeColor, 12)
     -- draws capybara body
-    o.AddRectFilled(sz, headCoords1, brownBodyColor)
+    o.AddRectFilled(sz, headCoords1, bodyColor)
+
+    o.AddRectFilled({ stemCoords[1], stemCoords[2] }, { stemCoords[1] + 10, stemCoords[2] + 20 }, stemColor)
+    o.AddRectFilled({ stemCoords[1] - 10, stemCoords[2] }, { stemCoords[1] + 20, stemCoords[2] - 5 }, stemColor)
 end
 
 -- Draws a capybara on the bottom left of the screen
