@@ -228,6 +228,7 @@ TRAIL_SHAPES = { -- shapes for cursor trails
 SELECT_TOOLS = {
     "Alternating",
     "By Snap",
+    "Chord Size",
     "Bookmark"
 }
 
@@ -2107,6 +2108,7 @@ function selectTab(globalVars)
     if toolName == "Alternating" then selectAlternatingMenu() end
     if toolName == "By Snap" then selectBySnapMenu() end
     if toolName == "Bookmark" then selectBookmarkMenu() end
+    if toolName == "Chord Size" then selectChordSizeMenu() end
 end
 
 -- Creates the "Place SVs" tab
@@ -2909,6 +2911,83 @@ function selectBookmarkMenu()
     state.SetValue("selectedIndex", selectedIndex)
     state.SetValue("searchTerm", searchTerm)
     state.SetValue("filterTerm", filterTerm)
+end
+
+---Combines two tables with no nesting.
+---@param t1 table
+---@param t2 table
+---@return table
+function table.combine(t1, t2)
+    for i = 1, #t2 do
+        t1[#t1 + 1] = t2[i]
+    end
+    return t1
+end
+
+function selectChordSizeMenu()
+    local menuVars = {
+        single = false,
+        jump = true,
+        hand = true,
+        quad = false
+    }
+
+    getVariables("selectChordSizeMenu", menuVars)
+
+    _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
+    _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
+
+    simpleActionMenu("Select chords within region", 2, selectChordSizes, nil, menuVars)
+
+    saveVariables("selectChordSizeMenu", menuVars)
+end
+
+function selectChordSizes(menuVars)
+    local offsets = uniqueSelectedNoteOffsets()
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+
+    local notes = getNotesBetweenOffsets(startOffset, endOffset)
+
+    local noteTimeTable = {}
+
+    for _, note in pairs(notes) do
+        table.insert(noteTimeTable, note.StartTime)
+    end
+
+    noteTimeTable = removeDuplicateValues(noteTimeTable)
+
+    local sizeDict = {
+        {},
+        {},
+        {},
+        {}
+    }
+
+    for _, time in pairs(noteTimeTable) do
+        local size = 0
+        local totalNotes = {}
+        for _, note in pairs(notes) do
+            if (math.abs(note.StartTime - time) < 3) then
+                size = size + 1
+                table.insert(totalNotes, note)
+            end
+        end
+        sizeDict[size] = table.combine(sizeDict[size], totalNotes)
+    end
+
+    local allowedNotes = {}
+
+    if (menuVars.single) then allowedNotes = table.combine(allowedNotes, sizeDict[1]) end
+    if (menuVars.jump) then allowedNotes = table.combine(allowedNotes, sizeDict[2]) end
+    if (menuVars.hand) then allowedNotes = table.combine(allowedNotes, sizeDict[3]) end
+    if (menuVars.quad) then allowedNotes = table.combine(allowedNotes, sizeDict[4]) end
+
+    actions.SetHitObjectSelection(allowedNotes)
 end
 
 -- Creates the add teleport menu
@@ -5778,6 +5857,7 @@ function chooseSelectTool(globalVars)
     if selectTool == "Alternating" then toolTip("Skip over notes then select one, and repeat") end
     if selectTool == "By Snap" then toolTip("Select all notes with a certain snap color") end
     if selectTool == "Bookmark" then toolTip("Jump to a bookmark") end
+    if selectTool == "Chord Size" then toolTip("Select all notes with a certain chord size") end
 end
 
 -- Lets you choose which edit tool to use
