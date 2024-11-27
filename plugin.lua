@@ -977,6 +977,7 @@ function drawCapybara(globalVars)
     -- draws capybara body
     o.AddRectFilled(sz, headCoords1, bodyColor)
 
+    -- draws capybara stem
     o.AddRectFilled({ stemCoords[1], stemCoords[2] }, { stemCoords[1] + 10, stemCoords[2] + 20 }, stemColor)
     o.AddRectFilled({ stemCoords[1] - 10, stemCoords[2] }, { stemCoords[1] + 20, stemCoords[2] - 5 }, stemColor)
 end
