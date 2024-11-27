@@ -8512,6 +8512,5 @@ function deleteSVsAndSSFs(menuVars)
         text = counts[2] .. " SSFs removed"
     end
 
-
     print(type, text)
 end
