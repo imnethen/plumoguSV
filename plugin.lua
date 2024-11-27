@@ -102,6 +102,7 @@ DISPLACE_SCALE_SPOTS = { -- places to scale SV sections by displacing
 }
 EDIT_SV_TOOLS = { -- tools for editing SVs
     "Add Teleport",
+    "Align Timing Lines",
     "Copy & Paste",
     "Displace Note",
     "Displace View",
@@ -2108,27 +2109,6 @@ function selectTab(globalVars)
     if toolName == "Bookmark" then selectBookmarkMenu() end
 end
 
-function editSVTab(globalVars)
-    chooseEditTool(globalVars)
-    changeEditToolIfKeysPressed(globalVars)
-    addSeparator()
-    local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
-    if toolName == "Add Teleport" then addTeleportMenu() end
-    if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
-    if toolName == "Displace Note" then displaceNoteMenu() end
-    if toolName == "Displace View" then displaceViewMenu() end
-    if toolName == "Dynamic Scale" then dynamicScaleMenu(globalVars) end
-    if toolName == "Fix LN Ends" then fixLNEndsMenu() end
-    if toolName == "Flicker" then flickerMenu() end
-    if toolName == "Measure" then measureMenu() end
-    if toolName == "Merge" then mergeMenu() end
-    if toolName == "Reverse Scroll" then reverseScrollMenu() end
-    if toolName == "Scale (Displace)" then scaleDisplaceMenu() end
-    if toolName == "Scale (Multiply)" then scaleMultiplyMenu() end
-    if toolName == "Swap Notes" then swapNotesMenu() end
-    if toolName == "Vertical Shift" then verticalShiftMenu() end
-end
-
 -- Creates the "Place SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -2149,6 +2129,7 @@ function editSVTab(globalVars)
     addSeparator()
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
+    if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
     if toolName == "Displace Note" then displaceNoteMenu() end
     if toolName == "Displace View" then displaceViewMenu() end
@@ -2943,6 +2924,11 @@ function addTeleportMenu()
 
     addSeparator()
     simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, nil, menuVars)
+end
+
+-- Creates the align timing lines menu
+function alignTimingLinesMenu()
+    simpleActionMenu("Align timing lines in this region", 0, alignTimingLines, nil, nil)
 end
 
 -- Creates the copy and paste menu
@@ -5805,6 +5791,7 @@ function chooseEditTool(globalVars)
 
     local svTool = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if svTool == "Add Teleport" then toolTip("Add a large teleport SV to move far away") end
+    if svTool == "Align Timing Lines" then toolTip("Create timing lines at notes to avoid desync") end
     if svTool == "Copy & Paste" then toolTip("Copy SVs and SSFs and paste them somewhere else") end
     if svTool == "Displace Note" then toolTip("Move where notes are hit on the screen") end
     if svTool == "Displace View" then toolTip("Temporarily displace the playfield view") end
@@ -7988,6 +7975,45 @@ function addTeleportSVs(menuVars)
 
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
+end
+
+function alignTimingLines()
+    local timingpoint = state.CurrentTimingPoint
+    local starttime = timingpoint.StartTime
+    local length = map.GetTimingPointLength(timingpoint)
+    local endtime = starttime + length
+    local signature = tonumber(timingpoint.Signature)
+    local bpm = timingpoint.Bpm
+
+    local mspb = 60000 / bpm
+    local msptl = mspb * signature
+
+    local noteTimes = {}
+
+    for _, n in pairs(map.HitObjects) do
+        table.insert(noteTimes, n.StartTime)
+    end
+
+    local times = {}
+    local timingpoints = {}
+    for time = starttime, endtime, msptl do
+        local originalTime = math.floor(time)
+        while (noteTimes[1] < originalTime - 5) do
+            table.remove(noteTimes, 1)
+        end
+        if (math.abs(noteTimes[1] - originalTime) <= 5) then
+            table.insert(times, noteTimes[1])
+        else
+            table.insert(times, originalTime)
+        end
+    end
+    for _, time in pairs(times) do
+        table.insert(timingpoints, utils.CreateTimingPoint(time, bpm, signature))
+    end
+    actions.PerformBatch({
+        utils.CreateEditorAction(action_type.AddTimingPointBatch, timingpoints),
+        utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
+    })
 end
 
 -- Copies SVs between selected notes
