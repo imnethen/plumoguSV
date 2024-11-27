@@ -1550,7 +1550,9 @@ end
 --    variables : list of variables [Table]
 function getVariables(listName, variables)
     for key, value in pairs(variables) do
-        variables[key] = state.GetValue(listName .. key) or value
+        if (state.GetValue(listName .. key) ~= nil) then
+            variables[key] = state.GetValue(listName .. key) -- Changed because default setting of true would always override
+        end
     end
 end
 
@@ -2166,7 +2168,35 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function deleteSVTab(globalVars)
-    simpleActionMenu("Delete SVs and SSFs between selected notes", 2, deleteSVsAndSSFs, nil, nil)
+    local menuVars = {
+        deleteSV = true,
+        deleteSSF = true,
+    }
+    getVariables("deleteMenu", menuVars)
+    _, menuVars.deleteSV = imgui.Checkbox("Delete SV", menuVars.deleteSV)
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.deleteSSF = imgui.Checkbox("Delete SSF", menuVars.deleteSSF)
+    saveVariables("deleteMenu", menuVars)
+
+    if (not menuVars.deleteSV and not menuVars.deleteSSF) then return end
+
+    local text = ""
+
+    if (menuVars.deleteSV and menuVars.deleteSSF) then
+        text = "SVs and SSFs"
+    elseif (menuVars.deleteSV) then
+        text = "SVs"
+    else
+        text = "SSFs"
+    end
+
+    simpleActionMenu("Delete " .. text .. " between selected notes", 2, deleteSVsAndSSFs, nil, menuVars)
+end
+
+function chooseDeleteSV(menuVars)
+end
+
+function chooseDeleteSSF(menuVars)
 end
 
 -- Creates the menu tabs for quick keyboard access for "keyboard" mode
@@ -8448,13 +8478,15 @@ function verticalShiftSVs(menuVars)
 end
 
 -- Deletes SVs between selected notes
-function deleteSVsAndSSFs()
+function deleteSVsAndSSFs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
     local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endOffset)
     local counts = { #svsToRemove, #ssfsToRemove }
+    if (not menuVars.deleteSV) then svsToRemove = {} end
+    if (not menuVars.deleteSSF) then ssfsToRemove = {} end
     if (#svsToRemove > 0 or #ssfsToRemove > 0) then
         actions.PerformBatch({ utils.CreateEditorAction(
             action_type.RemoveScrollVelocityBatch, svsToRemove), utils.CreateEditorAction(
@@ -8470,5 +8502,16 @@ function deleteSVsAndSSFs()
         type =
         "W!"
     end -- Cascading Severity Levels
-    print(type, counts[1] .. " SVs removed and " .. counts[2] .. " SSFs removed")
+    local text = ""
+
+    if (menuVars.deleteSV and menuVars.deleteSSF) then
+        text = counts[1] .. " SVs removed and " .. counts[2] .. " SSFs removed"
+    elseif (menuVars.deleteSV) then
+        text = counts[1] .. " SVs removed"
+    else
+        text = counts[2] .. " SSFs removed"
+    end
+
+
+    print(type, text)
 end
