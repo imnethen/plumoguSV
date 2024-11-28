@@ -4746,6 +4746,15 @@ function addFinalSV(svsToAdd, endOffset, svMultiplier)
     addSVToList(svsToAdd, endOffset, svMultiplier, true)
 end
 
+-- Adds the final SV to the "svsToAdd" list if there isn't an SV at the end offset already
+-- Parameters
+--    svsToAdd     : list of SVs to add [Table]
+--    endOffset    : millisecond time of the final SV [Int]
+--    svMultiplier : the final SV's multiplier [Int/Float]
+function addHypotheticalFinalSV(svsToAdd, endOffset, svMultiplier)
+    addSVToList(svsToAdd, endOffset, svMultiplier, true)
+end
+
 function addFinalSSF(ssfsToAdd, endOffset, ssfMultiplier)
     local ssf = map.GetScrollSpeedFactorAt(endOffset)
     local ssfExistsAtEndOffset = ssf and (ssf.StartTime == endOffset)
@@ -4914,6 +4923,22 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     end
 end
 
+-- Gets removable SVs that are in the map at the exact time where an SV will get added
+-- Parameters
+--    svsToRemove   : list of SVs to remove [Table]
+--    svTimeIsAdded : list of SVs times added [Table]
+--    startOffset   : starting offset to remove after [Int]
+--    endOffset     : end offset to remove before [Int]
+function getHypotheticalRemovableSVs(baseSVs, svsToRemove, svTimeIsAdded, startOffset, endOffset)
+    for _, sv in pairs(baseSVs) do
+        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
+        if svIsInRange then
+            local svIsRemovable = svTimeIsAdded[sv.StartTime]
+            if svIsRemovable then table.insert(svsToRemove, sv) end
+        end
+    end
+end
+
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]
@@ -4921,7 +4946,7 @@ function getHypotheticalSVMultiplierAt(svs, offset)
     if (#svs == 1) then return svs[1].Multiplier end
     local index = #svs
     while (index >= 1) do
-        if (svs[index].StartTime < offset) then
+        if (svs[index].StartTime > offset) then
             index = index - 1
         else
             return svs[index].Multiplier
@@ -7269,14 +7294,18 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
         end
     end
     local lastMultiplier = menuVars.svMultipliers[numMultipliers]
-    addFinalSV(svsToAdd, lastOffset, lastMultiplier)
     if (place == nil or place == true) then
         if placingStillSVs then
             local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
                 table.sort(svsToAdd, sortAscendingStartTime))
+            local multis = {}
+            for _, t in pairs(tbl.svsToAdd) do
+                table.insert(multis, t.Multiplier)
+            end
             svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
+        addHypotheticalFinalSV(svsToAdd, lastOffset, lastMultiplier)
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
@@ -7360,10 +7389,11 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
         if i ~= 1 then
             beforeDisplacement = finalDisplacements[i]
         end
-        local baseSVs = makeDuplicateList(svsToAdd)
+        local baseSVs = makeDuplicateList(svs)
         prepareDisplacingSVs(noteOffset, svsToAdd, svTimeIsAdded, beforeDisplacement,
             atDisplacement, afterDisplacement, true, baseSVs)
     end
+    -- getHypotheticalRemovableSVs(svs, svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
     getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
     -- removeAndAddSVs(svsToRemove, svsToAdd)
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
