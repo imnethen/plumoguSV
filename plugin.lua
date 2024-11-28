@@ -7293,6 +7293,9 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier, true)
+        while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
+            table.remove(svsToAdd, 1)
+        end
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
@@ -7300,6 +7303,11 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
         table.sort(svsToAdd, sortAscendingStartTime))
     svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
+    if (placingStillSVs) then
+        while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
+            table.remove(svsToAdd, 1)
+        end
+    end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
 
@@ -7381,13 +7389,11 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
             atDisplacement, afterDisplacement, true, baseSVs)
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
-    -- local svExistsAtEndOffset = sv and (sv.StartTime == lastOffset)
 
     while (svsToAdd[#svsToAdd].StartTime == optionalEnd) do
         table.remove(svsToAdd, #svsToAdd)
     end
 
-    -- if (svExistsAtEndOffset) then table.remove(svsToAdd, #svsToAdd) end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
 
