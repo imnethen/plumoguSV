@@ -1601,6 +1601,7 @@ function getStillPlaceMenuVars()
         noteSpacing = 1,
         stillTypeIndex = 1,
         stillDistance = 200,
+        stillBehavior = 1,
         prePlaceDistances = {},
         svMultipliers = {},
         svDistances = {},
@@ -2311,6 +2312,7 @@ function placeStillSVMenu(globalVars)
     end
     imgui.Text("Still Settings:")
     chooseNoteSpacing(menuVars)
+    chooseStillBehavior(menuVars)
     chooseStillType(menuVars)
 
     addSeparator()
@@ -2325,11 +2327,27 @@ function placeStillSVMenu(globalVars)
         menuVars.svMultipliers, nil, false)
 
     addSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
+    simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, globalVars, menuVars)
 
     local labelText = table.concat({ currentSVType, "SettingsStill" })
     saveVariables(labelText, settingVars)
     saveVariables("placeStillMenu", menuVars)
+end
+
+function placeStillSVsParent(globalVars, menuVars)
+    local svsToRemove = {}
+    local svsToAdd = {}
+    if (menuVars.stillBehavior == 1) then
+        placeSVs(globalVars, menuVars)
+        return
+    end
+    local offsets = uniqueSelectedNoteOffsets()
+    for i = 1, (#offsets - 1) do
+        local tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
+        svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
+        svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
+    end
+    removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
 -- Creates the menu for linear SV settings
@@ -4899,6 +4917,22 @@ end
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]
+function getHypotheticalSVMultiplierAt(svs, offset)
+    if (#svs == 1) then return svs[1].Multiplier end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime < offset) then
+            index = index - 1
+        else
+            return svs[index].Multiplier
+        end
+    end
+    return 1
+end
+
+-- Returns the SV multiplier at a specified offset in the map [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
 function getSVMultiplierAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.Multiplier end
@@ -4917,6 +4951,15 @@ end
 function getSVsBetweenOffsets(startOffset, endOffset)
     local svsBetweenOffsets = {}
     for _, sv in pairs(map.ScrollVelocities) do
+        local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
+        if svIsInRange then table.insert(svsBetweenOffsets, sv) end
+    end
+    return table.sort(svsBetweenOffsets, sortAscendingStartTime)
+end
+
+function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
+    local svsBetweenOffsets = {}
+    for _, sv in pairs(svs) do
         local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
@@ -4962,9 +5005,12 @@ end
 --    svTime                 : time to add the displacing SV at [Int/Float]
 --    displacement           : amount that the SV will displace [Int/Float]
 --    displacementMultiplier : displacement multiplier value [Int/Float]
-function prepareDisplacingSV(svsToAdd, svTimeIsAdded, svTime, displacement, displacementMultiplier)
+function prepareDisplacingSV(svsToAdd, svTimeIsAdded, svTime, displacement, displacementMultiplier, hypothetical, svs)
     svTimeIsAdded[svTime] = true
     local currentSVMultiplier = getSVMultiplierAt(svTime)
+    if (hypothetical == true) then
+        currentSVMultiplier = getHypotheticalSVMultiplierAt(svs, svTime)
+    end
     local newSVMultiplier = displacementMultiplier * displacement + currentSVMultiplier
     addSVToList(svsToAdd, svTime, newSVMultiplier, true)
 end
@@ -4978,23 +5024,23 @@ end
 --    atDisplacement     : amount to displace at (nil value if not) [Int/Float]
 --    afterDisplacement  : amount to displace after (nil value if not) [Int/Float]
 function prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, beforeDisplacement, atDisplacement,
-                              afterDisplacement)
+                              afterDisplacement, hypothetical, baseSVs)
     local displacementMultiplier = getUsableDisplacementMultiplier(offset)
     local duration = 1 / displacementMultiplier
     if beforeDisplacement then
         local timeBefore = offset - duration
         prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeBefore, beforeDisplacement,
-            displacementMultiplier)
+            displacementMultiplier, hypothetical, baseSVs)
     end
     if atDisplacement then
         local timeAt = offset
         prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeAt, atDisplacement,
-            displacementMultiplier)
+            displacementMultiplier, hypothetical, baseSVs)
     end
     if afterDisplacement then
         local timeAfter = offset + duration
         prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeAfter, afterDisplacement,
-            displacementMultiplier)
+            displacementMultiplier, hypothetical, baseSVs)
     end
 end
 
@@ -6557,6 +6603,15 @@ function chooseStillType(menuVars)
     imgui.PopItemWidth()
 end
 
+local STILL_BEHAVIOR_TYPES = {
+    "Still Whole Region",
+    "Still Per Note Group"
+}
+
+function chooseStillBehavior(menuVars)
+    menuVars.stillBehavior = combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
+end
+
 -- Lets you choose the duration of a stutter SV
 -- Returns whether or not the duration changed [Boolean]
 -- Parameters
@@ -7185,12 +7240,15 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function placeSVs(globalVars, menuVars)
+function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
     if placingStillSVs then
         offsets = uniqueNoteOffsetsBetweenSelected()
+        if (place == false) then
+            offsets = uniqueNoteOffsetsBetween(optionalStart, optionalEnd)
+        end
     end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
@@ -7212,8 +7270,21 @@ function placeSVs(globalVars, menuVars)
     end
     local lastMultiplier = menuVars.svMultipliers[numMultipliers]
     addFinalSV(svsToAdd, lastOffset, lastMultiplier)
-    removeAndAddSVs(svsToRemove, svsToAdd)
-    if placingStillSVs then placeStillSVs(menuVars) end
+    if (place == nil or place == true) then
+        if placingStillSVs then
+            local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
+                table.sort(svsToAdd, sortAscendingStartTime))
+            svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
+            svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
+        end
+        removeAndAddSVs(svsToRemove, svsToAdd)
+        return
+    end
+    local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
+        table.sort(svsToAdd, sortAscendingStartTime))
+    svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
+    svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
+    return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
 
 -- Places standard SVs between selected notes
@@ -7249,30 +7320,30 @@ end
 -- Places still SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function placeStillSVs(menuVars)
+function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
     local stillType = STILL_TYPES[menuVars.stillTypeIndex]
     local noteSpacing = menuVars.noteSpacing
     local stillDistance = menuVars.stillDistance
-    local noteOffsets = uniqueNoteOffsetsBetweenSelected()
+    local noteOffsets = uniqueNoteOffsetsBetween(optionalStart, optionalEnd)
     local firstOffset = noteOffsets[1]
     local lastOffset = noteOffsets[#noteOffsets]
     if stillType == "Auto" then
         local multiplier = getUsableDisplacementMultiplier(firstOffset)
         local duration = 1 / multiplier
         local timeBefore = firstOffset - duration
-        local multiplierBefore = getSVMultiplierAt(timeBefore)
+        multiplierBefore = getHypotheticalSVMultiplierAt(svs, timeBefore)
         stillDistance = multiplierBefore * duration
     elseif stillType == "Otua" then
         local multiplier = getUsableDisplacementMultiplier(lastOffset)
         local duration = 1 / multiplier
         local timeAt = lastOffset
-        local multiplierAt = getSVMultiplierAt(timeAt)
+        local multiplierAt = getHypotheticalSVMultiplierAt(svs, timeAt)
         stillDistance = -multiplierAt * duration
     end
     local svsToAdd = {}
     local svsToRemove = {}
     local svTimeIsAdded = {}
-    local svsBetweenOffsets = getSVsBetweenOffsets(firstOffset, lastOffset)
+    local svsBetweenOffsets = getHypotheticalSVsBetweenOffsets(svs, firstOffset, lastOffset)
     local svDisplacements = calculateDisplacementsFromSVs(svsBetweenOffsets, noteOffsets)
     local nsvDisplacements = calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local finalDisplacements = calculateStillDisplacements(stillType, stillDistance,
@@ -7289,11 +7360,13 @@ function placeStillSVs(menuVars)
         if i ~= 1 then
             beforeDisplacement = finalDisplacements[i]
         end
+        local baseSVs = makeDuplicateList(svsToAdd)
         prepareDisplacingSVs(noteOffset, svsToAdd, svTimeIsAdded, beforeDisplacement,
-            atDisplacement, afterDisplacement)
+            atDisplacement, afterDisplacement, true, baseSVs)
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
-    removeAndAddSVs(svsToRemove, svsToAdd)
+    -- removeAndAddSVs(svsToRemove, svsToAdd)
+    return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
 
 -- Places stutter SVs between selected notes
@@ -8268,7 +8341,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not place) then offsets = { optionalOffset } end
+    if (place == false) then offsets = { optionalOffset } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local displaceAmount = menuVars.distance
@@ -8281,7 +8354,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
             atDisplacement, afterDisplacement)
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
-    if (place) then
+    if (place ~= nil and place ~= false) then
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
@@ -8429,7 +8502,7 @@ function flickerSVs(menuVars, place, optionalStart, optionalEnd)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not place) then offsets = { optionalStart, optionalEnd } end
+    if (place == false) then offsets = { optionalStart, optionalEnd } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local numTeleports = 2 * menuVars.numFlickers
@@ -8460,7 +8533,7 @@ function flickerSVs(menuVars, place, optionalStart, optionalEnd)
         end
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
-    if (place) then
+    if (place ~= nil and place ~= false) then
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
