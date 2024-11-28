@@ -2347,6 +2347,7 @@ function placeStillSVsParent(globalVars, menuVars)
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     end
+    addHypotheticalFinalSV(svsToAdd, offsets[#offsets], menuVars.svMultipliers[#menuVars.svMultipliers])
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
