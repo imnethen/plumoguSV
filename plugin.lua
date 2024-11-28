@@ -3041,14 +3041,18 @@ end
 -- Creates the displace note menu
 function displaceNoteMenu()
     local menuVars = {
-        distance = 200
+        distance = 200,
+        distance1 = 0,
+        distance2 = 200,
+        linearlyChange = false
     }
     getVariables("displaceNoteMenu", menuVars)
-    chooseDistance(menuVars)
+    chooseVaryingDistance(menuVars)
+    chooseLinearlyChangeDist(menuVars)
     saveVariables("displaceNoteMenu", menuVars)
 
     addSeparator()
-    simpleActionMenu("Displace selected notes", 1, displaceNoteSVs, nil, menuVars)
+    simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, nil, menuVars)
 end
 
 -- Creates the displace view menu
@@ -5770,6 +5774,40 @@ function chooseDistance(menuVars)
     _, menuVars.distance = imgui.InputFloat("Distance", menuVars.distance, 0, 0, "%.3f msx")
 end
 
+-- Lets you choose a distance
+-- Parameters
+--    settingVars : list of variables used for the current menu [Table]
+function chooseVaryingDistance(settingVars)
+    if (not settingVars.linearlyChange) then
+        _, settingVars.distance = imgui.InputFloat("Distance", settingVars.distance, 0, 0, "%.3f msx")
+        return
+    end
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
+    local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
+    toolTip("Swap start/end SV values")
+    local oldValues = { settingVars.distance1, settingVars.distance2 }
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
+    toolTip("Negate start/end SV values")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.98 - SAMELINE_SPACING)
+    local _, newValues = imgui.InputFloat2("Dist.", oldValues, "%.2f msx")
+    imgui.PopItemWidth()
+    settingVars.distance1 = newValues[1]
+    settingVars.distance2 = newValues[2]
+    if swapButtonPressed then
+        settingVars.distance1 = oldValues[2]
+        settingVars.distance2 = oldValues[1]
+    end
+    if (negateButtonPressed) then
+        settingVars.distance1 = -oldValues[1]
+        settingVars.distance2 = -oldValues[2]
+    end
+    return swapButtonPressed or negateButtonPressed or oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+end
+
 function chooseEvery(menuVars)
     _, menuVars.every = imgui.InputInt("Every __ notes", menuVars.every)
     menuVars.every = clampToInterval(menuVars.every, 1, MAX_SV_POINTS)
@@ -6016,6 +6054,17 @@ end
 function chooseLinearlyChange(settingVars)
     local oldChoice = settingVars.linearlyChange
     local _, newChoice = imgui.Checkbox("Change stutter over time", oldChoice)
+    settingVars.linearlyChange = newChoice
+    return oldChoice ~= newChoice
+end
+
+-- Lets you choose whether or not to linearly change a stutter over time
+-- Returns whether or not the choice changed [Boolean]
+-- Parameters
+--    settingVars : list of variables used for the current menu [Table]
+function chooseLinearlyChangeDist(settingVars)
+    local oldChoice = settingVars.linearlyChange
+    local _, newChoice = imgui.Checkbox("Change distance over time", oldChoice)
     settingVars.linearlyChange = newChoice
     return oldChoice ~= newChoice
 end
@@ -8172,14 +8221,37 @@ function pasteSVsAndSSFs(globalVars, menuVars)
     if (#ssfsToAdd ~= 0) then removeAndAddSSFs(ssfsToRemove, ssfsToAdd) end
 end
 
+function displaceNoteSVsParent(menuVars)
+    if (not menuVars.linearlyChange) then
+        displaceNoteSVs(menuVars)
+        return
+    end
+    local offsets = uniqueSelectedNoteOffsets()
+
+    local svsToRemove = {}
+    local svsToAdd = {}
+
+    for _, offset in pairs(offsets) do
+        local t = (offset - offsets[1]) / (offsets[#offsets] - offsets[1])
+        local tbl = displaceNoteSVs(
+            { distance = t * (menuVars.distance2 - menuVars.distance1) + menuVars.distance1 },
+            false, offset)
+        table.combine(svsToRemove, tbl.svsToRemove)
+        table.combine(svsToAdd, tbl.svsToAdd)
+    end
+
+    removeAndAddSVs(svsToRemove, svsToAdd)
+end
+
 -- Displaces selected notes with SVs
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function displaceNoteSVs(menuVars)
+function displaceNoteSVs(menuVars, place, optionalOffset)
     local svsToAdd = {}
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not place) then offsets = { optionalOffset } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local displaceAmount = menuVars.distance
@@ -8192,7 +8264,11 @@ function displaceNoteSVs(menuVars)
             atDisplacement, afterDisplacement)
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
-    removeAndAddSVs(svsToRemove, svsToAdd)
+    if (place) then
+        removeAndAddSVs(svsToRemove, svsToAdd)
+        return
+    end
+    return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
 
 -- Displaces the playfield view with SVs between selected notes
