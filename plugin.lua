@@ -4915,22 +4915,6 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     end
 end
 
--- Gets removable SVs that are in the map at the exact time where an SV will get added
--- Parameters
---    svsToRemove   : list of SVs to remove [Table]
---    svTimeIsAdded : list of SVs times added [Table]
---    startOffset   : starting offset to remove after [Int]
---    endOffset     : end offset to remove before [Int]
-function getHypotheticalRemovableSVs(baseSVs, svsToRemove, svTimeIsAdded, startOffset, endOffset)
-    for _, sv in pairs(baseSVs) do
-        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
-        if svIsInRange then
-            local svIsRemovable = svTimeIsAdded[sv.StartTime]
-            if svIsRemovable then table.insert(svsToRemove, sv) end
-        end
-    end
-end
-
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]
@@ -7294,6 +7278,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier)
+        print(svsToRemove)
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
@@ -7381,9 +7366,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
         prepareDisplacingSVs(noteOffset, svsToAdd, svTimeIsAdded, beforeDisplacement,
             atDisplacement, afterDisplacement, true, baseSVs)
     end
-    getHypotheticalRemovableSVs(svs, svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
-    -- getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
-    -- removeAndAddSVs(svsToRemove, svsToAdd)
+    getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
     local sv = map.GetScrollVelocityAt(lastOffset)
     local svExistsAtEndOffset = sv and (sv.StartTime == lastOffset)
 
