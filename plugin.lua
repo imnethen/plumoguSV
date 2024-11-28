@@ -3149,11 +3149,15 @@ function flickerMenu()
     local menuVars = {
         flickerTypeIndex = 1,
         distance = -69420.727,
-        numFlickers = 1
+        distance1 = 0,
+        distance2 = -69420.727,
+        numFlickers = 1,
+        linearlyChange = false
     }
     getVariables("flickerMenu", menuVars)
     chooseFlickerType(menuVars)
-    chooseDistance(menuVars)
+    chooseVaryingDistance(menuVars)
+    chooseLinearlyChangeDist(menuVars)
     chooseNumFlickers(menuVars)
     saveVariables("flickerMenu", menuVars)
 
@@ -5499,7 +5503,7 @@ function chooseAverageSV(menuVars)
     local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     _, menuVars.avgSV = imgui.InputFloat("Average SV", menuVars.avgSV, 0, 0, "%.2fx")
     imgui.PopItemWidth()
@@ -5627,7 +5631,7 @@ function chooseConstantShift(settingVars, defaultShift)
     toolTip("Negate start/end SV values")
 
     imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
 
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local inputText = "Vertical Shift"
@@ -5791,7 +5795,7 @@ function chooseVaryingDistance(settingVars)
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.98 - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2("Dist.", oldValues, "%.2f msx")
     imgui.PopItemWidth()
@@ -6475,7 +6479,7 @@ function chooseStartEndSVs(settingVars)
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PopStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2("Start/End SV", oldValues, "%.2fx")
     imgui.PopItemWidth()
