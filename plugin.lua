@@ -2347,7 +2347,7 @@ function placeStillSVsParent(globalVars, menuVars)
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     end
-    addFinalSV(svsToAdd, offsets[#offsets], menuVars.svMultipliers[#menuVars.svMultipliers])
+    addFinalSV(svsToAdd, offsets[#offsets], menuVars.svMultipliers[#menuVars.svMultipliers], true)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
@@ -4739,10 +4739,10 @@ function rgbaToUint(r, g, b, a) return a * 16 ^ 6 + b * 16 ^ 4 + g * 16 ^ 2 + r 
 --    svsToAdd     : list of SVs to add [Table]
 --    endOffset    : millisecond time of the final SV [Int]
 --    svMultiplier : the final SV's multiplier [Int/Float]
-function addFinalSV(svsToAdd, endOffset, svMultiplier)
+function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
     local sv = map.GetScrollVelocityAt(endOffset)
     local svExistsAtEndOffset = sv and (sv.StartTime == endOffset)
-    if svExistsAtEndOffset then return end
+    if svExistsAtEndOffset and not force then return end
 
     addSVToList(svsToAdd, endOffset, svMultiplier, true)
 end
@@ -4913,6 +4913,22 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
             if svIsRemovable then table.insert(svsToRemove, sv) end
         end
     end
+end
+
+-- Returns the SV at a specified offset in the map [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
+function getHypotheticalSVAt(svs, offset)
+    if (#svs == 1) then return svs[1] end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index]
+        end
+    end
+    return nil
 end
 
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
@@ -7274,11 +7290,9 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
         if placingStillSVs then
             local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
                 table.sort(svsToAdd, sortAscendingStartTime))
-            svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
-        addFinalSV(svsToAdd, lastOffset, lastMultiplier)
-        print(svsToRemove)
+        addFinalSV(svsToAdd, lastOffset, lastMultiplier, true)
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
@@ -7367,10 +7381,13 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
             atDisplacement, afterDisplacement, true, baseSVs)
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
-    local sv = map.GetScrollVelocityAt(lastOffset)
-    local svExistsAtEndOffset = sv and (sv.StartTime == lastOffset)
+    -- local svExistsAtEndOffset = sv and (sv.StartTime == lastOffset)
 
-    if (svExistsAtEndOffset) then table.remove(svsToAdd, #svsToAdd) end
+    while (svsToAdd[#svsToAdd].StartTime == optionalEnd) do
+        table.remove(svsToAdd, #svsToAdd)
+    end
+
+    -- if (svExistsAtEndOffset) then table.remove(svsToAdd, #svsToAdd) end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
 
