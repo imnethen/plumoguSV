@@ -8575,7 +8575,7 @@ function flickerSVs(menuVars, place, optionalStart, optionalEnd)
         end
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
-    if (place ~= nil and place ~= false) then
+    if (place ~= false) then
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
