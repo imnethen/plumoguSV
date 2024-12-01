@@ -5581,7 +5581,7 @@ function chooseAverageSV(menuVars)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     _, menuVars.avgSV = imgui.InputFloat("Average SV", menuVars.avgSV, 0, 0, "%.2fx")
     imgui.PopItemWidth()
-    if (negateButtonPressed and menuVars.avgSV ~= 0) then
+    if ((negateButtonPressed or utils.IsKeyPressed("N")) and menuVars.avgSV ~= 0) then
         menuVars.avgSV = -menuVars.avgSV
     end
     return oldAvg ~= menuVars.avgSV
@@ -5691,15 +5691,17 @@ function chooseConstantShift(settingVars, defaultShift)
     local oldShift = settingVars.verticalShift
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
-    if imgui.Button("R##verticalShift", TERTIARY_BUTTON_SIZE) then
+    local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
+    if (resetButtonPressed or utils.IsKeyPressed("R")) then
         settingVars.verticalShift = defaultShift
     end
     toolTip("Reset vertical shift to initial values")
     imgui.SameLine(0, SAMELINE_SPACING)
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
 
-    if (imgui.Button("N##verticalShift", TERTIARY_BUTTON_SIZE) and settingVars.verticalShift ~= 0) then
+    if negateButtonPressed and settingVars.verticalShift ~= 0 then
         settingVars.verticalShift = -settingVars.verticalShift
     end
     toolTip("Negate start/end SV values")
@@ -5875,11 +5877,11 @@ function chooseVaryingDistance(settingVars)
     imgui.PopItemWidth()
     settingVars.distance1 = newValues[1]
     settingVars.distance2 = newValues[2]
-    if swapButtonPressed then
+    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
         settingVars.distance1 = oldValues[2]
         settingVars.distance2 = oldValues[1]
     end
-    if (negateButtonPressed) then
+    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
         settingVars.distance1 = -oldValues[1]
         settingVars.distance2 = -oldValues[2]
     end
@@ -6559,11 +6561,11 @@ function chooseStartEndSVs(settingVars)
     imgui.PopItemWidth()
     settingVars.startSV = newValues[1]
     settingVars.endSV = newValues[2]
-    if swapButtonPressed then
+    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
         settingVars.startSV = oldValues[2]
         settingVars.endSV = oldValues[1]
     end
-    if (negateButtonPressed) then
+    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
         settingVars.startSV = -oldValues[1]
         settingVars.endSV = -oldValues[2]
     end
@@ -6677,7 +6679,7 @@ function chooseSVBehavior(settingVars)
     local oldBehaviorIndex = settingVars.behaviorIndex
     settingVars.behaviorIndex = combo("Behavior", SV_BEHAVIORS, oldBehaviorIndex)
     imgui.PopItemWidth()
-    if (swapButtonPressed) then
+    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
         settingVars.behaviorIndex = oldBehaviorIndex == 1 and 2 or 1
     end
     return oldBehaviorIndex ~= settingVars.behaviorIndex
