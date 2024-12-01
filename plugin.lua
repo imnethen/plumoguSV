@@ -3007,6 +3007,7 @@ function selectChordSizes(menuVars)
     if (menuVars.quad) then allowedNotes = table.combine(allowedNotes, sizeDict[4]) end
 
     actions.SetHitObjectSelection(allowedNotes)
+    print(#allowedNotes > 0 and "S!" or "W!", #allowedNotes .. " notes selected")
 end
 
 -- Creates the add teleport menu
@@ -8147,6 +8148,7 @@ function selectAlternating(menuVars)
         end
     end
     actions.SetHitObjectSelection(allowedNotes)
+    print(#allowedNotes > 0 and "S!" or "W!", #allowedNotes .. " notes selected")
 end
 
 function selectBySnap(menuVars)
@@ -8204,6 +8206,7 @@ function selectBySnap(menuVars)
     end
 
     actions.SetHitObjectSelection(allowedNotes)
+    print(#allowedNotes > 0 and "S!" or "W!", #allowedNotes .. " notes selected")
 end
 
 -- Adds teleport SVs at selected notes
