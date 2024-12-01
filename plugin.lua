@@ -6669,8 +6669,17 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseSVBehavior(settingVars)
+    local swapButtonPressed = imgui.Button("Swap", SECONDARY_BUTTON_SIZE)
+    toolTip("Switch between slow down/speed up")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local oldBehaviorIndex = settingVars.behaviorIndex
     settingVars.behaviorIndex = combo("Behavior", SV_BEHAVIORS, oldBehaviorIndex)
+    imgui.PopItemWidth()
+    if (swapButtonPressed) then
+        settingVars.behaviorIndex = oldBehaviorIndex == 1 and 2 or 1
+    end
     return oldBehaviorIndex ~= settingVars.behaviorIndex
 end
 
