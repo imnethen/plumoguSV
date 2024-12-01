@@ -2334,7 +2334,7 @@ function placeStillSVMenu(globalVars)
     saveVariables("placeStillMenu", menuVars)
 end
 
-function placeStillSVsParent(globalVars, menuVars)
+function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE OF SHIT
     local svsToRemove = {}
     local svsToAdd = {}
     if (menuVars.stillBehavior == 1) then
@@ -2347,7 +2347,7 @@ function placeStillSVsParent(globalVars, menuVars)
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     end
-    addFinalSV(svsToAdd, offsets[#offsets], menuVars.svMultipliers[#menuVars.svMultipliers], true)
+    addFinalSV(svsToAdd, offsets[#offsets], menuVars.svMultipliers[#menuVars.svMultipliers])
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
@@ -4739,10 +4739,10 @@ function rgbaToUint(r, g, b, a) return a * 16 ^ 6 + b * 16 ^ 4 + g * 16 ^ 2 + r 
 --    svsToAdd     : list of SVs to add [Table]
 --    endOffset    : millisecond time of the final SV [Int]
 --    svMultiplier : the final SV's multiplier [Int/Float]
-function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
+function addFinalSV(svsToAdd, endOffset, svMultiplier)
     local sv = map.GetScrollVelocityAt(endOffset)
     local svExistsAtEndOffset = sv and (sv.StartTime == endOffset)
-    if svExistsAtEndOffset and not force then return end
+    if svExistsAtEndOffset then return end
 
     addSVToList(svsToAdd, endOffset, svMultiplier, true)
 end
@@ -4907,7 +4907,7 @@ end
 --    endOffset     : end offset to remove before [Int]
 function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     for _, sv in pairs(map.ScrollVelocities) do
-        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
+        local svIsInRange = sv.StartTime >= startOffset + 1 and sv.StartTime <= endOffset - 1
         if svIsInRange then
             local svIsRemovable = svTimeIsAdded[sv.StartTime]
             if svIsRemovable then table.insert(svsToRemove, sv) end
@@ -7257,7 +7257,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
+function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, force)
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
@@ -7292,7 +7292,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd)
                 table.sort(svsToAdd, sortAscendingStartTime))
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
-        addFinalSV(svsToAdd, lastOffset, lastMultiplier, true)
+        addFinalSV(svsToAdd, lastOffset, lastMultiplier)
         while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
             table.remove(svsToAdd, 1)
         end
