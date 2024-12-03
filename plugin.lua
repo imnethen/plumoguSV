@@ -5886,7 +5886,8 @@ function chooseVaryingDistance(settingVars)
         settingVars.distance1 = -oldValues[1]
         settingVars.distance2 = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+        oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 
 function chooseEvery(menuVars)
@@ -6570,7 +6571,8 @@ function chooseStartEndSVs(settingVars)
         settingVars.startSV = -oldValues[1]
         settingVars.endSV = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+        oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 
 -- Lets you choose a start SV percent
@@ -8396,7 +8398,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
             atDisplacement, afterDisplacement)
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
-    if (place ~= nil and place ~= false) then
+    if (place ~= false) then
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
