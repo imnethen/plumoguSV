@@ -1,4 +1,4 @@
----@diagnostic disable: need-check-nil, param-type-mismatch
+---@diagnostic disable: need-check-nil, param-type-mismatch, undefined-field
 -- plumoguSV v6.6.2 (1 April 2024)
 -- by kloi34, plummyyummy
 
@@ -3035,6 +3035,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function copyNPasteMenu(globalVars)
     local menuVars = {
+        copyTable = {}, -- 1: notes, 2: timing lines, 3: svs, 4: ssfs
         copiedSVs = {},
         copiedSSFs = {}
     }
@@ -3048,6 +3049,9 @@ function copyNPasteMenu(globalVars)
     else
         button("Clear copied SVs and SSFs", ACTION_BUTTON_SIZE, clearCopiedSVsAndSSFs, nil, menuVars)
     end
+
+    _, menuVars.copyTable[1] = imgui.Checkbox()
+
     saveVariables("copyMenu", menuVars)
 
     if noSVsCopiedInitially and noSSFsCopiedInitially then return end
