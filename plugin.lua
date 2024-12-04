@@ -2343,9 +2343,11 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
     end
     local offsets = uniqueSelectedNoteOffsets()
     for i = 1, (#offsets - 1) do
+        if (i % 2 == 0 and menuVars.stillBehavior == 3) then goto continue end
         local tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
+        ::continue::
     end
     addFinalSV(svsToAdd, offsets[#offsets], menuVars.svMultipliers[#menuVars.svMultipliers])
     removeAndAddSVs(svsToRemove, svsToAdd)
@@ -6626,8 +6628,9 @@ function chooseStillType(menuVars)
 end
 
 local STILL_BEHAVIOR_TYPES = {
-    "Still Whole Region",
-    "Still Per Note Group"
+    "Entire Region",
+    "Per Note Group",
+    "Alternating Groups"
 }
 
 function chooseStillBehavior(menuVars)
