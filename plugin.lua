@@ -3050,12 +3050,10 @@ function copyNPasteMenu(globalVars)
     imgui.SameLine(0, SAMELINE_SPACING)
     _, menuVars.copyTable[4] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[4])
 
-
-    local noSVsCopiedInitially = #menuVars.copiedSVs == 0
-    local noSSFsCopiedInitially = #menuVars.copiedSSFs == 0
+    local copiedItemCount = #menuVars.copiedNotes + #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs
 
     addSeparator()
-    if (noSVsCopiedInitially and noSSFsCopiedInitially) then
+    if (copiedItemCount == 0) then
         simpleActionMenu("Copy items between selected notes", 2, copyItems, nil, menuVars)
     else
         button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, nil, menuVars)
@@ -3064,7 +3062,7 @@ function copyNPasteMenu(globalVars)
 
     saveVariables("copyMenu", menuVars)
 
-    if noSVsCopiedInitially and noSSFsCopiedInitially then return end
+    if copiedItemCount == 0 then return end
 
     addSeparator()
     simpleActionMenu("Paste items at selected notes", 1, pasteItems, globalVars, menuVars)
@@ -8309,22 +8307,33 @@ function copyItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
-    local notesBetweenoffsets = uniqueNoteOffsetsBetweenSelected()
-    local linesBetweenOffsets = getLinesBetweenOffsets(startOffset, endOffset)
-    local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
-    local ssfsBetweenOffsets = getSSFsBetweenOffsets(startOffset, endOffset)
-    for _, sv in ipairs(svsBetweenOffsets) do
-        local relativeTime = sv.StartTime - startOffset
+    for _, note in ipairs(uniqueNoteOffsetsBetweenSelected()) do
+        local copiedNote = {
+            relativeStartOffset = note.StartTime - startOffset,
+            relativeEndOffset = note.EndTime == 0 and 0 or note.EndTime - startOffset,
+            lane = note.Lane,
+        }
+        table.insert(menuVars.copiedNotes, copiedNote)
+    end
+    for _, line in ipairs(getLinesBetweenOffsets(startOffset, endOffset)) do
+        local copiedLine = {
+            relativeOffset = line.StartTime - startOffset,
+            bpm = line.Bpm,
+            signature = line.Signature,
+            hidden = line.Hidden
+        }
+        table.insert(menuVars.copiedLines, copiedLine)
+    end
+    for _, sv in ipairs(getSVsBetweenOffsets(startOffset, endOffset)) do
         local copiedSV = {
-            relativeOffset = relativeTime,
+            relativeOffset = sv.StartTime - startOffset,
             multiplier = sv.Multiplier
         }
         table.insert(menuVars.copiedSVs, copiedSV)
     end
-    for _, ssf in ipairs(ssfsBetweenOffsets) do
-        local relativeTime = ssf.StartTime - startOffset
+    for _, ssf in ipairs(getSSFsBetweenOffsets(startOffset, endOffset)) do
         local copiedSSF = {
-            relativeOffset = relativeTime,
+            relativeOffset = ssf.StartTime - startOffset,
             multiplier = ssf.Multiplier
         }
         table.insert(menuVars.copiedSSFs, copiedSSF)
