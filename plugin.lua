@@ -3035,29 +3035,39 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function copyNPasteMenu(globalVars)
     local menuVars = {
-        copyTable = {}, -- 1: notes, 2: timing lines, 3: svs, 4: ssfs
+        copyTable = { false, false, true, true }, -- 1: notes, 2: timing lines, 3: svs, 4: ssfs
+        copiedNotes = {},
+        copiedLines = {},
         copiedSVs = {},
         copiedSSFs = {}
     }
     getVariables("copyMenu", menuVars)
+
+    _, menuVars.copyTable[1] = imgui.Checkbox("Copy Notes", menuVars.copyTable[1])
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.copyTable[2] = imgui.Checkbox("Copy Lines", menuVars.copyTable[2])
+    _, menuVars.copyTable[3] = imgui.Checkbox("Copy SVs", menuVars.copyTable[3])
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.copyTable[4] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[4])
+
+
     local noSVsCopiedInitially = #menuVars.copiedSVs == 0
     local noSSFsCopiedInitially = #menuVars.copiedSSFs == 0
 
     addSeparator()
     if (noSVsCopiedInitially and noSSFsCopiedInitially) then
-        simpleActionMenu("Copy SVs and SSFs between selected notes", 2, copySVsAndSSFs, nil, menuVars)
+        simpleActionMenu("Copy items between selected notes", 2, copyItems, nil, menuVars)
     else
-        button("Clear copied SVs and SSFs", ACTION_BUTTON_SIZE, clearCopiedSVsAndSSFs, nil, menuVars)
+        button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, nil, menuVars)
     end
 
-    _, menuVars.copyTable[1] = imgui.Checkbox()
 
     saveVariables("copyMenu", menuVars)
 
     if noSVsCopiedInitially and noSSFsCopiedInitially then return end
 
     addSeparator()
-    simpleActionMenu("Paste SVs + SSFs at selected notes", 1, pasteSVsAndSSFs, globalVars, menuVars)
+    simpleActionMenu("Paste items at selected notes", 1, pasteItems, globalVars, menuVars)
 end
 
 -- Creates the displace note menu
@@ -4966,6 +4976,15 @@ function getNotesBetweenOffsets(startOffset, endOffset)
         if noteIsInRange then table.insert(notesBetweenOffsets, note) end
     end
     return table.sort(notesBetweenOffsets, sortAscendingStartTime)
+end
+
+function getLinesBetweenOffsets(startOffset, endOffset)
+    local linesBetweenoffsets = {}
+    for _, line in pairs(map.TimingPoints) do
+        local lineIsInRange = line.StartTime >= startOffset and line.StartTime < endOffset
+        if lineIsInRange then table.insert(linesBetweenoffsets, line) end
+    end
+    return table.sort(linesBetweenoffsets, sortAscendingStartTime)
 end
 
 function getSVsBetweenOffsets(startOffset, endOffset)
@@ -8282,12 +8301,16 @@ end
 -- Copies SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function copySVsAndSSFs(menuVars)
+function copyItems(menuVars)
+    menuVars.copiedNotes = {}
+    menuVars.copiedLines = {}
     menuVars.copiedSVs = {}
     menuVars.copiedSSFs = {}
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
+    local notesBetweenoffsets = uniqueNoteOffsetsBetweenSelected()
+    local linesBetweenOffsets = getLinesBetweenOffsets(startOffset, endOffset)
     local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
     local ssfsBetweenOffsets = getSSFsBetweenOffsets(startOffset, endOffset)
     for _, sv in ipairs(svsBetweenOffsets) do
@@ -8312,7 +8335,9 @@ end
 -- Clears all copied SVs
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function clearCopiedSVsAndSSFs(menuVars)
+function clearCopiedItems(menuVars)
+    menuVars.copiedNotes = {}
+    menuVars.copiedLines = {}
     menuVars.copiedSVs = {}
     menuVars.copiedSSFs = {}
 end
@@ -8321,7 +8346,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function pasteSVsAndSSFs(globalVars, menuVars)
+function pasteItems(globalVars, menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
