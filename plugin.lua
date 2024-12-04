@@ -2960,12 +2960,12 @@ function selectChordSizeMenu()
     imgui.SameLine(0, SAMELINE_SPACING)
     _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
 
-    simpleActionMenu("Select chords within region", 2, selectChordSizes, nil, menuVars)
+    simpleActionMenu("Select chords within region", 2, selectByChordSizes, nil, menuVars)
 
     saveVariables("selectChordSizeMenu", menuVars)
 end
 
-function selectChordSizes(menuVars)
+function selectByChordSizes(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
@@ -3041,8 +3041,6 @@ function copyNPasteMenu(globalVars)
     getVariables("copyMenu", menuVars)
     local noSVsCopiedInitially = #menuVars.copiedSVs == 0
     local noSSFsCopiedInitially = #menuVars.copiedSSFs == 0
-    imgui.Text(table.concat({ #menuVars.copiedSVs, " SVs copied" }))
-    imgui.Text(table.concat({ #menuVars.copiedSSFs, " SSFs copied" }))
 
     addSeparator()
     if (noSVsCopiedInitially and noSSFsCopiedInitially) then
