@@ -2076,7 +2076,7 @@ function createMenuTab(globalVars, tabName)
     if tabName == "Select" then selectTab(globalVars) end
     if tabName == "Create" then placeSVTab(globalVars) end
     if tabName == "Edit" then editSVTab(globalVars) end
-    if tabName == "Delete" then deleteSVTab(globalVars) end
+    if tabName == "Delete" then deleteTab(globalVars) end
     imgui.EndTabItem()
 end
 
@@ -2151,36 +2151,30 @@ end
 -- Creates the "Delete SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function deleteSVTab(globalVars)
+function deleteTab(globalVars)
     local menuVars = {
-        deleteSV = true,
-        deleteSSF = true,
+        deleteTable = { true, true, true, true }
     }
     getVariables("deleteMenu", menuVars)
-    _, menuVars.deleteSV = imgui.Checkbox("Delete SVs", menuVars.deleteSV)
+    _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
     imgui.SameLine(0, SAMELINE_SPACING)
-    _, menuVars.deleteSSF = imgui.Checkbox("Delete SSFs", menuVars.deleteSSF)
+    _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])
+    _, menuVars.deleteTable[3] = imgui.Checkbox("Delete SSFs", menuVars.deleteTable[3])
+    imgui.SameLine(0, SAMELINE_SPACING + 3.5)
+    _, menuVars.deleteTable[4] = imgui.Checkbox("Delete Bookmarks", menuVars.deleteTable[4])
+
     saveVariables("deleteMenu", menuVars)
 
-    if (not menuVars.deleteSV and not menuVars.deleteSSF) then return end
-
-    local text = ""
-
-    if (menuVars.deleteSV and menuVars.deleteSSF) then
-        text = "SVs and SSFs"
-    elseif (menuVars.deleteSV) then
-        text = "SVs"
-    else
-        text = "SSFs"
+    for i = 1, 4 do
+        if (menuVars.deleteTable[i]) then goto continue end
     end
 
-    simpleActionMenu("Delete " .. text .. " between selected notes", 2, deleteSVsAndSSFs, nil, menuVars)
-end
+    do return 69 end
 
-function chooseDeleteSV(menuVars)
-end
+    ::continue::
 
-function chooseDeleteSSF(menuVars)
+
+    simpleActionMenu("Delete items between selected notes", 2, deleteItems, nil, menuVars)
 end
 
 -- Creates the menu tabs for quick keyboard access for "keyboard" mode
@@ -2201,7 +2195,7 @@ function createQuickTabs(globalVars)
         placeSpecialSVMenu,
         placeStillSVMenu,
         editSVTab,
-        deleteSVTab
+        deleteTab
     }
     for i = 1, #tabMenus do
         local tabName = tabMenus[i]
@@ -3048,7 +3042,7 @@ function copyNPasteMenu(globalVars)
     imgui.SameLine(0, SAMELINE_SPACING)
     _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
     _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
-    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.SameLine(0, SAMELINE_SPACING + 3.5)
     _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
 
     addSeparator()
@@ -8906,39 +8900,27 @@ function verticalShiftSVs(menuVars)
 end
 
 -- Deletes SVs between selected notes
-function deleteSVsAndSSFs(menuVars)
+function deleteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
+    local linesToRemove = getLinesBetweenOffsets(startOffset, endOffset)
     local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
     local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endOffset)
-    local counts = { #svsToRemove, #ssfsToRemove }
-    if (not menuVars.deleteSV) then svsToRemove = {} end
-    if (not menuVars.deleteSSF) then ssfsToRemove = {} end
-    if (#svsToRemove > 0 or #ssfsToRemove > 0) then
-        actions.PerformBatch({ utils.CreateEditorAction(
-            action_type.RemoveScrollVelocityBatch, svsToRemove), utils.CreateEditorAction(
-            action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove) })
+    local bmsToRemove = getBookmarksBetweenOffsets(startOffset, endOffset)
+    if (not menuVars.deleteTable[1]) then linesToRemove = {} end
+    if (not menuVars.deleteTable[2]) then svsToRemove = {} end
+    if (not menuVars.deleteTable[3]) then ssfsToRemove = {} end
+    if (not menuVars.deleteTable[4]) then bmsToRemove = {} end
+    if (#linesToRemove > 0 or #svsToRemove > 0 or #ssfsToRemove > 0 or #bmsToRemove > 0) then
+        actions.PerformBatch({
+            utils.CreateEditorAction(
+                action_type.RemoveTimingPointBatch, linesToRemove),
+            utils.CreateEditorAction(
+                action_type.RemoveScrollVelocityBatch, svsToRemove),
+            utils.CreateEditorAction(
+                action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove),
+            utils.CreateEditorAction(
+                action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
-    local type = "S!"
-    if (counts[1] == 0 and counts[2] == 0) then
-        type = "I!"
-    elseif (counts[1] > 2000 or counts[2] > 2000) then
-        type =
-        "E!"
-    elseif (counts[1] > 1000 or counts[2] > 1000) then
-        type =
-        "W!"
-    end -- Cascading Severity Levels
-    local text = ""
-
-    if (menuVars.deleteSV and menuVars.deleteSSF) then
-        text = counts[1] .. " SVs removed and " .. counts[2] .. " SSFs removed"
-    elseif (menuVars.deleteSV) then
-        text = counts[1] .. " SVs removed"
-    else
-        text = counts[2] .. " SSFs removed"
-    end
-
-    print(type, text)
 end
