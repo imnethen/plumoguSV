@@ -1633,10 +1633,14 @@ function getSettingVars(svType, label)
             behaviorIndex = 1,
             intensity = 30,
             verticalShift = 0,
+            distance = 100,
+            startSV = 0.01,
+            endSV = 1,
             avgSV = 1,
             svPoints = 16,
             finalSVIndex = 2,
-            customSV = 1
+            customSV = 1,
+            distanceMode = 1
         }
     elseif svType == "Bezier" then
         settingVars = {
@@ -2370,11 +2374,32 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+    settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
+    if (settingVars.distanceMode ~= 3) then
+        settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
+    end
+    if (settingVars.distanceMode == 1) then
+        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+    elseif (settingVars.distanceMode == 2) then
+        settingsChanged = chooseDistance(settingVars) or settingsChanged
+    else
+        imgui.TextColored({ 1, 0, 0, 1 }, "This feature is being not complete yet, sorry!")
+    end
     settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
+end
+
+local DISTANCE_TYPES = {
+    "Average SV + Shift",
+    "Distance + Shift",
+    "Start / End"
+}
+
+function chooseDistanceMode(menuVars)
+    local oldMode = menuVars.distanceMode
+    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
+    return oldMode ~= menuVars.distanceMode
 end
 
 -- Creates the menu for bezier SV settings
@@ -5876,7 +5901,9 @@ end
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
 function chooseDistance(menuVars)
+    local oldDistance = menuVars.distance
     _, menuVars.distance = imgui.InputFloat("Distance", menuVars.distance, 0, 0, "%.3f msx")
+    return oldDistance ~= menuVars.distance
 end
 
 -- Lets you choose a distance
