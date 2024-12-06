@@ -1,4 +1,4 @@
----@diagnostic disable: need-check-nil, param-type-mismatch
+---@diagnostic disable: need-check-nil, param-type-mismatch, undefined-field
 -- plumoguSV v6.6.2 (1 April 2024)
 -- by kloi34, plummyyummy
 
@@ -2962,12 +2962,12 @@ function selectChordSizeMenu()
     imgui.SameLine(0, SAMELINE_SPACING)
     _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
 
-    simpleActionMenu("Select chords within region", 2, selectChordSizes, nil, menuVars)
+    simpleActionMenu("Select chords within region", 2, selectByChordSizes, nil, menuVars)
 
     saveVariables("selectChordSizeMenu", menuVars)
 end
 
-function selectChordSizes(menuVars)
+function selectByChordSizes(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
@@ -3037,27 +3037,38 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function copyNPasteMenu(globalVars)
     local menuVars = {
+        copyTable = { true, true, true, true }, -- 1: timing lines, 2: svs, 3: ssfs, 4: bookmarks
+        copiedLines = {},
         copiedSVs = {},
-        copiedSSFs = {}
+        copiedSSFs = {},
+        copiedBMs = {},
     }
     getVariables("copyMenu", menuVars)
-    local noSVsCopiedInitially = #menuVars.copiedSVs == 0
-    local noSSFsCopiedInitially = #menuVars.copiedSSFs == 0
-    imgui.Text(table.concat({ #menuVars.copiedSVs, " SVs copied" }))
-    imgui.Text(table.concat({ #menuVars.copiedSSFs, " SSFs copied" }))
+
+    _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
+    _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
 
     addSeparator()
-    if (noSVsCopiedInitially and noSSFsCopiedInitially) then
-        simpleActionMenu("Copy SVs and SSFs between selected notes", 2, copySVsAndSSFs, nil, menuVars)
+
+    local copiedItemCount = #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs + #menuVars.copiedBMs
+
+    if (copiedItemCount == 0) then
+        simpleActionMenu("Copy items between selected notes", 2, copyItems, nil, menuVars)
     else
-        button("Clear copied SVs and SSFs", ACTION_BUTTON_SIZE, clearCopiedSVsAndSSFs, nil, menuVars)
+        button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, nil, menuVars)
     end
+
+
     saveVariables("copyMenu", menuVars)
 
-    if noSVsCopiedInitially and noSSFsCopiedInitially then return end
+    if copiedItemCount == 0 then return end
 
     addSeparator()
-    simpleActionMenu("Paste SVs + SSFs at selected notes", 1, pasteSVsAndSSFs, globalVars, menuVars)
+    simpleActionMenu("Paste items at selected notes", 1, pasteItems, globalVars, menuVars)
 end
 
 -- Creates the displace note menu
@@ -4968,6 +4979,15 @@ function getNotesBetweenOffsets(startOffset, endOffset)
     return table.sort(notesBetweenOffsets, sortAscendingStartTime)
 end
 
+function getLinesBetweenOffsets(startOffset, endOffset)
+    local linesBetweenoffsets = {}
+    for _, line in pairs(map.TimingPoints) do
+        local lineIsInRange = line.StartTime >= startOffset and line.StartTime < endOffset
+        if lineIsInRange then table.insert(linesBetweenoffsets, line) end
+    end
+    return table.sort(linesBetweenoffsets, sortAscendingStartTime)
+end
+
 function getSVsBetweenOffsets(startOffset, endOffset)
     local svsBetweenOffsets = {}
     for _, sv in pairs(map.ScrollVelocities) do
@@ -4975,6 +4995,15 @@ function getSVsBetweenOffsets(startOffset, endOffset)
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
     return table.sort(svsBetweenOffsets, sortAscendingStartTime)
+end
+
+function getBookmarksBetweenOffsets(startOffset, endOffset)
+    local bookmarksBetweenOffsets = {}
+    for _, bm in pairs(map.Bookmarks) do
+        local bmIsInRange = bm.StartTime >= startOffset and bm.StartTime < endOffset
+        if bmIsInRange then table.insert(bookmarksBetweenOffsets, bm) end
+    end
+    return table.sort(bookmarksBetweenOffsets, sortAscendingStartTime)
 end
 
 function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
@@ -8283,77 +8312,130 @@ end
 -- Copies SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function copySVsAndSSFs(menuVars)
+function copyItems(menuVars)
+    menuVars.copiedLines = {}
     menuVars.copiedSVs = {}
     menuVars.copiedSSFs = {}
+    menuVars.copiedBMs = {}
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
-    local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
-    local ssfsBetweenOffsets = getSSFsBetweenOffsets(startOffset, endOffset)
-    for _, sv in ipairs(svsBetweenOffsets) do
-        local relativeTime = sv.StartTime - startOffset
+    if (not menuVars.copyTable[1]) then goto continue1 end
+    for _, line in pairs(getLinesBetweenOffsets(startOffset, endOffset)) do
+        local copiedLine = {
+            relativeOffset = line.StartTime - startOffset,
+            bpm = line.Bpm,
+            signature = line.Signature,
+            hidden = line.Hidden,
+        }
+        table.insert(menuVars.copiedLines, copiedLine)
+    end
+    ::continue1::
+    if (not menuVars.copyTable[2]) then goto continue2 end
+    for _, sv in pairs(getSVsBetweenOffsets(startOffset, endOffset)) do
         local copiedSV = {
-            relativeOffset = relativeTime,
+            relativeOffset = sv.StartTime - startOffset,
             multiplier = sv.Multiplier
         }
         table.insert(menuVars.copiedSVs, copiedSV)
     end
-    for _, ssf in ipairs(ssfsBetweenOffsets) do
-        local relativeTime = ssf.StartTime - startOffset
+    ::continue2::
+    if (not menuVars.copyTable[3]) then goto continue3 end
+    for _, ssf in pairs(getSSFsBetweenOffsets(startOffset, endOffset)) do
         local copiedSSF = {
-            relativeOffset = relativeTime,
+            relativeOffset = ssf.StartTime - startOffset,
             multiplier = ssf.Multiplier
         }
         table.insert(menuVars.copiedSSFs, copiedSSF)
     end
-    print("S!", "Copied " .. #menuVars.copiedSVs .. " SVs and " .. #menuVars.copiedSSFs .. " SSFs")
+    ::continue3::
+    if (not menuVars.copyTable[4]) then goto continue4 end
+    for _, bm in pairs(getBookmarksBetweenOffsets(startOffset, endOffset)) do
+        local copiedBM = {
+            relativeOffset = bm.StartTime - startOffset,
+            note = bm.Note
+        }
+        table.insert(menuVars.copiedBMs, copiedBM)
+    end
+    ::continue4::
+    if (#menuVars.copiedBMs > 0) then print("S!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks") end
+    if (#menuVars.copiedSSFs > 0) then print("S!", "Copied " .. #menuVars.copiedSSFs .. " SSFs") end
+    if (#menuVars.copiedSVs > 0) then print("S!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
+    if (#menuVars.copiedLines > 0) then print("S!", "Copied " .. #menuVars.copiedLines .. " Lines") end
 end
 
 -- Clears all copied SVs
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function clearCopiedSVsAndSSFs(menuVars)
+function clearCopiedItems(menuVars)
+    menuVars.copiedLines = {}
     menuVars.copiedSVs = {}
     menuVars.copiedSSFs = {}
+    menuVars.copiedBMs = {}
 end
 
 -- Pastes copied SVs at selected notes
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function pasteSVsAndSSFs(globalVars, menuVars)
+function pasteItems(globalVars, menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
+    local lastCopiedLine = menuVars.copiedLines[#menuVars.copiedLines]
     local lastCopiedSV = menuVars.copiedSVs[#menuVars.copiedSVs]
     local lastCopiedSSF = menuVars.copiedSSFs[#menuVars.copiedSSFs]
+    local lastCopiedBM = menuVars.copiedBMs[#menuVars.copiedBMs]
 
     local lastCopiedValue = lastCopiedSV
     if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedSSF end
+    if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedLine end
+    if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedBM end
 
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128
+    local linesToRemove = getLinesBetweenOffsets(startOffset, endRemoveOffset)
     local svsToRemove = getSVsBetweenOffsets(startOffset, endRemoveOffset)
     local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endRemoveOffset)
+    local bmsToRemove = getBookmarksBetweenOffsets(startOffset, endRemoveOffset)
     if globalVars.dontReplaceSV then
+        linesToRemove = {}
         svsToRemove = {}
         ssfsToRemove = {}
+        bmsToRemove = {}
     end
+    local linesToAdd = {}
     local svsToAdd = {}
     local ssfsToAdd = {}
+    local bmsToAdd = {}
     for i = 1, #offsets do
         local pasteOffset = offsets[i]
+        for _, line in ipairs(menuVars.copiedLines) do
+            local timeToPasteLine = pasteOffset + line.relativeOffset
+            table.insert(linesToAdd, utils.CreateTimingPoint(timeToPasteLine, line.bpm, line.signature, line.hidden))
+        end
         for _, sv in ipairs(menuVars.copiedSVs) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
-            addSVToList(svsToAdd, timeToPasteSV, sv.multiplier, true)
+            table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
         end
         for _, ssf in ipairs(menuVars.copiedSSFs) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
-            addSSFToList(ssfsToAdd, timeToPasteSSF, ssf.multiplier, true)
+            table.insert(ssfsToAdd, utils.CreateScrollSpeedFactor(timeToPasteSSF, ssf.multiplier))
+        end
+        for _, bm in ipairs(menuVars.copiedBMs) do
+            local timeToPasteBM = pasteOffset + bm.relativeOffset
+            table.insert(bmsToAdd, utils.CreateBookmark(timeToPasteBM, bm.note))
         end
     end
-    if (#svsToAdd ~= 0) then removeAndAddSVs(svsToRemove, svsToAdd) end
-    if (#ssfsToAdd ~= 0) then removeAndAddSSFs(ssfsToRemove, ssfsToAdd) end
+    actions.PerformBatch({
+        utils.CreateEditorAction(action_type.RemoveTimingPointBatch, linesToRemove),
+        utils.CreateEditorAction(action_type.RemoveScrollVelocityBatch, svsToRemove),
+        utils.CreateEditorAction(action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove),
+        utils.CreateEditorAction(action_type.RemoveBookmarkBatch, bmsToRemove),
+        utils.CreateEditorAction(action_type.AddTimingPointBatch, linesToAdd),
+        utils.CreateEditorAction(action_type.AddScrollVelocityBatch, svsToAdd),
+        utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd),
+        utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
+    })
 end
 
 function displaceNoteSVsParent(menuVars)
