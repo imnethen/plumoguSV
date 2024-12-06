@@ -6251,7 +6251,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseMSPF(settingVars)
     local _, newMSPF = imgui.InputFloat("ms Per Frame", settingVars.msPerFrame, 0.5, 0.5, "%.1f")
-    newMSPF = clampToInterval(newMSPF, 4, 1000)
+    newMSPF = clampToInterval(newMSPF, 4, 10000)
     settingVars.msPerFrame = newMSPF
     helpMarker("Number of milliseconds splitscroll will display a set of SVs before jumping to " ..
         "the next set of SVs")
@@ -6309,7 +6309,7 @@ function chooseNumPeriods(settingVars)
     local oldPeriods = settingVars.periods
     local _, newPeriods = imgui.InputFloat("Periods/Cycles", oldPeriods, 0.25, 0.25, "%.2f")
     newPeriods = forceQuarter(newPeriods)
-    newPeriods = clampToInterval(newPeriods, 0.25, 20)
+    newPeriods = clampToInterval(newPeriods, 0.25, 69420)
     settingVars.periods = newPeriods
     return oldPeriods ~= newPeriods
 end
@@ -6681,7 +6681,7 @@ function chooseStuttersPerSection(settingVars)
     local oldNumber = settingVars.stuttersPerSection
     local _, newNumber = imgui.InputInt("Stutters", oldNumber, 1, 1)
     helpMarker("Number of stutters per section")
-    newNumber = clampToInterval(newNumber, 1, 100)
+    newNumber = clampToInterval(newNumber, 1, 1000)
     settingVars.stuttersPerSection = newNumber
     return oldNumber ~= newNumber
 end
