@@ -2157,9 +2157,9 @@ function deleteSVTab(globalVars)
         deleteSSF = true,
     }
     getVariables("deleteMenu", menuVars)
-    _, menuVars.deleteSV = imgui.Checkbox("Delete SV", menuVars.deleteSV)
+    _, menuVars.deleteSV = imgui.Checkbox("Delete SVs", menuVars.deleteSV)
     imgui.SameLine(0, SAMELINE_SPACING)
-    _, menuVars.deleteSSF = imgui.Checkbox("Delete SSF", menuVars.deleteSSF)
+    _, menuVars.deleteSSF = imgui.Checkbox("Delete SSFs", menuVars.deleteSSF)
     saveVariables("deleteMenu", menuVars)
 
     if (not menuVars.deleteSV and not menuVars.deleteSSF) then return end
@@ -2343,7 +2343,6 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
     end
     local offsets = uniqueSelectedNoteOffsets()
     for i = 1, (#offsets - 1) do
-        if (i % 2 == 0 and menuVars.stillBehavior == 3) then goto continue end
         tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
@@ -6659,7 +6658,6 @@ end
 local STILL_BEHAVIOR_TYPES = {
     "Entire Region",
     "Per Note Group",
-    "Alternating Groups"
 }
 
 function chooseStillBehavior(menuVars)
