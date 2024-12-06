@@ -2344,7 +2344,7 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
     local offsets = uniqueSelectedNoteOffsets()
     for i = 1, (#offsets - 1) do
         if (i % 2 == 0 and menuVars.stillBehavior == 3) then goto continue end
-        local tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
+        tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         ::continue::
