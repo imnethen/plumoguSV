@@ -2361,6 +2361,21 @@ function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
     settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
+    if (settingVars.startSV < 0 and settingVars.endSV > 0 and math.abs(settingVars.startSV / settingVars.endSV) < 5) then
+        height = state.GetValue("JumpHeight") or 0
+        if settingsChanged then
+            print("hi")
+            linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1)
+            local sum = 0
+            for i = 1, #linearSet - 1 do
+                if (linearSet[i] >= 0) then break end
+                sum = sum - linearSet[i] / settingVars.svPoints
+            end
+            height = sum
+            state.SetValue("JumpHeight", sum)
+        end
+        imgui.TextColored({ 1, 0, 0, 1 }, "Jump detected. The maximum \nheight of the jump is " .. height .. "x.")
+    end
     return settingsChanged
 end
 
@@ -7358,8 +7373,10 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, force
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier)
-        while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
-            table.remove(svsToAdd, 1)
+        if (placingStillSVs) then
+            while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
+                table.remove(svsToAdd, 1)
+            end
         end
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
