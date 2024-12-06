@@ -1,5 +1,5 @@
 ---@diagnostic disable: need-check-nil, param-type-mismatch, undefined-field
--- plumoguSV v6.6.2 (1 April 2024)
+-- plumoguSV v1.1.0
 -- by kloi34, plummyyummy
 
 -- Many SV tool ideas were stolen from other plugins, so here is credit to those plugins and the
@@ -8899,7 +8899,7 @@ function verticalShiftSVs(menuVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
--- Deletes SVs between selected notes
+-- Deletes items between selected notes
 function deleteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
