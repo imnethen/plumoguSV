@@ -2364,7 +2364,6 @@ function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     if (settingVars.startSV < 0 and settingVars.endSV > 0 and math.abs(settingVars.startSV / settingVars.endSV) < 5) then
         height = state.GetValue("JumpHeight") or 0
         if settingsChanged then
-            print("hi")
             linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1)
             local sum = 0
             for i = 1, #linearSet - 1 do
@@ -5155,7 +5154,7 @@ end
 function uniqueNoteOffsetsBetween(startOffset, endOffset)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset then
+        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and state.SelectedScrollGroupId == hitObject.TimingGroup then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
             if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
                 table.insert(noteOffsetsBetween,
