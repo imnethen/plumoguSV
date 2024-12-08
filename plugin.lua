@@ -2008,6 +2008,8 @@ end
 -- Plugin Menus (+ other higher level menu-related functions) -------------------------------------
 ---------------------------------------------------------------------------------------------------
 
+local BETA_IGNORE_NOTES_OUTSIDE_TG = false
+
 -- Creates the plugin window
 function draw()
     local globalVars = {
@@ -2038,6 +2040,7 @@ function draw()
     }
 
     getVariables("globalVars", globalVars)
+    BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("beta_1") or false
 
     drawCapybara(globalVars)
     drawCapybara2(globalVars)
@@ -2065,6 +2068,7 @@ function draw()
     imgui.End()
 
     saveVariables("globalVars", globalVars)
+    state.SetValue("beta_1", BETA_IGNORE_NOTES_OUTSIDE_TG)
 end
 
 ----------------------------------------------------------------------------------------- Tab stuff
@@ -3430,6 +3434,7 @@ function choosePluginBehaviorSettings(globalVars)
     chooseUpscroll(globalVars)
     addSeparator()
     chooseDontReplaceSV(globalVars)
+    chooseBetaIgnore()
     addPadding()
 end
 
@@ -5154,7 +5159,7 @@ end
 function uniqueNoteOffsetsBetween(startOffset, endOffset)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and state.SelectedScrollGroupId == hitObject.TimingGroup then
+        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not BETA_IGNORE_NOTES_OUTSIDE_TG) then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
             if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
                 table.insert(noteOffsetsBetween,
@@ -5172,7 +5177,12 @@ function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     local startOffset = selectedNoteOffsets[1]
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
-    return uniqueNoteOffsetsBetween(startOffset, endOffset)
+    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
+    if (#offsets < 2) then
+        print("E!",
+            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+    end
+    return offsets
 end
 
 -- Finds unique offsets of all notes currently selected in the editor
@@ -6003,6 +6013,14 @@ end
 function chooseDontReplaceSV(globalVars)
     local label = "Dont replace SVs when placing regular SVs"
     _, globalVars.dontReplaceSV = imgui.Checkbox(label, globalVars.dontReplaceSV)
+end
+
+-- Lets you choose whether or not to replace SVs when placing SVs
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function chooseBetaIgnore()
+    _, BETA_IGNORE_NOTES_OUTSIDE_TG = imgui.Checkbox("Ignore notes outside current timing group",
+        BETA_IGNORE_NOTES_OUTSIDE_TG)
 end
 
 -- Lets you choose whether or not to draw a capybara on screen
