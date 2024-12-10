@@ -8446,10 +8446,10 @@ function pasteItems(globalVars, menuVars)
     if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedBM end
 
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128
-    local linesToRemove = getLinesBetweenOffsets(startOffset, endRemoveOffset)
-    local svsToRemove = getSVsBetweenOffsets(startOffset, endRemoveOffset)
-    local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endRemoveOffset)
-    local bmsToRemove = getBookmarksBetweenOffsets(startOffset, endRemoveOffset)
+    local linesToRemove = menuVars.copyTable[1] and getLinesBetweenOffsets(startOffset, endRemoveOffset) or {}
+    local svsToRemove = menuVars.copyTable[2] and getSVsBetweenOffsets(startOffset, endRemoveOffset) or {}
+    local ssfsToRemove = menuVars.copyTable[3] and getSSFsBetweenOffsets(startOffset, endRemoveOffset) or {}
+    local bmsToRemove = menuVars.copyTable[4] and getBookmarksBetweenOffsets(startOffset, endRemoveOffset) or {}
     if globalVars.dontReplaceSV then
         linesToRemove = {}
         svsToRemove = {}
