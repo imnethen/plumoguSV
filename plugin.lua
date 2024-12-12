@@ -1633,10 +1633,14 @@ function getSettingVars(svType, label)
             behaviorIndex = 1,
             intensity = 30,
             verticalShift = 0,
+            distance = 100,
+            startSV = 0.01,
+            endSV = 1,
             avgSV = 1,
             svPoints = 16,
             finalSVIndex = 2,
-            customSV = 1
+            customSV = 1,
+            distanceMode = 1
         }
     elseif svType == "Bezier" then
         settingVars = {
@@ -2004,6 +2008,8 @@ end
 -- Plugin Menus (+ other higher level menu-related functions) -------------------------------------
 ---------------------------------------------------------------------------------------------------
 
+local BETA_IGNORE_NOTES_OUTSIDE_TG = false
+
 -- Creates the plugin window
 function draw()
     local globalVars = {
@@ -2034,6 +2040,7 @@ function draw()
     }
 
     getVariables("globalVars", globalVars)
+    BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("beta_1") or false
 
     drawCapybara(globalVars)
     drawCapybara2(globalVars)
@@ -2061,6 +2068,7 @@ function draw()
     imgui.End()
 
     saveVariables("globalVars", globalVars)
+    state.SetValue("beta_1", BETA_IGNORE_NOTES_OUTSIDE_TG)
 end
 
 ----------------------------------------------------------------------------------------- Tab stuff
@@ -2246,12 +2254,23 @@ function placeStandardSVMenu(globalVars)
         menuVars.svMultipliers, nil, false)
 
     addSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
+    if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
+        menuVars.settingVars = settingVars
+        simpleActionMenu("Place SVs between selected notes", 2, placeExponentialSpecialSVs, globalVars, menuVars)
+    else
+        simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
+    end
     simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, globalVars, menuVars, true)
 
     local labelText = table.concat({ currentSVType, "SettingsStandard" })
     saveVariables(labelText, settingVars)
     saveVariables("placeStandardMenu", menuVars)
+end
+
+function placeExponentialSpecialSVs(globalVars, menuVars)
+    if (menuVars.settingVars.distanceMode == 2) then
+        placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
+    end
 end
 
 -- Creates the menu for placing special SVs
@@ -2321,6 +2340,7 @@ function placeStillSVMenu(globalVars)
         menuVars.svMultipliers, nil, false)
 
     addSeparator()
+    menuVars.settingVars = settingVars
     simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, globalVars, menuVars)
 
     local labelText = table.concat({ currentSVType, "SettingsStill" })
@@ -2332,12 +2352,20 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
     local svsToRemove = {}
     local svsToAdd = {}
     if (menuVars.stillBehavior == 1) then
-        placeSVs(globalVars, menuVars)
+        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
+            placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
+        else
+            placeSVs(globalVars, menuVars)
+        end
         return
     end
     local offsets = uniqueSelectedNoteOffsets()
     for i = 1, (#offsets - 1) do
-        tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
+        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
+            tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
+        else
+            tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
+        end
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         ::continue::
@@ -2357,6 +2385,20 @@ function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
     settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
+    if (settingVars.startSV < 0 and settingVars.endSV > 0 and math.abs(settingVars.startSV / settingVars.endSV) < 5) then
+        height = state.GetValue("JumpHeight") or 0
+        if settingsChanged then
+            linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1)
+            local sum = 0
+            for i = 1, #linearSet - 1 do
+                if (linearSet[i] >= 0) then break end
+                sum = sum - linearSet[i] / settingVars.svPoints
+            end
+            height = sum
+            state.SetValue("JumpHeight", sum)
+        end
+        imgui.TextColored({ 1, 0, 0, 1 }, "Jump detected. The maximum \nheight of the jump is " .. height .. "x.")
+    end
     return settingsChanged
 end
 
@@ -2370,11 +2412,32 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+    settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
+    if (settingVars.distanceMode ~= 3) then
+        settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
+    end
+    if (settingVars.distanceMode == 1) then
+        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+    elseif (settingVars.distanceMode == 2) then
+        settingsChanged = chooseDistance(settingVars) or settingsChanged
+    else
+        settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
+    end
     settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
+end
+
+local DISTANCE_TYPES = {
+    "Average SV + Shift",
+    "Distance + Shift",
+    "Start / End"
+}
+
+function chooseDistanceMode(menuVars)
+    local oldMode = menuVars.distanceMode
+    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
+    return oldMode ~= menuVars.distanceMode
 end
 
 -- Creates the menu for bezier SV settings
@@ -3391,6 +3454,7 @@ function choosePluginBehaviorSettings(globalVars)
     chooseUpscroll(globalVars)
     addSeparator()
     chooseDontReplaceSV(globalVars)
+    chooseBetaIgnore()
     addPadding()
 end
 
@@ -5115,7 +5179,7 @@ end
 function uniqueNoteOffsetsBetween(startOffset, endOffset)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset then
+        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not BETA_IGNORE_NOTES_OUTSIDE_TG) then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
             if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
                 table.insert(noteOffsetsBetween,
@@ -5133,7 +5197,12 @@ function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     local startOffset = selectedNoteOffsets[1]
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
-    return uniqueNoteOffsetsBetween(startOffset, endOffset)
+    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
+    if (#offsets < 2) then
+        print("E!",
+            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+    end
+    return offsets
 end
 
 -- Finds unique offsets of all notes currently selected in the editor
@@ -5876,7 +5945,9 @@ end
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
 function chooseDistance(menuVars)
+    local oldDistance = menuVars.distance
     _, menuVars.distance = imgui.InputFloat("Distance", menuVars.distance, 0, 0, "%.3f msx")
+    return oldDistance ~= menuVars.distance
 end
 
 -- Lets you choose a distance
@@ -5962,6 +6033,14 @@ end
 function chooseDontReplaceSV(globalVars)
     local label = "Dont replace SVs when placing regular SVs"
     _, globalVars.dontReplaceSV = imgui.Checkbox(label, globalVars.dontReplaceSV)
+end
+
+-- Lets you choose whether or not to replace SVs when placing SVs
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function chooseBetaIgnore()
+    _, BETA_IGNORE_NOTES_OUTSIDE_TG = imgui.Checkbox("Ignore notes outside current timing group",
+        BETA_IGNORE_NOTES_OUTSIDE_TG)
 end
 
 -- Lets you choose whether or not to draw a capybara on screen
@@ -6794,8 +6873,14 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
             settingVars.svPoints + 1)
     elseif svType == "Exponential" then
         local behavior = SV_BEHAVIORS[settingVars.behaviorIndex]
-        multipliers = generateExponentialSet(behavior, settingVars.svPoints + 1, settingVars.avgSV,
-            settingVars.intensity, settingVars.verticalShift)
+        if (settingVars.distanceMode == 3) then
+            multipliers = generateExponentialSet2(behavior, settingVars.svPoints + 1, settingVars.startSV,
+                settingVars.endSV,
+                settingVars.intensity)
+        else
+            multipliers = generateExponentialSet(behavior, settingVars.svPoints + 1, settingVars.avgSV,
+                settingVars.intensity, settingVars.verticalShift)
+        end
     elseif svType == "Bezier" then
         multipliers = generateBezierSet(settingVars.x1, settingVars.y1, settingVars.x2,
             settingVars.y2, settingVars.avgSV,
@@ -6897,12 +6982,35 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
         else
             x = (numValues - i - 0.5) * intensity / numValues
         end
-        local y = (math.exp(x) / math.exp(1)) / intensity
+        local y = math.exp(x - 1) / intensity
         table.insert(exponentialSet, y)
     end
     normalizeValues(exponentialSet, avgValue, false)
     for i = 1, #exponentialSet do
         exponentialSet[i] = exponentialSet[i] + verticalShift
+    end
+    return exponentialSet
+end
+
+function generateExponentialSet2(behavior, numValues, startValue, endValue, intensity)
+    local exponentialSet = {}
+    -- reduce intensity scaling to produce more useful/practical values
+    intensity = intensity / 5
+    for i = 0, numValues - 1 do
+        fx = startValue
+        local x = i / (numValues - 1)
+        if (behavior == "Slow down" and startValue ~= endValue) then
+            local k = 1 / (math.exp(intensity * math.abs(endValue - startValue)) - 1)
+            fx = 1 / intensity * math.log((x + k) / (1 + k))
+            if (startValue > endValue) then
+                fx = -fx
+            end
+            fx = fx + endValue
+        else
+            local k = (endValue - startValue) / (math.exp(intensity) - 1)
+            fx = k * math.exp(intensity * x) + startValue - k
+        end
+        table.insert(exponentialSet, fx)
     end
     return exponentialSet
 end
@@ -7295,7 +7403,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, force)
+function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optionalDistance)
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
@@ -7320,6 +7428,9 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, force
         for j = 1, #svOffsets - 1 do
             local offset = svOffsets[j]
             local multiplier = menuVars.svMultipliers[j]
+            if (optionalDistance ~= nil) then
+                multiplier = optionalDistance / (endOffset - startOffset) * math.abs(multiplier)
+            end
             addSVToList(svsToAdd, offset, multiplier, true)
         end
     end
@@ -7331,8 +7442,10 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, force
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier)
-        while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
-            table.remove(svsToAdd, 1)
+        if (placingStillSVs) then
+            while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
+                table.remove(svsToAdd, 1)
+            end
         end
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
@@ -7393,13 +7506,13 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
         local multiplier = getUsableDisplacementMultiplier(firstOffset)
         local duration = 1 / multiplier
         local timeBefore = firstOffset - duration
-        multiplierBefore = getHypotheticalSVMultiplierAt(svs, timeBefore)
+        multiplierBefore = getSVMultiplierAt(timeBefore)
         stillDistance = multiplierBefore * duration
     elseif stillType == "Otua" then
         local multiplier = getUsableDisplacementMultiplier(lastOffset)
         local duration = 1 / multiplier
         local timeAt = lastOffset
-        local multiplierAt = getHypotheticalSVMultiplierAt(svs, timeAt)
+        local multiplierAt = getSVMultiplierAt(timeAt)
         stillDistance = -multiplierAt * duration
     end
     local svsToAdd = {}
@@ -8385,10 +8498,10 @@ function pasteItems(globalVars, menuVars)
     if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedBM end
 
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128
-    local linesToRemove = getLinesBetweenOffsets(startOffset, endRemoveOffset)
-    local svsToRemove = getSVsBetweenOffsets(startOffset, endRemoveOffset)
-    local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endRemoveOffset)
-    local bmsToRemove = getBookmarksBetweenOffsets(startOffset, endRemoveOffset)
+    local linesToRemove = menuVars.copyTable[1] and getLinesBetweenOffsets(startOffset, endRemoveOffset) or {}
+    local svsToRemove = menuVars.copyTable[2] and getSVsBetweenOffsets(startOffset, endRemoveOffset) or {}
+    local ssfsToRemove = menuVars.copyTable[3] and getSSFsBetweenOffsets(startOffset, endRemoveOffset) or {}
+    local bmsToRemove = menuVars.copyTable[4] and getBookmarksBetweenOffsets(startOffset, endRemoveOffset) or {}
     if globalVars.dontReplaceSV then
         linesToRemove = {}
         svsToRemove = {}
