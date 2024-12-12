@@ -2255,7 +2255,6 @@ function placeStandardSVMenu(globalVars)
 
     addSeparator()
     if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode ~= 1) then
-        menuVars.distanceMode = settingVars.distanceMode
         menuVars.settingVars = settingVars
         simpleActionMenu("Place SVs between selected notes", 2, placeExponentialSpecialSVs, globalVars, menuVars)
     else
@@ -2269,7 +2268,9 @@ function placeStandardSVMenu(globalVars)
 end
 
 function placeExponentialSpecialSVs(globalVars, menuVars)
-    placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
+    if (menuVars.settingVars.distanceMode == 2) then
+        placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
+    end
 end
 
 -- Creates the menu for placing special SVs
@@ -2339,6 +2340,7 @@ function placeStillSVMenu(globalVars)
         menuVars.svMultipliers, nil, false)
 
     addSeparator()
+    menuVars.settingVars = settingVars
     simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, globalVars, menuVars)
 
     local labelText = table.concat({ currentSVType, "SettingsStill" })
@@ -2350,12 +2352,20 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
     local svsToRemove = {}
     local svsToAdd = {}
     if (menuVars.stillBehavior == 1) then
-        placeSVs(globalVars, menuVars)
+        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode ~= 1) then
+            placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
+        else
+            placeSVs(globalVars, menuVars)
+        end
         return
     end
     local offsets = uniqueSelectedNoteOffsets()
     for i = 1, (#offsets - 1) do
-        tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
+        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode ~= 1) then
+            tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
+        else
+            tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
+        end
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         ::continue::
@@ -7390,7 +7400,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
             local offset = svOffsets[j]
             local multiplier = menuVars.svMultipliers[j]
             if (optionalDistance ~= nil) then
-                multiplier = optionalDistance / (endOffset - startOffset) * multiplier
+                multiplier = optionalDistance / (endOffset - startOffset) * math.abs(multiplier)
             end
             addSVToList(svsToAdd, offset, multiplier, true)
         end
