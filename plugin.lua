@@ -2254,12 +2254,22 @@ function placeStandardSVMenu(globalVars)
         menuVars.svMultipliers, nil, false)
 
     addSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
+    if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode ~= 1) then
+        menuVars.distanceMode = settingVars.distanceMode
+        menuVars.settingVars = settingVars
+        simpleActionMenu("Place SVs between selected notes", 2, placeExponentialSpecialSVs, globalVars, menuVars)
+    else
+        simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
+    end
     simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, globalVars, menuVars, true)
 
     local labelText = table.concat({ currentSVType, "SettingsStandard" })
     saveVariables(labelText, settingVars)
     saveVariables("placeStandardMenu", menuVars)
+end
+
+function placeExponentialSpecialSVs(globalVars, menuVars)
+    placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
 end
 
 -- Creates the menu for placing special SVs
@@ -7354,7 +7364,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, force)
+function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optionalDistance)
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
@@ -7379,6 +7389,9 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, force
         for j = 1, #svOffsets - 1 do
             local offset = svOffsets[j]
             local multiplier = menuVars.svMultipliers[j]
+            if (optionalDistance ~= nil) then
+                multiplier = optionalDistance / (endOffset - startOffset) * multiplier
+            end
             addSVToList(svsToAdd, offset, multiplier, true)
         end
     end
