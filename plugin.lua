@@ -7454,13 +7454,13 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
         local multiplier = getUsableDisplacementMultiplier(firstOffset)
         local duration = 1 / multiplier
         local timeBefore = firstOffset - duration
-        multiplierBefore = getHypotheticalSVMultiplierAt(svs, timeBefore)
+        multiplierBefore = getSVMultiplierAt(timeBefore)
         stillDistance = multiplierBefore * duration
     elseif stillType == "Otua" then
         local multiplier = getUsableDisplacementMultiplier(lastOffset)
         local duration = 1 / multiplier
         local timeAt = lastOffset
-        local multiplierAt = getHypotheticalSVMultiplierAt(svs, timeAt)
+        local multiplierAt = getSVMultiplierAt(timeAt)
         stillDistance = -multiplierAt * duration
     end
     local svsToAdd = {}
