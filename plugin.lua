@@ -2254,7 +2254,7 @@ function placeStandardSVMenu(globalVars)
         menuVars.svMultipliers, nil, false)
 
     addSeparator()
-    if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode ~= 1) then
+    if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
         menuVars.settingVars = settingVars
         simpleActionMenu("Place SVs between selected notes", 2, placeExponentialSpecialSVs, globalVars, menuVars)
     else
@@ -2352,7 +2352,7 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
     local svsToRemove = {}
     local svsToAdd = {}
     if (menuVars.stillBehavior == 1) then
-        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode ~= 1) then
+        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
             placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
         else
             placeSVs(globalVars, menuVars)
@@ -2361,7 +2361,7 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
     end
     local offsets = uniqueSelectedNoteOffsets()
     for i = 1, (#offsets - 1) do
-        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode ~= 1) then
+        if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
             tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
         else
             tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
@@ -2421,7 +2421,7 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif (settingVars.distanceMode == 2) then
         settingsChanged = chooseDistance(settingVars) or settingsChanged
     else
-        imgui.TextColored({ 1, 0, 0, 1 }, "This feature is being not complete yet, sorry!")
+        settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
     end
     settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
@@ -6873,8 +6873,14 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
             settingVars.svPoints + 1)
     elseif svType == "Exponential" then
         local behavior = SV_BEHAVIORS[settingVars.behaviorIndex]
-        multipliers = generateExponentialSet(behavior, settingVars.svPoints + 1, settingVars.avgSV,
-            settingVars.intensity, settingVars.verticalShift)
+        if (settingVars.distanceMode == 3) then
+            multipliers = generateExponentialSet2(behavior, settingVars.svPoints + 1, settingVars.startSV,
+                settingVars.endSV,
+                settingVars.intensity)
+        else
+            multipliers = generateExponentialSet(behavior, settingVars.svPoints + 1, settingVars.avgSV,
+                settingVars.intensity, settingVars.verticalShift)
+        end
     elseif svType == "Bezier" then
         multipliers = generateBezierSet(settingVars.x1, settingVars.y1, settingVars.x2,
             settingVars.y2, settingVars.avgSV,
@@ -6976,12 +6982,35 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
         else
             x = (numValues - i - 0.5) * intensity / numValues
         end
-        local y = (math.exp(x) / math.exp(1)) / intensity
+        local y = math.exp(x - 1) / intensity
         table.insert(exponentialSet, y)
     end
     normalizeValues(exponentialSet, avgValue, false)
     for i = 1, #exponentialSet do
         exponentialSet[i] = exponentialSet[i] + verticalShift
+    end
+    return exponentialSet
+end
+
+function generateExponentialSet2(behavior, numValues, startValue, endValue, intensity)
+    local exponentialSet = {}
+    -- reduce intensity scaling to produce more useful/practical values
+    intensity = intensity / 5
+    for i = 0, numValues - 1 do
+        fx = startValue
+        local x = i / (numValues - 1)
+        if (behavior == "Slow down" and startValue ~= endValue) then
+            local k = 1 / (math.exp(intensity * math.abs(endValue - startValue)) - 1)
+            fx = 1 / intensity * math.log((x + k) / (1 + k))
+            if (startValue > endValue) then
+                fx = -fx
+            end
+            fx = fx + endValue
+        else
+            local k = (endValue - startValue) / (math.exp(intensity) - 1)
+            fx = k * math.exp(intensity * x) + startValue - k
+        end
+        table.insert(exponentialSet, fx)
     end
     return exponentialSet
 end
