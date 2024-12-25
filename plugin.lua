@@ -1,5 +1,7 @@
 ---@diagnostic disable: need-check-nil, param-type-mismatch, undefined-field, cast-local-type
 
+-- you just lost the game L also riley gay :3
+
 ---@class BookmarkInfo
 ---@field StartTime integer
 ---@field Note string
