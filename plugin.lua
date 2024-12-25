@@ -1,4 +1,32 @@
----@diagnostic disable: need-check-nil, param-type-mismatch, undefined-field
+---@diagnostic disable: need-check-nil, param-type-mismatch, undefined-field, cast-local-type
+
+---@class BookmarkInfo
+---@field StartTime integer
+---@field Note string
+
+---@class HitObjectInfo
+---@field StartTime number
+---@field Lane 1|2|3|4|5|6|7
+---@field EndTime number
+---@field HitSound any
+---@field EditorLayer integer
+
+---@meta TimingPointInfo
+
+---@class TimingPointInfo
+---@field StartTime number
+---@field Bpm number
+---@field Signature number
+---@field Hidden boolean
+
+
+---@meta SliderVelocityInfo
+
+---@class SliderVelocityInfo
+---@field StartTime number
+---@field Multiplier number
+
+
 -- plumoguSV v1.1.0
 -- by kloi34, plummyyummy
 
@@ -123,17 +151,20 @@ EMOTICONS = { -- emoticons to visually clutter the plugin and confuse users
     "( * o * )",
     "( h . m )",
     "( ~ _ ~ )",
+    "( - . - )",
     "( C | D )",
     "( w . w )",
     "( ^ w ^ )",
     "( > . < )",
     "( + x + )",
     "( o _ 0 )",
-    "[mwm]",
+    "[ m w m ]",
     "( v . ^ )",
     "( ^ o v )",
     "( ^ o v )",
-    "( ; A ; )"
+    "( ; A ; )",
+    "[ . _ . ]",
+    "[ ' = ' ]",
 }
 FINAL_SV_TYPES = { -- options for the last SV placed at the tail end of all SVs
     "Normal",
