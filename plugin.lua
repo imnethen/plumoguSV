@@ -5639,11 +5639,12 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         return
     end
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
-    toolTip("Press 'T' on your keyboard to do the same thing as this button")
     if (hideNoteReq) then
+        toolTip("Press 'Shift+T' on your keyboard to do the same thing as this button")
         if (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift)) then return end
         executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
     else
+        toolTip("Press 'T' on your keyboard to do the same thing as this button")
         executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
     end
 end
