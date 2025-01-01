@@ -5640,8 +5640,12 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
     end
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
     toolTip("Press 'T' on your keyboard to do the same thing as this button")
-    if (hideNoteReq) then return end
-    executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+    if (hideNoteReq) then
+        if (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift)) then return end
+        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+    else
+        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+    end
 end
 
 -- Initializes and returns a default svGraphStats object [Table]
