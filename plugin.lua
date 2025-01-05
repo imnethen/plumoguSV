@@ -184,7 +184,8 @@ NOTE_SKIN_TYPES = { -- types of note skins
 PLACE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
-    "Still"
+    "Still",
+    "Funny"
 }
 RANDOM_TYPES = { -- distribution types of random values
     "Normal",
@@ -202,6 +203,9 @@ SPECIAL_SVS = { -- types of special SVs
     "Splitscroll (Advanced)",
     "Splitscroll (Adv v2)",
     "Frames Setup"
+}
+FUNNY_SVS = {
+    "Penis"
 }
 STANDARD_SVS = { -- types of standard SVs
     "Linear",
@@ -1627,6 +1631,15 @@ function getSpecialPlaceMenuVars()
     return menuVars
 end
 
+-- Returns menuVars for the menu at Place SVs > Funny
+function getFunnyPlaceMenuVars()
+    local menuVars = {
+        svTypeIndex = 1
+    }
+    getVariables("placeFunnyMenu", menuVars)
+    return menuVars
+end
+
 -- Returns menuVars for the menu at Place SVs > Still
 function getStillPlaceMenuVars()
     local menuVars = {
@@ -1844,6 +1857,10 @@ function getSettingVars(svType, label)
             frameTimes = {},
             selectedTimeIndex = 1,
             currentFrame = 1
+        }
+    elseif svType == "Funny" then
+        settingVars = {
+
         }
     end
     local labelText = table.concat({ svType, "Settings", label })
@@ -2162,6 +2179,7 @@ function placeSVTab(globalVars)
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
+    if placeType == "Funny" then placeFunnySVMenu(globalVars) end
 end
 
 -- Creates the "Edit SVs" tab
@@ -2235,6 +2253,7 @@ function createQuickTabs(globalVars)
         placeStandardSVMenu,
         placeSpecialSVMenu,
         placeStillSVMenu,
+        placeFunnySVMenu,
         editSVTab,
         deleteTab
     }
@@ -2380,6 +2399,29 @@ function placeStillSVMenu(globalVars)
     local labelText = table.concat({ currentSVType, "SettingsStill" })
     saveVariables(labelText, settingVars)
     saveVariables("placeStillMenu", menuVars)
+end
+
+function placeFunnySVMenu(globalVars)
+    exportImportSettingsButton(globalVars)
+    local menuVars = getFunnyPlaceMenuVars()
+    changeSVTypeIfKeysPressed(menuVars)
+    chooseSpecialSVType(menuVars)
+
+    addSeparator()
+    local currentSVType = FUNNY_SVS[menuVars.svTypeIndex]
+    local settingVars = getSettingVars(currentSVType, "Funny")
+    if globalVars.showExportImportMenu then
+        --saveVariables("placeSpecialMenu", menuVars)
+        exportImportSettingsMenu(globalVars, menuVars, settingVars)
+        return
+    end
+
+    -- if currentSVType == "Penis" then stutterMenu(settingVars) end
+
+
+    local labelText = table.concat({ currentSVType, "SettingsFunny" })
+    saveVariables(labelText, settingVars)
+    saveVariables("placeFunnyMenu", menuVars)
 end
 
 function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE OF SHIT
