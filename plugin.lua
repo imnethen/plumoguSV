@@ -2289,7 +2289,8 @@ function placeStandardSVMenu(globalVars)
     addSeparator()
     if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
         menuVars.settingVars = settingVars
-        simpleActionMenu("Place SVs between selected notes", 2, placeExponentialSpecialSVs, globalVars, menuVars)
+        simpleActionMenu("Place SVs between selected notes##Exponential", 2, placeExponentialSpecialSVs, globalVars,
+            menuVars)
     else
         simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
     end
