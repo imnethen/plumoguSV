@@ -1,3 +1,6 @@
+![SV Mapper Tier List](tierlist.png "SV Mapper Tier List")
+
+
 # SS Tier
 **aster** - Aster is for me is the current crème de la crème of SV mappers. They have shown that they are capable of making many types of maps, with a blend of innovation and personality to them. I personally respect multidimensional mappers a lot, and that's why they will go at the top. Good but not over the top usage of vibrato, solid AFFINE understanding, and extremely smooth base SV layering come together to make some of the best maps this game has seen.
 **riley** - Probably by far my favorite gay SV mapper. I think it's a weird conundrum here, where the maps riley has ranked are (IMO) not very significant to things that are laying in the unranked section, like lightspeed. However, the flagship maps that Riley has really shine out compared to the rest of the sv map pool. I think what makes riley special is the fact that they can innovate so much while rarely even using one of the tools given (vibrato). I sort of think of it like fried rice, there are so few ingredients that go into it that if one is bad, it will screw up the whole dish. Riley's maps preserve this delicate balance quite well, so he will go in SS tier for me.
