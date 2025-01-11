@@ -9155,3 +9155,27 @@ function deleteItems(menuVars)
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
 end
+
+function ssf(startTime, multiplier)
+    return utils.CreateScrollSpeedFactor(startTime, multiplier)
+end
+
+function ssfVibrato(lowerStart, lowerEnd, higherStart, higherEnd, startTime, endTime, resolution)
+    local delta = endTime - startTime / 2 * resolution
+    local time = startTime
+    local ssfs = {}
+    while time < endTime do
+        local x = (time - startTime) - (endTime - startTime)
+        local lowerSSF = lowerStart + x * (lowerEnd - lowerStart)
+        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), lowerSSF)) -- Prevent linearization
+        table.insert(ssfs, ssf(time, lowerSSF))
+        time = time + delta
+        x = (time - startTime) - (endTime - startTime)
+        local higherSSF = higherStart + x * (higherEnd - higherStart)
+        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), higherSSF)) -- Prevent linearization
+        table.insert(ssfs, ssf(time, higherSSF))
+        time = time + delta
+    end
+
+    utils.PlaceScrollSpeedFactorBatch(ssfs)
+end
