@@ -9163,18 +9163,15 @@ end
 function ssfVibrato(lowerStart, lowerEnd, higherStart, higherEnd, startTime, endTime, resolution)
     local delta = endTime - startTime / 2 * resolution
     local time = startTime
-    local ssfs = {}
+    local ssfs = { ssf(startTime - getUsableDisplacementMultiplier(startTime), map.GetScrollSpeedFactorAt(time)) }
     while time < endTime do
         local x = (time - startTime) - (endTime - startTime)
-        local lowerSSF = lowerStart + x * (lowerEnd - lowerStart)
-        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), lowerSSF)) -- Prevent linearization
-        table.insert(ssfs, ssf(time, lowerSSF))
-        time = time + delta
-        x = (time - startTime) - (endTime - startTime)
-        local higherSSF = higherStart + x * (higherEnd - higherStart)
-        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), higherSSF)) -- Prevent linearization
-        table.insert(ssfs, ssf(time, higherSSF))
-        time = time + delta
+        local y = (time + delta - startTime) - (endTime - startTime)
+        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), higherStart + x * (higherEnd - higherStart))) -- Prevent linearization
+        table.insert(ssfs, ssf(time, lowerStart + x * (lowerEnd - lowerStart)))
+        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), lowerStart + y * (lowerEnd - lowerStart)))    -- Prevent linearization
+        table.insert(ssfs, ssf(time, higherStart + y * (higherEnd - higherStart)))
+        time = time + 2 * delta
     end
 
     utils.PlaceScrollSpeedFactorBatch(ssfs)
