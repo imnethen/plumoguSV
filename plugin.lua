@@ -6332,6 +6332,14 @@ function chooseIntensity(settingVars)
     return oldIntensity ~= newIntensity
 end
 
+function chooseCurvature(settingVars)
+    local oldCurvature = settingVars.curvature
+    local _, newCurvature = imgui.SliderInt("Intensity", oldCurvature, -100, 100, oldCurvature .. "%%")
+    newCurvature = clampToInterval(newCurvature, -100, 100)
+    settingVars.intensity = newCurvature
+    return oldCurvature ~= newCurvature
+end
+
 -- Lets you choose the interlace
 -- Returns whether or not the interlace settings changed [Boolean]
 -- Parameters
@@ -9168,9 +9176,9 @@ function ssfVibrato(lowerStart, lowerEnd, higherStart, higherEnd, startTime, end
     while time < endTime do
         local x = ((time - startTime) - (endTime - startTime)) ^ exponent
         local y = ((time + delta - startTime) - (endTime - startTime)) ^ exponent
-        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), higherStart + x * (higherEnd - higherStart))) -- Prevent linearization
+        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), higherStart + x * (higherEnd - higherStart)))
         table.insert(ssfs, ssf(time, lowerStart + x * (lowerEnd - lowerStart)))
-        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), lowerStart + y * (lowerEnd - lowerStart)))    -- Prevent linearization
+        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), lowerStart + y * (lowerEnd - lowerStart)))
         table.insert(ssfs, ssf(time, higherStart + y * (higherEnd - higherStart)))
         time = time + 2 * delta
     end
