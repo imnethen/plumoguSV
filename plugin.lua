@@ -1858,10 +1858,10 @@ function getSettingVars(svType, label)
             selectedTimeIndex = 1,
             currentFrame = 1
         }
-    elseif svType == "Funny" then
+    elseif svType == "Penis" then
         settingVars = {
-            bWidth = 1000,
-            sWidth = 1000,
+            bWidth = 100,
+            sWidth = 200,
             sCurvature = 100,
             bCurvature = 100
         }
@@ -2408,7 +2408,7 @@ function placeFunnySVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getFunnyPlaceMenuVars()
     changeSVTypeIfKeysPressed(menuVars)
-    chooseSpecialSVType(menuVars)
+    chooseFunnySVType(menuVars)
 
     addSeparator()
     local currentSVType = FUNNY_SVS[menuVars.svTypeIndex]
@@ -2695,8 +2695,13 @@ function comboSettingsMenu(settingVars)
 end
 
 function penisMenu(settingVars)
-    _, settingVars.sCurvature = imgui.DragInt("S Curvature", clampToInterval(settingVars.sCurvature, 1, 100))
-    _, settingVars.bCurvature = imgui.DragInt("B Curvature", clampToInterval(settingVars.bCurvature, 1, 100))
+    _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
+    _, settingVars.sWidth = imgui.InputInt("Shaft Width", settingVars.sWidth)
+
+    _, settingVars.sCurvature = imgui.SliderInt("S Curvature", settingVars.sCurvature, 1, 100,
+        settingVars.sCurvature .. "%%")
+    _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
+        settingVars.bCurvature .. "%%")
 
     simpleActionMenu("Place SVs", 1, placePenisSV, nil, settingVars)
 end
@@ -2719,13 +2724,13 @@ function placePenisSV(settingVars)
     for i = 0, 100 do
         local time = startTime + settingVars.bWidth + i * settingVars.sWidth / 100
 
-        local circVal = math.sqrt(4 - ((i / 50) - 1) ^ 2)
-        local trueVal = settingVars.sCurvature / 100 * circVal + (4 - settingVars.sCurvature / 100)
+        local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
+        local trueVal = settingVars.sCurvature / 100 * circVal + (3.75 - settingVars.sCurvature / 100)
 
         table.insert(svs, utils.CreateScrollVelocity(time, trueVal))
     end
 
-    removeAndAddSVs(getSVsBetweenOffsets(startTime, startTime + 2500), svs)
+    removeAndAddSVs(getSVsBetweenOffsets(startTime, startTime + settingVars.sWidth + settingVars.bWidth * 2), svs)
 end
 
 -- Creates the menu for stutter SV
@@ -6669,6 +6674,15 @@ function chooseSpecialSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
+end
+
+-- Lets you choose the special SV type
+-- Parameters
+--    menuVars : list of variables used for the current menu [Table]
+function chooseFunnySVType(menuVars)
+    local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
+    local label = "  " .. EMOTICONS[emoticonIndex]
+    menuVars.svTypeIndex = combo(label, FUNNY_SVS, menuVars.svTypeIndex)
 end
 
 -- Lets you choose the current splitscroll layer
