@@ -1,7 +1,7 @@
 # plumoguSV
-<img src="https://user-images.githubusercontent.com/53842237/126182216-381a7104-7814-4661-8f80-fcb3a5034398.png" alt="plumoguSV Logo" width=320px height=160px>
+<img src="./logo.png" alt="plumoguSV Logo">
 
-> "The ultimate community-driven and open-source competitive SV plugin"
+> "The ultimate community-driven and open-source competitive SV plugin. Remastered with many new features."
 
 This is a plugin for [Quaver](https://github.com/Quaver), the ultimate community-driven and open-source competitive rhythm game.
 The plugin provides various tools to place, edit, and delete SVs (Scroll Velocities) quickly and efficiently when making maps.
@@ -61,6 +61,8 @@ Special types of SVs:
 Remove SVs and SSFs between notes.
 
 ## Special Note
+Thanks to [asterSSH](https://github.com/asterssh) for the banner and other graphic design help.
+
 Most of the core ideas and base functionality were taken (stolen) from [iceSV](https://github.com/IceDynamix/iceSV) by [IceDynamix](https://github.com/IceDynamix).
 Other SV ideas also taken (stolen) from [Illuminati-CRAZ](https://github.com/Illuminati-CRAZ)’s SV plugins.
 Without these two people’s contributions to SV plugins in general, plumoguSV would not be as good as it is today or even exist in the first place, so huge thanks to them.
