@@ -5766,6 +5766,7 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         if (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift)) then return end
         executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
     else
+        if (utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)) then return end
         toolTip("Press 'T' on your keyboard to do the same thing as this button")
         executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
     end
