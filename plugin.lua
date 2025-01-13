@@ -266,7 +266,8 @@ SELECT_TOOLS = {
     "Alternating",
     "By Snap",
     "Chord Size",
-    "Bookmark"
+    "Note Type",
+    "Bookmark",
 }
 
 ---------------------------------------------------------------------------------------------------
@@ -2171,6 +2172,7 @@ function selectTab(globalVars)
     if toolName == "By Snap" then selectBySnapMenu() end
     if toolName == "Bookmark" then selectBookmarkMenu() end
     if toolName == "Chord Size" then selectChordSizeMenu() end
+    if toolName == "Note Type" then selectNoteTypeMenu() end
 end
 
 -- Creates the "Place SVs" tab
@@ -3175,15 +3177,50 @@ function selectByChordSizes(menuVars)
         sizeDict[size] = table.combine(sizeDict[size], totalNotes)
     end
 
-    local allowedNotes = {}
+    local notesToSelect = {}
 
-    if (menuVars.single) then allowedNotes = table.combine(allowedNotes, sizeDict[1]) end
-    if (menuVars.jump) then allowedNotes = table.combine(allowedNotes, sizeDict[2]) end
-    if (menuVars.hand) then allowedNotes = table.combine(allowedNotes, sizeDict[3]) end
-    if (menuVars.quad) then allowedNotes = table.combine(allowedNotes, sizeDict[4]) end
+    if (menuVars.single) then notesToSelect = table.combine(notesToSelect, sizeDict[1]) end
+    if (menuVars.jump) then notesToSelect = table.combine(notesToSelect, sizeDict[2]) end
+    if (menuVars.hand) then notesToSelect = table.combine(notesToSelect, sizeDict[3]) end
+    if (menuVars.quad) then notesToSelect = table.combine(notesToSelect, sizeDict[4]) end
 
-    actions.SetHitObjectSelection(allowedNotes)
-    print(#allowedNotes > 0 and "S!" or "W!", #allowedNotes .. " notes selected")
+    actions.SetHitObjectSelection(notesToSelect)
+    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+end
+
+function selectByNoteType(menuVars)
+    local offsets = uniqueSelectedNoteOffsets()
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+
+    local totalNotes = getNotesBetweenOffsets(startOffset, endOffset)
+
+    local notesToSelect = {}
+
+    for _, note in pairs(totalNotes) do
+        if (note.EndTime == 0 and menuVars.rice) then table.insert(notesToSelect, note) end
+        if (note.EndTime ~= 0 and menuVars.ln) then table.insert(notesToSelect, note) end
+    end
+
+    actions.SetHitObjectSelection(notesToSelect)
+    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+end
+
+function selectNoteTypeMenu()
+    local menuVars = {
+        rice = true,
+        ln = true
+    }
+
+    getVariables("selectNoteTypeMenu", menuVars)
+
+    _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
+
+    simpleActionMenu("Select notes within region", 2, selectByNoteType, nil, menuVars)
+
+    saveVariables("selectNoteTypeMenu", menuVars)
 end
 
 -- Creates the add teleport menu
@@ -8414,7 +8451,7 @@ function selectAlternating(menuVars)
             table.insert(allowedTimes, time)
         end
     end
-    local allowedNotes = {}
+    local notesToSelect = {}
     local currentTime = allowedTimes[1]
     local index = 2
     for _, note in pairs(notes) do
@@ -8423,11 +8460,11 @@ function selectAlternating(menuVars)
             index = index + 1
         end
         if (note.StartTime == currentTime) then
-            table.insert(allowedNotes, note)
+            table.insert(notesToSelect, note)
         end
     end
-    actions.SetHitObjectSelection(allowedNotes)
-    print(#allowedNotes > 0 and "S!" or "W!", #allowedNotes .. " notes selected")
+    actions.SetHitObjectSelection(notesToSelect)
+    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
 end
 
 function selectBySnap(menuVars)
@@ -8471,7 +8508,7 @@ function selectBySnap(menuVars)
         end
     end
 
-    local allowedNotes = {}
+    local notesToSelect = {}
     local currentTime = times[1]
     local index = 2
     for _, note in pairs(notes) do
@@ -8480,12 +8517,12 @@ function selectBySnap(menuVars)
             index = index + 1
         end
         if (math.abs(note.StartTime - currentTime) < 10) then
-            table.insert(allowedNotes, note)
+            table.insert(notesToSelect, note)
         end
     end
 
-    actions.SetHitObjectSelection(allowedNotes)
-    print(#allowedNotes > 0 and "S!" or "W!", #allowedNotes .. " notes selected")
+    actions.SetHitObjectSelection(notesToSelect)
+    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
 end
 
 -- Adds teleport SVs at selected notes
