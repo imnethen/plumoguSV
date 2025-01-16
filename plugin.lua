@@ -2090,7 +2090,8 @@ function draw()
         importData = "",
         exportCustomSVData = "",
         exportData = "",
-        debugText = "debug"
+        debugText = "debug",
+        scrollGroupIndex = 1
     }
 
     getVariables("globalVars", globalVars)
@@ -2136,7 +2137,7 @@ function createMenuTab(globalVars, tabName)
     addPadding()
     if tabName == "Info" then infoTab(globalVars) end
     if tabName == "Select" then selectTab(globalVars) end
-    if tabName == "Create" then placeSVTab(globalVars) end
+    if tabName == "Create" then createSVTab(globalVars) end
     if tabName == "Edit" then editSVTab(globalVars) end
     if tabName == "Delete" then deleteTab(globalVars) end
     imgui.EndTabItem()
@@ -2178,7 +2179,8 @@ end
 -- Creates the "Place SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function placeSVTab(globalVars)
+function createSVTab(globalVars)
+    chooseCurrentScrollGroup(globalVars)
     choosePlaceSVType(globalVars)
     local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
@@ -2191,6 +2193,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function editSVTab(globalVars)
+    chooseCurrentScrollGroup(globalVars)
     chooseEditTool(globalVars)
     changeEditToolIfKeysPressed(globalVars)
     addSeparator()
@@ -6249,7 +6252,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseEditTool(globalVars)
     imgui.AlignTextToFramePadding()
-    imgui.Text("Current Tool:")
+    imgui.Text("  Current Tool:")
     imgui.SameLine(0, SAMELINE_SPACING)
     globalVars.editToolIndex = combo("##edittool", EDIT_SV_TOOLS, globalVars.editToolIndex)
 
@@ -6593,6 +6596,24 @@ function choosePlaceSVType(globalVars)
     globalVars.placeTypeIndex = combo("##placeType", PLACE_TYPES, globalVars.placeTypeIndex)
     local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Still" then toolTip("Still keeps notes normal distance/spacing apart") end
+end
+
+-- Lets you choose the place SV type
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function chooseCurrentScrollGroup(globalVars)
+    imgui.AlignTextToFramePadding()
+    imgui.Text("  Scroll Group: ")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    local groups = { "$Default", "$Global" }
+    for k, _ in pairs(map.TimingGroups) do
+        if string.find(k, "%$") then goto continue end
+        table.insert(groups, k)
+        ::continue::
+    end
+    globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex)
+    addSeparator()
+    state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
 end
 
 -- Lets you choose the variability scale of randomness
