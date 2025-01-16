@@ -1,4 +1,4 @@
-# plumoguSV
+# plumoguSV v1.1.0
 <img src="./logo.png" alt="plumoguSV Logo">
 
 > "The ultimate community-driven and open-source competitive SV plugin. Remastered with many new features."
@@ -7,9 +7,9 @@ This is a plugin for [Quaver](https://github.com/Quaver), the ultimate community
 The plugin provides various tools to place, edit, and delete SVs (Scroll Velocities) quickly and efficiently when making maps.
 
 ## Installation
-1. Go to the releases tab on the right, and download the latest release zip file
-2. Extract the downloaded ZIP file to get the plumoguSV-main folder
-3. Move the plumoguSV-main folder into the Plugins folder (located in the Quaver folder)
+1. Go to the releases tab on the right, and download the latest release's `.zip` file.
+2. Extract the downloaded `.zip` file to get the plumoguSV-main folder
+3. Move the plumoguSV-main folder into the `/Plugins` folder (located in the `/Quaver` folder)
 
 ## Plugin Overview 
 plumoguSV makes working with SVs quick and easy!
