@@ -4388,11 +4388,12 @@ function importPlaceSVButton(globalVars)
         local num = tonumber(str)
         if num ~= nil then
             table.insert(settingsTable, num)
-        end
-        if str == "false" then
+        elseif str == "false" then
             table.insert(settingsTable, false)
         elseif str == "true" then
             table.insert(settingsTable, true)
+        else
+            table.insert(settingsTable, str)
         end
     end
     if #settingsTable < 2 then return end
@@ -4405,6 +4406,10 @@ function importPlaceSVButton(globalVars)
     local stillPlaceType    = placeType == "Still"
 
     local menuVars
+
+    print(currentSVType)
+
+
     if standardPlaceType then menuVars = getStandardPlaceMenuVars() end
     if specialPlaceType then menuVars = getSpecialPlaceMenuVars() end
     if stillPlaceType then menuVars = getStillPlaceMenuVars() end
@@ -4465,7 +4470,6 @@ function importPlaceSVButton(globalVars)
         settingVars.finalSVIndex = table.remove(settingsTable, 1)
         settingVars.customSV = table.remove(settingsTable, 1)
     elseif exponentialSVType then
-        settingVars.behaviorIndex = table.remove(settingsTable, 1)
         settingVars.intensity = table.remove(settingsTable, 1)
         settingVars.verticalShift = table.remove(settingsTable, 1)
         settingVars.avgSV = table.remove(settingsTable, 1)
