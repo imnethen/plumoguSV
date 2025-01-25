@@ -3409,7 +3409,7 @@ function flickerMenu()
     saveVariables("flickerMenu", menuVars)
 
     addSeparator()
-    simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVsParent, nil, menuVars)
+    simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, nil, menuVars)
 end
 
 -- Creates the measure menu
@@ -8907,39 +8907,14 @@ function dynamicScaleSVs(menuVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
-function flickerSVsParent(menuVars)
-    if (not menuVars.linearlyChange) then
-        flickerSVs(menuVars)
-        return
-    end
-    local offsets = uniqueSelectedNoteOffsets()
-    local svsToRemove = {}
-    local svsToAdd = {}
-    for i = 1, (#offsets - 1) do
-        local startOffset = offsets[i]
-        local endOffset = offsets[i + 1]
-
-        local newMenuVars = makeDuplicateTable(menuVars)
-
-        newMenuVars.distance = (offsets[i] - offsets[1]) / (offsets[#offsets] - offsets[1]) *
-            (menuVars.distance2 - menuVars.distance1) + menuVars.distance1
-
-        local tbl = flickerSVs(newMenuVars, false, startOffset, endOffset)
-        table.combine(svsToRemove, tbl.svsToRemove)
-        table.combine(svsToAdd, tbl.svsToAdd)
-    end
-    removeAndAddSVs(svsToRemove, svsToAdd)
-end
-
 -- Adds flicker SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function flickerSVs(menuVars, place, optionalStart, optionalEnd)
+function flickerSVs(menuVars)
     local svsToAdd = {}
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (place == false) then offsets = { optionalStart, optionalEnd } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local numTeleports = 2 * menuVars.numFlickers
@@ -8970,11 +8945,7 @@ function flickerSVs(menuVars, place, optionalStart, optionalEnd)
         end
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
-    if (place ~= false) then
-        removeAndAddSVs(svsToRemove, svsToAdd)
-        return
-    end
-    return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
+    removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
 -- Measures SVs between selected notes
