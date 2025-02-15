@@ -5140,7 +5140,7 @@ end
 --    endOffset     : end offset to remove before [Int]
 function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     for _, sv in pairs(map.ScrollVelocities) do
-        local svIsInRange = sv.StartTime >= startOffset + 1 and sv.StartTime <= endOffset - 1
+        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
         if svIsInRange then
             local svIsRemovable = svTimeIsAdded[sv.StartTime]
             if svIsRemovable then table.insert(svsToRemove, sv) end
@@ -5228,7 +5228,7 @@ end
 function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
     local svsBetweenOffsets = {}
     for _, sv in pairs(svs) do
-        local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
+        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime < endOffset + 1
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
     return table.sort(svsBetweenOffsets, sortAscendingStartTime)
@@ -7645,11 +7645,6 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier)
-        if (placingStillSVs) then
-            while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
-                table.remove(svsToAdd, 1)
-            end
-        end
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
@@ -7657,11 +7652,6 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
         table.sort(svsToAdd, sortAscendingStartTime))
     svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
-    if (placingStillSVs) then
-        while (svsToAdd[1].StartTime == firstOffset and math.abs(svsToAdd[1].Multiplier - menuVars.svMultipliers[1]) <= 0.1) do
-            table.remove(svsToAdd, 1)
-        end
-    end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
 
