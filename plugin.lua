@@ -2069,6 +2069,7 @@ function awake()
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
+    state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
 end
 
 -- Creates the plugin window
@@ -2080,7 +2081,7 @@ function draw()
         colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
         styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
         effectFPS = 90,
-        cursorTrailIndex = 1,
+        cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
         cursorTrailShapeIndex = 1,
         cursorTrailPoints = 10,
         cursorTrailSize = 5,
@@ -6036,7 +6037,11 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseCursorTrail(globalVars)
-    globalVars.cursorTrailIndex = combo("Cursor Trail", CURSOR_TRAILS, globalVars.cursorTrailIndex)
+    local oldCursorTrailIndex = globalVars.cursorTrailIndex
+    globalVars.cursorTrailIndex = combo("Cursor Trail", CURSOR_TRAILS, oldCursorTrailIndex)
+    if (oldCursorTrailIndex ~= globalVars.cursorTrailIndex) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose whether or not the cursor trail will gradually become transparent
