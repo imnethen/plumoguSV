@@ -2064,14 +2064,21 @@ end
 
 local BETA_IGNORE_NOTES_OUTSIDE_TG = false
 
+function awake()
+    local tempGlobalVars = read()
+    state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
+    state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
+    state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
+end
+
 -- Creates the plugin window
 function draw()
     local globalVars = {
         keyboardMode = false,
         dontReplaceSV = false,
         upscroll = false,
-        colorThemeIndex = 9,
-        styleThemeIndex = 1,
+        colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
+        styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
         effectFPS = 90,
         cursorTrailIndex = 1,
         cursorTrailShapeIndex = 1,
@@ -2079,7 +2086,7 @@ function draw()
         cursorTrailSize = 5,
         snakeSpringConstant = 1,
         cursorTrailGhost = false,
-        rgbPeriod = 2,
+        rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
         drawCapybara = false,
         drawCapybara2 = false,
         drawCapybara312 = false,
@@ -3594,6 +3601,9 @@ function listKeyboardShortcuts()
     addSeparator()
     imgui.BulletText("T = activate the big button doing SV stuff")
     toolTip("Use this to do SV stuff for a quick workflow")
+    addSeparator()
+    imgui.BulletText("Shift+T = activate the big button doing SSF stuff")
+    toolTip("Use this to do SSF stuff for a quick workflow")
     addSeparator()
     imgui.BulletText("Alt + Shift + (Z or X) = switch tool type")
     toolTip("Use this to do SV stuff for a quick workflow")
@@ -5899,7 +5909,12 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseColorTheme(globalVars)
+    local oldColorThemeIndex = globalVars.colorThemeIndex
     globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex)
+
+    if (oldColorThemeIndex ~= globalVars.colorThemeIndex) then
+        write(globalVars)
+    end
 
     local currentTheme = COLOR_THEMES[globalVars.colorThemeIndex]
     local isRGBColorTheme = currentTheme == "Tobi's RGB Glass" or
@@ -6652,10 +6667,14 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseRGBPeriod(globalVars)
-    _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", globalVars.rgbPeriod, 0, 0,
+    local oldRGBPeriod = globalVars.rgbPeriod
+    _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", oldRGBPeriod, 0, 0,
         "%.0f seconds")
     globalVars.rgbPeriod = clampToInterval(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
         MAX_RGB_CYCLE_TIME)
+    if (oldRGBPeriod ~= globalVars.rgbPeriod) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the second height/displacement for splitscroll
@@ -6972,7 +6991,11 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseStyleTheme(globalVars)
-    globalVars.styleThemeIndex = combo("Style Theme", STYLE_THEMES, globalVars.styleThemeIndex)
+    local oldStyleTheme = globalVars.styleThemeIndex
+    globalVars.styleThemeIndex = combo("Style Theme", STYLE_THEMES, oldStyleTheme)
+    if (oldStyleTheme ~= globalVars.styleThemeIndex) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the behavior of SVs
