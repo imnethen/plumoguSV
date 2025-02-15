@@ -11,7 +11,7 @@ cursorTrailSize: 5
 snakeSpringConstant: 1
 cursorTrailGhost: false
 rgbPeriod: 5
-drawCapybara: false
+drawCapybara: true
 drawCapybara2: false
 drawCapybara312: false
 selectTypeIndex: 1

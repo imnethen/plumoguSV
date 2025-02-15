@@ -2070,6 +2070,9 @@ function awake()
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
+    state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
+    state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
+    state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
 end
 
 -- Creates the plugin window
@@ -2088,9 +2091,9 @@ function draw()
         snakeSpringConstant = 1,
         cursorTrailGhost = false,
         rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
-        drawCapybara = false,
-        drawCapybara2 = false,
-        drawCapybara312 = false,
+        drawCapybara = state.GetValue("global_drawCapybara") or false,
+        drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
+        drawCapybara312 = state.GetValue("global_drawCapybara312") or false,
         selectTypeIndex = 1,
         placeTypeIndex = 1,
         editToolIndex = 1,
@@ -6235,24 +6238,36 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseDrawCapybara(globalVars)
-    _, globalVars.drawCapybara = imgui.Checkbox("Capybara", globalVars.drawCapybara)
+    local oldDrawCapybara = globalVars.drawCapybara
+    _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
     helpMarker("Draws a capybara at the bottom right of the screen")
+    if (oldDrawCapybara ~= globalVars.drawCapybara) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose whether or not to draw the second capybara on screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseDrawCapybara2(globalVars)
-    _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", globalVars.drawCapybara2)
+    local oldDrawCapybara2 = globalVars.drawCapybara2
+    _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
     helpMarker("Draws a capybara at the bottom left of the screen")
+    if (oldDrawCapybara2 ~= globalVars.drawCapybara2) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose whether or not to draw capybara 312 on screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseDrawCapybara312(globalVars)
-    _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", globalVars.drawCapybara312)
-    helpMarker("Draws a capybara???!?!??!!!!?")
+    local oldDrawCapybara312 = globalVars.drawCapybara312
+    _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", oldDrawCapybara312)
+    if (oldDrawCapybara312 ~= globalVars.drawCapybara312) then
+        write(globalVars)
+    end
+    helpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
 
 -- Lets you choose which select tool to use
