@@ -2066,10 +2066,12 @@ local BETA_IGNORE_NOTES_OUTSIDE_TG = false
 
 function awake()
     local tempGlobalVars = read()
+    state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
+    state.SetValue("global_effectFPS", tonumber(tempGlobalVars.global_effectFPS))
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
@@ -2081,10 +2083,10 @@ function draw()
     local globalVars = {
         keyboardMode = false,
         dontReplaceSV = false,
-        upscroll = false,
+        upscroll = state.GetValue("global_upscroll") or false,
         colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
         styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
-        effectFPS = 90,
+        effectFPS = state.GetValue("global_effectFPS") or 90,
         cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
         cursorTrailShapeIndex = 1,
         cursorTrailPoints = 10,
@@ -6323,8 +6325,11 @@ end
 function chooseEffectFPS(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
-
-    _, globalVars.effectFPS = imgui.InputInt("Effect FPS", globalVars.effectFPS, 1, 1)
+    local oldEffectFPS = globalVars.effectFPS
+    _, globalVars.effectFPS = imgui.InputInt("Effect FPS", oldEffectFPS, 1, 1)
+    if (oldEffectFPS ~= globalVars.effectFPS) then
+        write(globalVars)
+    end
     helpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
     globalVars.effectFPS = clampToInterval(globalVars.effectFPS, 2, 1000)
 end
@@ -7080,12 +7085,16 @@ function chooseUpscroll(globalVars)
     imgui.Text("Scroll Direction:")
     toolTip("Orientation for distance graphs and visuals")
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    local oldUpscroll = globalVars.upscroll
     if imgui.RadioButton("Down", not globalVars.upscroll) then
         globalVars.upscroll = false
     end
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     if imgui.RadioButton("Up         ", globalVars.upscroll) then
         globalVars.upscroll = true
+    end
+    if (oldUpscroll ~= globalVars.upscroll) then
+        write(globalVars)
     end
 end
 
