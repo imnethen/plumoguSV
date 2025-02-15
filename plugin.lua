@@ -2073,6 +2073,7 @@ function awake()
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
+    state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
 end
 
 -- Creates the plugin window
@@ -2102,11 +2103,11 @@ function draw()
         exportCustomSVData = "",
         exportData = "",
         debugText = "debug",
-        scrollGroupIndex = 1
+        scrollGroupIndex = 1,
+        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false
     }
 
     getVariables("globalVars", globalVars)
-    BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("beta_1") or false
 
     drawCapybara(globalVars)
     drawCapybara2(globalVars)
@@ -2134,7 +2135,6 @@ function draw()
     imgui.End()
 
     saveVariables("globalVars", globalVars)
-    state.SetValue("beta_1", BETA_IGNORE_NOTES_OUTSIDE_TG)
 end
 
 ----------------------------------------------------------------------------------------- Tab stuff
@@ -3626,7 +3626,7 @@ function choosePluginBehaviorSettings(globalVars)
     chooseUpscroll(globalVars)
     addSeparator()
     chooseDontReplaceSV(globalVars)
-    chooseBetaIgnore()
+    chooseBetaIgnore(globalVars)
     addPadding()
 end
 
@@ -6229,9 +6229,13 @@ end
 -- Lets you choose whether or not to replace SVs when placing SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function chooseBetaIgnore()
-    _, BETA_IGNORE_NOTES_OUTSIDE_TG = imgui.Checkbox("Ignore notes outside current timing group",
-        BETA_IGNORE_NOTES_OUTSIDE_TG)
+function chooseBetaIgnore(globalVars)
+    local oldIgnore = globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG
+    _, globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG = imgui.Checkbox("Ignore notes outside current timing group",
+        oldIgnore)
+    if (oldIgnore ~= globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose whether or not to draw a capybara on screen

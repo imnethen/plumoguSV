@@ -23,3 +23,4 @@ exportCustomSVData: ''
 exportData: ''
 debugText: debug
 scrollGroupIndex: 1
+BETA_IGNORE_NOTES_OUTSIDE_TG: true
