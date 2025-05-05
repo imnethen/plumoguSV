@@ -133,6 +133,7 @@ DISPLACE_SCALE_SPOTS = { -- places to scale SV sections by displacing
 EDIT_SV_TOOLS = { -- tools for editing SVs
     "Add Teleport",
     "Align Timing Lines",
+    "bug fixing from <1.1.1",
     "Copy & Paste",
     "Displace Note",
     "Displace View",
@@ -2213,6 +2214,7 @@ function editSVTab(globalVars)
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
+    if toolName == "bug fixing from <1.1.1" then tempBugFixMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
     if toolName == "Displace Note" then displaceNoteMenu() end
     if toolName == "Displace View" then displaceViewMenu() end
@@ -3257,6 +3259,29 @@ end
 -- Creates the align timing lines menu
 function alignTimingLinesMenu()
     simpleActionMenu("Align timing lines in this region", 0, alignTimingLines, nil, nil)
+end
+
+function tempBugFixMenu()
+    imgui.PushTextWrapPos(200)
+    imgui.TextWrapped("note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
+    imgui.NewLine()
+    imgui.TextWrapped("Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
+    imgui.NewLine()
+    imgui.TextWrapped(" If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
+    imgui.PopTextWrapPos()
+    simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
+end
+
+function tempBugFix()
+    local ptr = 0
+    local svsToRemove = {}
+    for _, sv in pairs(map.ScrollVelocities) do
+        if (math.abs(ptr - sv.StartTime) < 0.035) then
+            table.insert(svsToRemove, sv)
+        end
+        ptr = sv.StartTime 
+    end
+    actions.RemoveScrollVelocityBatch(svsToRemove)
 end
 
 -- Creates the copy and paste menu
@@ -5359,7 +5384,7 @@ end
 --    svsToRemove : list of SVs to remove [Table]
 --    svsToAdd    : list of SVs to add [Table]
 function removeAndAddSVs(svsToRemove, svsToAdd)
-    local tolerance = 0.04
+    local tolerance = 0.035
     if #svsToAdd == 0 then return end
     for idx, sv in pairs(svsToRemove) do
         local baseSV = map.GetScrollVelocityAt(sv.StartTime)
