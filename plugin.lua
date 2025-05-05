@@ -1862,8 +1862,8 @@ function getSettingVars(svType, label)
         }
     elseif svType == "Penis" then
         settingVars = {
-            bWidth = 100,
-            sWidth = 200,
+            bWidth = 50,
+            sWidth = 100,
             sCurvature = 100,
             bCurvature = 100
         }
