@@ -5154,13 +5154,22 @@ end
 --    svTimeIsAdded : list of SVs times added [Table]
 --    startOffset   : starting offset to remove after [Int]
 --    endOffset     : end offset to remove before [Int]
-function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
+function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, retroactiveSVRemovalTable)
     for _, sv in pairs(map.ScrollVelocities) do
         local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
         if svIsInRange then
             local svIsRemovable = svTimeIsAdded[sv.StartTime]
             if svIsRemovable then table.insert(svsToRemove, sv) end
         end
+    end
+    if (#retroactiveSVRemovalTable > 0) then
+    for idx, sv in pairs(retroactiveSVRemovalTable) do
+        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
+        if svIsInRange then
+            local svIsRemovable = svTimeIsAdded[sv.StartTime]
+            if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
+        end
+    end
     end
 end
 
@@ -5191,6 +5200,19 @@ function getHypotheticalSVMultiplierAt(svs, offset)
             index = index - 1
         else
             return svs[index].Multiplier
+        end
+    end
+    return 1
+end
+
+function getHypotheticalSVTimeAt(svs, offset)
+    if (#svs == 1) then return svs[1].StartTime end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index].StartTime
         end
     end
     return 1
@@ -5294,6 +5316,10 @@ function prepareDisplacingSV(svsToAdd, svTimeIsAdded, svTime, displacement, disp
     local currentSVMultiplier = getSVMultiplierAt(svTime)
     if (hypothetical == true) then
         currentSVMultiplier = getHypotheticalSVMultiplierAt(svs, svTime)
+        -- local quantumSVMultiplier = map.GetScrollVelocityAt(svTime) or {StartTime = -1}
+        -- if (quantumSVMultiplier.StartTime > getHypotheticalSVTimeAt(svs, svTime)) then
+        --     currentSVMultiplier = quantumSVMultiplier.Multiplier
+        -- end
     end
     local newSVMultiplier = displacementMultiplier * displacement + currentSVMultiplier
     addSVToList(svsToAdd, svTime, newSVMultiplier, true)
@@ -5331,7 +5357,7 @@ end
 -- Removes and adds SVs
 -- Parameters
 --    svsToRemove : list of SVs to remove [Table]
---    svsT2oAdd    : list of SVs to add [Table]
+--    svsToAdd    : list of SVs to add [Table]
 function removeAndAddSVs(svsToRemove, svsToAdd)
     if #svsToAdd == 0 then return end
     local editorActions = {
@@ -7697,7 +7723,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     if (place == nil or place == true) then
         if placingStillSVs then
             local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-                table.sort(svsToAdd, sortAscendingStartTime))
+                table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier)
@@ -7705,7 +7731,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
         return
     end
     local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-        table.sort(svsToAdd, sortAscendingStartTime))
+        table.sort(svsToAdd, sortAscendingStartTime),svsToAdd )
     svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
@@ -7744,7 +7770,7 @@ end
 -- Places still SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
-function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
+function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRemovalTable)
     local stillType = STILL_TYPES[menuVars.stillTypeIndex]
     local noteSpacing = menuVars.noteSpacing
     local stillDistance = menuVars.stillDistance
@@ -7788,8 +7814,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs)
         prepareDisplacingSVs(noteOffset, svsToAdd, svTimeIsAdded, beforeDisplacement,
             atDisplacement, afterDisplacement, true, baseSVs)
     end
-    getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
-
+    getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset, retroactiveSVRemovalTable)
     while (svsToAdd[#svsToAdd].StartTime == optionalEnd) do
         table.remove(svsToAdd, #svsToAdd)
     end
