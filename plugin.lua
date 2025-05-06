@@ -2061,15 +2061,9 @@ function awake()
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
-    
-    -- effect fps works now
     state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
-    
-    -- fix trail size and count
     state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))  
     state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
-    
-    -- the rest below works
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
@@ -2507,7 +2501,6 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
-    settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
     if (settingVars.distanceMode ~= 3) then
         settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
     end
@@ -2528,12 +2521,6 @@ local DISTANCE_TYPES = {
     "Distance + Shift",
     "Start / End"
 }
-
-function chooseDistanceMode(menuVars)
-    local oldMode = menuVars.distanceMode
-    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
-    return oldMode ~= menuVars.distanceMode
-end
 
 -- Creates the menu for bezier SV settings
 -- Returns whether settings have changed or not [Boolean]
@@ -6121,9 +6108,11 @@ function chooseCursorTrailPoints(globalVars)
     if currentTrail ~= "Snake" then return end
 
     local label = "Trail Points"
-    _, globalVars.cursorTrailPoints = imgui.InputInt(label, globalVars.cursorTrailPoints, 1, 1)
-    local maxPoints = MAX_CURSOR_TRAIL_POINTS
-    globalVars.cursorTrailPoints = clampToInterval(globalVars.cursorTrailPoints, 2, maxPoints)
+    local oldCursorTrailPoints = globalVars.cursorTrailPoints
+    _, globalVars.cursorTrailPoints = imgui.InputInt(label, oldCursorTrailPoints, 1, 1)
+    if (oldCursorTrailPoints ~= globalVars.cursorTrailPoints) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the cursor trail shape type
@@ -6144,10 +6133,17 @@ function chooseCursorShapeSize(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
+
+--Reference
     local label = "Shape Size"
-    _, globalVars.cursorTrailSize = imgui.InputInt(label, globalVars.cursorTrailSize, 1, 1)
-    globalVars.cursorTrailSize = clampToInterval(globalVars.cursorTrailSize, 1, 100)
+    local oldCursorTrailSize = globalVars.cursorTrailSize
+    _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
+    if (oldCursorTrailSize ~= globalVars.cursorTrailSize) then
+        write(globalVars)
+    end
 end
+
+
 
 -- Lets you choose SV curve sharpness
 -- Returns whether or not the curve sharpness changed [Boolean]
@@ -6699,7 +6695,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function choosePlaceSVType(globalVars)
     imgui.AlignTextToFramePadding()
-    imgui.Text("  Type : ")
+    imgui.Text("  Type:  ")
     imgui.SameLine(0, SAMELINE_SPACING)
     globalVars.placeTypeIndex = combo("##placeType", PLACE_TYPES, globalVars.placeTypeIndex)
     local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
