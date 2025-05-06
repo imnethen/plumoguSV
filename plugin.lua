@@ -3279,7 +3279,7 @@ function tempBugFix()
         if (math.abs(ptr - sv.StartTime) < 0.035) then
             table.insert(svsToRemove, sv)
         end
-        ptr = sv.StartTime 
+        ptr = sv.StartTime
     end
     actions.RemoveScrollVelocityBatch(svsToRemove)
 end
@@ -5187,14 +5187,14 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
             if svIsRemovable then table.insert(svsToRemove, sv) end
         end
     end
-    if (#retroactiveSVRemovalTable > 0) then
-    for idx, sv in pairs(retroactiveSVRemovalTable) do
-        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
-        if svIsInRange then
-            local svIsRemovable = svTimeIsAdded[sv.StartTime]
-            if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
+    if (retroactiveSVRemovalTable) then
+        for idx, sv in pairs(retroactiveSVRemovalTable) do
+            local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
+            if svIsInRange then
+                local svIsRemovable = svTimeIsAdded[sv.StartTime]
+                if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
+            end
         end
-    end
     end
 end
 
