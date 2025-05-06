@@ -185,8 +185,7 @@ NOTE_SKIN_TYPES = { -- types of note skins
 PLACE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
-    "Still",
-    "Funny"
+    "Still"
 }
 RANDOM_TYPES = { -- distribution types of random values
     "Normal",
@@ -203,11 +202,10 @@ SPECIAL_SVS = { -- types of special SVs
     "Splitscroll (Basic)",
     "Splitscroll (Advanced)",
     "Splitscroll (Adv v2)",
+    "Penis",
     "Frames Setup"
 }
-FUNNY_SVS = {
-    "Penis"
-}
+
 STANDARD_SVS = { -- types of standard SVs
     "Linear",
     "Exponential",
@@ -1633,22 +1631,13 @@ function getSpecialPlaceMenuVars()
     return menuVars
 end
 
--- Returns menuVars for the menu at Place SVs > Funny
-function getFunnyPlaceMenuVars()
-    local menuVars = {
-        svTypeIndex = 1
-    }
-    getVariables("placeFunnyMenu", menuVars)
-    return menuVars
-end
-
 -- Returns menuVars for the menu at Place SVs > Still
 function getStillPlaceMenuVars()
     local menuVars = {
         svTypeIndex = 1,
         noteSpacing = 1,
         stillTypeIndex = 1,
-        stillDistance = 200,
+        stillDistance = 0,
         stillBehavior = 1,
         prePlaceDistances = {},
         svMultipliers = {},
@@ -2072,7 +2061,15 @@ function awake()
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
-    state.SetValue("global_effectFPS", tonumber(tempGlobalVars.global_effectFPS))
+    
+    -- effect fps works now
+    state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
+    
+    -- fix trail size and count
+    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))  
+    state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
+    
+    -- the rest below works
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
@@ -2090,8 +2087,8 @@ function draw()
         effectFPS = state.GetValue("global_effectFPS") or 90,
         cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
         cursorTrailShapeIndex = 1,
-        cursorTrailPoints = 10,
-        cursorTrailSize = 5,
+        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
+        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 30,
         snakeSpringConstant = 1,
         cursorTrailGhost = false,
         rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
@@ -2200,7 +2197,6 @@ function createSVTab(globalVars)
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
-    if placeType == "Funny" then placeFunnySVMenu(globalVars) end
 end
 
 -- Creates the "Edit SVs" tab
@@ -2276,7 +2272,6 @@ function createQuickTabs(globalVars)
         placeStandardSVMenu,
         placeSpecialSVMenu,
         placeStillSVMenu,
-        placeFunnySVMenu,
         editSVTab,
         deleteTab
     }
@@ -2372,6 +2367,7 @@ function placeSpecialSVMenu(globalVars)
     if currentSVType == "Splitscroll (Basic)" then splitScrollBasicMenu(settingVars) end
     if currentSVType == "Splitscroll (Advanced)" then splitScrollAdvancedMenu(settingVars) end
     if currentSVType == "Splitscroll (Adv v2)" then splitScrollAdvancedV2Menu(settingVars) end
+    if currentSVType == "Penis" then penisMenu(settingVars) end
     if currentSVType == "Frames Setup" then
         animationFramesSetupMenu(globalVars, settingVars)
     end
@@ -6472,16 +6468,22 @@ function chooseFrameTimeData(settingVars)
     _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
 end
 
--- Lets you choose the intensity of something from 1 to 100
+-- Lets you choose the intensity in 5% steps (1 to 100)
 -- Returns whether or not the intensity changed [Boolean]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseIntensity(settingVars)
     local oldIntensity = settingVars.intensity
-    local _, newIntensity = imgui.SliderInt("Intensity", oldIntensity, 1, 100, oldIntensity .. "%%")
-    newIntensity = clampToInterval(newIntensity, 1, 100)
-    settingVars.intensity = newIntensity
-    return oldIntensity ~= newIntensity
+
+    -- Convert to step index: 0 to 19 (for 5% increments from 5 to 100)
+    local stepIndex = math.floor((oldIntensity - 1) / 5)
+    local changed, newStepIndex = imgui.SliderInt("Intensity", stepIndex, 0, 19, (stepIndex * 5 + 5) .. "%%")
+
+    -- Convert back to actual intensity (5% steps)
+    local newIntensity = newStepIndex * 5 + 5
+    settingVars.intensity = clampToInterval(newIntensity, 1, 100)
+
+    return oldIntensity ~= settingVars.intensity
 end
 
 function chooseCurvature(settingVars)
@@ -6709,7 +6711,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseCurrentScrollGroup(globalVars)
     imgui.AlignTextToFramePadding()
-    imgui.Text("  Scroll Group: ")
+    imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
     local groups = { "$Default", "$Global" }
     for k, _ in pairs(map.TimingGroups) do
