@@ -6463,7 +6463,7 @@ end
 --    settingVars : table of variables used for the current menu
 --    stepSize    : number representing the increment size (e.g., 1, 5, 10)
 function chooseIntensity(settingVars, UserStepSize)
-    UserStepSize = globalVars.stepSize -- Ensure stepSize is between 1 and 100
+    UserStepSize = 5
     
     local oldIntensity = settingVars.intensity
 
