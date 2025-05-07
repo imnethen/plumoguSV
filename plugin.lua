@@ -6466,22 +6466,22 @@ end
 --    stepSize    : number representing the increment size (e.g., 1, 5, 10)
 function chooseIntensity(settingVars)
     local userStepSize = state.GetValue("global_stepSize") or 5
+    local totalSteps = math.ceil(100 / userStepSize)
 
     local oldIntensity = settingVars.intensity
 
-    local totalSteps = math.floor(100 / userStepSize) - 1
-
-    local stepIndex = math.floor((oldIntensity - 1) / userStepSize)
+    local stepIndex = math.floor((oldIntensity - 0.01) / userStepSize)
 
     local _, newStepIndex = imgui.SliderInt(
         "Intensity",
         stepIndex,
         0,
-        totalSteps,
+        totalSteps - 1,
         settingVars.intensity .. "%%"
     )
 
-    local newIntensity = (newStepIndex + 1) * userStepSize
+    local newIntensity = newStepIndex * userStepSize + 100 % userStepSize
+    if (100 % userStepSize == 0) then newIntensity = newIntensity + userStepSize end
     settingVars.intensity = clampToInterval(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
