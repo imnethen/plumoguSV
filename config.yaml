@@ -6,7 +6,7 @@ styleThemeIndex: 1
 effectFPS: 90
 cursorTrailIndex: 1
 cursorTrailShapeIndex: 1
-cursorTrailPoints: 10
+cursorTrailPoints: 20
 cursorTrailSize: 5
 snakeSpringConstant: 1
 cursorTrailGhost: false
@@ -24,4 +24,4 @@ exportData: ''
 debugText: debug
 scrollGroupIndex: 1
 BETA_IGNORE_NOTES_OUTSIDE_TG: true
-advancedMode: true
+advancedMode: false

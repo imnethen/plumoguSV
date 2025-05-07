@@ -2186,7 +2186,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function createSVTab(globalVars)
-    chooseCurrentScrollGroup(globalVars)
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
     choosePlaceSVType(globalVars)
     local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
@@ -2479,7 +2479,9 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
-    settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
+    if (state.GetValue("global_advancedMode")) then 
+        settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
+    end
     if (settingVars.distanceMode ~= 3) then
         settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
     end
@@ -6529,8 +6531,8 @@ function chooseAdvancedMode(globalVars)
         globalVars.advancedMode = true
     end
     if (oldAdvancedMode ~= globalVars.advancedMode) then
-        print("hi")
         write(globalVars)
+        state.SetValue("global_advancedMode", globalVars.advancedMode)
     end
 end
 
