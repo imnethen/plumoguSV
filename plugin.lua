@@ -2068,6 +2068,7 @@ function awake()
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
     state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
+    state.SetValue("global_advancedMode", tempGlobalVars.advancedMode == "true" and true or false)
 end
 
 -- Creates the plugin window
@@ -2098,7 +2099,8 @@ function draw()
         exportData = "",
         debugText = "debug",
         scrollGroupIndex = 1,
-        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false
+        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
+        advancedMode = state.GetValue("global_advancedMode") or false
     }
 
     getVariables("globalVars", globalVars)
@@ -2157,6 +2159,7 @@ function infoTab(globalVars)
     listKeyboardShortcuts()
     choosePluginBehaviorSettings(globalVars)
     choosePluginAppearance(globalVars)
+    chooseAdvancedMode(globalVars)
 end
 
 -- Creates the "Info" tab for "keyboard" mode
@@ -2185,7 +2188,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function createSVTab(globalVars)
-    chooseCurrentScrollGroup(globalVars)
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
     choosePlaceSVType(globalVars)
     local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
@@ -2414,29 +2417,6 @@ function placeStillSVMenu(globalVars)
     saveVariables("placeStillMenu", menuVars)
 end
 
-function placeFunnySVMenu(globalVars)
-    exportImportSettingsButton(globalVars)
-    local menuVars = getFunnyPlaceMenuVars()
-    changeSVTypeIfKeysPressed(menuVars)
-    chooseFunnySVType(menuVars)
-
-    addSeparator()
-    local currentSVType = FUNNY_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Funny")
-    if globalVars.showExportImportMenu then
-        --saveVariables("placeSpecialMenu", menuVars)
-        exportImportSettingsMenu(globalVars, menuVars, settingVars)
-        return
-    end
-
-    if currentSVType == "Penis" then penisMenu(settingVars) end
-
-
-    local labelText = table.concat({ currentSVType, "SettingsFunny" })
-    saveVariables(labelText, settingVars)
-    saveVariables("placeFunnyMenu", menuVars)
-end
-
 function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE OF SHIT
     local svsToRemove = {}
     local svsToAdd = {}
@@ -2501,6 +2481,9 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
+    if (state.GetValue("global_advancedMode")) then 
+        settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
+    end
     if (settingVars.distanceMode ~= 3) then
         settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
     end
@@ -3262,7 +3245,7 @@ function tempBugFix()
         if (math.abs(ptr - sv.StartTime) < 0.035) then
             table.insert(svsToRemove, sv)
         end
-        ptr = sv.StartTime 
+        ptr = sv.StartTime
     end
     actions.RemoveScrollVelocityBatch(svsToRemove)
 end
@@ -5170,14 +5153,14 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
             if svIsRemovable then table.insert(svsToRemove, sv) end
         end
     end
-    if (#retroactiveSVRemovalTable > 0) then
-    for idx, sv in pairs(retroactiveSVRemovalTable) do
-        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
-        if svIsInRange then
-            local svIsRemovable = svTimeIsAdded[sv.StartTime]
-            if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
+    if (retroactiveSVRemovalTable) then
+        for idx, sv in pairs(retroactiveSVRemovalTable) do
+            local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
+            if svIsInRange then
+                local svIsRemovable = svTimeIsAdded[sv.StartTime]
+                if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
+            end
         end
-    end
     end
 end
 
@@ -6546,6 +6529,24 @@ function chooseKeyboardMode(globalVars)
     end
 end
 
+function chooseAdvancedMode(globalVars)
+    local oldAdvancedMode = globalVars.advancedMode
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Advanced Mode:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("OFF", not globalVars.advancedMode) then
+        globalVars.advancedMode = false
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("ON", globalVars.advancedMode) then
+        globalVars.advancedMode = true
+    end
+    if (oldAdvancedMode ~= globalVars.advancedMode) then
+        write(globalVars)
+        state.SetValue("global_advancedMode", globalVars.advancedMode)
+    end
+end
+
 -- Lets you choose the main SV multiplier of a teleport stutter
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -6841,15 +6842,6 @@ function chooseSpecialSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
-end
-
--- Lets you choose the special SV type
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
-function chooseFunnySVType(menuVars)
-    local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
-    local label = "  " .. EMOTICONS[emoticonIndex]
-    menuVars.svTypeIndex = combo(label, FUNNY_SVS, menuVars.svTypeIndex)
 end
 
 -- Lets you choose the current splitscroll layer
