@@ -6565,7 +6565,8 @@ end
 function chooseStepSize(globalVars)
     imgui.PushItemWidth(40)
     local oldStepSize = globalVars.stepSize
-    _, globalVars.stepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
+    local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
+    globalVars.stepSize = clampToInterval(tempStepSize, 1, 100)
     imgui.PopItemWidth()
     if (oldStepSize ~= globalVars.stepSize) then
         write(globalVars)
