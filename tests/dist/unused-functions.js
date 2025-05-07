@@ -13,9 +13,10 @@ function checkUnusedFunctions(file) {
         return idxs;
     }, []);
     var fns = [];
+    var globals = ["awake", "draw"];
     functions.forEach(function (fn) {
         var _a;
-        if (((_a = file.join("\n").match(new RegExp(String.raw(templateObject_1 || (templateObject_1 = __makeTemplateObject(["", "[(,)]"], ["", "[\\(,\\)]"])), fn), "gd"))) === null || _a === void 0 ? void 0 : _a.length) == 1) {
+        if (((_a = file.join("\n").match(new RegExp(String.raw(templateObject_1 || (templateObject_1 = __makeTemplateObject(["", "[(,)]"], ["", "[\\(,\\)]"])), fn), "gd"))) === null || _a === void 0 ? void 0 : _a.length) == 1 && !globals.includes(fn)) {
             console.log(chalk.red("".concat(fn, " is an unused function.")));
             fns.push(fn);
         }
