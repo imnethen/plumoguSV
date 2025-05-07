@@ -9,7 +9,7 @@ export default function checkUnusedFunctions(file: string[]) {
     const fns = []
 
     functions.forEach((fn) => {
-        if (file.join("\n").match(new RegExp(String.raw`${fn}`, "gd"))?.length == 1) {
+        if (file.join("\n").match(new RegExp(String.raw`${fn}[\(,\)]`, "gd"))?.length == 1) {
             console.log(chalk.red(`${fn} is an unused function.`))
             fns.push(fn)
         }
