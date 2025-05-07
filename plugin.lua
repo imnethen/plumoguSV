@@ -29,7 +29,7 @@
 ---@field Multiplier number
 
 
--- plumoguSV v1.1.0
+-- plumoguSV v1.1.2
 -- by kloi34, plummyyummy
 
 -- Many SV tool ideas were stolen from other plugins, so here is credit to those plugins and the
