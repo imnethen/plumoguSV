@@ -2312,7 +2312,7 @@ function placeStandardSVMenu(globalVars)
         return
     end
 
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
+    needSVUpdate = showSettingsMenu(currentSVType, settingVars, globalVars, false, nil) or needSVUpdate
 
     addSeparator()
     needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
@@ -2400,7 +2400,7 @@ function placeStillSVMenu(globalVars)
     chooseStillType(menuVars)
 
     addSeparator()
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
+    needSVUpdate = showSettingsMenu(currentSVType, settingVars, globalVars, false, nil) or needSVUpdate
 
     addSeparator()
     needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
@@ -2479,10 +2479,10 @@ end
 --    settingVars   : list of setting variables for this exponential menu [Table]
 --    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
 --    svPointsForce : number of SV points to force [Int or nil]
-function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+function exponentialSettingsMenu(settingVars, globalVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
-    settingsChanged = chooseIntensity(settingVars) or settingsChanged
+    settingsChanged = chooseIntensity(settingVars, globalVars) or settingsChanged
     if (state.GetValue("global_advancedMode")) then
         settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
     end
@@ -2650,14 +2650,14 @@ end
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
 --    settingVars : list of setting variables for this combo menu [Table]
-function comboSettingsMenu(settingVars)
+function comboSettingsMenu(settingVars, globalVars)
     local settingsChanged = false
     startNextWindowNotCollapsed("svType1AutoOpen")
     imgui.Begin("SV Type 1 Settings", imgui_window_flags.AlwaysAutoResize)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
     local svType1 = STANDARD_SVS[settingVars.svType1Index]
     local settingVars1 = getSettingVars(svType1, "Combo1")
-    settingsChanged = showSettingsMenu(svType1, settingVars1, true, nil) or settingsChanged
+    settingsChanged = showSettingsMenu(svType1, settingVars1, globalVars, true, nil) or settingsChanged
     local labelText1 = table.concat({ svType1, "SettingsCombo1" })
     saveVariables(labelText1, settingVars1)
     imgui.End()
@@ -2667,7 +2667,7 @@ function comboSettingsMenu(settingVars)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
     local svType2 = STANDARD_SVS[settingVars.svType2Index]
     local settingVars2 = getSettingVars(svType2, "Combo2")
-    settingsChanged = showSettingsMenu(svType2, settingVars2, true, nil) or settingsChanged
+    settingsChanged = showSettingsMenu(svType2, settingVars2, globalVars, true, nil) or settingsChanged
     local labelText2 = table.concat({ svType2, "SettingsCombo2" })
     saveVariables(labelText2, settingVars2)
     imgui.End()
@@ -3391,7 +3391,7 @@ function dynamicScaleMenu(globalVars)
     end
 
     local settingVars = getSettingVars(currentSVType, "DynamicScale")
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, true, numSVPoints) or needSVUpdate
+    needSVUpdate = showSettingsMenu(currentSVType, settingVars, globalVars, true, numSVPoints) or needSVUpdate
     if needSVUpdate then updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, true) end
 
     startNextWindowNotCollapsed("svInfoAutoOpen")
@@ -3680,11 +3680,12 @@ end
 --    settingVars   : list of variables used for the current menu [Table]
 --    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
 --    svPointsForce : number of SV points to force [Int or nil]
-function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce)
+function showSettingsMenu(currentSVType, settingVars, globalVars, skipFinalSV, svPointsForce)
     if currentSVType == "Linear" then
         return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Exponential" then
-        return exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+        -- TODO: currently expo is the only one that needs globalVars so its parameters are different from the others thats  bad maybe
+        return exponentialSettingsMenu(settingVars, globalVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Bezier" then
         return bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Hermite" then
@@ -3700,7 +3701,7 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
     elseif currentSVType == "Chinchilla" then
         return chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Combo" then
-        return comboSettingsMenu(settingVars)
+        return comboSettingsMenu(settingVars, globalVars)
     end
 end
 
@@ -6462,9 +6463,9 @@ end
 -- Parameters:
 --    settingVars : table of variables used for the current menu
 --    stepSize    : number representing the increment size (e.g., 1, 5, 10)
-function chooseIntensity(settingVars, UserStepSize)
-    UserStepSize = 5
-    
+function chooseIntensity(settingVars, globalVars)
+    UserStepSize = globalVars.stepSize or 5
+
     local oldIntensity = settingVars.intensity
 
     -- Total steps so the last one reaches 100 exactly
@@ -6492,9 +6493,9 @@ end
 -- Responsible for saving the step intensity set by the user to the YAML
 function chooseStepSize(globalVars)
     local oldStepSize = globalVars.stepSize
-    _, globalVars.stepSize = imgui.InputInt("Step Size", oldStepSize, 1, 1)
+    _, globalVars.stepSize = imgui.InputInt("Exponential Intensity Step Size", oldStepSize, 1, 1)
     if (oldStepSize ~= globalVars.stepSize) then
-    write(globalVars)
+        write(globalVars)
     end
 end
 
@@ -6575,7 +6576,9 @@ end
 
 -- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
 function chooseStepSize(menuVars)
-    _, menuVars.stepSize = imgui.InputFloat("Step Size", menuVars.stepSize, 0, 0, "%.0f Percent")
+    imgui.PushItemWidth(40)
+    _, menuVars.stepSize = imgui.InputFloat("Exponential Intensity Step Size", menuVars.stepSize, 0, 0, "%.0f %%")
+    imgui.PopItemWidth()
 end
 
 -- Lets you choose the main SV multiplier of a teleport stutter
