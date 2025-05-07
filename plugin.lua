@@ -1637,7 +1637,7 @@ function getStillPlaceMenuVars()
         svTypeIndex = 1,
         noteSpacing = 1,
         stillTypeIndex = 1,
-        stillDistance = 200,
+        stillDistance = 0,
         stillBehavior = 1,
         prePlaceDistances = {},
         svMultipliers = {},
@@ -2061,7 +2061,9 @@ function awake()
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
-    state.SetValue("global_effectFPS", tonumber(tempGlobalVars.global_effectFPS))
+    state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
+    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))  
+    state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
@@ -2080,8 +2082,8 @@ function draw()
         effectFPS = state.GetValue("global_effectFPS") or 90,
         cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
         cursorTrailShapeIndex = 1,
-        cursorTrailPoints = 10,
-        cursorTrailSize = 5,
+        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
+        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
         snakeSpringConstant = 1,
         cursorTrailGhost = false,
         rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
@@ -2502,12 +2504,6 @@ local DISTANCE_TYPES = {
     "Distance + Shift",
     "Start / End"
 }
-
-function chooseDistanceMode(menuVars)
-    local oldMode = menuVars.distanceMode
-    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
-    return oldMode ~= menuVars.distanceMode
-end
 
 -- Creates the menu for bezier SV settings
 -- Returns whether settings have changed or not [Boolean]
@@ -6095,9 +6091,11 @@ function chooseCursorTrailPoints(globalVars)
     if currentTrail ~= "Snake" then return end
 
     local label = "Trail Points"
-    _, globalVars.cursorTrailPoints = imgui.InputInt(label, globalVars.cursorTrailPoints, 1, 1)
-    local maxPoints = MAX_CURSOR_TRAIL_POINTS
-    globalVars.cursorTrailPoints = clampToInterval(globalVars.cursorTrailPoints, 2, maxPoints)
+    local oldCursorTrailPoints = globalVars.cursorTrailPoints
+    _, globalVars.cursorTrailPoints = imgui.InputInt(label, oldCursorTrailPoints, 1, 1)
+    if (oldCursorTrailPoints ~= globalVars.cursorTrailPoints) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the cursor trail shape type
@@ -6118,10 +6116,17 @@ function chooseCursorShapeSize(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
+
+--Reference
     local label = "Shape Size"
-    _, globalVars.cursorTrailSize = imgui.InputInt(label, globalVars.cursorTrailSize, 1, 1)
-    globalVars.cursorTrailSize = clampToInterval(globalVars.cursorTrailSize, 1, 100)
+    local oldCursorTrailSize = globalVars.cursorTrailSize
+    _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
+    if (oldCursorTrailSize ~= globalVars.cursorTrailSize) then
+        write(globalVars)
+    end
 end
+
+
 
 -- Lets you choose SV curve sharpness
 -- Returns whether or not the curve sharpness changed [Boolean]
@@ -6442,16 +6447,22 @@ function chooseFrameTimeData(settingVars)
     _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
 end
 
--- Lets you choose the intensity of something from 1 to 100
+-- Lets you choose the intensity in 5% steps (1 to 100)
 -- Returns whether or not the intensity changed [Boolean]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseIntensity(settingVars)
     local oldIntensity = settingVars.intensity
-    local _, newIntensity = imgui.SliderInt("Intensity", oldIntensity, 1, 100, oldIntensity .. "%%")
-    newIntensity = clampToInterval(newIntensity, 1, 100)
-    settingVars.intensity = newIntensity
-    return oldIntensity ~= newIntensity
+
+    -- Convert to step index: 0 to 19 (for 5% increments from 5 to 100)
+    local stepIndex = math.floor((oldIntensity - 1) / 5)
+    local changed, newStepIndex = imgui.SliderInt("Intensity", stepIndex, 0, 19, (stepIndex * 5 + 5) .. "%%")
+
+    -- Convert back to actual intensity (5% steps)
+    local newIntensity = newStepIndex * 5 + 5
+    settingVars.intensity = clampToInterval(newIntensity, 1, 100)
+
+    return oldIntensity ~= settingVars.intensity
 end
 
 function chooseCurvature(settingVars)
@@ -6685,7 +6696,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function choosePlaceSVType(globalVars)
     imgui.AlignTextToFramePadding()
-    imgui.Text("  Type : ")
+    imgui.Text("  Type:  ")
     imgui.SameLine(0, SAMELINE_SPACING)
     globalVars.placeTypeIndex = combo("##placeType", PLACE_TYPES, globalVars.placeTypeIndex)
     local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
@@ -6697,7 +6708,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseCurrentScrollGroup(globalVars)
     imgui.AlignTextToFramePadding()
-    imgui.Text("  Scroll Group: ")
+    imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
     local groups = { "$Default", "$Global" }
     for k, _ in pairs(map.TimingGroups) do
