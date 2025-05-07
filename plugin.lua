@@ -2066,6 +2066,7 @@ function awake()
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
     state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
+    state.SetValue("global_advancedMode", tempGlobalVars.advancedMode == "true" and true or false)
 end
 
 -- Creates the plugin window
@@ -2096,7 +2097,8 @@ function draw()
         exportData = "",
         debugText = "debug",
         scrollGroupIndex = 1,
-        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false
+        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
+        advancedMode = state.GetValue("global_advancedMode") or false
     }
 
     getVariables("globalVars", globalVars)
@@ -2155,6 +2157,7 @@ function infoTab(globalVars)
     listKeyboardShortcuts()
     choosePluginBehaviorSettings(globalVars)
     choosePluginAppearance(globalVars)
+    chooseAdvancedMode(globalVars)
 end
 
 -- Creates the "Info" tab for "keyboard" mode
@@ -6510,6 +6513,24 @@ function chooseKeyboardMode(globalVars)
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     if imgui.RadioButton("Keyboard", globalVars.keyboardMode) then
         globalVars.keyboardMode = true
+    end
+end
+
+function chooseAdvancedMode(globalVars)
+    local oldAdvancedMode = globalVars.advancedMode
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Advanced Mode:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("OFF", not globalVars.advancedMode) then
+        globalVars.advancedMode = false
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("ON", globalVars.advancedMode) then
+        globalVars.advancedMode = true
+    end
+    if (oldAdvancedMode ~= globalVars.advancedMode) then
+        print("hi")
+        write(globalVars)
     end
 end
 
