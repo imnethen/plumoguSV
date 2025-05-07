@@ -6480,8 +6480,7 @@ function chooseIntensity(settingVars)
         settingVars.intensity .. "%%"
     )
 
-    local newIntensity = newStepIndex * userStepSize + 100 % userStepSize
-    if (100 % userStepSize == 0) then newIntensity = newIntensity + userStepSize end
+    local newIntensity = newStepIndex * userStepSize + 99 % userStepSize + 1
     settingVars.intensity = clampToInterval(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
