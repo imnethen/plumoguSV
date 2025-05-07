@@ -185,8 +185,7 @@ NOTE_SKIN_TYPES = { -- types of note skins
 PLACE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
-    "Still",
-    "Funny"
+    "Still"
 }
 RANDOM_TYPES = { -- distribution types of random values
     "Normal",
@@ -203,11 +202,10 @@ SPECIAL_SVS = { -- types of special SVs
     "Splitscroll (Basic)",
     "Splitscroll (Advanced)",
     "Splitscroll (Adv v2)",
+    "Penis",
     "Frames Setup"
 }
-FUNNY_SVS = {
-    "Penis"
-}
+
 STANDARD_SVS = { -- types of standard SVs
     "Linear",
     "Exponential",
@@ -1633,15 +1631,6 @@ function getSpecialPlaceMenuVars()
     return menuVars
 end
 
--- Returns menuVars for the menu at Place SVs > Funny
-function getFunnyPlaceMenuVars()
-    local menuVars = {
-        svTypeIndex = 1
-    }
-    getVariables("placeFunnyMenu", menuVars)
-    return menuVars
-end
-
 -- Returns menuVars for the menu at Place SVs > Still
 function getStillPlaceMenuVars()
     local menuVars = {
@@ -2200,7 +2189,6 @@ function createSVTab(globalVars)
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
-    if placeType == "Funny" then placeFunnySVMenu(globalVars) end
 end
 
 -- Creates the "Edit SVs" tab
@@ -2276,7 +2264,6 @@ function createQuickTabs(globalVars)
         placeStandardSVMenu,
         placeSpecialSVMenu,
         placeStillSVMenu,
-        placeFunnySVMenu,
         editSVTab,
         deleteTab
     }
@@ -2372,6 +2359,7 @@ function placeSpecialSVMenu(globalVars)
     if currentSVType == "Splitscroll (Basic)" then splitScrollBasicMenu(settingVars) end
     if currentSVType == "Splitscroll (Advanced)" then splitScrollAdvancedMenu(settingVars) end
     if currentSVType == "Splitscroll (Adv v2)" then splitScrollAdvancedV2Menu(settingVars) end
+    if currentSVType == "Penis" then penisMenu(settingVars) end
     if currentSVType == "Frames Setup" then
         animationFramesSetupMenu(globalVars, settingVars)
     end
