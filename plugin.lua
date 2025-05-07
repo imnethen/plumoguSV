@@ -626,8 +626,8 @@ function setTobiGlassColors()
     imgui.PushStyleColor(imgui_col.TitleBgActive, transparentBlack)
     imgui.PushStyleColor(imgui_col.TitleBgCollapsed, transparentBlack)
     imgui.PushStyleColor(imgui_col.CheckMark, white)
-    imgui.PushStyleColor(imgui_col.SliderGrab, whiteTint)
-    imgui.PushStyleColor(imgui_col.SliderGrabActive, transparentWhite)
+    imgui.PushStyleColor(imgui_col.SliderGrab, frameColor)
+    imgui.PushStyleColor(imgui_col.SliderGrabActive, buttonColor)
     imgui.PushStyleColor(imgui_col.Button, buttonColor)
     imgui.PushStyleColor(imgui_col.ButtonHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.ButtonActive, whiteTint)
@@ -2056,6 +2056,7 @@ local BETA_IGNORE_NOTES_OUTSIDE_TG = false
 
 function awake()
     local tempGlobalVars = read()
+    state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
@@ -2074,6 +2075,7 @@ end
 -- Creates the plugin window
 function draw()
     local globalVars = {
+        stepSize = state.GetValue("global_stepSize") or 5,
         keyboardMode = false,
         dontReplaceSV = false,
         upscroll = state.GetValue("global_upscroll") or false,
@@ -2480,6 +2482,7 @@ end
 function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
+
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
     if (state.GetValue("global_advancedMode")) then
         settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
@@ -3236,13 +3239,13 @@ end
 function tempBugFixMenu()
     imgui.PushTextWrapPos(200)
     imgui.TextWrapped(
-    "note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
+        "note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
     imgui.NewLine()
     imgui.TextWrapped(
-    "Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
+        "Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
     imgui.NewLine()
     imgui.TextWrapped(
-    " If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
+        " If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
     imgui.PopTextWrapPos()
     simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
 end
@@ -3629,6 +3632,7 @@ function choosePluginBehaviorSettings(globalVars)
     addSeparator()
     chooseDontReplaceSV(globalVars)
     chooseBetaIgnore(globalVars)
+    chooseStepSize(globalVars)
     addPadding()
 end
 
@@ -3681,6 +3685,7 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
     if currentSVType == "Linear" then
         return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Exponential" then
+        -- TODO: currently expo is the only one that needs globalVars so its parameters are different from the others thats  bad maybe
         return exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Bezier" then
         return bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
@@ -6454,30 +6459,31 @@ function chooseFrameTimeData(settingVars)
     _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
 end
 
--- Lets you choose the intensity in 5% steps (1 to 100)
+-- Lets you choose the intensity in customizable steps (1 to 100)
 -- Returns whether or not the intensity changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
+-- Parameters:
+--    settingVars : table of variables used for the current menu
+--    stepSize    : number representing the increment size (e.g., 1, 5, 10)
 function chooseIntensity(settingVars)
+    local userStepSize = state.GetValue("global_stepSize") or 5
+    local totalSteps = math.ceil(100 / userStepSize)
+
     local oldIntensity = settingVars.intensity
 
-    -- Convert to step index: 0 to 19 (for 5% increments from 5 to 100)
-    local stepIndex = math.floor((oldIntensity - 1) / 5)
-    local changed, newStepIndex = imgui.SliderInt("Intensity", stepIndex, 0, 19, (stepIndex * 5 + 5) .. "%%")
+    local stepIndex = math.floor((oldIntensity - 0.01) / userStepSize)
 
-    -- Convert back to actual intensity (5% steps)
-    local newIntensity = newStepIndex * 5 + 5
+    local _, newStepIndex = imgui.SliderInt(
+        "Intensity",
+        stepIndex,
+        0,
+        totalSteps - 1,
+        settingVars.intensity .. "%%"
+    )
+
+    local newIntensity = newStepIndex * userStepSize + 99 % userStepSize + 1
     settingVars.intensity = clampToInterval(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
-end
-
-function chooseCurvature(settingVars)
-    local oldCurvature = settingVars.curvature
-    local _, newCurvature = imgui.SliderInt("Intensity", oldCurvature, -100, 100, oldCurvature .. "%%")
-    newCurvature = clampToInterval(newCurvature, -100, 100)
-    settingVars.intensity = newCurvature
-    return oldCurvature ~= newCurvature
 end
 
 -- Lets you choose the interlace
@@ -6536,6 +6542,7 @@ function chooseKeyboardMode(globalVars)
     end
 end
 
+-- Lets you choose whether to activate or deactive "Advanced Mode"
 function chooseAdvancedMode(globalVars)
     local oldAdvancedMode = globalVars.advancedMode
     imgui.AlignTextToFramePadding()
@@ -6551,6 +6558,19 @@ function chooseAdvancedMode(globalVars)
     if (oldAdvancedMode ~= globalVars.advancedMode) then
         write(globalVars)
         state.SetValue("global_advancedMode", globalVars.advancedMode)
+    end
+end
+
+-- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
+function chooseStepSize(globalVars)
+    imgui.PushItemWidth(40)
+    local oldStepSize = globalVars.stepSize
+    local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
+    globalVars.stepSize = clampToInterval(tempStepSize, 1, 100)
+    imgui.PopItemWidth()
+    if (oldStepSize ~= globalVars.stepSize) then
+        write(globalVars)
+        state.SetValue("global_stepSize", globalVars.stepSize)
     end
 end
 
