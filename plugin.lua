@@ -2062,7 +2062,7 @@ function awake()
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
     state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
-    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))  
+    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))
     state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
@@ -2481,7 +2481,7 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
-    if (state.GetValue("global_advancedMode")) then 
+    if (state.GetValue("global_advancedMode")) then
         settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
     end
     if (settingVars.distanceMode ~= 3) then
@@ -3235,11 +3235,14 @@ end
 
 function tempBugFixMenu()
     imgui.PushTextWrapPos(200)
-    imgui.TextWrapped("note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
+    imgui.TextWrapped(
+    "note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
     imgui.NewLine()
-    imgui.TextWrapped("Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
+    imgui.TextWrapped(
+    "Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
     imgui.NewLine()
-    imgui.TextWrapped(" If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
+    imgui.TextWrapped(
+    " If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
     imgui.PopTextWrapPos()
     simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
 end
@@ -6123,7 +6126,7 @@ function chooseCursorShapeSize(globalVars)
     if currentTrail ~= "Snake" then return end
 
 
---Reference
+    --Reference
     local label = "Shape Size"
     local oldCursorTrailSize = globalVars.cursorTrailSize
     _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
@@ -6131,8 +6134,6 @@ function chooseCursorShapeSize(globalVars)
         write(globalVars)
     end
 end
-
-
 
 -- Lets you choose SV curve sharpness
 -- Returns whether or not the curve sharpness changed [Boolean]
@@ -7759,7 +7760,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
         return
     end
     local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-        table.sort(svsToAdd, sortAscendingStartTime),svsToAdd )
+        table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
     svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
