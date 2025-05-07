@@ -83,3 +83,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * Add SSF vibrato
 * Improve dev exp
 * Lint code
+* Move to vector system
