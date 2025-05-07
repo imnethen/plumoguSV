@@ -3,7 +3,8 @@
     "version": "1.1.1",
     "description": "The ultimate SV plugin for Quaver.",
     "scripts": {
-        "test": "tsc && node tests/dist/"
+        "test": "tsc && node dist/tests",
+        "transpile": "tsc && node dist/transpiler"
     },
     "repository": {
         "type": "git",
