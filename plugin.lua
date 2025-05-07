@@ -2505,6 +2505,12 @@ local DISTANCE_TYPES = {
     "Start / End"
 }
 
+function chooseDistanceMode(menuVars)
+    local oldMode = menuVars.distanceMode
+    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
+    return oldMode ~= menuVars.distanceMode
+end
+
 -- Creates the menu for bezier SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
