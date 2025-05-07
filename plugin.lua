@@ -2482,7 +2482,7 @@ end
 function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
-  
+
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
     if (state.GetValue("global_advancedMode")) then
         settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
@@ -3239,13 +3239,13 @@ end
 function tempBugFixMenu()
     imgui.PushTextWrapPos(200)
     imgui.TextWrapped(
-    "note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
+        "note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
     imgui.NewLine()
     imgui.TextWrapped(
-    "Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
+        "Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
     imgui.NewLine()
     imgui.TextWrapped(
-    " If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
+        " If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
     imgui.PopTextWrapPos()
     simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
 end
@@ -6469,11 +6469,7 @@ function chooseIntensity(settingVars)
 
     local oldIntensity = settingVars.intensity
 
-    -- Total steps so the last one reaches 100 exactly
-    local totalSteps = math.floor((100 - 1) / userStepSize)
-    if (totalSteps * userStepSize + 1) < 100 then
-        totalSteps = totalSteps + 1
-    end
+    local totalSteps = math.floor(100 / userStepSize) - 1
 
     local stepIndex = math.floor((oldIntensity - 1) / userStepSize)
 
@@ -6482,22 +6478,13 @@ function chooseIntensity(settingVars)
         stepIndex,
         0,
         totalSteps,
-        (stepIndex * userStepSize) .. "%%"
+        settingVars.intensity .. "%%"
     )
 
-    local newIntensity = newStepIndex * userStepSize + 1
+    local newIntensity = (newStepIndex + 1) * userStepSize
     settingVars.intensity = clampToInterval(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
-end
-
--- Responsible for saving the step intensity set by the user to the YAML
-function chooseStepSize(globalVars)
-    local oldStepSize = globalVars.stepSize
-    _, globalVars.stepSize = imgui.InputInt("Exponential Intensity Step Size", oldStepSize, 1, 1)
-    if (oldStepSize ~= globalVars.stepSize) then
-        write(globalVars)
-    end
 end
 
 -- Lets you choose the interlace
@@ -6576,10 +6563,15 @@ function chooseAdvancedMode(globalVars)
 end
 
 -- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
-function chooseStepSize(menuVars)
+function chooseStepSize(globalVars)
     imgui.PushItemWidth(40)
-    _, menuVars.stepSize = imgui.InputFloat("Exponential Intensity Step Size", menuVars.stepSize, 0, 0, "%.0f %%")
+    local oldStepSize = globalVars.stepSize
+    _, globalVars.stepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
     imgui.PopItemWidth()
+    if (oldStepSize ~= globalVars.stepSize) then
+        write(globalVars)
+        state.SetValue("global_stepSize", globalVars.stepSize)
+    end
 end
 
 -- Lets you choose the main SV multiplier of a teleport stutter
