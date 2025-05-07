@@ -2412,29 +2412,6 @@ function placeStillSVMenu(globalVars)
     saveVariables("placeStillMenu", menuVars)
 end
 
-function placeFunnySVMenu(globalVars)
-    exportImportSettingsButton(globalVars)
-    local menuVars = getFunnyPlaceMenuVars()
-    changeSVTypeIfKeysPressed(menuVars)
-    chooseFunnySVType(menuVars)
-
-    addSeparator()
-    local currentSVType = FUNNY_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Funny")
-    if globalVars.showExportImportMenu then
-        --saveVariables("placeSpecialMenu", menuVars)
-        exportImportSettingsMenu(globalVars, menuVars, settingVars)
-        return
-    end
-
-    if currentSVType == "Penis" then penisMenu(settingVars) end
-
-
-    local labelText = table.concat({ currentSVType, "SettingsFunny" })
-    saveVariables(labelText, settingVars)
-    saveVariables("placeFunnyMenu", menuVars)
-end
-
 function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE OF SHIT
     local svsToRemove = {}
     local svsToAdd = {}
@@ -6831,15 +6808,6 @@ function chooseSpecialSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
-end
-
--- Lets you choose the special SV type
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
-function chooseFunnySVType(menuVars)
-    local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
-    local label = "  " .. EMOTICONS[emoticonIndex]
-    menuVars.svTypeIndex = combo(label, FUNNY_SVS, menuVars.svTypeIndex)
 end
 
 -- Lets you choose the current splitscroll layer
