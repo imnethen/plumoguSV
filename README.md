@@ -76,3 +76,10 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * [Displacer](https://github.com/Illuminati-CRAZ/Displacer) by Illuminati-CRAZ
 * [AFFINE](https://github.com/ESV-Sweetplum/AFFINE) by ESV-Sweetplum
 * [mulch](https://github.com/Emik03/mulch) by Emik03
+
+## TO-DO
+* Automate TG effects
+* Migrate affine vibrato
+* Add SSF vibrato
+* Improve dev exp
+* Lint code
