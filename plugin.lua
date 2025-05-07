@@ -6464,27 +6464,27 @@ end
 --    settingVars : table of variables used for the current menu
 --    stepSize    : number representing the increment size (e.g., 1, 5, 10)
 function chooseIntensity(settingVars, globalVars)
-    UserStepSize = globalVars.stepSize or 5
+    local userStepSize = globalVars.stepSize or 5
 
     local oldIntensity = settingVars.intensity
 
     -- Total steps so the last one reaches 100 exactly
-    local totalSteps = math.floor((100 - 1) / UserStepSize)
+    local totalSteps = math.floor((100 - 1) / userStepSize)
     if (totalSteps * UserStepSize + 1) < 100 then
         totalSteps = totalSteps + 1
     end
 
-    local stepIndex = math.floor((oldIntensity - 1) / UserStepSize)
+    local stepIndex = math.floor((oldIntensity - 1) / userStepSize)
 
     local changed, newStepIndex = imgui.SliderInt(
         "Intensity",
         stepIndex,
         0,
         totalSteps,
-        ((newStepIndex or stepIndex) * UserStepSize) .. "%%"
+        ((newStepIndex or stepIndex) * userStepSize) .. "%%"
     )
 
-    local newIntensity = newStepIndex * UserStepSize + 1
+    local newIntensity = newStepIndex * userStepSize + 1
     settingVars.intensity = clampToInterval(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
