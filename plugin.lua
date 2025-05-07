@@ -2482,6 +2482,7 @@ end
 function exponentialSettingsMenu(settingVars, globalVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
+  
     settingsChanged = chooseIntensity(settingVars, globalVars) or settingsChanged
     if (state.GetValue("global_advancedMode")) then
         settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
