@@ -1,4 +1,4 @@
-# plumoguSV v1.1.0
+# plumoguSV v1.1.1
 <img src="./logo.png" alt="plumoguSV Logo">
 
 > "The ultimate community-driven and open-source competitive SV plugin. Remastered with many new features."
@@ -60,7 +60,7 @@ Special types of SVs:
 Remove SVs and SSFs between notes.
 
 ## Special Note
-Thanks to [asterSSH](https://github.com/asterssh) for the banner and other graphic design help.
+Thanks to [asterSSH](https://github.com/asterssh) for the banner and other graphic design help. Thanks to [7xbi](https://github.com/7xbi) and [imnethen](https://github.com/imnethen) for PRs which have positively moved this plugin forward.
 
 Most of the core ideas and base functionality were taken (stolen) from [iceSV](https://github.com/IceDynamix/iceSV) by [IceDynamix](https://github.com/IceDynamix).
 Other SV ideas also taken (stolen) from [Illuminati-CRAZ](https://github.com/Illuminati-CRAZ)’s SV plugins.
