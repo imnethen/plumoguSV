@@ -1958,18 +1958,6 @@ function centerWindowIfHotkeysPressed()
     imgui.SetWindowPos("plumoguSV", coordinatesToCenter)
 end
 
---[[
--- Makes a plugin window start/spawn at a certain coordiate
--- Parameters
---    name   : name of the plugin window [String]
---    coords : (x, y) coordinates to spawn at [Table]
-function spawnWindowAtCoords(name, coords)
-    local key = name.."spawn"
-    if not state.GetValue(key) then return end
-    imgui.SetWindowPos(name, coords)
-    state.SetValue(key, true)
-end
---]]
 -- Returns whether or not the corresponding menu tab shortcut keys were pressed [Boolean]
 -- Parameters
 --    tabName : name of the menu tab [String]
@@ -5178,22 +5166,6 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
     end
 end
 
--- Returns the SV at a specified offset in the map [Int/Float]
--- Parameters
---    offset : millisecond time [Int/Float]
-function getHypotheticalSVAt(svs, offset)
-    if (#svs == 1) then return svs[1] end
-    local index = #svs
-    while (index >= 1) do
-        if (svs[index].StartTime > offset) then
-            index = index - 1
-        else
-            return svs[index]
-        end
-    end
-    return nil
-end
-
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]
@@ -5462,14 +5434,6 @@ function clampToInterval(number, lowerBound, upperBound)
     if number < lowerBound then return lowerBound end
     if number > upperBound then return upperBound end
     return number
-end
-
--- Forces a number to be a multiple of a half (0.5)
--- Returns the result of the force [Int/Float]
--- Parameters
---    number : number to force to be a multiple of one quarter [Int/Float]
-function forceHalf(number)
-    return math.floor(number * 2 + 0.5) / 2
 end
 
 -- Forces a number to be a multiple of a quarter (0.25)
@@ -5778,17 +5742,6 @@ function makeDuplicateList(list)
         table.insert(duplicateList, value)
     end
     return duplicateList
-end
-
--- Returns a new duplicate list [Table]
--- Parameters
---    list : list of values [Table]
-function makeDuplicateTable(table)
-    local duplicateTable = {}
-    for k, v in pairs(table) do
-        duplicateTable[k] = v
-    end
-    return duplicateTable
 end
 
 -- Combs through a list and locates unique values
