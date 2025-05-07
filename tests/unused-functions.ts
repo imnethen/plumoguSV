@@ -7,9 +7,10 @@ export default function checkUnusedFunctions(file: string[]) {
     }, [])
 
     const fns = []
+    const globals = ["awake", "draw"]
 
     functions.forEach((fn) => {
-        if (file.join("\n").match(new RegExp(String.raw`${fn}[\(,\)]`, "gd"))?.length == 1) {
+        if (file.join("\n").match(new RegExp(String.raw`${fn}[\(,\)]`, "gd"))?.length == 1 && !globals.includes(fn)) {
             console.log(chalk.red(`${fn} is an unused function.`))
             fns.push(fn)
         }
