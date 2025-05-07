@@ -2056,13 +2056,14 @@ local BETA_IGNORE_NOTES_OUTSIDE_TG = false
 
 function awake()
     local tempGlobalVars = read()
+    state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
     state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
-    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))  
+    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))
     state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
@@ -2074,6 +2075,7 @@ end
 -- Creates the plugin window
 function draw()
     local globalVars = {
+        stepSize = state.GetValue("global_stepSize") or 5,
         keyboardMode = false,
         dontReplaceSV = false,
         upscroll = state.GetValue("global_upscroll") or false,
@@ -2481,7 +2483,7 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
     settingsChanged = chooseIntensity(settingVars) or settingsChanged
-    if (state.GetValue("global_advancedMode")) then 
+    if (state.GetValue("global_advancedMode")) then
         settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
     end
     if (settingVars.distanceMode ~= 3) then
@@ -2504,6 +2506,12 @@ local DISTANCE_TYPES = {
     "Distance + Shift",
     "Start / End"
 }
+
+function chooseDistanceMode(menuVars)
+    local oldMode = menuVars.distanceMode
+    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
+    return oldMode ~= menuVars.distanceMode
+end
 
 -- Creates the menu for bezier SV settings
 -- Returns whether settings have changed or not [Boolean]
@@ -3229,11 +3237,14 @@ end
 
 function tempBugFixMenu()
     imgui.PushTextWrapPos(200)
-    imgui.TextWrapped("note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
+    imgui.TextWrapped(
+    "note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
     imgui.NewLine()
-    imgui.TextWrapped("Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
+    imgui.TextWrapped(
+    "Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
     imgui.NewLine()
-    imgui.TextWrapped(" If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
+    imgui.TextWrapped(
+    " If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
     imgui.PopTextWrapPos()
     simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
 end
@@ -3620,6 +3631,7 @@ function choosePluginBehaviorSettings(globalVars)
     addSeparator()
     chooseDontReplaceSV(globalVars)
     chooseBetaIgnore(globalVars)
+    chooseStepSize(globalVars)
     addPadding()
 end
 
@@ -6117,7 +6129,7 @@ function chooseCursorShapeSize(globalVars)
     if currentTrail ~= "Snake" then return end
 
 
---Reference
+    --Reference
     local label = "Shape Size"
     local oldCursorTrailSize = globalVars.cursorTrailSize
     _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
@@ -6125,8 +6137,6 @@ function chooseCursorShapeSize(globalVars)
         write(globalVars)
     end
 end
-
-
 
 -- Lets you choose SV curve sharpness
 -- Returns whether or not the curve sharpness changed [Boolean]
@@ -6447,30 +6457,45 @@ function chooseFrameTimeData(settingVars)
     _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
 end
 
--- Lets you choose the intensity in 5% steps (1 to 100)
+-- Lets you choose the intensity in customizable steps (1 to 100)
 -- Returns whether or not the intensity changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseIntensity(settingVars)
+-- Parameters:
+--    settingVars : table of variables used for the current menu
+--    stepSize    : number representing the increment size (e.g., 1, 5, 10)
+function chooseIntensity(settingVars, UserStepSize)
+    UserStepSize = globalVars.stepSize -- Ensure stepSize is between 1 and 100
+    
     local oldIntensity = settingVars.intensity
 
-    -- Convert to step index: 0 to 19 (for 5% increments from 5 to 100)
-    local stepIndex = math.floor((oldIntensity - 1) / 5)
-    local changed, newStepIndex = imgui.SliderInt("Intensity", stepIndex, 0, 19, (stepIndex * 5 + 5) .. "%%")
+    -- Total steps so the last one reaches 100 exactly
+    local totalSteps = math.floor((100 - 1) / UserStepSize)
+    if (totalSteps * UserStepSize + 1) < 100 then
+        totalSteps = totalSteps + 1
+    end
 
-    -- Convert back to actual intensity (5% steps)
-    local newIntensity = newStepIndex * 5 + 5
+    local stepIndex = math.floor((oldIntensity - 1) / UserStepSize)
+
+    local changed, newStepIndex = imgui.SliderInt(
+        "Intensity",
+        stepIndex,
+        0,
+        totalSteps,
+        ((newStepIndex or stepIndex) * UserStepSize) .. "%%"
+    )
+
+    local newIntensity = newStepIndex * UserStepSize + 1
     settingVars.intensity = clampToInterval(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
 end
 
-function chooseCurvature(settingVars)
-    local oldCurvature = settingVars.curvature
-    local _, newCurvature = imgui.SliderInt("Intensity", oldCurvature, -100, 100, oldCurvature .. "%%")
-    newCurvature = clampToInterval(newCurvature, -100, 100)
-    settingVars.intensity = newCurvature
-    return oldCurvature ~= newCurvature
+-- Responsible for saving the step intensity set by the user to the YAML
+function chooseStepSize(globalVars)
+    local oldStepSize = globalVars.stepSize
+    _, globalVars.stepSize = imgui.InputInt("Step Size", oldStepSize, 1, 1)
+    if (oldStepSize ~= globalVars.stepSize) then
+    write(globalVars)
+    end
 end
 
 -- Lets you choose the interlace
@@ -6529,6 +6554,7 @@ function chooseKeyboardMode(globalVars)
     end
 end
 
+-- Lets you choose whether to activate or deactive "Advanced Mode"
 function chooseAdvancedMode(globalVars)
     local oldAdvancedMode = globalVars.advancedMode
     imgui.AlignTextToFramePadding()
@@ -6545,6 +6571,11 @@ function chooseAdvancedMode(globalVars)
         write(globalVars)
         state.SetValue("global_advancedMode", globalVars.advancedMode)
     end
+end
+
+-- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
+function chooseStepSize(menuVars)
+    _, menuVars.stepSize = imgui.InputFloat("Step Size", menuVars.stepSize, 0, 0, "%.0f Percent")
 end
 
 -- Lets you choose the main SV multiplier of a teleport stutter
@@ -7753,7 +7784,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
         return
     end
     local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-        table.sort(svsToAdd, sortAscendingStartTime),svsToAdd )
+        table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
     svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
