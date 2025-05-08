@@ -205,3 +205,8 @@ SELECT_TOOLS = {
 }
 
 BETA_IGNORE_NOTES_OUTSIDE_TG = false
+
+STILL_BEHAVIOR_TYPES = {
+    "Entire Region",
+    "Per Note Group",
+}
