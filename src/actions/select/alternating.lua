@@ -7,7 +7,7 @@ function selectAlternating(menuVars)
     for _, v in pairs(notes) do
         table.insert(times, v.StartTime)
     end
-    times = removeDuplicateValues(times)
+    times = deDuplicate(times)
     local allowedTimes = {}
     for i, time in pairs(times) do
         if ((i - 2 + menuVars.offset) % menuVars.every == 0) then

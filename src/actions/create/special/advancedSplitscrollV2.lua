@@ -34,7 +34,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes2, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes2 = removeDuplicateValues(convertedSettingVars.noteTimes2)
+        convertedSettingVars.noteTimes2 = deDuplicate(convertedSettingVars.noteTimes2)
         convertedSettingVars.noteTimes2 = table.sort(convertedSettingVars.noteTimes2, sortAscending)
     end
     if splitscrollLayers[3] ~= nil then
@@ -44,7 +44,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes3, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes3 = removeDuplicateValues(convertedSettingVars.noteTimes3)
+        convertedSettingVars.noteTimes3 = deDuplicate(convertedSettingVars.noteTimes3)
         convertedSettingVars.noteTimes3 = table.sort(convertedSettingVars.noteTimes3, sortAscending)
     end
     if splitscrollLayers[4] ~= nil then
@@ -55,7 +55,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes4, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes4 = removeDuplicateValues(convertedSettingVars.noteTimes4)
+        convertedSettingVars.noteTimes4 = deDuplicate(convertedSettingVars.noteTimes4)
         convertedSettingVars.noteTimes4 = table.sort(convertedSettingVars.noteTimes4, sortAscending)
     end
     allLayerNotes = table.sort(allLayerNotes, sortAscendingStartTime)
@@ -77,7 +77,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             hasAddedLaneTime[lane][startTime] = true
         end
     end
-    allNoteTimes = removeDuplicateValues(allNoteTimes)
+    allNoteTimes = deDuplicate(allNoteTimes)
     allNoteTimes = table.sort(allNoteTimes, sortAscending)
     local editorActions = {
         actionRemoveNotesBetween(startOffset, endOffset),

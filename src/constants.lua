@@ -210,3 +210,9 @@ STILL_BEHAVIOR_TYPES = {
     "Entire Region",
     "Per Note Group",
 }
+
+DISTANCE_TYPES = {
+    "Average SV + Shift",
+    "Distance + Shift",
+    "Start / End"
+}

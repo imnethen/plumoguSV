@@ -130,369 +130,12 @@ end
 
 ----------------------------------------------------------------------------------------- Tab stuff
 
--- Creates the menu for placing standard SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function placeStandardSVMenu(globalVars)
-    exportImportSettingsButton(globalVars)
-    local menuVars = getStandardPlaceMenuVars()
-    local needSVUpdate = changeSVTypeIfKeysPressed(menuVars)
-    needSVUpdate = needSVUpdate or #menuVars.svMultipliers == 0
-    needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
-
-    addSeparator()
-    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Standard")
-    if globalVars.showExportImportMenu then
-        --saveVariables("placeStandardMenu", menuVars)
-        exportImportSettingsMenu(globalVars, menuVars, settingVars)
-        return
-    end
-
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
-
-    addSeparator()
-    needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
-    if needSVUpdate then updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false) end
-
-    startNextWindowNotCollapsed("svInfoAutoOpen")
-    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
-        menuVars.svMultipliers, nil, false)
-
-    addSeparator()
-    if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
-        menuVars.settingVars = settingVars
-        simpleActionMenu("Place SVs between selected notes##Exponential", 2, placeExponentialSpecialSVs, globalVars,
-            menuVars)
-    else
-        simpleActionMenu("Place SVs between selected notes", 2, placeSVs, globalVars, menuVars)
-    end
-    simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, globalVars, menuVars, true)
-
-    local labelText = table.concat({ currentSVType, "SettingsStandard" })
-    saveVariables(labelText, settingVars)
-    saveVariables("placeStandardMenu", menuVars)
-end
-
--- Creates the menu for placing special SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function placeSpecialSVMenu(globalVars)
-    exportImportSettingsButton(globalVars)
-    local menuVars = getSpecialPlaceMenuVars()
-    changeSVTypeIfKeysPressed(menuVars)
-    chooseSpecialSVType(menuVars)
-
-    addSeparator()
-    local currentSVType = SPECIAL_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Special")
-    if globalVars.showExportImportMenu then
-        --saveVariables("placeSpecialMenu", menuVars)
-        exportImportSettingsMenu(globalVars, menuVars, settingVars)
-        return
-    end
-
-    if currentSVType == "Stutter" then stutterMenu(settingVars) end
-    if currentSVType == "Teleport Stutter" then teleportStutterMenu(settingVars) end
-    if currentSVType == "Splitscroll (Basic)" then splitScrollBasicMenu(settingVars) end
-    if currentSVType == "Splitscroll (Advanced)" then splitScrollAdvancedMenu(settingVars) end
-    if currentSVType == "Splitscroll (Adv v2)" then splitScrollAdvancedV2Menu(settingVars) end
-    if currentSVType == "Penis" then penisMenu(settingVars) end
-    if currentSVType == "Frames Setup" then
-        animationFramesSetupMenu(globalVars, settingVars)
-    end
-
-    local labelText = table.concat({ currentSVType, "SettingsSpecial" })
-    saveVariables(labelText, settingVars)
-    saveVariables("placeSpecialMenu", menuVars)
-end
-
--- Creates the menu for placing still SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function placeStillSVMenu(globalVars)
-    exportImportSettingsButton(globalVars)
-    local menuVars = getStillPlaceMenuVars()
-    local needSVUpdate = changeSVTypeIfKeysPressed(menuVars)
-    needSVUpdate = needSVUpdate or #menuVars.svMultipliers == 0
-    needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
-
-    addSeparator()
-    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Still")
-    if globalVars.showExportImportMenu then
-        --saveVariables("placeStillMenu", menuVars)
-        exportImportSettingsMenu(globalVars, menuVars, settingVars)
-        return
-    end
-    imgui.Text("Still Settings:")
-    chooseNoteSpacing(menuVars)
-    chooseStillBehavior(menuVars)
-    chooseStillType(menuVars)
-
-    addSeparator()
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
-
-    addSeparator()
-    needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
-    if needSVUpdate then updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false) end
-
-    startNextWindowNotCollapsed("svInfoAutoOpen")
-    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
-        menuVars.svMultipliers, nil, false)
-
-    addSeparator()
-    menuVars.settingVars = settingVars
-    simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, globalVars, menuVars)
-
-    local labelText = table.concat({ currentSVType, "SettingsStill" })
-    saveVariables(labelText, settingVars)
-    saveVariables("placeStillMenu", menuVars)
-end
-
--- Creates the menu for linear SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this linear menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    if (settingVars.startSV < 0 and settingVars.endSV > 0 and math.abs(settingVars.startSV / settingVars.endSV) < 5) then
-        height = state.GetValue("JumpHeight") or 0
-        if settingsChanged then
-            linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1)
-            local sum = 0
-            for i = 1, #linearSet - 1 do
-                if (linearSet[i] >= 0) then break end
-                sum = sum - linearSet[i] / settingVars.svPoints
-            end
-            height = sum
-            state.SetValue("JumpHeight", sum)
-        end
-        imgui.TextColored({ 1, 0, 0, 1 }, "Jump detected. The maximum \nheight of the jump is " .. height .. "x.")
-    end
-    return settingsChanged
-end
-
--- Creates the menu for exponential SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this exponential menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
-
-    settingsChanged = chooseIntensity(settingVars) or settingsChanged
-    if (state.GetValue("global_advancedMode")) then
-        settingsChanged = chooseDistanceMode(settingVars) or settingsChanged
-    end
-    if (settingVars.distanceMode ~= 3) then
-        settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    end
-    if (settingVars.distanceMode == 1) then
-        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    elseif (settingVars.distanceMode == 2) then
-        settingsChanged = chooseDistance(settingVars) or settingsChanged
-    else
-        settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
-    end
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    return settingsChanged
-end
-
-local DISTANCE_TYPES = {
-    "Average SV + Shift",
-    "Distance + Shift",
-    "Start / End"
-}
-
 function chooseDistanceMode(menuVars)
     local oldMode = menuVars.distanceMode
     menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
     return oldMode ~= menuVars.distanceMode
 end
 
--- Creates the menu for bezier SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this bezier menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    settingsChanged = provideBezierWebsiteLink(settingVars) or settingsChanged
-    settingsChanged = chooseBezierPoints(settingVars) or settingsChanged
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    return settingsChanged
-end
-
--- Creates the menu for hermite SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this hermite menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    return settingsChanged
-end
-
--- Creates the menu for sinusoidal SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this sinusoidal menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function sinusoidalSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    imgui.Text("Amplitude:")
-    settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
-    settingsChanged = chooseCurveSharpness(settingVars) or settingsChanged
-    settingsChanged = chooseConstantShift(settingVars, 1) or settingsChanged
-    settingsChanged = chooseNumPeriods(settingVars) or settingsChanged
-    settingsChanged = choosePeriodShift(settingVars) or settingsChanged
-    settingsChanged = chooseSVPerQuarterPeriod(settingVars) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    return settingsChanged
-end
-
--- Creates the menu for circular SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this circular menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
-    settingsChanged = chooseArcPercent(settingVars) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    settingsChanged = chooseNoNormalize(settingVars) or settingsChanged
-    return settingsChanged
-end
-
--- Creates the menu for chinchilla SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this chinchilla menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    settingsChanged = chooseSVBehavior(settingVars) or settingsChanged
-    settingsChanged = chooseChinchillaType(settingVars) or settingsChanged
-    settingsChanged = chooseChinchillaIntensity(settingVars) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    return settingsChanged
-end
-
--- Creates the menu for random SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this random menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-
-    settingsChanged = chooseRandomType(settingVars) or settingsChanged
-    settingsChanged = chooseRandomScale(settingVars) or settingsChanged
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    if imgui.Button("Generate New Random Set", BEEG_BUTTON_SIZE) then
-        generateRandomSetMenuSVs(settingVars)
-        settingsChanged = true
-    end
-
-    addSeparator()
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    if not settingVars.dontNormalize then
-        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    end
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    settingsChanged = chooseNoNormalize(settingVars) or settingsChanged
-
-    return settingsChanged
-end
-
--- Creates the menu for custom SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this custom menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
-function customSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    local settingsChanged = false
-    settingsChanged = importCustomSVs(settingVars) or settingsChanged
-    settingsChanged = chooseCustomMultipliers(settingVars) or settingsChanged
-    if not (svPointsForce and skipFinalSV) then addSeparator() end
-    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
-    adjustNumberOfMultipliers(settingVars)
-    return settingsChanged
-end
-
--- Creates the menu for custom SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars : list of setting variables for this combo menu [Table]
-function comboSettingsMenu(settingVars)
-    local settingsChanged = false
-    startNextWindowNotCollapsed("svType1AutoOpen")
-    imgui.Begin("SV Type 1 Settings", imgui_window_flags.AlwaysAutoResize)
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-    local svType1 = STANDARD_SVS[settingVars.svType1Index]
-    local settingVars1 = getSettingVars(svType1, "Combo1")
-    settingsChanged = showSettingsMenu(svType1, settingVars1, true, nil) or settingsChanged
-    local labelText1 = table.concat({ svType1, "SettingsCombo1" })
-    saveVariables(labelText1, settingVars1)
-    imgui.End()
-
-    startNextWindowNotCollapsed("svType2AutoOpen")
-    imgui.Begin("SV Type 2 Settings", imgui_window_flags.AlwaysAutoResize)
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-    local svType2 = STANDARD_SVS[settingVars.svType2Index]
-    local settingVars2 = getSettingVars(svType2, "Combo2")
-    settingsChanged = showSettingsMenu(svType2, settingVars2, true, nil) or settingsChanged
-    local labelText2 = table.concat({ svType2, "SettingsCombo2" })
-    saveVariables(labelText2, settingVars2)
-    imgui.End()
-
-    local maxComboPhase = settingVars1.svPoints + settingVars2.svPoints
-
-    settingsChanged = chooseStandardSVTypes(settingVars) or settingsChanged
-    settingsChanged = chooseComboSVOption(settingVars, maxComboPhase) or settingsChanged
-
-    addSeparator()
-    settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
-    if not settingVars.dontNormalize then
-        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    end
-    settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
-    settingsChanged = chooseNoNormalize(settingVars) or settingsChanged
-
-    return settingsChanged
-end
 
 function penisMenu(settingVars)
     _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
@@ -504,33 +147,6 @@ function penisMenu(settingVars)
         settingVars.bCurvature .. "%%")
 
     simpleActionMenu("Place SVs", 1, placePenisSV, nil, settingVars)
-end
-
-function placePenisSV(settingVars)
-    local startTime = uniqueNoteOffsetsBetweenSelected()[1]
-
-    local svs = {}
-
-    for j = 0, 1 do
-        for i = 0, 100 do
-            local time = startTime + i * settingVars.bWidth / 100 + j * (settingVars.sWidth + settingVars.bWidth)
-            local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
-            local trueVal = settingVars.bCurvature / 100 * circVal + (1 - settingVars.bCurvature / 100)
-
-            table.insert(svs, utils.CreateScrollVelocity(time, trueVal))
-        end
-    end
-
-    for i = 0, 100 do
-        local time = startTime + settingVars.bWidth + i * settingVars.sWidth / 100
-
-        local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
-        local trueVal = settingVars.sCurvature / 100 * circVal + (3.75 - settingVars.sCurvature / 100)
-
-        table.insert(svs, utils.CreateScrollVelocity(time, trueVal))
-    end
-
-    removeAndAddSVs(getSVsBetweenOffsets(startTime, startTime + settingVars.sWidth + settingVars.bWidth * 2), svs)
 end
 
 -- Creates the menu for stutter SV
@@ -775,206 +391,6 @@ function exportImportSettingsMenu(globalVars, menuVars, settingVars)
     end
 end
 
--- Creates the select alternating menu
-function selectAlternatingMenu()
-    local menuVars = {
-        every = 1,
-        offset = 0
-    }
-    getVariables("selectAlternatingMenu", menuVars)
-    chooseEvery(menuVars)
-    chooseOffset(menuVars)
-    saveVariables("selectAlternatingMenu", menuVars)
-
-    local text = ""
-    if (menuVars.every > 1) then text = "s" end
-
-    addSeparator()
-    simpleActionMenu(
-        "Select a note every " .. menuVars.every .. " note" .. text .. ", from note #" .. menuVars.offset,
-        2,
-        selectAlternating, nil, menuVars)
-end
-
--- Creates the select by snap menu
-function selectBySnapMenu()
-    local menuVars = {
-        snap = 1,
-    }
-    getVariables("selectBySnapMenu", menuVars)
-    chooseSnap(menuVars)
-    saveVariables("selectBySnapMenu", menuVars)
-
-    addSeparator()
-    simpleActionMenu(
-        "Select notes with 1/" .. menuVars.snap .. " snap",
-        2,
-        selectBySnap, nil, menuVars)
-end
-
-function selectBookmarkMenu()
-    local bookmarks = map.bookmarks
-
-    local selectedIndex = state.GetValue("selectedIndex") or 0
-    local searchTerm = state.GetValue("searchTerm") or ""
-    local filterTerm = state.GetValue("filterTerm") or ""
-    local times = {}
-
-
-    if (#bookmarks == 0) then
-        imgui.TextWrapped("There are no bookmarks! Add one to navigate.")
-    else
-        imgui.PushItemWidth(70)
-
-        _, searchTerm = imgui.InputText("Search", searchTerm, 4096)
-        imgui.SameLine()
-        _, filterTerm = imgui.InputText("Ignore", filterTerm, 4096)
-
-        imgui.Columns(3)
-
-        imgui.Text("Time")
-        imgui.NextColumn()
-        imgui.Text("Bookmark Label")
-        imgui.NextColumn()
-        imgui.Text("Leap")
-        imgui.NextColumn()
-
-        imgui.Separator()
-
-
-        local skippedBookmarks = 0
-        local skippedIndices = 0
-
-        for idx, v in pairs(bookmarks) do
-            if (v.StartTime < 0) then
-                skippedBookmarks = skippedBookmarks + 1
-                skippedIndices = skippedIndices + 1
-                goto continue
-            end
-
-            if (searchTerm:len() > 0) and (not v.Note:find(searchTerm)) then
-                skippedBookmarks = skippedBookmarks + 1
-                goto continue
-            end
-            if (filterTerm:len() > 0) and (v.Note:find(filterTerm)) then
-                skippedBookmarks = skippedBookmarks + 1
-                goto continue
-            end
-
-            vPos = 126.5 + (idx - skippedBookmarks) * 32
-
-            imgui.SetCursorPosY(vPos)
-
-            table.insert(times, v.StartTime)
-            imgui.Text(v.StartTime)
-            imgui.NextColumn()
-
-            imgui.SetCursorPosY(vPos)
-
-            if (imgui.CalcTextSize(v.Note)[1] > 110) then
-                local note = v.Note
-                while (imgui.CalcTextSize(note)[1] > 85) do
-                    note = note:sub(1, #note - 1)
-                end
-                imgui.Text(note .. "...")
-            else
-                imgui.Text(v.Note)
-            end
-            imgui.NextColumn()
-
-
-            if (imgui.Button("Go to #" .. idx - skippedIndices, { 65, 24 })) then
-                actions.GoToObjects(v.StartTime)
-            end
-            imgui.NextColumn()
-
-            if (idx ~= #bookmarks) then imgui.Separator() end
-            ::continue::
-        end
-
-        local maxTimeLength = #tostring(math.max(table.unpack(times) or 0))
-
-        imgui.SetColumnWidth(0, maxTimeLength * 10.25)
-        imgui.SetColumnWidth(1, 110)
-        imgui.SetColumnWidth(2, 80)
-
-        imgui.PopItemWidth()
-        imgui.Columns(1)
-    end
-
-
-    state.SetValue("selectedIndex", selectedIndex)
-    state.SetValue("searchTerm", searchTerm)
-    state.SetValue("filterTerm", filterTerm)
-end
-
----Combines two tables with no nesting.
----@param t1 table
----@param t2 table
----@return table
-function table.combine(t1, t2)
-    for i = 1, #t2 do
-        t1[#t1 + 1] = t2[i]
-    end
-    return t1
-end
-
-function selectChordSizeMenu()
-    local menuVars = {
-        single = false,
-        jump = true,
-        hand = true,
-        quad = false
-    }
-
-    getVariables("selectChordSizeMenu", menuVars)
-
-    _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
-    imgui.SameLine(0, SAMELINE_SPACING)
-    _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
-    _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
-    imgui.SameLine(0, SAMELINE_SPACING)
-    _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
-
-    simpleActionMenu("Select chords within region", 2, selectByChordSizes, nil, menuVars)
-
-    saveVariables("selectChordSizeMenu", menuVars)
-end
-
-function selectByNoteType(menuVars)
-    local offsets = uniqueSelectedNoteOffsets()
-    local startOffset = offsets[1]
-    local endOffset = offsets[#offsets]
-
-    local totalNotes = getNotesBetweenOffsets(startOffset, endOffset)
-
-    local notesToSelect = {}
-
-    for _, note in pairs(totalNotes) do
-        if (note.EndTime == 0 and menuVars.rice) then table.insert(notesToSelect, note) end
-        if (note.EndTime ~= 0 and menuVars.ln) then table.insert(notesToSelect, note) end
-    end
-
-    actions.SetHitObjectSelection(notesToSelect)
-    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
-end
-
-function selectNoteTypeMenu()
-    local menuVars = {
-        rice = true,
-        ln = true
-    }
-
-    getVariables("selectNoteTypeMenu", menuVars)
-
-    _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
-    imgui.SameLine(0, SAMELINE_SPACING)
-    _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
-
-    simpleActionMenu("Select notes within region", 2, selectByNoteType, nil, menuVars)
-
-    saveVariables("selectNoteTypeMenu", menuVars)
-end
 
 -- Creates the add teleport menu
 function addTeleportMenu()
@@ -1795,7 +1211,7 @@ function addSelectedNoteTimes(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes2, hitObject.StartTime)
     end
-    settingVars.noteTimes2 = removeDuplicateValues(settingVars.noteTimes2)
+    settingVars.noteTimes2 = deDuplicate(settingVars.noteTimes2)
     settingVars.noteTimes2 = table.sort(settingVars.noteTimes2, sortAscending)
 end
 
@@ -1806,7 +1222,7 @@ function addSelectedNoteTimes2(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes3, hitObject.StartTime)
     end
-    settingVars.noteTimes3 = removeDuplicateValues(settingVars.noteTimes3)
+    settingVars.noteTimes3 = deDuplicate(settingVars.noteTimes3)
     settingVars.noteTimes3 = table.sort(settingVars.noteTimes3, sortAscending)
 end
 
@@ -1817,7 +1233,7 @@ function addSelectedNoteTimes3(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes4, hitObject.StartTime)
     end
-    settingVars.noteTimes4 = removeDuplicateValues(settingVars.noteTimes4)
+    settingVars.noteTimes4 = deDuplicate(settingVars.noteTimes4)
     settingVars.noteTimes4 = table.sort(settingVars.noteTimes4, sortAscending)
 end
 
@@ -2558,7 +1974,7 @@ function addSelectedNoteTimesToList(menuVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(menuVars.noteTimes, hitObject.StartTime)
     end
-    menuVars.noteTimes = removeDuplicateValues(menuVars.noteTimes)
+    menuVars.noteTimes = deDuplicate(menuVars.noteTimes)
     menuVars.noteTimes = table.sort(menuVars.noteTimes, sortAscending)
 end
 
@@ -3147,7 +2563,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
             end
         end
     end
-    noteOffsetsBetween = removeDuplicateValues(noteOffsetsBetween)
+    noteOffsetsBetween = deDuplicate(noteOffsetsBetween)
     noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
@@ -3172,7 +2588,7 @@ function uniqueSelectedNoteOffsets()
     for i, hitObject in pairs(state.SelectedHitObjects) do
         offsets[i] = hitObject.StartTime
     end
-    offsets = removeDuplicateValues(offsets)
+    offsets = deDuplicate(offsets)
     offsets = table.sort(offsets, sortAscending)
     return offsets
 end

@@ -325,7 +325,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes2, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes2 = removeDuplicateValues(convertedSettingVars.noteTimes2)
+        convertedSettingVars.noteTimes2 = deDuplicate(convertedSettingVars.noteTimes2)
         convertedSettingVars.noteTimes2 = table.sort(convertedSettingVars.noteTimes2, sortAscending)
     end
     if splitscrollLayers[3] ~= nil then
@@ -335,7 +335,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes3, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes3 = removeDuplicateValues(convertedSettingVars.noteTimes3)
+        convertedSettingVars.noteTimes3 = deDuplicate(convertedSettingVars.noteTimes3)
         convertedSettingVars.noteTimes3 = table.sort(convertedSettingVars.noteTimes3, sortAscending)
     end
     if splitscrollLayers[4] ~= nil then
@@ -346,7 +346,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes4, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes4 = removeDuplicateValues(convertedSettingVars.noteTimes4)
+        convertedSettingVars.noteTimes4 = deDuplicate(convertedSettingVars.noteTimes4)
         convertedSettingVars.noteTimes4 = table.sort(convertedSettingVars.noteTimes4, sortAscending)
     end
     allLayerNotes = table.sort(allLayerNotes, sortAscendingStartTime)
@@ -368,7 +368,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             hasAddedLaneTime[lane][startTime] = true
         end
     end
-    allNoteTimes = removeDuplicateValues(allNoteTimes)
+    allNoteTimes = deDuplicate(allNoteTimes)
     allNoteTimes = table.sort(allNoteTimes, sortAscending)
     local editorActions = {
         actionRemoveNotesBetween(startOffset, endOffset),
@@ -1540,7 +1540,7 @@ function selectAlternating(menuVars)
     for _, v in pairs(notes) do
         table.insert(times, v.StartTime)
     end
-    times = removeDuplicateValues(times)
+    times = deDuplicate(times)
     local allowedTimes = {}
     for i, time in pairs(times) do
         if ((i - 2 + menuVars.offset) % menuVars.every == 0) then
@@ -1575,7 +1575,7 @@ function selectByChordSizes(menuVars)
         table.insert(noteTimeTable, note.StartTime)
     end
 
-    noteTimeTable = removeDuplicateValues(noteTimeTable)
+    noteTimeTable = deDuplicate(noteTimeTable)
 
     local sizeDict = {
         {},
@@ -4005,7 +4005,7 @@ function addSelectedNoteTimes(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes2, hitObject.StartTime)
     end
-    settingVars.noteTimes2 = removeDuplicateValues(settingVars.noteTimes2)
+    settingVars.noteTimes2 = deDuplicate(settingVars.noteTimes2)
     settingVars.noteTimes2 = table.sort(settingVars.noteTimes2, sortAscending)
 end
 
@@ -4016,7 +4016,7 @@ function addSelectedNoteTimes2(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes3, hitObject.StartTime)
     end
-    settingVars.noteTimes3 = removeDuplicateValues(settingVars.noteTimes3)
+    settingVars.noteTimes3 = deDuplicate(settingVars.noteTimes3)
     settingVars.noteTimes3 = table.sort(settingVars.noteTimes3, sortAscending)
 end
 
@@ -4027,7 +4027,7 @@ function addSelectedNoteTimes3(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes4, hitObject.StartTime)
     end
-    settingVars.noteTimes4 = removeDuplicateValues(settingVars.noteTimes4)
+    settingVars.noteTimes4 = deDuplicate(settingVars.noteTimes4)
     settingVars.noteTimes4 = table.sort(settingVars.noteTimes4, sortAscending)
 end
 
@@ -4768,7 +4768,7 @@ function addSelectedNoteTimesToList(menuVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(menuVars.noteTimes, hitObject.StartTime)
     end
-    menuVars.noteTimes = removeDuplicateValues(menuVars.noteTimes)
+    menuVars.noteTimes = deDuplicate(menuVars.noteTimes)
     menuVars.noteTimes = table.sort(menuVars.noteTimes, sortAscending)
 end
 
@@ -5357,7 +5357,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
             end
         end
     end
-    noteOffsetsBetween = removeDuplicateValues(noteOffsetsBetween)
+    noteOffsetsBetween = deDuplicate(noteOffsetsBetween)
     noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
@@ -5382,7 +5382,7 @@ function uniqueSelectedNoteOffsets()
     for i, hitObject in pairs(state.SelectedHitObjects) do
         offsets[i] = hitObject.StartTime
     end
-    offsets = removeDuplicateValues(offsets)
+    offsets = deDuplicate(offsets)
     offsets = table.sort(offsets, sortAscending)
     return offsets
 end
@@ -5679,7 +5679,7 @@ end
 -- Returns a list of only unique values (no duplicates) [Table]
 -- Parameters
 --    list : list of values [Table]
-function removeDuplicateValues(list)
+function deDuplicate(list)
     local hash = {}
     local newList = {}
     for _, value in ipairs(list) do
@@ -9173,4 +9173,4 @@ function getStillPlaceMenuVars()
     }
     getVariables("placeStillMenu", menuVars)
     return menuVars
-end
+end
