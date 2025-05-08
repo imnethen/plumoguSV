@@ -1211,7 +1211,7 @@ function addSelectedNoteTimes(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes2, hitObject.StartTime)
     end
-    settingVars.noteTimes2 = deDuplicate(settingVars.noteTimes2)
+    settingVars.noteTimes2 = dedupe(settingVars.noteTimes2)
     settingVars.noteTimes2 = table.sort(settingVars.noteTimes2, sortAscending)
 end
 
@@ -1222,7 +1222,7 @@ function addSelectedNoteTimes2(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes3, hitObject.StartTime)
     end
-    settingVars.noteTimes3 = deDuplicate(settingVars.noteTimes3)
+    settingVars.noteTimes3 = dedupe(settingVars.noteTimes3)
     settingVars.noteTimes3 = table.sort(settingVars.noteTimes3, sortAscending)
 end
 
@@ -1233,7 +1233,7 @@ function addSelectedNoteTimes3(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes4, hitObject.StartTime)
     end
-    settingVars.noteTimes4 = deDuplicate(settingVars.noteTimes4)
+    settingVars.noteTimes4 = dedupe(settingVars.noteTimes4)
     settingVars.noteTimes4 = table.sort(settingVars.noteTimes4, sortAscending)
 end
 
@@ -1974,7 +1974,7 @@ function addSelectedNoteTimesToList(menuVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(menuVars.noteTimes, hitObject.StartTime)
     end
-    menuVars.noteTimes = deDuplicate(menuVars.noteTimes)
+    menuVars.noteTimes = dedupe(menuVars.noteTimes)
     menuVars.noteTimes = table.sort(menuVars.noteTimes, sortAscending)
 end
 
@@ -2563,7 +2563,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
             end
         end
     end
-    noteOffsetsBetween = deDuplicate(noteOffsetsBetween)
+    noteOffsetsBetween = dedupe(noteOffsetsBetween)
     noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
@@ -2588,7 +2588,7 @@ function uniqueSelectedNoteOffsets()
     for i, hitObject in pairs(state.SelectedHitObjects) do
         offsets[i] = hitObject.StartTime
     end
-    offsets = deDuplicate(offsets)
+    offsets = dedupe(offsets)
     offsets = table.sort(offsets, sortAscending)
     return offsets
 end
@@ -2726,114 +2726,7 @@ function wrapToInterval(number, lowerBound, upperBound)
     return number
 end
 
--------------------------------------------------------------------------------- Graph/Plot Related
-
--- Calculates distance vs time values of a note given a set of SV values
--- Returns the list of distances [Table]
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
---    svValues   : set of SV values [Table]
-function calculateDistanceVsTime(globalVars, svValues)
-    local distance = 0
-    local multiplier = 1
-    if globalVars.upscroll then multiplier = -1 end
-    local distancesBackwards = { multiplier * distance }
-    local svValuesBackwards = getReverseList(svValues)
-    for i = 1, #svValuesBackwards do
-        distance = distance + (multiplier * svValuesBackwards[i])
-        table.insert(distancesBackwards, distance)
-    end
-    return getReverseList(distancesBackwards)
-end
-
--- Returns the minimum value from a list of values [Int/Float]
--- Parameters
---    values : list of numerical values [Table]
-function calculateMinValue(values) return math.min(table.unpack(values)) end
-
--- Returns the maximum value from a list of values [Int/Float]
--- Parameters
---    values : list of numerical values [Table]
-function calculateMaxValue(values) return math.max(table.unpack(values)) end
-
--- Calculates the minimum and maximum scale of a plot
--- Returns the minimum scale and maximum scale [Int/Float]
--- Parameters
---    plotValues : set of numbers to calculate plot scale for [Table]
-function calculatePlotScale(plotValues)
-    local min = math.min(table.unpack(plotValues))
-    local max = math.max(table.unpack(plotValues))
-    local absMax = math.max(math.abs(min), math.abs(max))
-    -- as the default, set the plot range to +- the absolute max value
-    local minScale = -absMax
-    local maxScale = absMax
-    -- restrict the plot range to non-positive values when all values are non-positive
-    if max <= 0 then maxScale = 0 end
-    -- restrict the plot range to non-negative values when all values are non-negative
-    if min >= 0 then minScale = 0 end
-    return minScale, maxScale
-end
-
--- Calculates distance vs time values of a note given a set of stutter SV values
--- Returns the list of distances [Table]
--- Parameters
---    svValues           : set of SV values [Table]
---    stutterDuration    : duration of stutter SV [Int/Float]
---    stuttersPerSection : number of stutters per section [Int]
-function calculateStutterDistanceVsTime(svValues, stutterDuration, stuttersPerSection)
-    local distance = 0
-    local distancesBackwards = { distance }
-    local iterations = stuttersPerSection * 100
-    if iterations > 1000 then iterations = 1000 end
-    for i = 1, iterations do
-        local x = ((i - 1) % 100) + 1
-        if x <= (100 - stutterDuration) then
-            distance = distance + svValues[2]
-        else
-            distance = distance + svValues[1]
-        end
-        table.insert(distancesBackwards, distance)
-    end
-    return getReverseList(distancesBackwards)
-end
-
--- Creates a distance vs time graph/plot of SV motion
--- Parameters
---    noteDistances : list of note distances [Table]
---    minScale      : minimum scale of the plot [Int/Float]
---    maxScale      : maximum scale of the plot [Int/Float]
-function plotSVMotion(noteDistances, minScale, maxScale)
-    local plotSize = PLOT_GRAPH_SIZE
-    imgui.PlotLines("##motion", noteDistances, #noteDistances, 0, "", minScale, maxScale, plotSize)
-end
-
--- Creates a bar graph/plot of SVs
--- Parameters
---    svVals   : list of numerical SV values [Table]
---    minScale : minimum scale of the plot [Int/Float]
---    maxScale : maximum scale of the plot [Int/Float]
-function plotSVs(svVals, minScale, maxScale)
-    local plotSize = PLOT_GRAPH_SIZE
-    imgui.PlotHistogram("##svplot", svVals, #svVals, 0, "", minScale, maxScale, plotSize)
-end
-
 -------------------------------------------------------------------------------------- Abstractions
-
--- Creates and returns a frameTime object [Table]
--- Parameters
---    thisTime     : time in milliseconds [Int]
---    thisLanes    : note lanes [Table]
---    thisFrame    : frame number [Int]
---    thisPosition : msx position (height) on the frame [Int/Float]
-function createFrameTime(thisTime, thisLanes, thisFrame, thisPosition)
-    local frameTime = {
-        time = thisTime,
-        lanes = thisLanes,
-        frame = thisFrame,
-        position = thisPosition
-    }
-    return frameTime
-end
 
 -- Executes a function if a key is pressed
 -- Parameters
@@ -2856,53 +2749,6 @@ function executeFunctionIfKeyPressed(key, func, globalVars, menuVars)
         return
     end
     func()
-end
-
--- Creates a simple action menu + button that does SV things
--- Parameters
---    buttonText   : text on the button that appears [String]
---    minimumNotes : minimum number of notes to select before the action button appears [Int/Float]
---    actionfunc   : function to execute once button is pressed [Function]
---    globalVars   : list of variables used globally across all menus [Table]
---    menuVars     : list of variables used for the current menu [Table]
-function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq)
-    local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
-    local infoText = table.concat({ "Select ", minimumNotes, " or more notes" })
-    if (not enoughSelectedNotes) then
-        if (not hideNoteReq) then imgui.Text(infoText) end
-        return
-    end
-    button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
-    if (hideNoteReq) then
-        toolTip("Press 'Shift+T' on your keyboard to do the same thing as this button")
-        if (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift)) then return end
-        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
-    else
-        if (utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)) then return end
-        toolTip("Press 'T' on your keyboard to do the same thing as this button")
-        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
-    end
-end
-
--- Initializes and returns a default svGraphStats object [Table]
-function createSVGraphStats()
-    local svGraphStats = {
-        minScale = 0,
-        maxScale = 0,
-        distMinScale = 0,
-        distMaxScale = 0
-    }
-    return svGraphStats
-end
-
--- Initializes and returns a default svStats object [Table]
-function createSVStats()
-    local svStats = {
-        minSV = 0,
-        maxSV = 0,
-        avgSV = 0
-    }
-    return svStats
 end
 
 ------------------------------------------------------------------------------------- Acting on SVs

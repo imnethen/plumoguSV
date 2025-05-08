@@ -2,7 +2,7 @@
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function editSVTab(globalVars)
-    chooseCurrentScrollGroup(globalVars)
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
     chooseEditTool(globalVars)
     changeEditToolIfKeysPressed(globalVars)
     addSeparator()
