@@ -1,62 +1,21 @@
----@class BookmarkInfo
----@field StartTime integer
----@field Note string
 
----@class HitObjectInfo
----@field StartTime number
----@field Lane 1|2|3|4|5|6|7
----@field EndTime number
----@field HitSound any
----@field EditorLayer integer
-
----@meta TimingPointInfo
-
----@class TimingPointInfo
----@field StartTime number
----@field Bpm number
----@field Signature number
----@field Hidden boolean
-
-
----@meta SliderVelocityInfo
-
----@class SliderVelocityInfo
----@field StartTime number
----@field Multiplier number
-
-
--- plumoguSV v1.1.2
--- by kloi34, plummyyummy
-
--- Many SV tool ideas were stolen from other plugins, so here is credit to those plugins and the
--- creators behind them:
----------------------------------------------------------------------------------------------------
---    Plugin        Creator                Link
----------------------------------------------------------------------------------------------------
---    iceSV         IceDynamix             @ https://github.com/IceDynamix/iceSV
---    KeepStill     Illuminati-CRAZ        @ https://github.com/Illuminati-CRAZ/KeepStill
---    Vibrato       Illuminati-CRAZ        @ https://github.com/Illuminati-CRAZ/Vibrato
---    Displacer     Illuminati-CRAZ        @ https://github.com/Illuminati-CRAZ/Displacer
-
--- Also, some cursor effects were inspired (stolen) from https://github.com/tholman/cursor-effects
-
----------------------------------------------------------------------------------------------------
--- Plugin Info ------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------
-
--- This is a plugin for Quaver, the ultimate community-driven and open-source competitive rhythm
--- game. The plugin provides various tools to place, edit, and delete SVs (Scroll Velocities)
--- quickly and efficiently when making maps.
-
--- If you have any feature suggestions or issues with the plugin, please open an issue at
--- https://github.com/ESV-Sweetplum/plumoguSV/issues
-
----------------------------------------------------------------------------------------------------
--- Global Constants -------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------------------ GUI
-
+function awake()
+    local tempGlobalVars = read()
+    state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
+    state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
+    state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
+    state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
+    state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
+    state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
+    state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
+    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))
+    state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
+    state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
+    state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
+    state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
+    state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
+    state.SetValue("global_advancedMode", tempGlobalVars.advancedMode == "true" and true or false)
+end
 DEFAULT_WIDGET_HEIGHT = 26            -- value determining the height of GUI widgets
 DEFAULT_WIDGET_WIDTH = 160            -- value determining the width of GUI widgets
 PADDING_WIDTH = 8                     -- value determining window and frame padding
@@ -78,8 +37,6 @@ MAX_CURSOR_TRAIL_POINTS = 100       -- maximum number of points for cursor trail
 MAX_SV_POINTS = 1000                -- maximum number of SV points allowed
 MAX_ANIMATION_FRAMES = 999          -- maximum number of animation frames allowed
 MAX_IMPORT_CHARACTER_LIMIT = 999999 -- maximum number of characters allowed for import text
-
--------------------------------------------------------------------------------------- Menu related
 
 CHINCHILLA_TYPES = { -- types of chinchilla SVs
     "Exponential",
@@ -265,6 +222,68 @@ SELECT_TOOLS = {
     "Bookmark",
 }
 
+BETA_IGNORE_NOTES_OUTSIDE_TG = false
+function draw()
+    local globalVars = {
+        stepSize = state.GetValue("global_stepSize") or 5,
+        keyboardMode = false,
+        dontReplaceSV = false,
+        upscroll = state.GetValue("global_upscroll") or false,
+        colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
+        styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
+        effectFPS = state.GetValue("global_effectFPS") or 90,
+        cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
+        cursorTrailShapeIndex = 1,
+        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
+        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
+        snakeSpringConstant = 1,
+        cursorTrailGhost = false,
+        rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
+        drawCapybara = state.GetValue("global_drawCapybara") or false,
+        drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
+        drawCapybara312 = state.GetValue("global_drawCapybara312") or false,
+        selectTypeIndex = 1,
+        placeTypeIndex = 1,
+        editToolIndex = 1,
+        showExportImportMenu = false,
+        importData = "",
+        exportCustomSVData = "",
+        exportData = "",
+        debugText = "debug",
+        scrollGroupIndex = 1,
+        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
+        advancedMode = state.GetValue("global_advancedMode") or false
+    }
+
+    getVariables("globalVars", globalVars)
+
+    drawCapybara(globalVars)
+    drawCapybara2(globalVars)
+    drawCapybara312(globalVars)
+    drawCursorTrail(globalVars)
+    setPluginAppearance(globalVars)
+    startNextWindowNotCollapsed("plumoguSVAutoOpen")
+    focusWindowIfHotkeysPressed()
+    centerWindowIfHotkeysPressed()
+
+    imgui.Begin("plumoguSV", imgui_window_flags.AlwaysAutoResize)
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
+    if globalVars.keyboardMode then
+        imgui.BeginTabBar("Quick tabs")
+        createQuickTabs(globalVars)
+        imgui.EndTabBar()
+    else
+        imgui.BeginTabBar("SV tabs")
+        for i = 1, #TAB_MENUS do
+            createMenuTab(globalVars, TAB_MENUS[i])
+        end
+        imgui.EndTabBar()
+    end
+    state.IsWindowHovered = imgui.IsWindowHovered()
+    imgui.End()
+
+    saveVariables("globalVars", globalVars)
+end
 ---------------------------------------------------------------------------------------------------
 -- Plugin Appearance, Styles and Colors -----------------------------------------------------------
 ---------------------------------------------------------------------------------------------------
@@ -2030,93 +2049,6 @@ function changeEditToolIfKeysPressed(globalVars)
     if xPressed then globalVars.editToolIndex = globalVars.editToolIndex + 1 end
     if zPressed then globalVars.editToolIndex = globalVars.editToolIndex - 1 end
     globalVars.editToolIndex = wrapToInterval(globalVars.editToolIndex, 1, #EDIT_SV_TOOLS)
-end
-
----------------------------------------------------------------------------------------------------
--- Plugin Menus (+ other higher level menu-related functions) -------------------------------------
----------------------------------------------------------------------------------------------------
-
-local BETA_IGNORE_NOTES_OUTSIDE_TG = false
-
-function awake()
-    local tempGlobalVars = read()
-    state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
-    state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
-    state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
-    state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
-    state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
-    state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
-    state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
-    state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))
-    state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
-    state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
-    state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
-    state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
-    state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
-    state.SetValue("global_advancedMode", tempGlobalVars.advancedMode == "true" and true or false)
-end
-
--- Creates the plugin window
-function draw()
-    local globalVars = {
-        stepSize = state.GetValue("global_stepSize") or 5,
-        keyboardMode = false,
-        dontReplaceSV = false,
-        upscroll = state.GetValue("global_upscroll") or false,
-        colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
-        styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
-        effectFPS = state.GetValue("global_effectFPS") or 90,
-        cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
-        cursorTrailShapeIndex = 1,
-        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
-        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
-        snakeSpringConstant = 1,
-        cursorTrailGhost = false,
-        rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
-        drawCapybara = state.GetValue("global_drawCapybara") or false,
-        drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
-        drawCapybara312 = state.GetValue("global_drawCapybara312") or false,
-        selectTypeIndex = 1,
-        placeTypeIndex = 1,
-        editToolIndex = 1,
-        showExportImportMenu = false,
-        importData = "",
-        exportCustomSVData = "",
-        exportData = "",
-        debugText = "debug",
-        scrollGroupIndex = 1,
-        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
-        advancedMode = state.GetValue("global_advancedMode") or false
-    }
-
-    getVariables("globalVars", globalVars)
-
-    drawCapybara(globalVars)
-    drawCapybara2(globalVars)
-    drawCapybara312(globalVars)
-    drawCursorTrail(globalVars)
-    setPluginAppearance(globalVars)
-    startNextWindowNotCollapsed("plumoguSVAutoOpen")
-    focusWindowIfHotkeysPressed()
-    centerWindowIfHotkeysPressed()
-
-    imgui.Begin("plumoguSV", imgui_window_flags.AlwaysAutoResize)
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-    if globalVars.keyboardMode then
-        imgui.BeginTabBar("Quick tabs")
-        createQuickTabs(globalVars)
-        imgui.EndTabBar()
-    else
-        imgui.BeginTabBar("SV tabs")
-        for i = 1, #TAB_MENUS do
-            createMenuTab(globalVars, TAB_MENUS[i])
-        end
-        imgui.EndTabBar()
-    end
-    state.IsWindowHovered = imgui.IsWindowHovered()
-    imgui.End()
-
-    saveVariables("globalVars", globalVars)
 end
 
 ----------------------------------------------------------------------------------------- Tab stuff
@@ -9301,4 +9233,4 @@ function ssfVibrato(lowerStart, lowerEnd, higherStart, higherEnd, startTime, end
     end
 
     utils.PlaceScrollSpeedFactorBatch(ssfs)
-end
+end
