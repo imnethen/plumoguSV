@@ -26,3 +26,12 @@ function randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
 
     return settingsChanged
 end
+
+-- Creates a new set of random SV multipliers for the random menu's SVs
+-- Parameters
+--    settingVars : list of variables used for the random SV menu [Table]
+function generateRandomSetMenuSVs(settingVars)
+    local randomType = RANDOM_TYPES[settingVars.randomTypeIndex]
+    settingVars.svMultipliers = generateRandomSet(settingVars.svPoints + 1, randomType,
+        settingVars.randomScale)
+end

@@ -1324,3 +1324,50 @@ function chooseHand(settingVars)
     local label = "Add teleport before note"
     _, settingVars.teleportBeforeHand = imgui.Checkbox(label, settingVars.teleportBeforeHand)
 end
+
+
+function chooseDistanceMode(menuVars)
+    local oldMode = menuVars.distanceMode
+    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
+    return oldMode ~= menuVars.distanceMode
+end
+
+-- Lets you choose plugin behavior settings
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function choosePluginBehaviorSettings(globalVars)
+    if not imgui.CollapsingHeader("Plugin Behavior Settings") then return end
+    addPadding()
+    chooseKeyboardMode(globalVars)
+    addSeparator()
+    chooseUpscroll(globalVars)
+    addSeparator()
+    chooseDontReplaceSV(globalVars)
+    chooseBetaIgnore(globalVars)
+    chooseStepSize(globalVars)
+    addPadding()
+end
+
+
+-- Lets you choose global plugin appearance settings
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function choosePluginAppearance(globalVars)
+    if not imgui.CollapsingHeader("Plugin Appearance Settings") then return end
+    addPadding()
+    chooseStyleTheme(globalVars)
+    chooseColorTheme(globalVars)
+    addSeparator()
+    chooseCursorTrail(globalVars)
+    chooseCursorTrailShape(globalVars)
+    chooseEffectFPS(globalVars)
+    chooseCursorTrailPoints(globalVars)
+    chooseCursorShapeSize(globalVars)
+    chooseSnakeSpringConstant(globalVars)
+    chooseCursorTrailGhost(globalVars)
+    addSeparator()
+    chooseDrawCapybara(globalVars)
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    chooseDrawCapybara2(globalVars)
+    chooseDrawCapybara312(globalVars)
+end

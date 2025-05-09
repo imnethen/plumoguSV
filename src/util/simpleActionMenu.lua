@@ -24,3 +24,26 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
     end
 end
+
+-- Executes a function if a key is pressed
+-- Parameters
+--    key        : key to be pressed [keys.~, from Quaver's MonoGame.Framework.Input.Keys enum]
+--    func       : function to execute once key is pressed [Function]
+--    globalVars : list of variables used globally across all menus [Table]
+--    menuVars   : list of variables used for the current menu [Table]
+function executeFunctionIfKeyPressed(key, func, globalVars, menuVars)
+    if not utils.IsKeyPressed(key) then return end
+    if globalVars and menuVars then
+        func(globalVars, menuVars)
+        return
+    end
+    if globalVars then
+        func(globalVars)
+        return
+    end
+    if menuVars then
+        func(menuVars)
+        return
+    end
+    func()
+end

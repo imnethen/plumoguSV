@@ -16,10 +16,10 @@ export default async function transpiler() {
 
     const files = getFilesRecursively("./src");
 
-    const ignoredFiles = ["src\\classes.lua", "src\\intellisense.lua"];
+    const ignoredFiles = ["classes.lua", "intellisense.lua"];
 
     files.forEach((file) => {
-        if (ignoredFiles.includes(file)) return;
+        if (ignoredFiles.some((f) => file.includes(f))) return;
         const fileData = getFile(file)
             .split("\n")
             .filter((str) => str); // Filter out empty lines
