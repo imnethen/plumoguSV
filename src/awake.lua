@@ -1,5 +1,6 @@
 function awake()
     local tempGlobalVars = read()
+    if (not tempGlobalVars) then tempGlobalVars = {} end
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))

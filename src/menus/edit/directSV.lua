@@ -23,9 +23,12 @@ function directSVMenu()
     getVariables("directSVMenu", menuVars)
     local svs = state.GetValue("directSVList") or {}
     if (#svs == 0) then
-        imgui.TextWrapped("Select two notes to view SVs between those notes.")
+        menuVars.selectableIndex = 1
+        imgui.TextWrapped("Select two notes to view SVs.")
         return
     end
+
+    if (menuVars.selectableIndex > #svs) then menuVars.selectableIndex = #svs end
 
     local oldStartTime = svs[menuVars.selectableIndex].StartTime
     local oldMultiplier = svs[menuVars.selectableIndex].Multiplier

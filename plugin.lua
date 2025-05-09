@@ -2157,6 +2157,7 @@ function selectBySnap(menuVars)
 end
 function awake()
     local tempGlobalVars = read()
+    if (not tempGlobalVars) then tempGlobalVars = {} end
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
@@ -2398,7 +2399,7 @@ function draw()
     saveVariables("globalVars", globalVars)
 
     local clockTime = 0.2
-    if (os.clock() - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
+    if ((os.clock() or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
         state.SetValue("lastRecordedTime", os.clock())
         updateDirectEdit()
     end
@@ -3048,9 +3049,12 @@ function directSVMenu()
     getVariables("directSVMenu", menuVars)
     local svs = state.GetValue("directSVList") or {}
     if (#svs == 0) then
-        imgui.TextWrapped("Select two notes to view SVs between those notes.")
+        menuVars.selectableIndex = 1
+        imgui.TextWrapped("Select two notes to view SVs.")
         return
     end
+
+    if (menuVars.selectableIndex > #svs) then menuVars.selectableIndex = #svs end
 
     local oldStartTime = svs[menuVars.selectableIndex].StartTime
     local oldMultiplier = svs[menuVars.selectableIndex].Multiplier
@@ -9270,4 +9274,4 @@ function getStillPlaceMenuVars()
     }
     getVariables("placeStillMenu", menuVars)
     return menuVars
-end
+end
