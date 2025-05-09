@@ -60,8 +60,8 @@ function draw()
     saveVariables("globalVars", globalVars)
 
     local clockTime = 0.2
-    if (os.clock() - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
-        state.SetValue("lastRecordedTime", os.clock())
+    if ((os.clock() or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
+        state.SetValue("lastRecordedTime", os.clock() or 0)
         updateDirectEdit()
     end
 end
