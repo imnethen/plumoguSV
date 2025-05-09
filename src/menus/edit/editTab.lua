@@ -1,7 +1,7 @@
 EDIT_SV_TOOLS = { -- tools for editing SVs
     "Add Teleport",
     "Align Timing Lines",
-    "bug fixing from <1.1.1",
+    "bug fixing from <1.1.2",
     "Copy & Paste",
     "Direct SV",
     "Displace Note",
@@ -29,7 +29,7 @@ function editSVTab(globalVars)
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
-    if toolName == "bug fixing from <1.1.1" then tempBugFixMenu() end
+    if toolName == "bug fixing from <1.1.2" then tempBugFixMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
     if toolName == "Direct SV" then directSVMenu() end
     if toolName == "Displace Note" then displaceNoteMenu() end
