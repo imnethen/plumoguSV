@@ -47,10 +47,10 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * [mulch](https://github.com/Emik03/mulch) by Emik03
 
 ## TO-DO
-* Automate TG effects
-* Migrate affine vibrato
-* Add SSF vibrato
-* Improve dev exp
-* Lint code
-* Move to vector system
-* ~~Improved SV/SSF window~~
+* Automate TG effects (v2)
+* Migrate affine vibrato (v1.2)
+* Add SSF vibrato (v1.2)
+* ~~Improve dev exp~~ (v1.1.2)
+* ~~Lint code~~ (v1.1.2)
+* Move to vector system (v1.2)
+* ~~Improved SV/SSF window~~ (v1.1.2)
