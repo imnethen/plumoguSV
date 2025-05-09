@@ -3024,10 +3024,6 @@ function copyNPasteMenu(globalVars)
     simpleActionMenu("Paste items at selected notes", 1, pasteItems, globalVars, menuVars)
 end
 function updateDirectEdit()
-    local menuVars = {
-        svList = {}
-    }
-
     local offsets = uniqueSelectedNoteOffsets()
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
@@ -3052,7 +3048,7 @@ function directSVMenu()
     getVariables("directSVMenu", menuVars)
     local svs = state.GetValue("directSVList") or {}
     if (#svs == 0) then
-        imgui.TextWrapped("peanits")
+        imgui.TextWrapped("Select two notes to view SVs between those notes.")
         return
     end
 
@@ -3069,7 +3065,9 @@ function directSVMenu()
     else
         if (not primeStartTime) then goto continue1 end
         primeStartTime = false
-        -- Change SV Start Time
+        local newSV = utils.CreateScrollVelocity(state.GetValue("savedStartTime") or 0, menuVars.multiplier)
+        actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
+            utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
     end
 
     ::continue1::
@@ -3079,14 +3077,18 @@ function directSVMenu()
     else
         if (not primeMultiplier) then goto continue2 end
         primeMultiplier = false
-        -- Change SV Multiplier
+        local newSV = utils.CreateScrollVelocity(menuVars.startTime, state.GetValue("savedMultiplier") or 1)
+        actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
+            utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
     end
-
-    state.SetValue("primeStartTime", primeStartTime)
-    state.SetValue("primeMultiplier", primeMultiplier)
 
     ::continue2::
 
+    state.SetValue("primeStartTime", primeStartTime)
+    state.SetValue("primeMultiplier", primeMultiplier)
+    state.SetValue("savedStartTime", menuVars.startTime)
+    state.SetValue("savedMultiplier", menuVars.multiplier)
+    
     imgui.Separator()
     imgui.Text("Start Time")
     imgui.SameLine()
@@ -3110,7 +3112,6 @@ function directSVMenu()
     end
 
     imgui.EndTable()
-
 
     saveVariables("directSVMenu", menuVars)
 end
