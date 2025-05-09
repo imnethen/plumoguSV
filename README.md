@@ -84,5 +84,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * Improve dev exp
 * Lint code
 * Move to vector system
-* Improved SV/SSF window
-* Rename all placing to creating
+* ~~Improved SV/SSF window~~
