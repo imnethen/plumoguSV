@@ -4586,7 +4586,6 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
     if currentSVType == "Linear" then
         return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Exponential" then
-        -- TODO: currently expo is the only one that needs globalVars so its parameters are different from the others thats  bad maybe
         return exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Bezier" then
         return bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
@@ -9262,4 +9261,4 @@ function getStillPlaceMenuVars()
     }
     getVariables("placeStillMenu", menuVars)
     return menuVars
-end
+end

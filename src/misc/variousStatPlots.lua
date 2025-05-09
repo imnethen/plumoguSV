@@ -105,3 +105,23 @@ function startNextWindowNotCollapsed(windowName)
     imgui.SetNextWindowCollapsed(false)
     state.SetValue(windowName, true)
 end
+
+-- Makes the SV info windows for stutter SV
+-- Parameters
+--    settingVars : list of variables used for the current menu [Table]
+function displayStutterSVWindows(settingVars)
+    if settingVars.linearlyChange then
+        startNextWindowNotCollapsed("svInfo2AutoOpen")
+        makeSVInfoWindow("SV Info (Starting first SV)", settingVars.svGraphStats, nil,
+            settingVars.svDistances, settingVars.svMultipliers,
+            settingVars.stutterDuration, false)
+        startNextWindowNotCollapsed("svInfo3AutoOpen")
+        makeSVInfoWindow("SV Info (Ending first SV)", settingVars.svGraph2Stats, nil,
+            settingVars.svDistances2, settingVars.svMultipliers2,
+            settingVars.stutterDuration, false)
+    else
+        startNextWindowNotCollapsed("svInfo1AutoOpen")
+        makeSVInfoWindow("SV Info", settingVars.svGraphStats, nil, settingVars.svDistances,
+            settingVars.svMultipliers, settingVars.stutterDuration, false)
+    end
+end
