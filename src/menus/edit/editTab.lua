@@ -1,3 +1,23 @@
+EDIT_SV_TOOLS = { -- tools for editing SVs
+    "Add Teleport",
+    "Align Timing Lines",
+    "bug fixing from <1.1.1",
+    "Copy & Paste",
+    "Direct SV",
+    "Displace Note",
+    "Displace View",
+    "Dynamic Scale",
+    "Fix LN Ends",
+    "Flicker",
+    "Measure",
+    "Merge",
+    "Reverse Scroll",
+    "Scale (Displace)",
+    "Scale (Multiply)",
+    "Swap Notes",
+    "Vertical Shift"
+}
+
 -- Creates the "Edit SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -11,6 +31,7 @@ function editSVTab(globalVars)
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
     if toolName == "bug fixing from <1.1.1" then tempBugFixMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
+    if toolName == "Direct SV" then directSVMenu() end
     if toolName == "Displace Note" then displaceNoteMenu() end
     if toolName == "Displace View" then displaceViewMenu() end
     if toolName == "Dynamic Scale" then dynamicScaleMenu(globalVars) end

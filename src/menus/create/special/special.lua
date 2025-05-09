@@ -1,3 +1,12 @@
+SPECIAL_SVS = { -- types of special SVs
+    "Stutter",
+    "Teleport Stutter",
+    "Splitscroll (Basic)",
+    "Splitscroll (Advanced)",
+    "Splitscroll (Adv v2)",
+    "Penis",
+    "Frames Setup"
+}
 
 -- Creates the menu for placing special SVs
 -- Parameters

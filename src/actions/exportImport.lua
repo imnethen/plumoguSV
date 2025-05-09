@@ -9,7 +9,7 @@ function exportPlaceSVButton(globalVars, menuVars, settingVars)
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
 
     local exportList = {}
-    local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     local stillType = placeType == "Still"
     local regularType = placeType == "Standard" or stillType
     local specialType = placeType == "Special"

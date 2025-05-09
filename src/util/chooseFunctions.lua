@@ -866,8 +866,8 @@ function choosePlaceSVType(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
     imgui.SameLine(0, SAMELINE_SPACING)
-    globalVars.placeTypeIndex = combo("##placeType", PLACE_TYPES, globalVars.placeTypeIndex)
-    local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
+    globalVars.placeTypeIndex = combo("##placeType", CREATE_TYPES, globalVars.placeTypeIndex)
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Still" then toolTip("Still keeps notes normal distance/spacing apart") end
 end
 

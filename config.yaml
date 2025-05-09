@@ -15,9 +15,9 @@ rgbPeriod: 5
 drawCapybara: true
 drawCapybara2: false
 drawCapybara312: false
-selectTypeIndex: 1
+selectTypeIndex: 5
 placeTypeIndex: 1
-editToolIndex: 1
+editToolIndex: 5
 showExportImportMenu: false
 importData: ''
 exportCustomSVData: ''

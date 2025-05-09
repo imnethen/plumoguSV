@@ -58,4 +58,10 @@ function draw()
     imgui.End()
 
     saveVariables("globalVars", globalVars)
+
+    local clockTime = 0.2
+    if (os.clock() - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
+        state.SetValue("lastRecordedTime", os.clock())
+        updateDirectEdit()
+    end
 end

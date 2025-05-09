@@ -6,7 +6,7 @@
 --    settingVars : list of setting variables for the current sv type [Table]
 function exportImportSettingsMenu(globalVars, menuVars, settingVars)
     local multilineWidgetSize = { ACTION_BUTTON_SIZE[1], 50 }
-    local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     local isSpecialPlaceType = placeType == "Special"
     local svType
     if isSpecialPlaceType then

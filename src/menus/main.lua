@@ -1,3 +1,11 @@
+TAB_MENUS = { -- names of the tab menus
+    "Info",
+    "Select",
+    "Create",
+    "Edit",
+    "Delete"
+}
+
 -- Creates a menu tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

@@ -1568,7 +1568,7 @@ function exportPlaceSVButton(globalVars, menuVars, settingVars)
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
 
     local exportList = {}
-    local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     local stillType = placeType == "Still"
     local regularType = placeType == "Standard" or stillType
     local specialType = placeType == "Special"
@@ -2171,6 +2171,8 @@ function awake()
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
     state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
     state.SetValue("global_advancedMode", tempGlobalVars.advancedMode == "true" and true or false)
+
+    -- listen(function (event, history_type) print(event, history_type) end)
 end
 DEFAULT_WIDGET_HEIGHT = 26            -- value determining the height of GUI widgets
 DEFAULT_WIDGET_WIDTH = 160            -- value determining the width of GUI widgets
@@ -2239,24 +2241,6 @@ DISPLACE_SCALE_SPOTS = { -- places to scale SV sections by displacing
     "Start",
     "End"
 }
-EDIT_SV_TOOLS = { -- tools for editing SVs
-    "Add Teleport",
-    "Align Timing Lines",
-    "bug fixing from <1.1.1",
-    "Copy & Paste",
-    "Displace Note",
-    "Displace View",
-    "Dynamic Scale",
-    "Fix LN Ends",
-    "Flicker",
-    "Measure",
-    "Merge",
-    "Reverse Scroll",
-    "Scale (Displace)",
-    "Scale (Multiply)",
-    "Swap Notes",
-    "Vertical Shift"
-}
 EMOTICONS = { -- emoticons to visually clutter the plugin and confuse users
     "( - _ - )",
     "( e . e )",
@@ -2291,11 +2275,7 @@ NOTE_SKIN_TYPES = { -- types of note skins
     "Circle"
     --,    "Arrow"
 }
-PLACE_TYPES = { -- general categories of SVs to place
-    "Standard",
-    "Special",
-    "Still"
-}
+
 RANDOM_TYPES = { -- distribution types of random values
     "Normal",
     "Uniform"
@@ -2305,28 +2285,8 @@ SCALE_TYPES = { -- ways to scale SVs
     "Absolute Distance",
     "Relative Ratio"
 }
-SPECIAL_SVS = { -- types of special SVs
-    "Stutter",
-    "Teleport Stutter",
-    "Splitscroll (Basic)",
-    "Splitscroll (Advanced)",
-    "Splitscroll (Adv v2)",
-    "Penis",
-    "Frames Setup"
-}
 
-STANDARD_SVS = { -- types of standard SVs
-    "Linear",
-    "Exponential",
-    "Bezier",
-    "Hermite",
-    "Sinusoidal",
-    "Circular",
-    "Random",
-    "Custom",
-    "Chinchilla",
-    "Combo"
-}
+
 STANDARD_SVS_NO_COMBO = { -- types of standard SVs (excluding combo)
     "Linear",
     "Exponential",
@@ -2359,23 +2319,9 @@ SV_BEHAVIORS = { -- behaviors of SVs
     "Slow down",
     "Speed up"
 }
-TAB_MENUS = { -- names of the tab menus
-    "Info",
-    "Select",
-    "Create",
-    "Edit",
-    "Delete"
-}
 TRAIL_SHAPES = { -- shapes for cursor trails
     "Circles",
     "Triangles"
-}
-SELECT_TOOLS = {
-    "Alternating",
-    "By Snap",
-    "Chord Size",
-    "Note Type",
-    "Bookmark",
 }
 
 BETA_IGNORE_NOTES_OUTSIDE_TG = false
@@ -2450,6 +2396,12 @@ function draw()
     imgui.End()
 
     saveVariables("globalVars", globalVars)
+
+    local clockTime = 0.2
+    if (os.clock() - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
+        state.SetValue("lastRecordedTime", os.clock())
+        updateDirectEdit()
+    end
 end
 -- Creates a copy-pastable text box
 -- Parameters
@@ -2602,6 +2554,23 @@ function createQuickTabs(globalVars)
 end
 
 --------------------------------------------------------------------------------------------- Menus
+CREATE_TYPES = { -- general categories of SVs to place
+    "Standard",
+    "Special",
+    "Still"
+}
+
+-- Creates the "Place SVs" tab
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function createSVTab(globalVars)
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
+    choosePlaceSVType(globalVars)
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
+    if placeType == "Standard" then placeStandardSVMenu(globalVars) end
+    if placeType == "Special" then placeSpecialSVMenu(globalVars) end
+    if placeType == "Still" then placeStillSVMenu(globalVars) end
+end
 
 -- Creates the menu for advanced splitscroll SV
 -- Parameters
@@ -2735,17 +2704,6 @@ function animationFramesSetupMenu(globalVars, settingVars)
         simpleActionMenu(label, 1, displaceNotesForAnimationFrames, nil, settingVars)
     end
 end
--- Creates the "Place SVs" tab
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function createSVTab(globalVars)
-    if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
-    choosePlaceSVType(globalVars)
-    local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
-    if placeType == "Standard" then placeStandardSVMenu(globalVars) end
-    if placeType == "Special" then placeSpecialSVMenu(globalVars) end
-    if placeType == "Still" then placeStillSVMenu(globalVars) end
-end
 
 function penisMenu(settingVars)
     _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
@@ -2758,6 +2716,15 @@ function penisMenu(settingVars)
 
     simpleActionMenu("Place SVs", 1, placePenisSV, nil, settingVars)
 end
+SPECIAL_SVS = { -- types of special SVs
+    "Stutter",
+    "Teleport Stutter",
+    "Splitscroll (Basic)",
+    "Splitscroll (Advanced)",
+    "Splitscroll (Adv v2)",
+    "Penis",
+    "Frames Setup"
+}
 
 -- Creates the menu for placing special SVs
 -- Parameters
@@ -2812,6 +2779,60 @@ function splitScrollBasicMenu(settingVars)
     local label = "Place Splitscroll SVs at selected note(s)"
     simpleActionMenu(label, 1, placeSplitScrollSVs, nil, settingVars)
 end
+
+-- Creates the menu for stutter SV
+-- Parameters
+--    settingVars : list of variables used for the current menu [Table]
+function stutterMenu(settingVars)
+    local settingsChanged = #settingVars.svMultipliers == 0
+    settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
+    settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
+    settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
+    settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+
+    addSeparator()
+    settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+    settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
+    if settingsChanged then updateStutterMenuSVs(settingVars) end
+    displayStutterSVWindows(settingVars)
+
+    addSeparator()
+    simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, nil, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, nil, settingVars, true)
+end
+-- Creates the menu for teleport stutter SV
+-- Parameters
+--    settingVars : list of variables used for the current menu [Table]
+function teleportStutterMenu(settingVars)
+    if settingVars.useDistance then
+        chooseDistance(settingVars)
+        helpMarker("Start SV teleport distance")
+    else
+        chooseStartSVPercent(settingVars)
+    end
+    chooseMainSV(settingVars)
+    chooseAverageSV(settingVars)
+    chooseFinalSV(settingVars, false)
+    chooseUseDistance(settingVars)
+    chooseLinearlyChange(settingVars)
+
+    addSeparator()
+    simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, nil, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, nil, settingVars, true)
+end
+STANDARD_SVS = { -- types of standard SVs
+    "Linear",
+    "Exponential",
+    "Bezier",
+    "Hermite",
+    "Sinusoidal",
+    "Circular",
+    "Random",
+    "Custom",
+    "Chinchilla",
+    "Combo"
+}
 
 -- Creates the menu for placing standard SVs
 -- Parameters
@@ -2899,61 +2920,6 @@ function placeStillSVMenu(globalVars)
     saveVariables(labelText, settingVars)
     saveVariables("placeStillMenu", menuVars)
 end
-
--- Creates the menu for stutter SV
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function stutterMenu(settingVars)
-    local settingsChanged = #settingVars.svMultipliers == 0
-    settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
-    settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
-    settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
-    settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
-
-    addSeparator()
-    settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
-    if settingsChanged then updateStutterMenuSVs(settingVars) end
-    displayStutterSVWindows(settingVars)
-
-    addSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, nil, settingVars)
-    simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, nil, settingVars, true)
-end
--- Creates the menu for teleport stutter SV
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function teleportStutterMenu(settingVars)
-    if settingVars.useDistance then
-        chooseDistance(settingVars)
-        helpMarker("Start SV teleport distance")
-    else
-        chooseStartSVPercent(settingVars)
-    end
-    chooseMainSV(settingVars)
-    chooseAverageSV(settingVars)
-    chooseFinalSV(settingVars, false)
-    chooseUseDistance(settingVars)
-    chooseLinearlyChange(settingVars)
-
-    addSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, nil, settingVars)
-    simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, nil, settingVars, true)
-end
-function selectTab(globalVars)
-    chooseSelectTool(globalVars)
-    changeSelectToolIfKeysPressed(globalVars)
-    addSeparator()
-    local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
-    if toolName == "Alternating" then selectAlternatingMenu() end
-    if toolName == "By Snap" then selectBySnapMenu() end
-    if toolName == "Bookmark" then selectBookmarkMenu() end
-    if toolName == "Chord Size" then selectChordSizeMenu() end
-    if toolName == "Note Type" then selectNoteTypeMenu() end
-end
-
-
 -- Creates the "Delete SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -3057,6 +3023,97 @@ function copyNPasteMenu(globalVars)
     addSeparator()
     simpleActionMenu("Paste items at selected notes", 1, pasteItems, globalVars, menuVars)
 end
+function updateDirectEdit()
+    local menuVars = {
+        svList = {}
+    }
+
+    local offsets = uniqueSelectedNoteOffsets()
+    local firstOffset = offsets[1]
+    local lastOffset = offsets[#offsets]
+
+    if (#offsets < 2) then
+        state.SetValue("directSVList", {})
+        return
+    end
+
+    local svs = getSVsBetweenOffsets(firstOffset, lastOffset)
+
+    state.SetValue("directSVList", svs)
+end
+
+function directSVMenu()
+    local menuVars = {
+        selectableIndex = 1,
+        startTime = 0,
+        multiplier = 0
+    }
+
+    getVariables("directSVMenu", menuVars)
+    local svs = state.GetValue("directSVList") or {}
+    if (#svs == 0) then
+        imgui.TextWrapped("peanits")
+        return
+    end
+
+    local oldStartTime = svs[menuVars.selectableIndex].StartTime
+    local oldMultiplier = svs[menuVars.selectableIndex].Multiplier
+    local primeStartTime = state.GetValue("primeStartTime") or false
+    local primeMultiplier = state.GetValue("primeMultiplier") or false
+
+    _, menuVars.startTime = imgui.InputFloat("Start Time", oldStartTime)
+    _, menuVars.multiplier = imgui.InputFloat("Multiplier", oldMultiplier)
+
+    if (oldStartTime ~= menuVars.startTime) then
+        primeStartTime = true
+    else
+        if (not primeStartTime) then goto continue1 end
+        primeStartTime = false
+        -- Change SV Start Time
+    end
+
+    ::continue1::
+
+    if (oldMultiplier ~= menuVars.multiplier) then
+        primeMultiplier = true
+    else
+        if (not primeMultiplier) then goto continue2 end
+        primeMultiplier = false
+        -- Change SV Multiplier
+    end
+
+    state.SetValue("primeStartTime", primeStartTime)
+    state.SetValue("primeMultiplier", primeMultiplier)
+
+    ::continue2::
+
+    imgui.Separator()
+    imgui.Text("Start Time")
+    imgui.SameLine()
+    imgui.SetCursorPosX(150)
+    imgui.Text("Multiplier")
+    imgui.Separator()
+
+    imgui.BeginTable("Test", 2)
+    for idx, v in pairs(svs) do
+        imgui.PushID(idx)
+        imgui.TableNextRow()
+        imgui.TableSetColumnIndex(0)
+        imgui.Selectable(round(v.StartTime, 2), menuVars.selectableIndex == idx, imgui_selectable_flags.SpanAllColumns)
+        if (imgui.IsItemClicked()) then
+            menuVars.selectableIndex = idx
+        end
+        imgui.TableSetColumnIndex(1)
+        imgui.SetCursorPosX(150)
+        imgui.Text(round(v.Multiplier, 2));
+        imgui.PopID()
+    end
+
+    imgui.EndTable()
+
+
+    saveVariables("directSVMenu", menuVars)
+end
 
 -- Creates the displace note menu
 function displaceNoteMenu()
@@ -3148,6 +3205,26 @@ function dynamicScaleMenu(globalVars)
     addSeparator()
     simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, nil, menuVars)
 end
+EDIT_SV_TOOLS = { -- tools for editing SVs
+    "Add Teleport",
+    "Align Timing Lines",
+    "bug fixing from <1.1.1",
+    "Copy & Paste",
+    "Direct SV",
+    "Displace Note",
+    "Displace View",
+    "Dynamic Scale",
+    "Fix LN Ends",
+    "Flicker",
+    "Measure",
+    "Merge",
+    "Reverse Scroll",
+    "Scale (Displace)",
+    "Scale (Multiply)",
+    "Swap Notes",
+    "Vertical Shift"
+}
+
 -- Creates the "Edit SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -3161,6 +3238,7 @@ function editSVTab(globalVars)
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
     if toolName == "bug fixing from <1.1.1" then tempBugFixMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
+    if toolName == "Direct SV" then directSVMenu() end
     if toolName == "Displace Note" then displaceNoteMenu() end
     if toolName == "Displace View" then displaceViewMenu() end
     if toolName == "Dynamic Scale" then dynamicScaleMenu(globalVars) end
@@ -3335,6 +3413,14 @@ function infoTab(globalVars)
     choosePluginAppearance(globalVars)
     chooseAdvancedMode(globalVars)
 end
+TAB_MENUS = { -- names of the tab menus
+    "Info",
+    "Select",
+    "Create",
+    "Edit",
+    "Delete"
+}
+
 -- Creates a menu tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -3505,7 +3591,25 @@ function selectNoteTypeMenu()
 
     saveVariables("selectNoteTypeMenu", menuVars)
 end
+SELECT_TOOLS = {
+    "Alternating",
+    "By Snap",
+    "Chord Size",
+    "Note Type",
+    "Bookmark",
+}
 
+function selectTab(globalVars)
+    chooseSelectTool(globalVars)
+    changeSelectToolIfKeysPressed(globalVars)
+    addSeparator()
+    local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
+    if toolName == "Alternating" then selectAlternatingMenu() end
+    if toolName == "By Snap" then selectBySnapMenu() end
+    if toolName == "Bookmark" then selectBookmarkMenu() end
+    if toolName == "Chord Size" then selectChordSizeMenu() end
+    if toolName == "Note Type" then selectNoteTypeMenu() end
+end
 
 -- Creates the select by snap menu
 function selectBySnapMenu()
@@ -3672,7 +3776,7 @@ end
 --    settingVars : list of setting variables for the current sv type [Table]
 function exportImportSettingsMenu(globalVars, menuVars, settingVars)
     local multilineWidgetSize = { ACTION_BUTTON_SIZE[1], 50 }
-    local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     local isSpecialPlaceType = placeType == "Special"
     local svType
     if isSpecialPlaceType then
@@ -3800,24 +3904,6 @@ function sinusoidalSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
 end
-function getVariables(listName, variables)
-    for key, _ in pairs(variables) do
-        if (state.GetValue(listName .. key) ~= nil) then
-            variables[key] = state.GetValue(listName .. key) -- Changed because default setting of true would always override
-        end
-    end
-end
-
-function saveVariables(listName, variables)
-    for key, value in pairs(variables) do
-        state.SetValue(listName .. key, value)
-    end
-end
-
----------------------------------------------------------------------------------------------------
--- Plugin Convenience Functions -------------------------------------------------------------------
----------------------------------------------------------------------------------------------------
-
 -- Makes the next plugin window not collapsed on startup
 -- Parameters
 --    windowName : key name for the next plugin window that opens [String]
@@ -5146,171 +5232,6 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
     end
 end
 
--- Returns the SV multiplier at a specified offset in the map [Int/Float]
--- Parameters
---    offset : millisecond time [Int/Float]
-function getHypotheticalSVMultiplierAt(svs, offset)
-    if (#svs == 1) then return svs[1].Multiplier end
-    local index = #svs
-    while (index >= 1) do
-        if (svs[index].StartTime > offset) then
-            index = index - 1
-        else
-            return svs[index].Multiplier
-        end
-    end
-    return 1
-end
-
-function getHypotheticalSVTimeAt(svs, offset)
-    if (#svs == 1) then return svs[1].StartTime end
-    local index = #svs
-    while (index >= 1) do
-        if (svs[index].StartTime > offset) then
-            index = index - 1
-        else
-            return svs[index].StartTime
-        end
-    end
-    return 1
-end
-
--- Returns the SV multiplier at a specified offset in the map [Int/Float]
--- Parameters
---    offset : millisecond time [Int/Float]
-function getSVMultiplierAt(offset)
-    local sv = getSVMultiplierAt(offset)
-    if sv then return sv.Multiplier end
-    return 1
-end
-
-function getNotesBetweenOffsets(startOffset, endOffset)
-    local notesBetweenOffsets = {}
-    for _, note in pairs(map.HitObjects) do
-        local noteIsInRange = note.StartTime >= startOffset and note.StartTime <= endOffset
-        if noteIsInRange then table.insert(notesBetweenOffsets, note) end
-    end
-    return table.sort(notesBetweenOffsets, sortAscendingStartTime)
-end
-
-function getLinesBetweenOffsets(startOffset, endOffset)
-    local linesBetweenoffsets = {}
-    for _, line in pairs(map.TimingPoints) do
-        local lineIsInRange = line.StartTime >= startOffset and line.StartTime < endOffset
-        if lineIsInRange then table.insert(linesBetweenoffsets, line) end
-    end
-    return table.sort(linesBetweenoffsets, sortAscendingStartTime)
-end
-
-function getSVsBetweenOffsets(startOffset, endOffset)
-    local svsBetweenOffsets = {}
-    for _, sv in pairs(map.ScrollVelocities) do
-        local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
-        if svIsInRange then table.insert(svsBetweenOffsets, sv) end
-    end
-    return table.sort(svsBetweenOffsets, sortAscendingStartTime)
-end
-
-function getBookmarksBetweenOffsets(startOffset, endOffset)
-    local bookmarksBetweenOffsets = {}
-    for _, bm in pairs(map.Bookmarks) do
-        local bmIsInRange = bm.StartTime >= startOffset and bm.StartTime < endOffset
-        if bmIsInRange then table.insert(bookmarksBetweenOffsets, bm) end
-    end
-    return table.sort(bookmarksBetweenOffsets, sortAscendingStartTime)
-end
-
-function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
-    local svsBetweenOffsets = {}
-    for _, sv in pairs(svs) do
-        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime < endOffset + 1
-        if svIsInRange then table.insert(svsBetweenOffsets, sv) end
-    end
-    return table.sort(svsBetweenOffsets, sortAscendingStartTime)
-end
-
-function getSSFsBetweenOffsets(startOffset, endOffset)
-    local ssfsBetweenOffsets = {}
-    local ssfs = map.ScrollSpeedFactors
-    if (ssfs == nil) then
-        ssfs = {}
-    else
-        for _, ssf in pairs(map.ScrollSpeedFactors) do
-            local ssfIsInRange = ssf.StartTime >= startOffset and ssf.StartTime < endOffset
-            if ssfIsInRange then table.insert(ssfsBetweenOffsets, ssf) end
-        end
-    end
-    return table.sort(ssfsBetweenOffsets, sortAscendingStartTime)
-end
-
--- Returns a usable displacement multiplier for a given offset [Int/Float]
---[[
--- Current implementation:
--- 64 until 2^18 = 262144 ms ~4.3 min, then —> 32
--- 32 until 2^19 = 524288 ms ~8.7 min, then —> 16
--- 16 until 2^20 = 1048576 ms ~17.4 min, then —> 8
--- 8 until 2^21 = 2097152 ms ~34.9 min, then —> 4
--- 4 until 2^22 = 4194304 ms ~69.9 min, then —> 2
--- 2 until 2^23 = 8388608 ms ~139.8 min, then —> 1
---]]
--- Parameters
---    offset: time in milliseconds [Int]
-function getUsableDisplacementMultiplier(offset)
-    local exponent = 23 - math.floor(math.log(math.abs(offset) + 1) / math.log(2))
-    if exponent > 6 then exponent = 6 end
-    return 2 ^ exponent
-end
-
--- Adds a new displacing SV to a list of SVs to place and adds that SV time to a hash list
--- Parameters
---    svsToAdd               : list of displacing SVs to add to [Table]
---    svTimeIsAdded          : hash list indicating whether an SV time exists already [Table]
---    svTime                 : time to add the displacing SV at [Int/Float]
---    displacement           : amount that the SV will displace [Int/Float]
---    displacementMultiplier : displacement multiplier value [Int/Float]
-function prepareDisplacingSV(svsToAdd, svTimeIsAdded, svTime, displacement, displacementMultiplier, hypothetical, svs)
-    svTimeIsAdded[svTime] = true
-    local currentSVMultiplier = getSVMultiplierAt(svTime)
-    if (hypothetical == true) then
-        currentSVMultiplier = getHypotheticalSVMultiplierAt(svs, svTime)
-        -- local quantumSVMultiplier = getSVMultiplierAt(svTime) or {StartTime = -1}
-        -- if (quantumSVMultiplier.StartTime > getHypotheticalSVTimeAt(svs, svTime)) then
-        --     currentSVMultiplier = quantumSVMultiplier.Multiplier
-        -- end
-    end
-    local newSVMultiplier = displacementMultiplier * displacement + currentSVMultiplier
-    addSVToList(svsToAdd, svTime, newSVMultiplier, true)
-end
-
--- Adds new displacing SVs to a list of SVs to place and adds removable SV times to another list
--- Parameters
---    offset             : general offset in milliseconds to displace SVs at [Int]
---    svsToAdd           : list of displacing SVs to add to [Table]
---    svTimeIsAdded      : hash list indicating whether an SV time exists already [Table]
---    beforeDisplacement : amount to displace before (nil value if not) [Int/Float]
---    atDisplacement     : amount to displace at (nil value if not) [Int/Float]
---    afterDisplacement  : amount to displace after (nil value if not) [Int/Float]
-function prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, beforeDisplacement, atDisplacement,
-                              afterDisplacement, hypothetical, baseSVs)
-    local displacementMultiplier = getUsableDisplacementMultiplier(offset)
-    local duration = 1 / displacementMultiplier
-    if beforeDisplacement then
-        local timeBefore = offset - duration
-        prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeBefore, beforeDisplacement,
-            displacementMultiplier, hypothetical, baseSVs)
-    end
-    if atDisplacement then
-        local timeAt = offset
-        prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeAt, atDisplacement,
-            displacementMultiplier, hypothetical, baseSVs)
-    end
-    if afterDisplacement then
-        local timeAfter = offset + duration
-        prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeAfter, afterDisplacement,
-            displacementMultiplier, hypothetical, baseSVs)
-    end
-end
-
 -- Removes and adds SVs
 -- Parameters
 --    svsToRemove : list of SVs to remove [Table]
@@ -5339,52 +5260,6 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
     }
     actions.PerformBatch(editorActions)
 end
-
--- Finds and returns a list of all unique offsets of notes between a start and an end time [Table]
--- Parameters
---    startOffset : start time in milliseconds [Int/Float]
---    endOffset   : end time in milliseconds [Int/Float]
-function uniqueNoteOffsetsBetween(startOffset, endOffset)
-    local noteOffsetsBetween = {}
-    for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not BETA_IGNORE_NOTES_OUTSIDE_TG) then
-            table.insert(noteOffsetsBetween, hitObject.StartTime)
-            if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
-                table.insert(noteOffsetsBetween,
-                    hitObject.EndTime)
-            end
-        end
-    end
-    noteOffsetsBetween = dedupe(noteOffsetsBetween)
-    noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
-    return noteOffsetsBetween
-end
-
--- Finds and returns a list of all unique offsets of notes between selected notes [Table]
-function uniqueNoteOffsetsBetweenSelected()
-    local selectedNoteOffsets = uniqueSelectedNoteOffsets()
-    local startOffset = selectedNoteOffsets[1]
-    local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
-    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
-    if (#offsets < 2) then
-        print("E!",
-            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
-    end
-    return offsets
-end
-
--- Finds unique offsets of all notes currently selected in the editor
--- Returns a list of unique offsets (in increasing order) of selected notes [Table]
-function uniqueSelectedNoteOffsets()
-    local offsets = {}
-    for i, hitObject in pairs(state.SelectedHitObjects) do
-        offsets[i] = hitObject.StartTime
-    end
-    offsets = dedupe(offsets)
-    offsets = table.sort(offsets, sortAscending)
-    return offsets
-end
-
 
 -------------------------------------------------------------------------------------- Abstractions
 
@@ -7600,8 +7475,8 @@ function choosePlaceSVType(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
     imgui.SameLine(0, SAMELINE_SPACING)
-    globalVars.placeTypeIndex = combo("##placeType", PLACE_TYPES, globalVars.placeTypeIndex)
-    local placeType = PLACE_TYPES[globalVars.placeTypeIndex]
+    globalVars.placeTypeIndex = combo("##placeType", CREATE_TYPES, globalVars.placeTypeIndex)
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Still" then toolTip("Still keeps notes normal distance/spacing apart") end
 end
 
@@ -8057,6 +7932,73 @@ end
 function chooseHand(settingVars)
     local label = "Add teleport before note"
     _, settingVars.teleportBeforeHand = imgui.Checkbox(label, settingVars.teleportBeforeHand)
+end
+
+-- Returns a usable displacement multiplier for a given offset [Int/Float]
+--[[
+-- Current implementation:
+-- 64 until 2^18 = 262144 ms ~4.3 min, then —> 32
+-- 32 until 2^19 = 524288 ms ~8.7 min, then —> 16
+-- 16 until 2^20 = 1048576 ms ~17.4 min, then —> 8
+-- 8 until 2^21 = 2097152 ms ~34.9 min, then —> 4
+-- 4 until 2^22 = 4194304 ms ~69.9 min, then —> 2
+-- 2 until 2^23 = 8388608 ms ~139.8 min, then —> 1
+--]]
+-- Parameters
+--    offset: time in milliseconds [Int]
+function getUsableDisplacementMultiplier(offset)
+    local exponent = 23 - math.floor(math.log(math.abs(offset) + 1) / math.log(2))
+    if exponent > 6 then exponent = 6 end
+    return 2 ^ exponent
+end
+-- Adds a new displacing SV to a list of SVs to place and adds that SV time to a hash list
+-- Parameters
+--    svsToAdd               : list of displacing SVs to add to [Table]
+--    svTimeIsAdded          : hash list indicating whether an SV time exists already [Table]
+--    svTime                 : time to add the displacing SV at [Int/Float]
+--    displacement           : amount that the SV will displace [Int/Float]
+--    displacementMultiplier : displacement multiplier value [Int/Float]
+function prepareDisplacingSV(svsToAdd, svTimeIsAdded, svTime, displacement, displacementMultiplier, hypothetical, svs)
+    svTimeIsAdded[svTime] = true
+    local currentSVMultiplier = getSVMultiplierAt(svTime)
+    if (hypothetical == true) then
+        currentSVMultiplier = getHypotheticalSVMultiplierAt(svs, svTime)
+        -- local quantumSVMultiplier = getSVMultiplierAt(svTime) or {StartTime = -1}
+        -- if (quantumSVMultiplier.StartTime > getHypotheticalSVTimeAt(svs, svTime)) then
+        --     currentSVMultiplier = quantumSVMultiplier.Multiplier
+        -- end
+    end
+    local newSVMultiplier = displacementMultiplier * displacement + currentSVMultiplier
+    addSVToList(svsToAdd, svTime, newSVMultiplier, true)
+end
+
+-- Adds new displacing SVs to a list of SVs to place and adds removable SV times to another list
+-- Parameters
+--    offset             : general offset in milliseconds to displace SVs at [Int]
+--    svsToAdd           : list of displacing SVs to add to [Table]
+--    svTimeIsAdded      : hash list indicating whether an SV time exists already [Table]
+--    beforeDisplacement : amount to displace before (nil value if not) [Int/Float]
+--    atDisplacement     : amount to displace at (nil value if not) [Int/Float]
+--    afterDisplacement  : amount to displace after (nil value if not) [Int/Float]
+function prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, beforeDisplacement, atDisplacement,
+                              afterDisplacement, hypothetical, baseSVs)
+    local displacementMultiplier = getUsableDisplacementMultiplier(offset)
+    local duration = 1 / displacementMultiplier
+    if beforeDisplacement then
+        local timeBefore = offset - duration
+        prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeBefore, beforeDisplacement,
+            displacementMultiplier, hypothetical, baseSVs)
+    end
+    if atDisplacement then
+        local timeAt = offset
+        prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeAt, atDisplacement,
+            displacementMultiplier, hypothetical, baseSVs)
+    end
+    if afterDisplacement then
+        local timeAfter = offset + duration
+        prepareDisplacingSV(svsToAdd, svTimeIsAdded, timeAfter, afterDisplacement,
+            displacementMultiplier, hypothetical, baseSVs)
+    end
 end
 
 -- Returns a set of cubic bezier values [Table]
@@ -8720,6 +8662,147 @@ function createSVStats()
     }
     return svStats
 end
+
+-- Returns the SV multiplier at a specified offset in the map [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
+function getHypotheticalSVMultiplierAt(svs, offset)
+    if (#svs == 1) then return svs[1].Multiplier end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index].Multiplier
+        end
+    end
+    return 1
+end
+
+function getHypotheticalSVTimeAt(svs, offset)
+    if (#svs == 1) then return svs[1].StartTime end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index].StartTime
+        end
+    end
+    return 1
+end
+
+-- Returns the SV multiplier at a specified offset in the map [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
+function getSVMultiplierAt(offset)
+    local sv = map.GetScrollVelocityAt(offset)
+    if sv then return sv.Multiplier end
+    return 1
+end
+
+function getNotesBetweenOffsets(startOffset, endOffset)
+    local notesBetweenOffsets = {}
+    for _, note in pairs(map.HitObjects) do
+        local noteIsInRange = note.StartTime >= startOffset and note.StartTime <= endOffset
+        if noteIsInRange then table.insert(notesBetweenOffsets, note) end
+    end
+    return table.sort(notesBetweenOffsets, sortAscendingStartTime)
+end
+
+function getLinesBetweenOffsets(startOffset, endOffset)
+    local linesBetweenoffsets = {}
+    for _, line in pairs(map.TimingPoints) do
+        local lineIsInRange = line.StartTime >= startOffset and line.StartTime < endOffset
+        if lineIsInRange then table.insert(linesBetweenoffsets, line) end
+    end
+    return table.sort(linesBetweenoffsets, sortAscendingStartTime)
+end
+
+function getSVsBetweenOffsets(startOffset, endOffset)
+    local svsBetweenOffsets = {}
+    for _, sv in pairs(map.ScrollVelocities) do
+        local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
+        if svIsInRange then table.insert(svsBetweenOffsets, sv) end
+    end
+    return table.sort(svsBetweenOffsets, sortAscendingStartTime)
+end
+
+function getBookmarksBetweenOffsets(startOffset, endOffset)
+    local bookmarksBetweenOffsets = {}
+    for _, bm in pairs(map.Bookmarks) do
+        local bmIsInRange = bm.StartTime >= startOffset and bm.StartTime < endOffset
+        if bmIsInRange then table.insert(bookmarksBetweenOffsets, bm) end
+    end
+    return table.sort(bookmarksBetweenOffsets, sortAscendingStartTime)
+end
+
+function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
+    local svsBetweenOffsets = {}
+    for _, sv in pairs(svs) do
+        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime < endOffset + 1
+        if svIsInRange then table.insert(svsBetweenOffsets, sv) end
+    end
+    return table.sort(svsBetweenOffsets, sortAscendingStartTime)
+end
+
+function getSSFsBetweenOffsets(startOffset, endOffset)
+    local ssfsBetweenOffsets = {}
+    local ssfs = map.ScrollSpeedFactors
+    if (ssfs == nil) then
+        ssfs = {}
+    else
+        for _, ssf in pairs(map.ScrollSpeedFactors) do
+            local ssfIsInRange = ssf.StartTime >= startOffset and ssf.StartTime < endOffset
+            if ssfIsInRange then table.insert(ssfsBetweenOffsets, ssf) end
+        end
+    end
+    return table.sort(ssfsBetweenOffsets, sortAscendingStartTime)
+end
+-- Finds and returns a list of all unique offsets of notes between a start and an end time [Table]
+-- Parameters
+--    startOffset : start time in milliseconds [Int/Float]
+--    endOffset   : end time in milliseconds [Int/Float]
+function uniqueNoteOffsetsBetween(startOffset, endOffset)
+    local noteOffsetsBetween = {}
+    for _, hitObject in pairs(map.HitObjects) do
+        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not BETA_IGNORE_NOTES_OUTSIDE_TG) then
+            table.insert(noteOffsetsBetween, hitObject.StartTime)
+            if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
+                table.insert(noteOffsetsBetween,
+                    hitObject.EndTime)
+            end
+        end
+    end
+    noteOffsetsBetween = dedupe(noteOffsetsBetween)
+    noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
+    return noteOffsetsBetween
+end
+
+-- Finds and returns a list of all unique offsets of notes between selected notes [Table]
+function uniqueNoteOffsetsBetweenSelected()
+    local selectedNoteOffsets = uniqueSelectedNoteOffsets()
+    local startOffset = selectedNoteOffsets[1]
+    local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
+    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
+    if (#offsets < 2) then
+        print("E!",
+            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+    end
+    return offsets
+end
+
+-- Finds unique offsets of all notes currently selected in the editor
+-- Returns a list of unique offsets (in increasing order) of selected notes [Table]
+function uniqueSelectedNoteOffsets()
+    local offsets = {}
+    for i, hitObject in pairs(state.SelectedHitObjects) do
+        offsets[i] = hitObject.StartTime
+    end
+    offsets = dedupe(offsets)
+    offsets = table.sort(offsets, sortAscending)
+    return offsets
+end
 -- Evaluates a simplified one-dimensional cubic bezier expression with points (0, p2, p3, 1)
 -- Returns the result of the bezier evaluation [Int/Float]
 -- Parameters
@@ -8825,6 +8908,19 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         if (utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)) then return end
         toolTip("Press 'T' on your keyboard to do the same thing as this button")
         executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+    end
+end
+function getVariables(listName, variables)
+    for key, _ in pairs(variables) do
+        if (state.GetValue(listName .. key) ~= nil) then
+            variables[key] = state.GetValue(listName .. key) -- Changed because default setting of true would always override
+        end
+    end
+end
+
+function saveVariables(listName, variables)
+    for key, value in pairs(variables) do
+        state.SetValue(listName .. key, value)
     end
 end
 -- Returns the average value from a list of values [Int/Float]
@@ -9173,4 +9269,4 @@ function getStillPlaceMenuVars()
     }
     getVariables("placeStillMenu", menuVars)
     return menuVars
-end
+end

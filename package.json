@@ -4,7 +4,8 @@
     "description": "The ultimate SV plugin for Quaver.",
     "scripts": {
         "test": "tsc && node dist/tests",
-        "transpile": "tsc && node dist/transpiler"
+        "transpile": "tsc && node dist/transpiler",
+        "watch": "tsc && node dist/transpiler/watch"
     },
     "repository": {
         "type": "git",

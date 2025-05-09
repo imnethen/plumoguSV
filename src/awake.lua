@@ -14,4 +14,6 @@ function awake()
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
     state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
     state.SetValue("global_advancedMode", tempGlobalVars.advancedMode == "true" and true or false)
+
+    -- listen(function (event, history_type) print(event, history_type) end)
 end

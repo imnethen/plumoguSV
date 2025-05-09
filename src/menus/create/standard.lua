@@ -1,3 +1,15 @@
+STANDARD_SVS = { -- types of standard SVs
+    "Linear",
+    "Exponential",
+    "Bezier",
+    "Hermite",
+    "Sinusoidal",
+    "Circular",
+    "Random",
+    "Custom",
+    "Chinchilla",
+    "Combo"
+}
 
 -- Creates the menu for placing standard SVs
 -- Parameters

@@ -65,24 +65,6 @@ DISPLACE_SCALE_SPOTS = { -- places to scale SV sections by displacing
     "Start",
     "End"
 }
-EDIT_SV_TOOLS = { -- tools for editing SVs
-    "Add Teleport",
-    "Align Timing Lines",
-    "bug fixing from <1.1.1",
-    "Copy & Paste",
-    "Displace Note",
-    "Displace View",
-    "Dynamic Scale",
-    "Fix LN Ends",
-    "Flicker",
-    "Measure",
-    "Merge",
-    "Reverse Scroll",
-    "Scale (Displace)",
-    "Scale (Multiply)",
-    "Swap Notes",
-    "Vertical Shift"
-}
 EMOTICONS = { -- emoticons to visually clutter the plugin and confuse users
     "( - _ - )",
     "( e . e )",
@@ -117,11 +99,7 @@ NOTE_SKIN_TYPES = { -- types of note skins
     "Circle"
     --,    "Arrow"
 }
-PLACE_TYPES = { -- general categories of SVs to place
-    "Standard",
-    "Special",
-    "Still"
-}
+
 RANDOM_TYPES = { -- distribution types of random values
     "Normal",
     "Uniform"
@@ -131,28 +109,8 @@ SCALE_TYPES = { -- ways to scale SVs
     "Absolute Distance",
     "Relative Ratio"
 }
-SPECIAL_SVS = { -- types of special SVs
-    "Stutter",
-    "Teleport Stutter",
-    "Splitscroll (Basic)",
-    "Splitscroll (Advanced)",
-    "Splitscroll (Adv v2)",
-    "Penis",
-    "Frames Setup"
-}
 
-STANDARD_SVS = { -- types of standard SVs
-    "Linear",
-    "Exponential",
-    "Bezier",
-    "Hermite",
-    "Sinusoidal",
-    "Circular",
-    "Random",
-    "Custom",
-    "Chinchilla",
-    "Combo"
-}
+
 STANDARD_SVS_NO_COMBO = { -- types of standard SVs (excluding combo)
     "Linear",
     "Exponential",
@@ -185,23 +143,9 @@ SV_BEHAVIORS = { -- behaviors of SVs
     "Slow down",
     "Speed up"
 }
-TAB_MENUS = { -- names of the tab menus
-    "Info",
-    "Select",
-    "Create",
-    "Edit",
-    "Delete"
-}
 TRAIL_SHAPES = { -- shapes for cursor trails
     "Circles",
     "Triangles"
-}
-SELECT_TOOLS = {
-    "Alternating",
-    "By Snap",
-    "Chord Size",
-    "Note Type",
-    "Bookmark",
 }
 
 BETA_IGNORE_NOTES_OUTSIDE_TG = false
