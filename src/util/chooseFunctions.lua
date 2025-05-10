@@ -35,7 +35,7 @@ function chooseAverageSV(menuVars)
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    _, menuVars.avgSV = computableInputFloat("Average SV", menuVars.avgSV, 2)
+    _, menuVars.avgSV = imgui.InputFloat("Average SV", menuVars.avgSV, 0, 0, "%.2fx")
     imgui.PopItemWidth()
     if ((negateButtonPressed or utils.IsKeyPressed("N")) and menuVars.avgSV ~= 0) then
         menuVars.avgSV = -menuVars.avgSV
@@ -324,7 +324,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
-    menuVars.distance = computableInputFloat("Distance", menuVars.distance, 3)
+    menuVars.distance = computableInputFloat("Distance", menuVars.distance)
     return oldDistance ~= menuVars.distance
 end
 
@@ -333,7 +333,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseVaryingDistance(settingVars)
     if (not settingVars.linearlyChange) then
-        _, settingVars.distance = computableInputFloat("Distance", settingVars.distance, 3)
+        _, settingVars.distance = imgui.InputFloat("Distance", settingVars.distance, 0, 0, "%.3f msx")
         return
     end
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
@@ -1369,10 +1369,10 @@ function choosePluginAppearance(globalVars)
     chooseDrawCapybara312(globalVars)
 end
 
-function computableInputFloat(label, var, decimalPlaces)
+function computableInputFloat(label, var)
     local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
 
-    _, var = imgui.InputText(label, string.format("%." .. decimalPlaces .."f msx", tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0), 4096,
+    _, var = imgui.InputText(label, string.format("%.3f msx", tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0), 4096,
         imgui_input_text_flags.AutoSelectAll)
     if (not imgui.IsItemActive() and (state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex) or false)) then
         local desiredComp = tostring(var):gsub("[ ]*msx[ ]*", "")
