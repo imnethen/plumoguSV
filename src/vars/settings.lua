@@ -1,7 +1,7 @@
--- Gets the current menu's setting variables
--- Parameters
---    svType : name of the current menu's type of SV [Table]
---    label  : text to delineate the type of setting variables [String]
+---Gets the current menu's setting variables.
+---@param svType string The SV type - that is, the shape of the SV once plotted.
+---@param label string A delineator to separate two categories with similar SV types (Standard/Still, etc).
+---@return table
 function getSettingVars(svType, label)
     local settingVars
     if svType == "Linear" then

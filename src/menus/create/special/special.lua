@@ -40,3 +40,12 @@ function placeSpecialSVMenu(globalVars)
     saveVariables(labelText, settingVars)
     saveVariables("placeSpecialMenu", menuVars)
 end
+
+-- Returns menuVars for the menu at Place SVs > Special
+function getSpecialPlaceMenuVars()
+    local menuVars = {
+        svTypeIndex = 1
+    }
+    getVariables("placeSpecialMenu", menuVars)
+    return menuVars
+end

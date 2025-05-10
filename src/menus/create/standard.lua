@@ -54,3 +54,18 @@ function placeStandardSVMenu(globalVars)
     saveVariables(labelText, settingVars)
     saveVariables("placeStandardMenu", menuVars)
 end
+
+-- Returns menuVars for the menu at Place SVs > Standard
+function getStandardPlaceMenuVars()
+    local menuVars = {
+        svTypeIndex = 1,
+        svMultipliers = {},
+        svDistances = {},
+        svGraphStats = createSVGraphStats(),
+        svStats = createSVStats(),
+        interlace = false,
+        interlaceRatio = -0.5
+    }
+    getVariables("placeStandardMenu", menuVars)
+    return menuVars
+end
