@@ -9,5 +9,5 @@ chokidar.watch("src", {ignoreInitial: true}).on('all', async (event, path) => {
   console.log(`\nEvent ${chalk.red(event)} detected on file ${chalk.red(path)}. Now retranspiling...`);
   const fileCount = await transpiler()
   const endTime = Date.now();
-  console.log(`Successfully transpiled ${chalk.red(fileCount)} files in ${chalk.green(`${endTime - startTime}ms`)}.\n`);
+  console.log(`Successfully transpiled ${chalk.green(fileCount)} files in ${chalk.green(`${endTime - startTime}ms`)}.\n`);
 });

@@ -21,10 +21,10 @@ export default async function transpiler() {
 
     files.forEach((file) => {
         if (ignoredFiles.some((f) => file.includes(f))) return;
-        const fileData = getFile(file)
+        const fileData = readFileSync(file, "utf-8")
             .split("\n")
             .filter((str) => str); // Filter out empty lines
-        addToOutput(fileData.join("\n"));
+        output = `${output}\n${fileData.join("\n")}`
         fileCount++
     });
 
@@ -36,21 +36,3 @@ export default async function transpiler() {
 }
 
 transpiler();
-
-function getFile(relPath) {
-    return readFileSync(relPath, "utf-8");
-}
-
-export async function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export function locateIndices(arr, searchTerm) {
-    const indices = [];
-
-    arr.forEach((item, idx) => {
-        if (item.includes(searchTerm)) indices.push(idx);
-    });
-
-    return indices;
-}
