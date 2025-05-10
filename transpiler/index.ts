@@ -8,6 +8,7 @@ import {
 import { getFilesRecursively } from "./getFilesRecursively.js";
 
 export default async function transpiler() {
+    let fileCount = 0
     let output = "";
 
     function addToOutput(str) {
@@ -24,11 +25,14 @@ export default async function transpiler() {
             .split("\n")
             .filter((str) => str); // Filter out empty lines
         addToOutput(fileData.join("\n"));
+        fileCount++
     });
 
     if (existsSync("plugin.lua")) rmSync("plugin.lua");
     writeFileSync("temp.lua", output.replaceAll("\n\n", "\n"));
     renameSync("temp.lua", "plugin.lua");
+
+    return fileCount
 }
 
 transpiler();
