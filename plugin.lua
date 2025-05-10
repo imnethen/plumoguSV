@@ -2366,6 +2366,8 @@ DISTANCE_TYPES = {
     "Start / End"
 }
 function draw()
+    state.SetValue("computableInputFloatIndex", 1)
+
     local globalVars = {
         stepSize = state.GetValue("global_stepSize") or 5,
         keyboardMode = false,
@@ -6243,7 +6245,6 @@ function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkle
         end
     end
 end
-
 -- Lets you choose the multipliers for adding combo SVs
 -- Returns whether or not the multipliers changed [Boolean]
 -- Parameters
@@ -6570,7 +6571,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
-    _, menuVars.distance = imgui.InputFloat("Distance", menuVars.distance, 0, 0, "%.3f msx")
+    menuVars.distance = computableInputFloat("Distance", menuVars.distance)
     return oldDistance ~= menuVars.distance
 end
 
@@ -7570,7 +7571,6 @@ function chooseHand(settingVars)
     _, settingVars.teleportBeforeHand = imgui.Checkbox(label, settingVars.teleportBeforeHand)
 end
 
-
 function chooseDistanceMode(menuVars)
     local oldMode = menuVars.distanceMode
     menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
@@ -7593,7 +7593,6 @@ function choosePluginBehaviorSettings(globalVars)
     addPadding()
 end
 
-
 -- Lets you choose global plugin appearance settings
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -7615,6 +7614,20 @@ function choosePluginAppearance(globalVars)
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     chooseDrawCapybara2(globalVars)
     chooseDrawCapybara312(globalVars)
+end
+
+function computableInputFloat(label, var)
+    local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
+
+    _, var = imgui.InputText(label, string.format("%.3f msx", tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0), 4096,
+        imgui_input_text_flags.AutoSelectAll)
+    if (not imgui.IsItemActive() and (state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex) or false)) then
+        local desiredComp = tostring(var):gsub("[ ]*msx[ ]*", "")
+        var = expr(desiredComp)
+    end
+    state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())
+    state.SetValue("computableInputFloatIndex", computableStateIndex + 1)
+    return var
 end
 
 -- Calculates the total msx displacements over time at offsets

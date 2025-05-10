@@ -1,4 +1,6 @@
 function draw()
+    state.SetValue("computableInputFloatIndex", 1)
+
     local globalVars = {
         stepSize = state.GetValue("global_stepSize") or 5,
         keyboardMode = false,
