@@ -1,4 +1,3 @@
-
 -- Places stutter SVs between selected notes
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]

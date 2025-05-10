@@ -1,4 +1,3 @@
-
 -- Returns generated sv multipliers [Table]
 -- Parameters
 --    svType              : type of SV to generate [String]

@@ -1,4 +1,3 @@
-
 -- Returns a set of chinchilla values [Table]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -27,7 +26,6 @@ function generateChinchillaSet(settingVars)
     table.insert(chinchillaSet, settingVars.avgSV)
     return chinchillaSet
 end
-
 
 -- Scales a percent value based on the selected scale type
 -- Scaling graphs on Desmos: https://www.desmos.com/calculator/z00xjksfnk

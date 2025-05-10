@@ -1,4 +1,3 @@
-
 -- Returns a usable displacement multiplier for a given offset [Int/Float]
 --[[
 -- Current implementation:

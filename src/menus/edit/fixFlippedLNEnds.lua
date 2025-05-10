@@ -1,4 +1,3 @@
-
 -- Creates the fix LN ends menu
 function fixLNEndsMenu()
     local menuVars = {

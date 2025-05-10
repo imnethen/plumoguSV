@@ -1,4 +1,3 @@
-
 -- Creates the add teleport menu
 function addTeleportMenu()
     local menuVars = {

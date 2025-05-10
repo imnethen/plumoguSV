@@ -1,4 +1,3 @@
-
 -- Removes and adds SVs
 -- Parameters
 --    svsToRemove : list of SVs to remove [Table]

@@ -1,5 +1,3 @@
-
-
 -- Returns coordinates relative to the plugin window [Table]
 -- Parameters
 --    x : x coordinate relative to the plugin window [Int]
@@ -9,7 +7,6 @@ function coordsRelativeToWindow(x, y)
     local newY = y + imgui.GetWindowPos()[2]
     return { newX, newY }
 end
-
 
 -- Returns a point relative to a given point [Table]
 -- Parameters

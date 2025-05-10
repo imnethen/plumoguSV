@@ -1,4 +1,3 @@
-
 -- Creates the select by snap menu
 function selectBySnapMenu()
     local menuVars = {

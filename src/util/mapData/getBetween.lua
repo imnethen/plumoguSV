@@ -1,4 +1,3 @@
-
 function getNotesBetweenOffsets(startOffset, endOffset)
     local notesBetweenOffsets = {}
     for _, note in pairs(map.HitObjects) do

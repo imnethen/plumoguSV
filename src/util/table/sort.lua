@@ -1,4 +1,3 @@
-
 -- Sorting function for numbers that returns whether a < b [Boolean]
 -- Parameters
 --    a : first number [Int/Float]

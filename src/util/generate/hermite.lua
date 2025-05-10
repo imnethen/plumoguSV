@@ -1,4 +1,3 @@
-
 -- Returns a set of hermite spline related (?) values [Table]
 -- Parameters
 --    startValue    : intended first value of the set [Int/Float]

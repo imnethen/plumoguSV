@@ -1,4 +1,3 @@
-
 -- Creates the copy and paste menu
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

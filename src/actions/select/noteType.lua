@@ -1,4 +1,3 @@
-
 function selectByNoteType(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]

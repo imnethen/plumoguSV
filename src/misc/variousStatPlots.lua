@@ -1,4 +1,3 @@
-
 -- Updates stats for the current menu's SVs
 -- Parameters
 --    svGraphStats         : list of stats for the SV graphs [Table]

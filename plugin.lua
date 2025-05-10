@@ -1,5 +1,4 @@
 
-
 -- Places advanced split scroll SVs
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -289,7 +288,6 @@ function placeAdvancedSplitScrollSVsActual(settingVars, allNoteOffsets)
     end
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 -- Places advanced splitscroll SVs from the 2nd version of the menu
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -451,7 +449,6 @@ function placePenisSV(settingVars)
 
     removeAndAddSVs(getSVsBetweenOffsets(startTime, startTime + settingVars.sWidth + settingVars.bWidth * 2), svs)
 end
-
 -- Places split scroll SVs
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -551,7 +548,6 @@ function placeSplitScrollSVs(settingVars)
     end
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 -- Places stutter SVs between selected notes
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -632,7 +628,6 @@ function placeStutterSSFs(settingVars)
     addFinalSSF(ssfsToAdd, lastOffset, lastMultiplier)
     removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end
-
 -- Places teleport stutter SVs between selected notes
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -739,7 +734,6 @@ function placeExponentialSpecialSVs(globalVars, menuVars)
         placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
     end
 end
-
 -- Places standard SVs between selected notes
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -769,7 +763,6 @@ function placeSSFs(globalVars, menuVars)
     addInitialSSF(ssfsToAdd, firstOffset - 1 / getUsableDisplacementMultiplier(firstOffset))
     removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end
-
 -- Places standard SVs between selected notes
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -822,7 +815,6 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
-
 function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE OF SHIT
     local svsToRemove = {}
     local svsToAdd = {}
@@ -944,7 +936,6 @@ function deleteItems(menuVars)
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
 end
-
 -- Adds teleport SVs at selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -971,7 +962,6 @@ function addTeleportSVs(menuVars)
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 function alignTimingLines()
     local timingpoint = state.CurrentTimingPoint
     local starttime = timingpoint.StartTime
@@ -1010,7 +1000,6 @@ function alignTimingLines()
         utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
     })
 end
-
 -- Copies SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -1246,7 +1235,6 @@ function dynamicScaleSVs(menuVars)
     end
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 -- Fixes flipped LN ends with SVs
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -1297,7 +1285,6 @@ function fixFlippedLNEnds(menuVars)
 
     menuVars.fixedText = table.concat({ "Fixed ", fixedLNEndsCount, " flipped LN ends" })
 end
-
 -- Adds flicker SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -1338,7 +1325,6 @@ function flickerSVs(menuVars)
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 -- Measures SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -1384,7 +1370,6 @@ function measureSVs(menuVars)
     menuVars.roundedAvgSVDisplaceless = round(trueAvgSV, roundingDecimalPlaces)
     menuVars.avgSVDisplaceless = tostring(trueAvgSV)
 end
-
 -- Merges overlapping SVs between selected notes
 function mergeSVs()
     local offsets = uniqueSelectedNoteOffsets()
@@ -1409,7 +1394,6 @@ function mergeSVs()
 
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 -- Reverses scroll direction by adding/modifying SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -1530,7 +1514,6 @@ function scaleMultiplySVs(menuVars)
     end
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 -- Swap selected notes' position with SVs
 function swapNoteSVs()
     local svsToAdd = {}
@@ -1585,7 +1568,6 @@ function verticalShiftSVs(menuVars)
     end
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-
 -- Creates the export button for Place SV settings
 -- Parameters
 --    globalVars  : list of variables used globally across all menus [Table]
@@ -2108,7 +2090,6 @@ function selectByChordSizes(menuVars)
     actions.SetHitObjectSelection(notesToSelect)
     print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
 end
-
 function selectByNoteType(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
@@ -2225,7 +2206,7 @@ MAX_SV_POINTS = 1000                -- maximum number of SV points allowed
 MAX_ANIMATION_FRAMES = 999          -- maximum number of animation frames allowed
 MAX_IMPORT_CHARACTER_LIMIT = 999999 -- maximum number of characters allowed for import text
 
-CHINCHILLA_TYPES = { -- types of chinchilla SVs
+CHINCHILLA_TYPES = {                -- types of chinchilla SVs
     "Exponential",
     "Polynomial",
     "Circular",
@@ -2444,7 +2425,6 @@ function infoTabKeyboard(globalVars)
     choosePluginAppearance(globalVars)
 end
 
-
 -- Creates the menu tabs for quick keyboard access for "keyboard" mode
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -2604,7 +2584,6 @@ end
 function linkBox(text, url)
     copiableBox(text, "##" .. url, url)
 end
-
 -- Creates an imgui button
 -- Parameters
 --    text       : text on the button [String]
@@ -2628,7 +2607,6 @@ function button(text, size, func, globalVars, menuVars)
     end
     func()
 end
-
 -- Converts an RGBA color value into uint (unsigned integer) and returns the converted value [Int]
 -- Parameters
 --    r : red value [Int]
@@ -2662,8 +2640,6 @@ function combo(label, list, listIndex)
     return newComboIndex + 1
     --]]
 end
-
-
 -- Returns coordinates relative to the plugin window [Table]
 -- Parameters
 --    x : x coordinate relative to the plugin window [Int]
@@ -2673,7 +2649,6 @@ function coordsRelativeToWindow(x, y)
     local newY = y + imgui.GetWindowPos()[2]
     return { newX, newY }
 end
-
 
 -- Returns a point relative to a given point [Table]
 -- Parameters
@@ -2823,7 +2798,6 @@ function drawHorizontalPillShape(o, point1, point2, radius, color, circleSegment
     local rectangleEndCoords = relativePoint(point2, 0, -radius)
     o.AddRectFilled(rectangleStartCoords, rectangleEndCoords, color)
 end
-
 -- Adds vertical blank space/padding on the GUI
 function addPadding()
     imgui.Dummy({ 0, 0 })
@@ -2872,7 +2846,6 @@ function createSVTab(globalVars)
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
 end
-
 -- Creates the menu for advanced splitscroll SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -2922,7 +2895,6 @@ function splitScrollAdvancedMenu(settingVars)
     local label = "Place Splitscroll SVs at selected note(s)"
     simpleActionMenu(label, 1, placeAdvancedSplitScrollSVs, nil, settingVars)
 end
-
 -- Creates the 2nd version menu for advanced splitscroll SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -2953,7 +2925,6 @@ function splitScrollAdvancedV2Menu(settingVars)
     local label = "Place Splitscroll SVs"
     simpleActionMenu(label, 0, placeAdvancedSplitScrollSVsV2, nil, settingVars)
 end
-
 -- Creates the menu for setting up animation frames
 -- Parameters
 --    globalVars  : list of variables used globally across all menus [Table]
@@ -3005,7 +2976,6 @@ function animationFramesSetupMenu(globalVars, settingVars)
         simpleActionMenu(label, 1, displaceNotesForAnimationFrames, nil, settingVars)
     end
 end
-
 function penisMenu(settingVars)
     _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
     _, settingVars.sWidth = imgui.InputInt("Shaft Width", settingVars.sWidth)
@@ -3059,8 +3029,6 @@ function placeSpecialSVMenu(globalVars)
     saveVariables(labelText, settingVars)
     saveVariables("placeSpecialMenu", menuVars)
 end
-
-
 -- Creates the menu for basic splitscroll SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -3080,7 +3048,6 @@ function splitScrollBasicMenu(settingVars)
     local label = "Place Splitscroll SVs at selected note(s)"
     simpleActionMenu(label, 1, placeSplitScrollSVs, nil, settingVars)
 end
-
 -- Creates the menu for stutter SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -3178,7 +3145,6 @@ function placeStandardSVMenu(globalVars)
     saveVariables(labelText, settingVars)
     saveVariables("placeStandardMenu", menuVars)
 end
-
 -- Creates the menu for placing still SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -3249,7 +3215,6 @@ function deleteTab(globalVars)
 
     simpleActionMenu("Delete items between selected notes", 2, deleteItems, nil, menuVars)
 end
-
 -- Creates the add teleport menu
 function addTeleportMenu()
     local menuVars = {
@@ -3264,14 +3229,10 @@ function addTeleportMenu()
     addSeparator()
     simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, nil, menuVars)
 end
-
-
 -- Creates the align timing lines menu
 function alignTimingLinesMenu()
     simpleActionMenu("Align timing lines in this region", 0, alignTimingLines, nil, nil)
 end
-
-
 function tempBugFixMenu()
     imgui.PushTextWrapPos(200)
     imgui.TextWrapped(
@@ -3285,7 +3246,6 @@ function tempBugFixMenu()
     imgui.PopTextWrapPos()
     simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
 end
-
 -- Creates the copy and paste menu
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -3392,7 +3352,7 @@ function directSVMenu()
     state.SetValue("primeMultiplier", primeMultiplier)
     state.SetValue("savedStartTime", menuVars.startTime)
     state.SetValue("savedMultiplier", menuVars.multiplier)
-    
+
     imgui.Separator()
     imgui.Text("Start Time")
     imgui.SameLine()
@@ -3419,7 +3379,6 @@ function directSVMenu()
 
     saveVariables("directSVMenu", menuVars)
 end
-
 -- Creates the displace note menu
 function displaceNoteMenu()
     local menuVars = {
@@ -3436,7 +3395,6 @@ function displaceNoteMenu()
     addSeparator()
     simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, nil, menuVars)
 end
-
 -- Creates the displace view menu
 function displaceViewMenu()
     local menuVars = {
@@ -3449,7 +3407,6 @@ function displaceViewMenu()
     addSeparator()
     simpleActionMenu("Displace view between selected notes", 2, displaceViewSVs, nil, menuVars)
 end
-
 -- Creates the dynamic scale menu
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -3557,7 +3514,6 @@ function editSVTab(globalVars)
     if toolName == "Swap Notes" then swapNotesMenu() end
     if toolName == "Vertical Shift" then verticalShiftMenu() end
 end
-
 -- Creates the fix LN ends menu
 function fixLNEndsMenu()
     local menuVars = {
@@ -3572,8 +3528,6 @@ function fixLNEndsMenu()
     simpleActionMenu("Fix flipped LN ends", 0, fixFlippedLNEnds, nil, menuVars)
     saveVariables("fixLNEndsMenu", menuVars)
 end
-
-
 -- Creates the flicker menu
 function flickerMenu()
     local menuVars = {
@@ -3594,7 +3548,6 @@ function flickerMenu()
     addSeparator()
     simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, nil, menuVars)
 end
-
 -- Creates the measure menu
 function measureMenu()
     local menuVars = {
@@ -3629,7 +3582,6 @@ function measureMenu()
     simpleActionMenu("Measure SVs between selected notes", 2, measureSVs, nil, menuVars)
     saveVariables("measureMenu", menuVars)
 end
-
 
 -- Displays measured SV stats rounded
 -- Parameters
@@ -3668,15 +3620,10 @@ function displayMeasuredStatsUnrounded(menuVars)
     copiableBox("End displacement", "##endDisplacement", menuVars.endDisplacement)
     copiableBox("True average SV", "##avgSVDisplaceless", menuVars.avgSVDisplaceless)
 end
-
-
-
 -- Creates the merge menu
 function mergeMenu()
     simpleActionMenu("Merge duplicate SVs between selected notes", 2, mergeSVs, nil, nil)
 end
-
-
 -- Creates the reverse scroll menu
 function reverseScrollMenu()
     local menuVars = {
@@ -3691,8 +3638,6 @@ function reverseScrollMenu()
     local buttonText = "Reverse scroll between selected notes"
     simpleActionMenu(buttonText, 2, reverseScrollSVs, nil, menuVars)
 end
-
-
 -- Creates the scale (displace) menu
 function scaleDisplaceMenu()
     local menuVars = {
@@ -3728,12 +3673,10 @@ function scaleMultiplyMenu()
     local buttonText = "Scale SVs between selected notes##multiply"
     simpleActionMenu(buttonText, 2, scaleMultiplySVs, nil, menuVars)
 end
-
 -- Creates the menu for swapping notes
 function swapNotesMenu()
     simpleActionMenu("Swap selected notes using SVs", 2, swapNoteSVs, nil, nil)
 end
-
 -- Creates the menu for vertical shifts of SVs
 function verticalShiftMenu()
     local menuVars = {
@@ -3758,7 +3701,6 @@ function infoTab(globalVars)
     choosePluginAppearance(globalVars)
     chooseAdvancedMode(globalVars)
 end
-
 
 -- Gives basic info about how to use the plugin
 function provideBasicPluginInfo()
@@ -3824,7 +3766,6 @@ function createMenuTab(globalVars, tabName)
     if tabName == "Delete" then deleteTab(globalVars) end
     imgui.EndTabItem()
 end
-
 -- Creates the select alternating menu
 function selectAlternatingMenu()
     local menuVars = {
@@ -3845,7 +3786,6 @@ function selectAlternatingMenu()
         2,
         selectAlternating, nil, menuVars)
 end
-
 function selectBookmarkMenu()
     local bookmarks = map.bookmarks
 
@@ -3941,7 +3881,6 @@ function selectBookmarkMenu()
     state.SetValue("searchTerm", searchTerm)
     state.SetValue("filterTerm", filterTerm)
 end
-
 function selectChordSizeMenu()
     local menuVars = {
         single = false,
@@ -3963,7 +3902,6 @@ function selectChordSizeMenu()
 
     saveVariables("selectChordSizeMenu", menuVars)
 end
-
 function selectNoteTypeMenu()
     local menuVars = {
         rice = true,
@@ -3999,7 +3937,6 @@ function selectTab(globalVars)
     if toolName == "Chord Size" then selectChordSizeMenu() end
     if toolName == "Note Type" then selectNoteTypeMenu() end
 end
-
 -- Creates the select by snap menu
 function selectBySnapMenu()
     local menuVars = {
@@ -4015,7 +3952,6 @@ function selectBySnapMenu()
         2,
         selectBySnap, nil, menuVars)
 end
-
 -- Creates the menu for bezier SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4032,7 +3968,6 @@ function bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
 end
-
 -- Creates the menu for chinchilla SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4050,7 +3985,6 @@ function chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
 end
-
 -- Creates the menu for circular SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4068,7 +4002,6 @@ function circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseNoNormalize(settingVars) or settingsChanged
     return settingsChanged
 end
-
 -- Creates the menu for custom SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4110,8 +4043,6 @@ function comboSettingsMenu(settingVars)
 
     return settingsChanged
 end
-
-
 -- Creates the menu for custom SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4128,7 +4059,6 @@ function customSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     adjustNumberOfMultipliers(settingVars)
     return settingsChanged
 end
-
 -- Creates the menu for exponential SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4157,7 +4087,6 @@ function exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
 end
-
 -- Makes the export and import menu for place SV settings
 -- Parameters
 --    globalVars  : list of variables used globally across all menus [Table]
@@ -4218,7 +4147,6 @@ function hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
 end
-
 -- Creates the menu for linear SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4246,7 +4174,6 @@ function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     end
     return settingsChanged
 end
-
 -- Creates the menu for random SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4283,7 +4210,6 @@ function generateRandomSetMenuSVs(settingVars)
     settingVars.svMultipliers = generateRandomSet(settingVars.svPoints + 1, randomType,
         settingVars.randomScale)
 end
-
 -- Creates the menu for sinusoidal SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters
@@ -4302,8 +4228,6 @@ function sinusoidalSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
 end
-
-
 -- Provides a copy-pastable link to a cubic bezier website and also can parse inputted links
 -- Returns whether new bezier coordinates were parsed [Boolean]
 -- Parameters
@@ -4395,7 +4319,6 @@ function adjustNumberOfMultipliers(settingVars)
         table.remove(settingVars.svMultipliers)
     end
 end
-
 -- Creates a button that adds frameTime objects to the list in the frames setup menu
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -4517,7 +4440,6 @@ function drawCurrentFrame(globalVars, settingVars)
     imgui.EndChild()
 end
 
-
 -- Adds selected note times to the noteTimes list in menuVars
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -4558,7 +4480,6 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
         return comboSettingsMenu(settingVars)
     end
 end
-
 -- Creates a button that adds or clears note times for the 2nd scroll for the splitscroll menu
 -- Parameters
 --    settingVars          : list of variables used for the current menu [Table]
@@ -4651,7 +4572,6 @@ function addNoteTimesToDynamicScaleButton(menuVars)
     local buttonText = "Assign selected note times"
     button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, nil, menuVars)
 end
-
 
 -- Makes the button that removes the currently selected frame time for the frames setup menu
 -- Parameters
@@ -4806,7 +4726,6 @@ function buttonClear4thScrollSVs(settingVars)
     settingVars.svsInScroll4 = {}
 end
 
-
 -- Creates the button for exporting/importing current menu settings
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -4820,7 +4739,6 @@ function exportImportSettingsButton(globalVars)
 
     globalVars.showExportImportMenu = not globalVars.showExportImportMenu
 end
-
 -- Updates stats for the current menu's SVs
 -- Parameters
 --    svGraphStats         : list of stats for the SV graphs [Table]
@@ -4947,7 +4865,6 @@ function displayStutterSVWindows(settingVars)
             settingVars.svMultipliers, settingVars.stutterDuration, false)
     end
 end
-
 -- Draws a capybara on the bottom right of the screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -5231,7 +5148,6 @@ function drawCapybara312(globalVars)
     o.AddCircleFilled(p26, eyeRadius, outlineColor, numSements)
     o.AddCircleFilled(p27, eyeRadius, outlineColor, numSements)
 end
-
 -- Configures the plugin GUI colors
 -- Parameters
 --    colorTheme : currently selected color theme [String]
@@ -7619,7 +7535,9 @@ end
 function computableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
 
-    _, var = imgui.InputText(label, string.format("%."..decimalPlaces.."f" .. suffix, tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0), 4096,
+    _, var = imgui.InputText(label,
+        string.format("%." .. decimalPlaces .. "f" .. suffix, tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0),
+        4096,
         imgui_input_text_flags.AutoSelectAll)
     if (not imgui.IsItemActive() and (state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex) or false)) then
         local desiredComp = tostring(var):gsub("[ ]*msx[ ]*", "")
@@ -7630,7 +7548,6 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
 
     return tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+"))
 end
-
 -- Calculates the total msx displacements over time at offsets
 -- Returns a table of total displacements [Table]
 -- Parameters
@@ -7647,7 +7564,6 @@ function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     end
     return displacements
 end
-
 -- Calculates the total msx displacement over time for a given set of SVs
 -- Returns a table of total displacements [Table]
 -- Parameters
@@ -7691,7 +7607,6 @@ function calculateDisplacementsFromSVs(svs, offsets)
     table.insert(displacements, totalDisplacement)
     return displacements
 end
-
 -- Calculates still displacements
 -- Returns the still displacements [Table]
 -- Parameters
@@ -7716,7 +7631,6 @@ function calculateStillDisplacements(stillType, stillDistance, svDisplacements, 
     end
     return finalDisplacements
 end
-
 -- Returns a usable displacement multiplier for a given offset [Int/Float]
 --[[
 -- Current implementation:
@@ -7783,7 +7697,6 @@ function prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, beforeDisplacemen
             displacementMultiplier, hypothetical, baseSVs)
     end
 end
-
 -- Returns a set of cubic bezier values [Table]
 -- Parameters
 --    x1            : x-coordinate of the first (inputted) cubic bezier point [Int/Float]
@@ -7830,7 +7743,6 @@ function generateBezierSet(x1, y1, x2, y2, avgValue, numValues, verticalShift)
     end
     return bezierSet
 end
-
 -- Returns a set of chinchilla values [Table]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -7859,7 +7771,6 @@ function generateChinchillaSet(settingVars)
     table.insert(chinchillaSet, settingVars.avgSV)
     return chinchillaSet
 end
-
 
 -- Scales a percent value based on the selected scale type
 -- Scaling graphs on Desmos: https://www.desmos.com/calculator/z00xjksfnk
@@ -7912,7 +7823,6 @@ function scalePercent(settingVars, percent)
     if slowDownType then newPercent = 1 - newPercent end
     return clampToInterval(newPercent, 0, 1)
 end
-
 -- Returns a set of circular values [Table]
 -- Parameters
 --    behavior      : description of how the set changes (speeds up or slows down) [String]
@@ -7922,30 +7832,30 @@ end
 --    numValues     : total number of values in the circular set [Int]
 --    dontNormalize : Whether or not to normalize values to the target average value [Boolean]
 function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numValues,
-    dontNormalize)
-local increaseValues = (behavior == "Speed up")
-avgValue = avgValue - verticalShift
-local startingAngle = math.pi * (arcPercent / 100)
-local angles = generateLinearSet(startingAngle, 0, numValues)
-local yCoords = {}
-for i = 1, #angles do
-local angle = round(angles[i], 8)
-local x = math.cos(angle)
-yCoords[i] = -avgValue * math.sqrt(1 - x ^ 2)
-end
-local circularSet = {}
-for i = 1, #yCoords - 1 do
-local startY = yCoords[i]
-local endY = yCoords[i + 1]
-circularSet[i] = (endY - startY) * (numValues - 1)
-end
-if not increaseValues then circularSet = getReverseList(circularSet) end
-if not dontNormalize then normalizeValues(circularSet, avgValue, true) end
-for i = 1, #circularSet do
-circularSet[i] = circularSet[i] + verticalShift
-end
-table.insert(circularSet, avgValue)
-return circularSet
+                             dontNormalize)
+    local increaseValues = (behavior == "Speed up")
+    avgValue = avgValue - verticalShift
+    local startingAngle = math.pi * (arcPercent / 100)
+    local angles = generateLinearSet(startingAngle, 0, numValues)
+    local yCoords = {}
+    for i = 1, #angles do
+        local angle = round(angles[i], 8)
+        local x = math.cos(angle)
+        yCoords[i] = -avgValue * math.sqrt(1 - x ^ 2)
+    end
+    local circularSet = {}
+    for i = 1, #yCoords - 1 do
+        local startY = yCoords[i]
+        local endY = yCoords[i + 1]
+        circularSet[i] = (endY - startY) * (numValues - 1)
+    end
+    if not increaseValues then circularSet = getReverseList(circularSet) end
+    if not dontNormalize then normalizeValues(circularSet, avgValue, true) end
+    for i = 1, #circularSet do
+        circularSet[i] = circularSet[i] + verticalShift
+    end
+    table.insert(circularSet, avgValue)
+    return circularSet
 end
 -- Returns a set of combo values [Table]
 -- Parameters
@@ -7959,84 +7869,83 @@ end
 --    avgValue         : average value of the set [Int/Float]
 --    verticalShift    : constant to add to each value in the set at very the end [Int/Float]
 function generateComboSet(values1, values2, comboPhase, comboType, comboMultiplier1,
-    comboMultiplier2, dontNormalize, avgValue, verticalShift)
-local comboValues = {}
-if comboType == "SV Type 1 Only" then
-comboValues = makeDuplicateList(values1)
-elseif comboType == "SV Type 2 Only" then
-comboValues = makeDuplicateList(values2)
-else
-local lastValue1 = table.remove(values1)
-local lastValue2 = table.remove(values2)
+                          comboMultiplier2, dontNormalize, avgValue, verticalShift)
+    local comboValues = {}
+    if comboType == "SV Type 1 Only" then
+        comboValues = makeDuplicateList(values1)
+    elseif comboType == "SV Type 2 Only" then
+        comboValues = makeDuplicateList(values2)
+    else
+        local lastValue1 = table.remove(values1)
+        local lastValue2 = table.remove(values2)
 
-local endIndex1 = #values1 - comboPhase
-local startIndex1 = comboPhase + 1
-local endIndex2 = comboPhase - #values1
-local startIndex2 = #values1 + #values2 + 1 - comboPhase
+        local endIndex1 = #values1 - comboPhase
+        local startIndex1 = comboPhase + 1
+        local endIndex2 = comboPhase - #values1
+        local startIndex2 = #values1 + #values2 + 1 - comboPhase
 
-for i = 1, endIndex1 do
-table.insert(comboValues, values1[i])
-end
-for i = 1, endIndex2 do
-table.insert(comboValues, values2[i])
-end
+        for i = 1, endIndex1 do
+            table.insert(comboValues, values1[i])
+        end
+        for i = 1, endIndex2 do
+            table.insert(comboValues, values2[i])
+        end
 
-if comboType ~= "Remove" then
-local comboValues1StartIndex = endIndex1 + 1
-local comboValues1EndIndex = startIndex2 - 1
-local comboValues2StartIndex = endIndex2 + 1
-local comboValues2EndIndex = startIndex1 - 1
+        if comboType ~= "Remove" then
+            local comboValues1StartIndex = endIndex1 + 1
+            local comboValues1EndIndex = startIndex2 - 1
+            local comboValues2StartIndex = endIndex2 + 1
+            local comboValues2EndIndex = startIndex1 - 1
 
-local comboValues1 = {}
-for i = comboValues1StartIndex, comboValues1EndIndex do
-table.insert(comboValues1, values1[i])
-end
-local comboValues2 = {}
-for i = comboValues2StartIndex, comboValues2EndIndex do
-table.insert(comboValues2, values2[i])
-end
-for i = 1, #comboValues1 do
-local comboValue1 = comboValues1[i]
-local comboValue2 = comboValues2[i]
-local finalValue
-if comboType == "Add" then
-finalValue = comboMultiplier1 * comboValue1 + comboMultiplier2 * comboValue2
-elseif comboType == "Cross Multiply" then
-finalValue = comboValue1 * comboValue2
-elseif comboType == "Min" then
-finalValue = math.min(comboValue1, comboValue2)
-elseif comboType == "Max" then
-finalValue = math.max(comboValue1, comboValue2)
-end
-table.insert(comboValues, finalValue)
-end
-end
+            local comboValues1 = {}
+            for i = comboValues1StartIndex, comboValues1EndIndex do
+                table.insert(comboValues1, values1[i])
+            end
+            local comboValues2 = {}
+            for i = comboValues2StartIndex, comboValues2EndIndex do
+                table.insert(comboValues2, values2[i])
+            end
+            for i = 1, #comboValues1 do
+                local comboValue1 = comboValues1[i]
+                local comboValue2 = comboValues2[i]
+                local finalValue
+                if comboType == "Add" then
+                    finalValue = comboMultiplier1 * comboValue1 + comboMultiplier2 * comboValue2
+                elseif comboType == "Cross Multiply" then
+                    finalValue = comboValue1 * comboValue2
+                elseif comboType == "Min" then
+                    finalValue = math.min(comboValue1, comboValue2)
+                elseif comboType == "Max" then
+                    finalValue = math.max(comboValue1, comboValue2)
+                end
+                table.insert(comboValues, finalValue)
+            end
+        end
 
-for i = startIndex1, #values2 do
-table.insert(comboValues, values2[i])
-end
-for i = startIndex2, #values1 do
-table.insert(comboValues, values1[i])
-end
+        for i = startIndex1, #values2 do
+            table.insert(comboValues, values2[i])
+        end
+        for i = startIndex2, #values1 do
+            table.insert(comboValues, values1[i])
+        end
 
-if #comboValues == 0 then table.insert(comboValues, 1) end
-if (comboPhase - #values2 >= 0) then
-table.insert(comboValues, lastValue1)
-else
-table.insert(comboValues, lastValue2)
-end
-end
-avgValue = avgValue - verticalShift
-if not dontNormalize then
-normalizeValues(comboValues, avgValue, false)
-end
-for i = 1, #comboValues do
-comboValues[i] = comboValues[i] + verticalShift
-end
+        if #comboValues == 0 then table.insert(comboValues, 1) end
+        if (comboPhase - #values2 >= 0) then
+            table.insert(comboValues, lastValue1)
+        else
+            table.insert(comboValues, lastValue2)
+        end
+    end
+    avgValue = avgValue - verticalShift
+    if not dontNormalize then
+        normalizeValues(comboValues, avgValue, false)
+    end
+    for i = 1, #comboValues do
+        comboValues[i] = comboValues[i] + verticalShift
+    end
 
-return comboValues
+    return comboValues
 end
-
 -- Returns a set of custom values [Table]
 -- Parameters
 --    values : list of custom values [Table]
@@ -8046,7 +7955,6 @@ function generateCustomSet(values)
     table.insert(newValues, averageMultiplier)
     return newValues
 end
-
 -- Returns a set of exponential values [Table]
 -- Parameters
 --    behavior      : behavior of the values (increase/speed up, or decrease/slow down) [String]
@@ -8077,7 +7985,6 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
     return exponentialSet
 end
 
-
 function generateExponentialSet2(behavior, numValues, startValue, endValue, intensity)
     local exponentialSet = {}
     -- reduce intensity scaling to produce more useful/practical values
@@ -8100,7 +8007,6 @@ function generateExponentialSet2(behavior, numValues, startValue, endValue, inte
     end
     return exponentialSet
 end
-
 -- Returns a set of hermite spline related (?) values [Table]
 -- Parameters
 --    startValue    : intended first value of the set [Int/Float]
@@ -8143,7 +8049,6 @@ function generateLinearSet(startValue, endValue, numValues)
     end
     return linearSet
 end
-
 -- Returns the average of two numbers [Int/Float]
 -- Returns a modified set of random values [Table]
 -- Parameters
@@ -8188,7 +8093,6 @@ function generateRandomSet(numValues, randomType, randomScale)
     end
     return randomSet
 end
-
 -- Returns a set of sinusoidal values [Table]
 -- Parameters
 --    startAmplitude         : starting amplitude of the sinusoidal wave [Int/Float]
@@ -8199,25 +8103,25 @@ end
 --    verticalShift          : constant to add to each value in the set at very the end [Int/Float]
 --    curveSharpness         : value determining the curviness of the sine curve [Int/Float]
 function generateSinusoidalSet(startAmplitude, endAmplitude, periods, periodsShift,
-    valuesPerQuarterPeriod, verticalShift, curveSharpness)
-local sinusoidalSet = {}
-local quarterPeriods = 4 * periods
-local quarterPeriodsShift = 4 * periodsShift
-local totalValues = valuesPerQuarterPeriod * quarterPeriods
-local amplitudes = generateLinearSet(startAmplitude, endAmplitude, totalValues + 1)
-local normalizedSharpness
-if curveSharpness > 50 then
-normalizedSharpness = math.sqrt((curveSharpness - 50) * 2)
-else
-normalizedSharpness = (curveSharpness / 50) ^ 2
-end
-for i = 0, totalValues do
-local angle = (math.pi / 2) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
-local value = amplitudes[i + 1] * (math.abs(math.sin(angle)) ^ (normalizedSharpness))
-value = value * getSignOfNumber(math.sin(angle)) + verticalShift
-table.insert(sinusoidalSet, value)
-end
-return sinusoidalSet
+                               valuesPerQuarterPeriod, verticalShift, curveSharpness)
+    local sinusoidalSet = {}
+    local quarterPeriods = 4 * periods
+    local quarterPeriodsShift = 4 * periodsShift
+    local totalValues = valuesPerQuarterPeriod * quarterPeriods
+    local amplitudes = generateLinearSet(startAmplitude, endAmplitude, totalValues + 1)
+    local normalizedSharpness
+    if curveSharpness > 50 then
+        normalizedSharpness = math.sqrt((curveSharpness - 50) * 2)
+    else
+        normalizedSharpness = (curveSharpness / 50) ^ 2
+    end
+    for i = 0, totalValues do
+        local angle = (math.pi / 2) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
+        local value = amplitudes[i + 1] * (math.abs(math.sin(angle)) ^ (normalizedSharpness))
+        value = value * getSignOfNumber(math.sin(angle)) + verticalShift
+        table.insert(sinusoidalSet, value)
+    end
+    return sinusoidalSet
 end
 -- Returns a set of stutter values [Table]
 -- Parameters
@@ -8233,7 +8137,6 @@ function generateStutterSet(stutterValue, stutterDuration, avgValue, controlLast
     if controlLastValue then stutterSet = { otherValue, stutterValue, avgValue } end
     return stutterSet
 end
-
 -- Returns generated sv multipliers [Table]
 -- Parameters
 --    svType              : type of SV to generate [String]
@@ -8408,7 +8311,6 @@ function plotSVs(svVals, minScale, maxScale)
     local plotSize = PLOT_GRAPH_SIZE
     imgui.PlotHistogram("##svplot", svVals, #svVals, 0, "", minScale, maxScale, plotSize)
 end
-
 -- Creates and returns a frameTime object [Table]
 -- Parameters
 --    thisTime     : time in milliseconds [Int]
@@ -8424,7 +8326,6 @@ function createFrameTime(thisTime, thisLanes, thisFrame, thisPosition)
     }
     return frameTime
 end
-
 -- Initializes and returns a default svGraphStats object [Table]
 function createSVGraphStats()
     local svGraphStats = {
@@ -8445,7 +8346,6 @@ function createSVStats()
     }
     return svStats
 end
-
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]
@@ -8483,7 +8383,6 @@ function getSVMultiplierAt(offset)
     if sv then return sv.Multiplier end
     return 1
 end
-
 function getNotesBetweenOffsets(startOffset, endOffset)
     local notesBetweenOffsets = {}
     for _, note in pairs(map.HitObjects) do
@@ -8561,7 +8460,6 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
     noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
-
 -- Finds and returns a list of all unique offsets of notes between selected notes [Table]
 function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
@@ -8586,7 +8484,6 @@ function uniqueSelectedNoteOffsets()
     offsets = table.sort(offsets, sortAscending)
     return offsets
 end
-
 -- Updates SVs and SV info stored in the menu
 -- Parameters
 --    currentSVType : current type of SV being updated [String]
@@ -8624,7 +8521,6 @@ function updateFinalSV(finalSVIndex, svMultipliers, customSV, skipFinalSV)
     if finalSVType == "Normal" then return end
     svMultipliers[#svMultipliers] = customSV
 end
-
 
 -- Updates SVs and SV info stored in the stutter menu
 -- Parameters
@@ -8675,7 +8571,6 @@ end
 function simplifiedQuadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end
-
 -- Restricts a number to be within a closed interval
 -- Returns the result of the restriction [Int/Float]
 -- Parameters
@@ -8687,7 +8582,6 @@ function clampToInterval(number, lowerBound, upperBound)
     if number > upperBound then return upperBound end
     return number
 end
-
 -- Forces a number to be a multiple of a quarter (0.25)
 -- Returns the result of the force [Int/Float]
 -- Parameters
@@ -8695,7 +8589,6 @@ end
 function forceQuarter(number)
     return math.floor(number * 4 + 0.5) / 4
 end
-
 -- Evaluates a simplified one-dimensional hermite related (?) spline for SV purposes
 -- Returns the result of the hermite evaluation [Int/Float]
 -- Parameters
@@ -8709,7 +8602,6 @@ function simplifiedHermite(m1, m2, y2, t)
     local c = m1
     return a * t ^ 3 + b * t ^ 2 + c * t
 end
-
 -- Rounds a number to a given amount of decimal places
 -- Returns the rounded number [Int/Float]
 -- Parameters
@@ -8719,7 +8611,6 @@ function round(number, decimalPlaces)
     local multiplier = 10 ^ decimalPlaces
     return math.floor(multiplier * number + 0.5) / multiplier
 end
-
 -- Returns the sign of a number: +1 if the number is non-negative, -1 if negative [Int]
 -- Parameters
 --    number : number to get the sign of
@@ -8738,7 +8629,6 @@ function wrapToInterval(number, lowerBound, upperBound)
     if number > upperBound then return lowerBound end
     return number
 end
-
 -- Creates a simple action menu + button that does SV things
 -- Parameters
 --    buttonText   : text on the button that appears [String]
@@ -8886,7 +8776,6 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
         end
     end
 end
-
 -- Removes and adds SVs
 -- Parameters
 --    svsToRemove : list of SVs to remove [Table]
@@ -8969,7 +8858,6 @@ function makeDuplicateList(list)
     end
     return duplicateList
 end
-
 -- Normalizes a set of values to achieve a target average
 -- Parameters
 --    values                    : set of numbers [Table]
@@ -8993,7 +8881,6 @@ function getReverseList(list)
     end
     return reverseList
 end
-
 -- Sorting function for numbers that returns whether a < b [Boolean]
 -- Parameters
 --    a : first number [Int/Float]
@@ -9011,7 +8898,6 @@ function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 --    a : first object
 --    b : second object
 function sortAscendingTime(a, b) return a.time < b.time end
-
 -- Gets the current menu's setting variables
 -- Parameters
 --    svType : name of the current menu's type of SV [Table]

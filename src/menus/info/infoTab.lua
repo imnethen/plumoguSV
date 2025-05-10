@@ -10,7 +10,6 @@ function infoTab(globalVars)
     chooseAdvancedMode(globalVars)
 end
 
-
 -- Gives basic info about how to use the plugin
 function provideBasicPluginInfo()
     imgui.Text("Steps to use plumoguSV:")

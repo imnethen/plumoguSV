@@ -1,4 +1,3 @@
-
 -- Normalizes a set of values to achieve a target average
 -- Parameters
 --    values                    : set of numbers [Table]

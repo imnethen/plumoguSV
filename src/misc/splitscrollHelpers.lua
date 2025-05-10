@@ -1,4 +1,3 @@
-
 -- Creates a button that adds or clears note times for the 2nd scroll for the splitscroll menu
 -- Parameters
 --    settingVars          : list of variables used for the current menu [Table]

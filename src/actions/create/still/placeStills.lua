@@ -1,4 +1,3 @@
-
 function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE OF SHIT
     local svsToRemove = {}
     local svsToAdd = {}

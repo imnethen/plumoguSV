@@ -1,4 +1,3 @@
-
 function selectBookmarkMenu()
     local bookmarks = map.bookmarks
 

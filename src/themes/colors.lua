@@ -1,4 +1,3 @@
-
 -- Configures the plugin GUI colors
 -- Parameters
 --    colorTheme : currently selected color theme [String]

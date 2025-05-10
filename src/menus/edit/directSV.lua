@@ -66,7 +66,7 @@ function directSVMenu()
     state.SetValue("primeMultiplier", primeMultiplier)
     state.SetValue("savedStartTime", menuVars.startTime)
     state.SetValue("savedMultiplier", menuVars.multiplier)
-    
+
     imgui.Separator()
     imgui.Text("Start Time")
     imgui.SameLine()

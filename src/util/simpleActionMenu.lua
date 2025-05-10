@@ -1,4 +1,3 @@
-
 -- Creates a simple action menu + button that does SV things
 -- Parameters
 --    buttonText   : text on the button that appears [String]

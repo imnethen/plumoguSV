@@ -1,5 +1,3 @@
-
-
 -- Creates the flicker menu
 function flickerMenu()
     local menuVars = {

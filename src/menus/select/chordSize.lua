@@ -1,4 +1,3 @@
-
 function selectChordSizeMenu()
     local menuVars = {
         single = false,

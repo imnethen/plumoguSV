@@ -1,4 +1,3 @@
-
 -- Creates the menu for stutter SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]

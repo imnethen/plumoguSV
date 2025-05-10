@@ -1,5 +1,3 @@
-
-
 function tempBugFixMenu()
     imgui.PushTextWrapPos(200)
     imgui.TextWrapped(

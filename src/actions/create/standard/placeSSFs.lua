@@ -1,4 +1,3 @@
-
 -- Places standard SVs between selected notes
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

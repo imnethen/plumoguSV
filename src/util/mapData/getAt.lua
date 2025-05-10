@@ -1,4 +1,3 @@
-
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]

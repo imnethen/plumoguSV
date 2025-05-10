@@ -1,4 +1,3 @@
-
 -- Places advanced split scroll SVs
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]

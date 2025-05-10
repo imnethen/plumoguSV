@@ -1,4 +1,3 @@
-
 -- Creates the menu for bezier SV settings
 -- Returns whether settings have changed or not [Boolean]
 -- Parameters

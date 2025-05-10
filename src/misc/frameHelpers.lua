@@ -1,4 +1,3 @@
-
 -- Creates a button that adds frameTime objects to the list in the frames setup menu
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -119,7 +118,6 @@ function drawCurrentFrame(globalVars, settingVars)
     end
     imgui.EndChild()
 end
-
 
 -- Adds selected note times to the noteTimes list in menuVars
 -- Parameters

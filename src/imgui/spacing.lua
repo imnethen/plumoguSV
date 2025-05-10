@@ -1,4 +1,3 @@
-
 -- Adds vertical blank space/padding on the GUI
 function addPadding()
     imgui.Dummy({ 0, 0 })

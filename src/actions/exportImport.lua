@@ -1,4 +1,3 @@
-
 -- Creates the export button for Place SV settings
 -- Parameters
 --    globalVars  : list of variables used globally across all menus [Table]

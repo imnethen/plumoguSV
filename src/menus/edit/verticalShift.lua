@@ -1,4 +1,3 @@
-
 -- Creates the menu for vertical shifts of SVs
 function verticalShiftMenu()
     local menuVars = {

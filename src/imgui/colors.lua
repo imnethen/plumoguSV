@@ -1,4 +1,3 @@
-
 -- Converts an RGBA color value into uint (unsigned integer) and returns the converted value [Int]
 -- Parameters
 --    r : red value [Int]

@@ -1,4 +1,3 @@
-
 -- Returns the average of two numbers [Int/Float]
 -- Returns a modified set of random values [Table]
 -- Parameters

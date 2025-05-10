@@ -1,5 +1,3 @@
-
-
 -- Creates the menu for basic splitscroll SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]

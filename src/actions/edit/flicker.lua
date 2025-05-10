@@ -1,4 +1,3 @@
-
 -- Adds flicker SVs between selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]

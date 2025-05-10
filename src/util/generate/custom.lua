@@ -1,4 +1,3 @@
-
 -- Returns a set of custom values [Table]
 -- Parameters
 --    values : list of custom values [Table]

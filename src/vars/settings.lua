@@ -1,4 +1,3 @@
-
 -- Gets the current menu's setting variables
 -- Parameters
 --    svType : name of the current menu's type of SV [Table]

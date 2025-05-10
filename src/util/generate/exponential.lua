@@ -1,4 +1,3 @@
-
 -- Returns a set of exponential values [Table]
 -- Parameters
 --    behavior      : behavior of the values (increase/speed up, or decrease/slow down) [String]
@@ -28,7 +27,6 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
     end
     return exponentialSet
 end
-
 
 function generateExponentialSet2(behavior, numValues, startValue, endValue, intensity)
     local exponentialSet = {}

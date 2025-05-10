@@ -1,4 +1,3 @@
-
 -- Updates SVs and SV info stored in the menu
 -- Parameters
 --    currentSVType : current type of SV being updated [String]
@@ -36,7 +35,6 @@ function updateFinalSV(finalSVIndex, svMultipliers, customSV, skipFinalSV)
     if finalSVType == "Normal" then return end
     svMultipliers[#svMultipliers] = customSV
 end
-
 
 -- Updates SVs and SV info stored in the stutter menu
 -- Parameters

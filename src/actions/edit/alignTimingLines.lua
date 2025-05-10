@@ -1,4 +1,3 @@
-
 function alignTimingLines()
     local timingpoint = state.CurrentTimingPoint
     local starttime = timingpoint.StartTime

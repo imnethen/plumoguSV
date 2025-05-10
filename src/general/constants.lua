@@ -20,7 +20,7 @@ MAX_SV_POINTS = 1000                -- maximum number of SV points allowed
 MAX_ANIMATION_FRAMES = 999          -- maximum number of animation frames allowed
 MAX_IMPORT_CHARACTER_LIMIT = 999999 -- maximum number of characters allowed for import text
 
-CHINCHILLA_TYPES = { -- types of chinchilla SVs
+CHINCHILLA_TYPES = {                -- types of chinchilla SVs
     "Exponential",
     "Polynomial",
     "Circular",

@@ -1,4 +1,3 @@
-
 -- Creates the measure menu
 function measureMenu()
     local menuVars = {
@@ -33,7 +32,6 @@ function measureMenu()
     simpleActionMenu("Measure SVs between selected notes", 2, measureSVs, nil, menuVars)
     saveVariables("measureMenu", menuVars)
 end
-
 
 -- Displays measured SV stats rounded
 -- Parameters
@@ -72,4 +70,3 @@ function displayMeasuredStatsUnrounded(menuVars)
     copiableBox("End displacement", "##endDisplacement", menuVars.endDisplacement)
     copiableBox("True average SV", "##avgSVDisplaceless", menuVars.avgSVDisplaceless)
 end
-

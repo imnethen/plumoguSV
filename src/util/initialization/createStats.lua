@@ -1,4 +1,3 @@
-
 -- Initializes and returns a default svGraphStats object [Table]
 function createSVGraphStats()
     local svGraphStats = {

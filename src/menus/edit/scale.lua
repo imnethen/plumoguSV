@@ -1,5 +1,3 @@
-
-
 -- Creates the scale (displace) menu
 function scaleDisplaceMenu()
     local menuVars = {

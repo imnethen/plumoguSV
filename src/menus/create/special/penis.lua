@@ -1,4 +1,3 @@
-
 function penisMenu(settingVars)
     _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
     _, settingVars.sWidth = imgui.InputInt("Shaft Width", settingVars.sWidth)

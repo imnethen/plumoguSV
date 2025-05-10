@@ -1,4 +1,3 @@
-
 -- Creates the menu for setting up animation frames
 -- Parameters
 --    globalVars  : list of variables used globally across all menus [Table]

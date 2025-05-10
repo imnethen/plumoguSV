@@ -1,4 +1,3 @@
-
 -- Creates and returns a frameTime object [Table]
 -- Parameters
 --    thisTime     : time in milliseconds [Int]

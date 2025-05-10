@@ -1,4 +1,3 @@
-
 -- Calculates the total msx displacements over time at offsets
 -- Returns a table of total displacements [Table]
 -- Parameters

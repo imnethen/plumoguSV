@@ -1,4 +1,3 @@
-
 -- Places advanced splitscroll SVs from the 2nd version of the menu
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]

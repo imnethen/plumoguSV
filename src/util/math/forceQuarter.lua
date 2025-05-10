@@ -1,4 +1,3 @@
-
 -- Forces a number to be a multiple of a quarter (0.25)
 -- Returns the result of the force [Int/Float]
 -- Parameters

@@ -1,4 +1,3 @@
-
 -- Finds and returns a list of all unique offsets of notes between selected notes [Table]
 function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()

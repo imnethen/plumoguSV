@@ -1,4 +1,3 @@
-
 -- Rounds a number to a given amount of decimal places
 -- Returns the rounded number [Int/Float]
 -- Parameters

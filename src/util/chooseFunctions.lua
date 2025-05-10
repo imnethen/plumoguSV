@@ -1372,7 +1372,9 @@ end
 function computableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
 
-    _, var = imgui.InputText(label, string.format("%."..decimalPlaces.."f" .. suffix, tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0), 4096,
+    _, var = imgui.InputText(label,
+        string.format("%." .. decimalPlaces .. "f" .. suffix, tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0),
+        4096,
         imgui_input_text_flags.AutoSelectAll)
     if (not imgui.IsItemActive() and (state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex) or false)) then
         local desiredComp = tostring(var):gsub("[ ]*msx[ ]*", "")

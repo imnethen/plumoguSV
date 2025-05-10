@@ -1,4 +1,3 @@
-
 -- Restricts a number to be within a closed interval
 -- Returns the result of the restriction [Int/Float]
 -- Parameters

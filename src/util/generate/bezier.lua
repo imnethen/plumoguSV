@@ -1,4 +1,3 @@
-
 -- Returns a set of cubic bezier values [Table]
 -- Parameters
 --    x1            : x-coordinate of the first (inputted) cubic bezier point [Int/Float]

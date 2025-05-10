@@ -1,4 +1,3 @@
-
 -- Creates the menu for placing still SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

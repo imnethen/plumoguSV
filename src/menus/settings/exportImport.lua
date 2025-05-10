@@ -1,4 +1,3 @@
-
 -- Makes the export and import menu for place SV settings
 -- Parameters
 --    globalVars  : list of variables used globally across all menus [Table]

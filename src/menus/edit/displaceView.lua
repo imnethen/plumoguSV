@@ -1,4 +1,3 @@
-
 -- Creates the displace view menu
 function displaceViewMenu()
     local menuVars = {

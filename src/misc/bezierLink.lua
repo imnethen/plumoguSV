@@ -1,5 +1,3 @@
-
-
 -- Provides a copy-pastable link to a cubic bezier website and also can parse inputted links
 -- Returns whether new bezier coordinates were parsed [Boolean]
 -- Parameters

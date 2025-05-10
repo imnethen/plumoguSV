@@ -1,4 +1,3 @@
-
 -- Calculates the total msx displacement over time for a given set of SVs
 -- Returns a table of total displacements [Table]
 -- Parameters

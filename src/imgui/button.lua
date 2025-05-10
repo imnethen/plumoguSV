@@ -1,4 +1,3 @@
-
 -- Creates an imgui button
 -- Parameters
 --    text       : text on the button [String]

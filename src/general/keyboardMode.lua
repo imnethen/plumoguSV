@@ -8,7 +8,6 @@ function infoTabKeyboard(globalVars)
     choosePluginAppearance(globalVars)
 end
 
-
 -- Creates the menu tabs for quick keyboard access for "keyboard" mode
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

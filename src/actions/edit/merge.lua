@@ -1,4 +1,3 @@
-
 -- Merges overlapping SVs between selected notes
 function mergeSVs()
     local offsets = uniqueSelectedNoteOffsets()

@@ -1,4 +1,3 @@
-
 -- Calculates still displacements
 -- Returns the still displacements [Table]
 -- Parameters

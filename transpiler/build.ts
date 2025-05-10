@@ -3,7 +3,7 @@ import transpiler from ".";
 import * as chalk from "chalk";
 import * as fs from "fs";
 
-const startTime = Date.now()
+const startTime = Date.now();
 
 console.log(
     chalk.blueBright(
@@ -15,9 +15,7 @@ transpiler();
 const versionNumber = `v${fs.readFileSync(".version", "utf-8")}`;
 
 console.log(
-    chalk.blueBright(
-        chalk.bold(`Updating ${chalk.redBright("README.md")}...`)
-    )
+    chalk.blueBright(chalk.bold(`Updating ${chalk.redBright("README.md")}...`))
 );
 
 const readme = fs.readFileSync("README.md", "utf-8");
@@ -57,30 +55,36 @@ if (packageVer !== versionNumber.slice(1)) {
     fs.writeFileSync("package.json", packageLines.join("\n"));
 }
 
-const packageName = `plumoguSV-${versionNumber}`
+const packageName = `plumoguSV-${versionNumber}`;
 
 console.log(
     chalk.blueBright(
-        chalk.bold(`Zipping into ${chalk.redBright(`builds/${packageName}`)}...`)
+        chalk.bold(
+            `Zipping into ${chalk.redBright(`builds/${packageName}`)}...`
+        )
     )
 );
 
 const zip = new AdmZip();
 
-if (!fs.existsSync("builds")) fs.mkdirSync("builds")
-if (!fs.existsSync(`build-temp`)) fs.mkdirSync(`build-temp`)
+if (!fs.existsSync("builds")) fs.mkdirSync("builds");
+if (!fs.existsSync(`build-temp`)) fs.mkdirSync(`build-temp`);
 
 fs.copyFileSync("plugin.lua", `build-temp/plugin.lua`);
 fs.copyFileSync("settings.ini", "build-temp/settings.ini");
 
-zip.addLocalFolder("build-temp")
+zip.addLocalFolder("build-temp");
 
 zip.writeZip(`builds/${packageName}.zip`);
 
 console.log(
     chalk.greenBright(
-        chalk.bold(`Process completed in ${Date.now() - startTime}ms. Find the build at ${chalk.redBright(`builds/${packageName}`)}.`)
+        chalk.bold(
+            `Process completed in ${
+                Date.now() - startTime
+            }ms. Find the build at ${chalk.redBright(`builds/${packageName}`)}.`
+        )
     )
 );
 
-fs.rmSync("build-temp", { recursive: true, force: true })
+fs.rmSync("build-temp", { recursive: true, force: true });

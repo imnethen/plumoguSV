@@ -1,4 +1,3 @@
-
 -- Draws a capybara on the bottom right of the screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

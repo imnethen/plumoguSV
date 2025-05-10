@@ -1,4 +1,3 @@
-
 function selectNoteTypeMenu()
     local menuVars = {
         rice = true,

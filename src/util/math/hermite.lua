@@ -1,4 +1,3 @@
-
 -- Evaluates a simplified one-dimensional hermite related (?) spline for SV purposes
 -- Returns the result of the hermite evaluation [Int/Float]
 -- Parameters

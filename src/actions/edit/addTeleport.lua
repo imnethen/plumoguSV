@@ -1,4 +1,3 @@
-
 -- Adds teleport SVs at selected notes
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]

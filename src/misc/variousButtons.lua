@@ -14,7 +14,6 @@ function addNoteTimesToDynamicScaleButton(menuVars)
     button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, nil, menuVars)
 end
 
-
 -- Makes the button that removes the currently selected frame time for the frames setup menu
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -167,7 +166,6 @@ function buttonClear4thScrollSVs(settingVars)
     if not imgui.Button(buttonText, HALF_ACTION_BUTTON_SIZE) then return end
     settingVars.svsInScroll4 = {}
 end
-
 
 -- Creates the button for exporting/importing current menu settings
 -- Parameters
