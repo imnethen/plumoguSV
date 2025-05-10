@@ -4,7 +4,7 @@
 --    endOffset    : millisecond time of the final SV [Int]
 --    svMultiplier : the final SV's multiplier [Int/Float]
 function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
-    local sv = getSVMultiplierAt(endOffset)
+    local sv = map.GetScrollVelocityAt(endOffset)
     local svExistsAtEndOffset = sv and (sv.StartTime == endOffset)
     if svExistsAtEndOffset and not force then return end
 
@@ -34,7 +34,7 @@ end
 --    startOffset : start offset in milliseconds for the list of SVs [Int]
 function addStartSVIfMissing(svs, startOffset)
     if #svs ~= 0 and svs[1].StartTime == startOffset then return end
-    addSVToList(svs, startOffset, getSVMultiplierAt(startOffset), false)
+    addSVToList(svs, startOffset, map.GetScrollVelocityAt(startOffset), false)
 end
 
 -- Creates and adds a new SV to an existing list of SVs

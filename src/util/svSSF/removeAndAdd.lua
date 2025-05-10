@@ -7,7 +7,7 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
     local tolerance = 0.035
     if #svsToAdd == 0 then return end
     for idx, sv in pairs(svsToRemove) do
-        local baseSV = getSVMultiplierAt(sv.StartTime)
+        local baseSV = map.GetScrollVelocityAt(sv.StartTime)
         if (math.abs(baseSV.StartTime - sv.StartTime) > tolerance) then
             table.remove(svsToRemove, idx)
         end

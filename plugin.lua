@@ -6571,7 +6571,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
-    menuVars.distance = computableInputFloat("Distance", menuVars.distance)
+    menuVars.distance = computableInputFloat("Distance", menuVars.distance, 3, " msx")
     return oldDistance ~= menuVars.distance
 end
 
@@ -6580,7 +6580,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseVaryingDistance(settingVars)
     if (not settingVars.linearlyChange) then
-        _, settingVars.distance = imgui.InputFloat("Distance", settingVars.distance, 0, 0, "%.3f msx")
+        settingVars.distance = computableInputFloat("Distance", settingVars.distance, 3, " msx")
         return
     end
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
@@ -7616,10 +7616,10 @@ function choosePluginAppearance(globalVars)
     chooseDrawCapybara312(globalVars)
 end
 
-function computableInputFloat(label, var)
+function computableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
 
-    _, var = imgui.InputText(label, string.format("%.3f msx", tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0), 4096,
+    _, var = imgui.InputText(label, string.format("%."..decimalPlaces.."f" .. suffix, tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or 0), 4096,
         imgui_input_text_flags.AutoSelectAll)
     if (not imgui.IsItemActive() and (state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex) or false)) then
         local desiredComp = tostring(var):gsub("[ ]*msx[ ]*", "")
@@ -7627,7 +7627,8 @@ function computableInputFloat(label, var)
     end
     state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())
     state.SetValue("computableInputFloatIndex", computableStateIndex + 1)
-    return var
+
+    return tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+"))
 end
 
 -- Calculates the total msx displacements over time at offsets
@@ -8805,7 +8806,7 @@ end
 --    endOffset    : millisecond time of the final SV [Int]
 --    svMultiplier : the final SV's multiplier [Int/Float]
 function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
-    local sv = getSVMultiplierAt(endOffset)
+    local sv = map.GetScrollVelocityAt(endOffset)
     local svExistsAtEndOffset = sv and (sv.StartTime == endOffset)
     if svExistsAtEndOffset and not force then return end
 
@@ -8835,7 +8836,7 @@ end
 --    startOffset : start offset in milliseconds for the list of SVs [Int]
 function addStartSVIfMissing(svs, startOffset)
     if #svs ~= 0 and svs[1].StartTime == startOffset then return end
-    addSVToList(svs, startOffset, getSVMultiplierAt(startOffset), false)
+    addSVToList(svs, startOffset, map.GetScrollVelocityAt(startOffset), false)
 end
 
 -- Creates and adds a new SV to an existing list of SVs
@@ -8894,7 +8895,7 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
     local tolerance = 0.035
     if #svsToAdd == 0 then return end
     for idx, sv in pairs(svsToRemove) do
-        local baseSV = getSVMultiplierAt(sv.StartTime)
+        local baseSV = map.GetScrollVelocityAt(sv.StartTime)
         if (math.abs(baseSV.StartTime - sv.StartTime) > tolerance) then
             table.remove(svsToRemove, idx)
         end
