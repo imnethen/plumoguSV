@@ -1,3 +1,2 @@
-function linearVibratoMenu()
-
+function linearVibratoMenu(settingVars)
 end
