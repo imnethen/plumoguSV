@@ -12,6 +12,15 @@ function getSettingVars(svType, label)
             finalSVIndex = 2,
             customSV = 1
         }
+    elseif svType == "Linear SSF" then
+        settingVars = {
+            lowerStart = 1,
+            lowerEnd = 1,
+            higherStart = 0.5,
+            higherEnd = 0.5,
+            resolution = 90,
+            curvature = 0,
+        }
     elseif svType == "Exponential" then
         settingVars = {
             behaviorIndex = 1,

@@ -895,10 +895,10 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
 
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
-function ssfVibrato(menuVars)
+function linearSSFVibrato(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startTime = offsets[1]
-    local endTime = offsets[#startTime]
+    local endTime = offsets[#offsets]
     local exponent = 2 ^ (menuVars.curvature / 100)
     local delta = 500 / menuVars.resolution
     local time = startTime
@@ -3242,8 +3242,11 @@ function getStillPlaceMenuVars()
     getVariables("placeStillMenu", menuVars)
     return menuVars
 end
+function linearVibratoMenu(settingVars)
+    simpleActionMenu("Place SSFs", 2, linearSSFVibrato, nil, settingVars)
+end
 VIBRATO_SVS = { -- types of vibrato SVs
-    "Linear"
+    "Linear SSF"
 }
 
 -- Creates the menu for placing special SVs
@@ -3263,11 +3266,11 @@ function placeVibratoSVMenu(globalVars)
         return
     end
 
-    if currentSVType == "Linear" then linearVibratoMenu(settingVars) end
+    if currentSVType == "Linear SSF" then linearVibratoMenu(settingVars) end
 
     local labelText = table.concat({ currentSVType, "SettingsVibrato" })
     saveVariables(labelText, settingVars)
-    saveVariables("placeSpecialMenu", menuVars)
+    saveVariables("placeVibratoMenu", menuVars)
 end
 
 -- Returns menuVars for the menu at Place SVs > Special
@@ -3275,7 +3278,7 @@ function getVibratoPlaceMenuVars()
     local menuVars = {
         svTypeIndex = 1
     }
-    getVariables("placeSpecialMenu", menuVars)
+    getVariables("placeVibratoMenu", menuVars)
     return menuVars
 end
 -- Creates the "Delete SVs" tab
@@ -9012,6 +9015,15 @@ function getSettingVars(svType, label)
             finalSVIndex = 2,
             customSV = 1
         }
+    elseif svType == "Linear SSF" then
+        settingVars = {
+            lowerStart = 1,
+            lowerEnd = 1,
+            higherStart = 0.5,
+            higherEnd = 0.5,
+            resolution = 90,
+            curvature = 0,
+        }
     elseif svType == "Exponential" then
         settingVars = {
             behaviorIndex = 1,
@@ -9207,4 +9219,4 @@ function getSettingVars(svType, label)
     local labelText = table.concat({ svType, "Settings", label })
     getVariables(labelText, settingVars)
     return settingVars
-end
+end

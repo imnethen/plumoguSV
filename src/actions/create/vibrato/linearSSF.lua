@@ -1,7 +1,7 @@
-function ssfVibrato(menuVars)
+function linearSSFVibrato(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startTime = offsets[1]
-    local endTime = offsets[#startTime]
+    local endTime = offsets[#offsets]
     local exponent = 2 ^ (menuVars.curvature / 100)
     local delta = 500 / menuVars.resolution
     local time = startTime

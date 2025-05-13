@@ -1,5 +1,5 @@
 VIBRATO_SVS = { -- types of vibrato SVs
-    "Linear"
+    "Linear SSF"
 }
 
 -- Creates the menu for placing special SVs
@@ -19,11 +19,11 @@ function placeVibratoSVMenu(globalVars)
         return
     end
 
-    if currentSVType == "Linear" then linearVibratoMenu(settingVars) end
+    if currentSVType == "Linear SSF" then linearVibratoMenu(settingVars) end
 
     local labelText = table.concat({ currentSVType, "SettingsVibrato" })
     saveVariables(labelText, settingVars)
-    saveVariables("placeSpecialMenu", menuVars)
+    saveVariables("placeVibratoMenu", menuVars)
 end
 
 -- Returns menuVars for the menu at Place SVs > Special
@@ -31,6 +31,6 @@ function getVibratoPlaceMenuVars()
     local menuVars = {
         svTypeIndex = 1
     }
-    getVariables("placeSpecialMenu", menuVars)
+    getVariables("placeVibratoMenu", menuVars)
     return menuVars
 end
