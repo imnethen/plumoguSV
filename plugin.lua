@@ -895,22 +895,31 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
 
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
-function ssfVibrato(lowerStart, lowerEnd, higherStart, higherEnd, startTime, endTime, resolution, curvature)
-    local exponent = 2 ^ (curvature / 100)
-    local delta = endTime - startTime / 2 * resolution
+function ssfVibrato(menuVars)
+    local offsets = uniqueSelectedNoteOffsets()
+    local startTime = offsets[1]
+    local endTime = offsets[#startTime]
+    local exponent = 2 ^ (menuVars.curvature / 100)
+    local delta = 500 / menuVars.resolution
     local time = startTime
-    local ssfs = { ssf(startTime - getUsableDisplacementMultiplier(startTime), map.GetScrollSpeedFactorAt(time)) }
+    local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime), map.GetScrollSpeedFactorAt(time) or 1) }
     while time < endTime do
-        local x = ((time - startTime) - (endTime - startTime)) ^ exponent
-        local y = ((time + delta - startTime) - (endTime - startTime)) ^ exponent
-        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), higherStart + x * (higherEnd - higherStart)))
-        table.insert(ssfs, ssf(time, lowerStart + x * (lowerEnd - lowerStart)))
-        table.insert(ssfs, ssf(time - getUsableDisplacementMultiplier(time), lowerStart + y * (lowerEnd - lowerStart)))
-        table.insert(ssfs, ssf(time, higherStart + y * (higherEnd - higherStart)))
+        local x = ((time - startTime) / (endTime - startTime)) ^ exponent
+        local y = ((time + delta - startTime) / (endTime - startTime)) ^ exponent
+        table.insert(ssfs,
+            ssf(time - 1 / getUsableDisplacementMultiplier(time),
+                menuVars.higherStart + x * (menuVars.higherEnd - menuVars.higherStart)))
+        table.insert(ssfs, ssf(time, menuVars.lowerStart + x * (menuVars.lowerEnd - menuVars.lowerStart)))
+        table.insert(ssfs,
+            ssf(time + delta - 1 / getUsableDisplacementMultiplier(time),
+                menuVars.lowerStart + y * (menuVars.lowerEnd - menuVars.lowerStart)))
+        table.insert(ssfs, ssf(time + delta, menuVars.higherStart + y * (menuVars.higherEnd - menuVars.higherStart)))
         time = time + 2 * delta
     end
 
-    utils.PlaceScrollSpeedFactorBatch(ssfs)
+    actions.PerformBatch({
+        utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
+    })
 end
 function deleteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
@@ -3029,6 +3038,15 @@ function placeSpecialSVMenu(globalVars)
     saveVariables(labelText, settingVars)
     saveVariables("placeSpecialMenu", menuVars)
 end
+
+-- Returns menuVars for the menu at Place SVs > Special
+function getSpecialPlaceMenuVars()
+    local menuVars = {
+        svTypeIndex = 1
+    }
+    getVariables("placeSpecialMenu", menuVars)
+    return menuVars
+end
 -- Creates the menu for basic splitscroll SV
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -3145,6 +3163,21 @@ function placeStandardSVMenu(globalVars)
     saveVariables(labelText, settingVars)
     saveVariables("placeStandardMenu", menuVars)
 end
+
+-- Returns menuVars for the menu at Place SVs > Standard
+function getStandardPlaceMenuVars()
+    local menuVars = {
+        svTypeIndex = 1,
+        svMultipliers = {},
+        svDistances = {},
+        svGraphStats = createSVGraphStats(),
+        svStats = createSVStats(),
+        interlace = false,
+        interlaceRatio = -0.5
+    }
+    getVariables("placeStandardMenu", menuVars)
+    return menuVars
+end
 -- Creates the menu for placing still SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -3186,6 +3219,26 @@ function placeStillSVMenu(globalVars)
     local labelText = table.concat({ currentSVType, "SettingsStill" })
     saveVariables(labelText, settingVars)
     saveVariables("placeStillMenu", menuVars)
+end
+
+-- Returns menuVars for the menu at Place SVs > Still
+function getStillPlaceMenuVars()
+    local menuVars = {
+        svTypeIndex = 1,
+        noteSpacing = 1,
+        stillTypeIndex = 1,
+        stillDistance = 0,
+        stillBehavior = 1,
+        prePlaceDistances = {},
+        svMultipliers = {},
+        svDistances = {},
+        svGraphStats = createSVGraphStats(),
+        svStats = createSVStats(),
+        interlace = false,
+        interlaceRatio = -0.5
+    }
+    getVariables("placeStillMenu", menuVars)
+    return menuVars
 end
 -- Creates the "Delete SVs" tab
 -- Parameters
@@ -8898,10 +8951,10 @@ function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 --    a : first object
 --    b : second object
 function sortAscendingTime(a, b) return a.time < b.time end
--- Gets the current menu's setting variables
--- Parameters
---    svType : name of the current menu's type of SV [Table]
---    label  : text to delineate the type of setting variables [String]
+---Gets the current menu's setting variables.
+---@param svType string The SV type - that is, the shape of the SV once plotted.
+---@param label string A delineator to separate two categories with similar SV types (Standard/Still, etc).
+---@return table
 function getSettingVars(svType, label)
     local settingVars
     if svType == "Linear" then
@@ -9107,47 +9160,4 @@ function getSettingVars(svType, label)
     local labelText = table.concat({ svType, "Settings", label })
     getVariables(labelText, settingVars)
     return settingVars
-end
--- Returns menuVars for the menu at Place SVs > Standard
-function getStandardPlaceMenuVars()
-    local menuVars = {
-        svTypeIndex = 1,
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats(),
-        interlace = false,
-        interlaceRatio = -0.5
-    }
-    getVariables("placeStandardMenu", menuVars)
-    return menuVars
-end
-
--- Returns menuVars for the menu at Place SVs > Special
-function getSpecialPlaceMenuVars()
-    local menuVars = {
-        svTypeIndex = 1
-    }
-    getVariables("placeSpecialMenu", menuVars)
-    return menuVars
-end
-
--- Returns menuVars for the menu at Place SVs > Still
-function getStillPlaceMenuVars()
-    local menuVars = {
-        svTypeIndex = 1,
-        noteSpacing = 1,
-        stillTypeIndex = 1,
-        stillDistance = 0,
-        stillBehavior = 1,
-        prePlaceDistances = {},
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats(),
-        interlace = false,
-        interlaceRatio = -0.5
-    }
-    getVariables("placeStillMenu", menuVars)
-    return menuVars
 end
