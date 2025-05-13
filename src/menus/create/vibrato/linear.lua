@@ -5,7 +5,7 @@ function linearVibratoMenu(settingVars)
     simpleActionMenu("Place SSFs", 2, linearSSFVibrato, nil, settingVars)
 end
 
--- Lets you choose a start and an end SV
+-- sum shit idk
 -- Returns whether or not the start or end SVs changed [Boolean]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
