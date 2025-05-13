@@ -1,7 +1,8 @@
 CREATE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
-    "Still"
+    "Still",
+    "Vibrato"
 }
 
 -- Creates the "Place SVs" tab
@@ -14,4 +15,5 @@ function createSVTab(globalVars)
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
+    if placeType == "Vibrato" then placeVibratoSVMenu(globalVars) end
 end

@@ -1011,6 +1011,15 @@ function chooseSpecialSVType(menuVars)
     menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
 end
 
+-- Lets you choose the special SV type
+-- Parameters
+--    menuVars : list of variables used for the current menu [Table]
+function chooseVibratoSVType(menuVars)
+    local emoticonIndex = menuVars.svTypeIndex + #VIBRATO_SVS
+    local label = "  " .. EMOTICONS[emoticonIndex]
+    menuVars.svTypeIndex = combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
+end
+
 -- Lets you choose the current splitscroll layer
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]

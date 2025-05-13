@@ -2841,7 +2841,8 @@ end
 CREATE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
-    "Still"
+    "Still",
+    "Vibrato"
 }
 
 -- Creates the "Place SVs" tab
@@ -2854,6 +2855,7 @@ function createSVTab(globalVars)
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
+    if placeType == "Vibrato" then placeVibratoSVMenu(globalVars) end
 end
 -- Creates the menu for advanced splitscroll SV
 -- Parameters
@@ -3238,6 +3240,42 @@ function getStillPlaceMenuVars()
         interlaceRatio = -0.5
     }
     getVariables("placeStillMenu", menuVars)
+    return menuVars
+end
+VIBRATO_SVS = { -- types of vibrato SVs
+    "Linear"
+}
+
+-- Creates the menu for placing special SVs
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function placeVibratoSVMenu(globalVars)
+    exportImportSettingsButton(globalVars)
+    local menuVars = getVibratoPlaceMenuVars()
+    changeSVTypeIfKeysPressed(menuVars)
+    chooseVibratoSVType(menuVars)
+
+    addSeparator()
+    local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
+    local settingVars = getSettingVars(currentSVType, "Vibrato")
+    if globalVars.showExportImportMenu then
+        -- exportImportSettingsMenu(globalVars, menuVars, settingVars)
+        return
+    end
+
+    if currentSVType == "Linear" then linearVibratoMenu(settingVars) end
+
+    local labelText = table.concat({ currentSVType, "SettingsVibrato" })
+    saveVariables(labelText, settingVars)
+    saveVariables("placeSpecialMenu", menuVars)
+end
+
+-- Returns menuVars for the menu at Place SVs > Special
+function getVibratoPlaceMenuVars()
+    local menuVars = {
+        svTypeIndex = 1
+    }
+    getVariables("placeSpecialMenu", menuVars)
     return menuVars
 end
 -- Creates the "Delete SVs" tab
@@ -7225,6 +7263,15 @@ function chooseSpecialSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
+end
+
+-- Lets you choose the special SV type
+-- Parameters
+--    menuVars : list of variables used for the current menu [Table]
+function chooseVibratoSVType(menuVars)
+    local emoticonIndex = menuVars.svTypeIndex + #VIBRATO_SVS
+    local label = "  " .. EMOTICONS[emoticonIndex]
+    menuVars.svTypeIndex = combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
 end
 
 -- Lets you choose the current splitscroll layer
