@@ -9052,10 +9052,10 @@ function getSettingVars(svType, label)
         }
     elseif svType == "Linear SSF" then
         settingVars = {
-            lowerStart = 1,
-            lowerEnd = 1,
-            higherStart = 0.5,
-            higherEnd = 0.5,
+            lowerStart = 0.5,
+            lowerEnd = 0.5,
+            higherStart = 1,
+            higherEnd = 1,
             resolution = 90,
             curvature = 0,
         }
