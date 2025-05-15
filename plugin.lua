@@ -2856,7 +2856,7 @@ CREATE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
     "Still",
-    "Vibrato"
+    -- "Vibrato"
 }
 
 -- Creates the "Place SVs" tab
