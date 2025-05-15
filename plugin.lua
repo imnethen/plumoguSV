@@ -7176,9 +7176,12 @@ function chooseCurrentScrollGroup(globalVars)
         table.insert(groups, k)
         ::continue::
     end
+    local prevIndex = globalVars.scrollGroupIndex
     globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex)
     addSeparator()
-    state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
+    if (prevIndex ~= globalVars.scrollGroupIndex) then
+        state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
+    end
 end
 
 -- Lets you choose the variability scale of randomness
