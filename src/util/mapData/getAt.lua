@@ -33,5 +33,5 @@ end
 function getSVMultiplierAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.Multiplier end
-    return 1
+    return map.InitialScrollVelocity or 1
 end
