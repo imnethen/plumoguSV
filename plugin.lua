@@ -7167,6 +7167,15 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseCurrentScrollGroup(globalVars)
+    function indexOf(tbl, var)
+        for k, v in pairs(tbl) do
+            if v == var then
+                return k
+            end
+        end
+        return nil
+    end
+
     imgui.AlignTextToFramePadding()
     imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -7181,6 +7190,9 @@ function chooseCurrentScrollGroup(globalVars)
     addSeparator()
     if (prevIndex ~= globalVars.scrollGroupIndex) then
         state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
+    end
+    if (state.SelectedScrollGroupId ~= groups[globalVars.scrollGroupIndex]) then
+        globalVars.scrollGroupIndex = indexOf(groups, state.SelectedScrollGroupId)
     end
 end
 
