@@ -23,6 +23,5 @@ function deleteTab(globalVars)
 
     ::continue::
 
-
     simpleActionMenu("Delete items between selected notes", 2, deleteItems, nil, menuVars)
 end
