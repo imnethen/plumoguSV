@@ -19,7 +19,7 @@ function generateChinchillaSet(settingVars)
         local slope = distance * numValues
         chinchillaSet[i] = slope
     end
-    normalizeValues(chinchillaSet, avgValue, true)
+    table.normalize(chinchillaSet, avgValue, true)
     for i = 1, #chinchillaSet do
         chinchillaSet[i] = chinchillaSet[i] + settingVars.verticalShift
     end
@@ -76,5 +76,5 @@ function scalePercent(settingVars, percent)
         newPercent = (workingPercent ^ 2) * (1 + c) / (workingPercent + c)
     end
     if slowDownType then newPercent = 1 - newPercent end
-    return clampToInterval(newPercent, 0, 1)
+    return math.clamp(newPercent, 0, 1)
 end

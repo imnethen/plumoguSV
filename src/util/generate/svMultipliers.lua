@@ -76,7 +76,7 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
             table.insert(newMultipliers, multipliers[i] * interlaceMultiplier)
         end
         if settingVars.avgSV and not settingVars.dontNormalize then
-            normalizeValues(newMultipliers, settingVars.avgSV, false)
+            table.normalize(newMultipliers, settingVars.avgSV, false)
         end
         multipliers = newMultipliers
     end

@@ -22,7 +22,7 @@ function removeSelectedFrameTimeButton(settingVars)
     if not imgui.Button("Removed currently selected time", BEEG_BUTTON_SIZE) then return end
     table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
     local maxIndex = math.max(1, #settingVars.frameTimes)
-    settingVars.selectedTimeIndex = clampToInterval(settingVars.selectedTimeIndex, 1, maxIndex)
+    settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
 end
 
 -- Makes a button that places SVs assigned for a scroll for the splitscroll menu

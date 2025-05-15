@@ -13,9 +13,9 @@ function generateComboSet(values1, values2, comboPhase, comboType, comboMultipli
                           comboMultiplier2, dontNormalize, avgValue, verticalShift)
     local comboValues = {}
     if comboType == "SV Type 1 Only" then
-        comboValues = makeDuplicateList(values1)
+        comboValues = table.duplicate(values1)
     elseif comboType == "SV Type 2 Only" then
-        comboValues = makeDuplicateList(values2)
+        comboValues = table.duplicate(values2)
     else
         local lastValue1 = table.remove(values1)
         local lastValue2 = table.remove(values2)
@@ -79,7 +79,7 @@ function generateComboSet(values1, values2, comboPhase, comboType, comboMultipli
     end
     avgValue = avgValue - verticalShift
     if not dontNormalize then
-        normalizeValues(comboValues, avgValue, false)
+        table.normalize(comboValues, avgValue, false)
     end
     for i = 1, #comboValues do
         comboValues[i] = comboValues[i] + verticalShift

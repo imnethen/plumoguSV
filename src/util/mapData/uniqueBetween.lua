@@ -13,7 +13,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
             end
         end
     end
-    noteOffsetsBetween = dedupe(noteOffsetsBetween)
+    noteOffsetsBetween = table.dedupe(noteOffsetsBetween)
     noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end

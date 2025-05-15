@@ -10,12 +10,12 @@ function calculateDistanceVsTime(globalVars, svValues)
     local multiplier = 1
     if globalVars.upscroll then multiplier = -1 end
     local distancesBackwards = { multiplier * distance }
-    local svValuesBackwards = getReverseList(svValues)
+    local svValuesBackwards = table.reverse(svValues)
     for i = 1, #svValuesBackwards do
         distance = distance + (multiplier * svValuesBackwards[i])
         table.insert(distancesBackwards, distance)
     end
-    return getReverseList(distancesBackwards)
+    return table.reverse(distancesBackwards)
 end
 
 -- Returns the minimum value from a list of values [Int/Float]
@@ -66,7 +66,7 @@ function calculateStutterDistanceVsTime(svValues, stutterDuration, stuttersPerSe
         end
         table.insert(distancesBackwards, distance)
     end
-    return getReverseList(distancesBackwards)
+    return table.reverse(distancesBackwards)
 end
 
 -- Creates a distance vs time graph/plot of SV motion

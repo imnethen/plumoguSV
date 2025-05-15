@@ -634,7 +634,7 @@ function getCurrentRGBColors(rgbPeriod)
     local percentIntoRGBCycle = (currentTime % rgbPeriod) / rgbPeriod
     local stagesElapsed = 6 * percentIntoRGBCycle
     local currentStageNumber = math.floor(stagesElapsed)
-    local percentIntoStage = clampToInterval(stagesElapsed - currentStageNumber, 0, 1)
+    local percentIntoStage = math.clamp(stagesElapsed - currentStageNumber, 0, 1)
 
     local red = 0
     local green = 0

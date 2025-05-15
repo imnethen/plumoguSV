@@ -9,7 +9,7 @@ function updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, skipFin
     local interlaceMultiplier = nil
     if menuVars.interlace then interlaceMultiplier = menuVars.interlaceRatio end
     menuVars.svMultipliers = generateSVMultipliers(currentSVType, settingVars, interlaceMultiplier)
-    local svMultipliersNoEndSV = makeDuplicateList(menuVars.svMultipliers)
+    local svMultipliersNoEndSV = table.duplicate(menuVars.svMultipliers)
     table.remove(svMultipliersNoEndSV)
     menuVars.svDistances = calculateDistanceVsTime(globalVars, svMultipliersNoEndSV)
 
@@ -41,11 +41,11 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function updateStutterMenuSVs(settingVars)
     settingVars.svMultipliers = generateSVMultipliers("Stutter1", settingVars, nil)
-    local svMultipliersNoEndSV = makeDuplicateList(settingVars.svMultipliers)
+    local svMultipliersNoEndSV = table.duplicate(settingVars.svMultipliers)
     table.remove(svMultipliersNoEndSV)
 
     settingVars.svMultipliers2 = generateSVMultipliers("Stutter2", settingVars, nil)
-    local svMultipliersNoEndSV2 = makeDuplicateList(settingVars.svMultipliers2)
+    local svMultipliersNoEndSV2 = table.duplicate(settingVars.svMultipliers2)
     table.remove(svMultipliersNoEndSV2)
 
     settingVars.svDistances = calculateStutterDistanceVsTime(svMultipliersNoEndSV,

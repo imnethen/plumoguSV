@@ -2,7 +2,7 @@
 -- Returns a list of only unique values (no duplicates) [Table]
 -- Parameters
 --    list : list of values [Table]
-function dedupe(list)
+function table.dedupe(list)
     local hash = {}
     local newList = {}
     for _, value in ipairs(list) do

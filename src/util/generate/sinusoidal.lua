@@ -23,7 +23,7 @@ function generateSinusoidalSet(startAmplitude, endAmplitude, periods, periodsShi
     for i = 0, totalValues do
         local angle = (math.pi / 2) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
         local value = amplitudes[i + 1] * (math.abs(math.sin(angle)) ^ (normalizedSharpness))
-        value = value * getSignOfNumber(math.sin(angle)) + verticalShift
+        value = value * math.sign(math.sin(angle)) + verticalShift
         table.insert(sinusoidalSet, value)
     end
     return sinusoidalSet

@@ -11,7 +11,7 @@ function selectByChordSizes(menuVars)
         table.insert(noteTimeTable, note.StartTime)
     end
 
-    noteTimeTable = dedupe(noteTimeTable)
+    noteTimeTable = table.dedupe(noteTimeTable)
 
     local sizeDict = {
         {},

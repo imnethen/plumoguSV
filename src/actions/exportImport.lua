@@ -184,7 +184,7 @@ function exportCustomSVButton(globalVars, menuVars)
     local buttonText = "Export current SVs as custom SV data"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
 
-    local multipliersCopy = makeDuplicateList(menuVars.svMultipliers)
+    local multipliersCopy = table.duplicate(menuVars.svMultipliers)
     table.remove(multipliersCopy)
     globalVars.exportCustomSVData = table.concat(multipliersCopy, " ")
 end

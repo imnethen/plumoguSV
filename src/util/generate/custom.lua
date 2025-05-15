@@ -2,8 +2,8 @@
 -- Parameters
 --    values : list of custom values [Table]
 function generateCustomSet(values)
-    local newValues = makeDuplicateList(values)
-    local averageMultiplier = calculateAverage(newValues, true)
+    local newValues = table.duplicate(values)
+    local averageMultiplier = table.average(newValues, true)
     table.insert(newValues, averageMultiplier)
     return newValues
 end

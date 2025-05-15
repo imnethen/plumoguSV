@@ -10,7 +10,7 @@ function generateHermiteSet(startValue, endValue, verticalShift, avgValue, numVa
     local xCoords = generateLinearSet(0, 1, numValues)
     local yCoords = {}
     for i = 1, #xCoords do
-        yCoords[i] = simplifiedHermite(startValue, endValue, avgValue, xCoords[i])
+        yCoords[i] = math.hermite(startValue, endValue, avgValue, xCoords[i])
     end
     local hermiteSet = {}
     for i = 1, #yCoords - 1 do
@@ -18,7 +18,7 @@ function generateHermiteSet(startValue, endValue, verticalShift, avgValue, numVa
         local endY = yCoords[i + 1]
         hermiteSet[i] = (endY - startY) * (numValues - 1)
     end
-    --normalizeValues(hermiteSet, avgValue, false)
+    --table.normalize(hermiteSet, avgValue, false)
     for i = 1, #hermiteSet do
         hermiteSet[i] = hermiteSet[i] + verticalShift
     end

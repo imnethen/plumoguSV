@@ -7,9 +7,9 @@
 --    svDistances          : list of distances calculated from SV multipliers [Table]
 function updateSVStats(svGraphStats, svStats, svMultipliers, svMultipliersNoEndSV, svDistances)
     updateGraphStats(svGraphStats, svMultipliers, svDistances)
-    svStats.minSV = round(calculateMinValue(svMultipliersNoEndSV), 2)
-    svStats.maxSV = round(calculateMaxValue(svMultipliersNoEndSV), 2)
-    svStats.avgSV = round(calculateAverage(svMultipliersNoEndSV, true), 3)
+    svStats.minSV = math.round(calculateMinValue(svMultipliersNoEndSV), 2)
+    svStats.maxSV = math.round(calculateMaxValue(svMultipliersNoEndSV), 2)
+    svStats.avgSV = math.round(table.average(svMultipliersNoEndSV, true), 3)
 end
 
 -- Updates scale stats for SV graphs
@@ -65,8 +65,8 @@ end
 --    svMultipliers   : stutter multipliers [Table]
 --    stutterDuration : duration of the stutter (out of 100) [Int]
 function displayStutterSVStats(svMultipliers, stutterDuration)
-    local firstSV = round(svMultipliers[1], 3)
-    local secondSV = round(svMultipliers[2], 3)
+    local firstSV = math.round(svMultipliers[1], 3)
+    local secondSV = math.round(svMultipliers[2], 3)
     local firstDuration = stutterDuration
     local secondDuration = 100 - stutterDuration
     imgui.Columns(2, "SV Stutter Stats", false)

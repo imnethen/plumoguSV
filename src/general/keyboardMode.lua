@@ -110,7 +110,7 @@ function changeSVTypeIfKeysPressed(menuVars)
 
     if xPressed then menuVars.svTypeIndex = menuVars.svTypeIndex + 1 end
     if zPressed then menuVars.svTypeIndex = menuVars.svTypeIndex - 1 end
-    menuVars.svTypeIndex = wrapToInterval(menuVars.svTypeIndex, 1, maxSVTypes)
+    menuVars.svTypeIndex = math.wrap(menuVars.svTypeIndex, 1, maxSVTypes)
     return true
 end
 
@@ -128,7 +128,7 @@ function changeSelectToolIfKeysPressed(globalVars)
 
     if xPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex + 1 end
     if zPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex - 1 end
-    globalVars.selectTypeIndex = wrapToInterval(globalVars.selectTypeIndex, 1, #SELECT_TOOLS)
+    globalVars.selectTypeIndex = math.wrap(globalVars.selectTypeIndex, 1, #SELECT_TOOLS)
 end
 
 -- Changes the edit tool if certain keys are pressed
@@ -145,5 +145,5 @@ function changeEditToolIfKeysPressed(globalVars)
 
     if xPressed then globalVars.editToolIndex = globalVars.editToolIndex + 1 end
     if zPressed then globalVars.editToolIndex = globalVars.editToolIndex - 1 end
-    globalVars.editToolIndex = wrapToInterval(globalVars.editToolIndex, 1, #EDIT_SV_TOOLS)
+    globalVars.editToolIndex = math.wrap(globalVars.editToolIndex, 1, #EDIT_SV_TOOLS)
 end

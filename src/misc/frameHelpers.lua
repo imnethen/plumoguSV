@@ -78,7 +78,7 @@ function drawCurrentFrame(globalVars, settingVars)
     local mapKeyCount = map.GetKeyCount()
     local noteWidth = 200 / mapKeyCount
     local noteSpacing = 5
-    local barNoteHeight = round(2 * noteWidth / 5, 0)
+    local barNoteHeight = math.round(2 * noteWidth / 5, 0)
     local noteColor = rgbaToUint(117, 117, 117, 255)
     local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
     local drawlist = imgui.GetWindowDrawList()
@@ -126,6 +126,6 @@ function addSelectedNoteTimesToList(menuVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(menuVars.noteTimes, hitObject.StartTime)
     end
-    menuVars.noteTimes = dedupe(menuVars.noteTimes)
+    menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
     menuVars.noteTimes = table.sort(menuVars.noteTimes, sortAscending)
 end

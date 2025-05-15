@@ -79,13 +79,14 @@ function directSVMenu()
         imgui.PushID(idx)
         imgui.TableNextRow()
         imgui.TableSetColumnIndex(0)
-        imgui.Selectable(round(v.StartTime, 2), menuVars.selectableIndex == idx, imgui_selectable_flags.SpanAllColumns)
+        imgui.Selectable(math.round(v.StartTime, 2), menuVars.selectableIndex == idx,
+            imgui_selectable_flags.SpanAllColumns)
         if (imgui.IsItemClicked()) then
             menuVars.selectableIndex = idx
         end
         imgui.TableSetColumnIndex(1)
         imgui.SetCursorPosX(150)
-        imgui.Text(round(v.Multiplier, 2));
+        imgui.Text(math.round(v.Multiplier, 2));
         imgui.PopID()
     end
 

@@ -67,7 +67,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
         if i ~= 1 then
             beforeDisplacement = finalDisplacements[i]
         end
-        local baseSVs = makeDuplicateList(svs)
+        local baseSVs = table.duplicate(svs)
         prepareDisplacingSVs(noteOffset, svsToAdd, svTimeIsAdded, beforeDisplacement,
             atDisplacement, afterDisplacement, true, baseSVs)
     end

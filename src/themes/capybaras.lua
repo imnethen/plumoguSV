@@ -223,9 +223,9 @@ function drawCapybara312(globalVars)
     local o = imgui.GetOverlayDrawList()
     --local sz = state.WindowSize
     local rgbColors = getCurrentRGBColors(globalVars.rgbPeriod)
-    local redRounded = round(255 * rgbColors.red, 0)
-    local greenRounded = round(255 * rgbColors.green, 0)
-    local blueRounded = round(255 * rgbColors.blue, 0)
+    local redRounded = math.round(255 * rgbColors.red, 0)
+    local greenRounded = math.round(255 * rgbColors.green, 0)
+    local blueRounded = math.round(255 * rgbColors.blue, 0)
     local outlineColor = rgbaToUint(redRounded, greenRounded, blueRounded, 255)
 
     local p1 = { 42, 32 }

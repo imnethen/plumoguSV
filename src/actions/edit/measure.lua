@@ -13,11 +13,11 @@ function measureSVs(menuVars)
     menuVars.nsvDistance = tostring(menuVars.roundedNSVDistance)
 
     local totalDistance = calculateDisplacementFromSVs(svsBetweenOffsets, startOffset, endOffset)
-    menuVars.roundedSVDistance = round(totalDistance, roundingDecimalPlaces)
+    menuVars.roundedSVDistance = math.round(totalDistance, roundingDecimalPlaces)
     menuVars.svDistance = tostring(totalDistance)
 
     local avgSV = totalDistance / menuVars.roundedNSVDistance
-    menuVars.roundedAvgSV = round(avgSV, roundingDecimalPlaces)
+    menuVars.roundedAvgSV = math.round(avgSV, roundingDecimalPlaces)
     menuVars.avgSV = tostring(avgSV)
 
     local durationStart = 1 / getUsableDisplacementMultiplier(startOffset)
@@ -26,7 +26,7 @@ function measureSVs(menuVars)
     local multiplierAt = getSVMultiplierAt(timeAt)
     local multiplierAfter = getSVMultiplierAt(timeAfter)
     local startDisplacement = -(multiplierAt - multiplierAfter) * durationStart
-    menuVars.roundedStartDisplacement = round(startDisplacement, roundingDecimalPlaces)
+    menuVars.roundedStartDisplacement = math.round(startDisplacement, roundingDecimalPlaces)
     menuVars.startDisplacement = tostring(startDisplacement)
 
     local durationEnd = 1 / getUsableDisplacementMultiplier(startOffset)
@@ -35,11 +35,11 @@ function measureSVs(menuVars)
     local multiplierBefore = getSVMultiplierAt(timeBefore)
     local multiplierBeforeBefore = getSVMultiplierAt(timeBeforeBefore)
     local endDisplacement = (multiplierBefore - multiplierBeforeBefore) * durationEnd
-    menuVars.roundedEndDisplacement = round(endDisplacement, roundingDecimalPlaces)
+    menuVars.roundedEndDisplacement = math.round(endDisplacement, roundingDecimalPlaces)
     menuVars.endDisplacement = tostring(endDisplacement)
 
     local trueDistance = totalDistance - endDisplacement + startDisplacement
     local trueAvgSV = trueDistance / menuVars.roundedNSVDistance
-    menuVars.roundedAvgSVDisplaceless = round(trueAvgSV, roundingDecimalPlaces)
+    menuVars.roundedAvgSVDisplaceless = math.round(trueAvgSV, roundingDecimalPlaces)
     menuVars.avgSVDisplaceless = tostring(trueAvgSV)
 end

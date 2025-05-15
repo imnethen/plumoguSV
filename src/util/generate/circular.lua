@@ -14,7 +14,7 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
     local angles = generateLinearSet(startingAngle, 0, numValues)
     local yCoords = {}
     for i = 1, #angles do
-        local angle = round(angles[i], 8)
+        local angle = math.round(angles[i], 8)
         local x = math.cos(angle)
         yCoords[i] = -avgValue * math.sqrt(1 - x ^ 2)
     end
@@ -24,8 +24,8 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
         local endY = yCoords[i + 1]
         circularSet[i] = (endY - startY) * (numValues - 1)
     end
-    if not increaseValues then circularSet = getReverseList(circularSet) end
-    if not dontNormalize then normalizeValues(circularSet, avgValue, true) end
+    if not increaseValues then circularSet = table.reverse(circularSet) end
+    if not dontNormalize then table.normalize(circularSet, avgValue, true) end
     for i = 1, #circularSet do
         circularSet[i] = circularSet[i] + verticalShift
     end

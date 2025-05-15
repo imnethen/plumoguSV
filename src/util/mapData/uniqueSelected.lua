@@ -18,7 +18,7 @@ function uniqueSelectedNoteOffsets()
     for i, hitObject in pairs(state.SelectedHitObjects) do
         offsets[i] = hitObject.StartTime
     end
-    offsets = dedupe(offsets)
+    offsets = table.dedupe(offsets)
     offsets = table.sort(offsets, sortAscending)
     return offsets
 end

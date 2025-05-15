@@ -50,7 +50,7 @@ function addSelectedNoteTimes(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes2, hitObject.StartTime)
     end
-    settingVars.noteTimes2 = dedupe(settingVars.noteTimes2)
+    settingVars.noteTimes2 = table.dedupe(settingVars.noteTimes2)
     settingVars.noteTimes2 = table.sort(settingVars.noteTimes2, sortAscending)
 end
 
@@ -61,7 +61,7 @@ function addSelectedNoteTimes2(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes3, hitObject.StartTime)
     end
-    settingVars.noteTimes3 = dedupe(settingVars.noteTimes3)
+    settingVars.noteTimes3 = table.dedupe(settingVars.noteTimes3)
     settingVars.noteTimes3 = table.sort(settingVars.noteTimes3, sortAscending)
 end
 
@@ -72,6 +72,6 @@ function addSelectedNoteTimes3(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes4, hitObject.StartTime)
     end
-    settingVars.noteTimes4 = dedupe(settingVars.noteTimes4)
+    settingVars.noteTimes4 = table.dedupe(settingVars.noteTimes4)
     settingVars.noteTimes4 = table.sort(settingVars.noteTimes4, sortAscending)
 end

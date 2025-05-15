@@ -323,7 +323,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes2, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes2 = dedupe(convertedSettingVars.noteTimes2)
+        convertedSettingVars.noteTimes2 = table.dedupe(convertedSettingVars.noteTimes2)
         convertedSettingVars.noteTimes2 = table.sort(convertedSettingVars.noteTimes2, sortAscending)
     end
     if splitscrollLayers[3] ~= nil then
@@ -333,7 +333,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes3, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes3 = dedupe(convertedSettingVars.noteTimes3)
+        convertedSettingVars.noteTimes3 = table.dedupe(convertedSettingVars.noteTimes3)
         convertedSettingVars.noteTimes3 = table.sort(convertedSettingVars.noteTimes3, sortAscending)
     end
     if splitscrollLayers[4] ~= nil then
@@ -344,7 +344,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(allLayerNotes, layerNotes[i])
             table.insert(convertedSettingVars.noteTimes4, layerNotes[i].StartTime)
         end
-        convertedSettingVars.noteTimes4 = dedupe(convertedSettingVars.noteTimes4)
+        convertedSettingVars.noteTimes4 = table.dedupe(convertedSettingVars.noteTimes4)
         convertedSettingVars.noteTimes4 = table.sort(convertedSettingVars.noteTimes4, sortAscending)
     end
     allLayerNotes = table.sort(allLayerNotes, sortAscendingStartTime)
@@ -366,7 +366,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             hasAddedLaneTime[lane][startTime] = true
         end
     end
-    allNoteTimes = dedupe(allNoteTimes)
+    allNoteTimes = table.dedupe(allNoteTimes)
     allNoteTimes = table.sort(allNoteTimes, sortAscending)
     local editorActions = {
         actionRemoveNotesBetween(startOffset, endOffset),
@@ -884,7 +884,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
         if i ~= 1 then
             beforeDisplacement = finalDisplacements[i]
         end
-        local baseSVs = makeDuplicateList(svs)
+        local baseSVs = table.duplicate(svs)
         prepareDisplacingSVs(noteOffset, svsToAdd, svTimeIsAdded, beforeDisplacement,
             atDisplacement, afterDisplacement, true, baseSVs)
     end
@@ -1349,11 +1349,11 @@ function measureSVs(menuVars)
     menuVars.nsvDistance = tostring(menuVars.roundedNSVDistance)
 
     local totalDistance = calculateDisplacementFromSVs(svsBetweenOffsets, startOffset, endOffset)
-    menuVars.roundedSVDistance = round(totalDistance, roundingDecimalPlaces)
+    menuVars.roundedSVDistance = math.round(totalDistance, roundingDecimalPlaces)
     menuVars.svDistance = tostring(totalDistance)
 
     local avgSV = totalDistance / menuVars.roundedNSVDistance
-    menuVars.roundedAvgSV = round(avgSV, roundingDecimalPlaces)
+    menuVars.roundedAvgSV = math.round(avgSV, roundingDecimalPlaces)
     menuVars.avgSV = tostring(avgSV)
 
     local durationStart = 1 / getUsableDisplacementMultiplier(startOffset)
@@ -1362,7 +1362,7 @@ function measureSVs(menuVars)
     local multiplierAt = getSVMultiplierAt(timeAt)
     local multiplierAfter = getSVMultiplierAt(timeAfter)
     local startDisplacement = -(multiplierAt - multiplierAfter) * durationStart
-    menuVars.roundedStartDisplacement = round(startDisplacement, roundingDecimalPlaces)
+    menuVars.roundedStartDisplacement = math.round(startDisplacement, roundingDecimalPlaces)
     menuVars.startDisplacement = tostring(startDisplacement)
 
     local durationEnd = 1 / getUsableDisplacementMultiplier(startOffset)
@@ -1371,12 +1371,12 @@ function measureSVs(menuVars)
     local multiplierBefore = getSVMultiplierAt(timeBefore)
     local multiplierBeforeBefore = getSVMultiplierAt(timeBeforeBefore)
     local endDisplacement = (multiplierBefore - multiplierBeforeBefore) * durationEnd
-    menuVars.roundedEndDisplacement = round(endDisplacement, roundingDecimalPlaces)
+    menuVars.roundedEndDisplacement = math.round(endDisplacement, roundingDecimalPlaces)
     menuVars.endDisplacement = tostring(endDisplacement)
 
     local trueDistance = totalDistance - endDisplacement + startDisplacement
     local trueAvgSV = trueDistance / menuVars.roundedNSVDistance
-    menuVars.roundedAvgSVDisplaceless = round(trueAvgSV, roundingDecimalPlaces)
+    menuVars.roundedAvgSVDisplaceless = math.round(trueAvgSV, roundingDecimalPlaces)
     menuVars.avgSVDisplaceless = tostring(trueAvgSV)
 end
 -- Merges overlapping SVs between selected notes
@@ -1763,7 +1763,7 @@ function exportCustomSVButton(globalVars, menuVars)
     local buttonText = "Export current SVs as custom SV data"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
 
-    local multipliersCopy = makeDuplicateList(menuVars.svMultipliers)
+    local multipliersCopy = table.duplicate(menuVars.svMultipliers)
     table.remove(multipliersCopy)
     globalVars.exportCustomSVData = table.concat(multipliersCopy, " ")
 end
@@ -2033,7 +2033,7 @@ function selectAlternating(menuVars)
     for _, v in pairs(notes) do
         table.insert(times, v.StartTime)
     end
-    times = dedupe(times)
+    times = table.dedupe(times)
     local allowedTimes = {}
     for i, time in pairs(times) do
         if ((i - 2 + menuVars.offset) % menuVars.every == 0) then
@@ -2068,7 +2068,7 @@ function selectByChordSizes(menuVars)
         table.insert(noteTimeTable, note.StartTime)
     end
 
-    noteTimeTable = dedupe(noteTimeTable)
+    noteTimeTable = table.dedupe(noteTimeTable)
 
     local sizeDict = {
         {},
@@ -2400,7 +2400,7 @@ function draw()
     focusWindowIfHotkeysPressed()
     centerWindowIfHotkeysPressed()
 
-    imgui.Begin("plumoguSV-v1.1.2", imgui_window_flags.AlwaysAutoResize)
+    imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
     if globalVars.keyboardMode then
         imgui.BeginTabBar("Quick tabs")
@@ -2536,7 +2536,7 @@ function changeSVTypeIfKeysPressed(menuVars)
 
     if xPressed then menuVars.svTypeIndex = menuVars.svTypeIndex + 1 end
     if zPressed then menuVars.svTypeIndex = menuVars.svTypeIndex - 1 end
-    menuVars.svTypeIndex = wrapToInterval(menuVars.svTypeIndex, 1, maxSVTypes)
+    menuVars.svTypeIndex = math.wrap(menuVars.svTypeIndex, 1, maxSVTypes)
     return true
 end
 
@@ -2554,7 +2554,7 @@ function changeSelectToolIfKeysPressed(globalVars)
 
     if xPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex + 1 end
     if zPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex - 1 end
-    globalVars.selectTypeIndex = wrapToInterval(globalVars.selectTypeIndex, 1, #SELECT_TOOLS)
+    globalVars.selectTypeIndex = math.wrap(globalVars.selectTypeIndex, 1, #SELECT_TOOLS)
 end
 
 -- Changes the edit tool if certain keys are pressed
@@ -2571,7 +2571,7 @@ function changeEditToolIfKeysPressed(globalVars)
 
     if xPressed then globalVars.editToolIndex = globalVars.editToolIndex + 1 end
     if zPressed then globalVars.editToolIndex = globalVars.editToolIndex - 1 end
-    globalVars.editToolIndex = wrapToInterval(globalVars.editToolIndex, 1, #EDIT_SV_TOOLS)
+    globalVars.editToolIndex = math.wrap(globalVars.editToolIndex, 1, #EDIT_SV_TOOLS)
 end
 -- Creates a copy-pastable text box
 -- Parameters
@@ -3494,13 +3494,14 @@ function directSVMenu()
         imgui.PushID(idx)
         imgui.TableNextRow()
         imgui.TableSetColumnIndex(0)
-        imgui.Selectable(round(v.StartTime, 2), menuVars.selectableIndex == idx, imgui_selectable_flags.SpanAllColumns)
+        imgui.Selectable(math.round(v.StartTime, 2), menuVars.selectableIndex == idx,
+            imgui_selectable_flags.SpanAllColumns)
         if (imgui.IsItemClicked()) then
             menuVars.selectableIndex = idx
         end
         imgui.TableSetColumnIndex(1)
         imgui.SetCursorPosX(150)
-        imgui.Text(round(v.Multiplier, 2));
+        imgui.Text(math.round(v.Multiplier, 2));
         imgui.PopID()
     end
 
@@ -4528,7 +4529,7 @@ function drawCurrentFrame(globalVars, settingVars)
     local mapKeyCount = map.GetKeyCount()
     local noteWidth = 200 / mapKeyCount
     local noteSpacing = 5
-    local barNoteHeight = round(2 * noteWidth / 5, 0)
+    local barNoteHeight = math.round(2 * noteWidth / 5, 0)
     local noteColor = rgbaToUint(117, 117, 117, 255)
     local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
     local drawlist = imgui.GetWindowDrawList()
@@ -4576,7 +4577,7 @@ function addSelectedNoteTimesToList(menuVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(menuVars.noteTimes, hitObject.StartTime)
     end
-    menuVars.noteTimes = dedupe(menuVars.noteTimes)
+    menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
     menuVars.noteTimes = table.sort(menuVars.noteTimes, sortAscending)
 end
 -- Shows the settings menu for the current SV type
@@ -4661,7 +4662,7 @@ function addSelectedNoteTimes(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes2, hitObject.StartTime)
     end
-    settingVars.noteTimes2 = dedupe(settingVars.noteTimes2)
+    settingVars.noteTimes2 = table.dedupe(settingVars.noteTimes2)
     settingVars.noteTimes2 = table.sort(settingVars.noteTimes2, sortAscending)
 end
 
@@ -4672,7 +4673,7 @@ function addSelectedNoteTimes2(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes3, hitObject.StartTime)
     end
-    settingVars.noteTimes3 = dedupe(settingVars.noteTimes3)
+    settingVars.noteTimes3 = table.dedupe(settingVars.noteTimes3)
     settingVars.noteTimes3 = table.sort(settingVars.noteTimes3, sortAscending)
 end
 
@@ -4683,7 +4684,7 @@ function addSelectedNoteTimes3(settingVars)
     for _, hitObject in pairs(state.SelectedHitObjects) do
         table.insert(settingVars.noteTimes4, hitObject.StartTime)
     end
-    settingVars.noteTimes4 = dedupe(settingVars.noteTimes4)
+    settingVars.noteTimes4 = table.dedupe(settingVars.noteTimes4)
     settingVars.noteTimes4 = table.sort(settingVars.noteTimes4, sortAscending)
 end
 -- Creates a button that lets you clear all assigned note times for the current menu
@@ -4710,7 +4711,7 @@ function removeSelectedFrameTimeButton(settingVars)
     if not imgui.Button("Removed currently selected time", BEEG_BUTTON_SIZE) then return end
     table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
     local maxIndex = math.max(1, #settingVars.frameTimes)
-    settingVars.selectedTimeIndex = clampToInterval(settingVars.selectedTimeIndex, 1, maxIndex)
+    settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
 end
 
 -- Makes a button that places SVs assigned for a scroll for the splitscroll menu
@@ -4877,9 +4878,9 @@ end
 --    svDistances          : list of distances calculated from SV multipliers [Table]
 function updateSVStats(svGraphStats, svStats, svMultipliers, svMultipliersNoEndSV, svDistances)
     updateGraphStats(svGraphStats, svMultipliers, svDistances)
-    svStats.minSV = round(calculateMinValue(svMultipliersNoEndSV), 2)
-    svStats.maxSV = round(calculateMaxValue(svMultipliersNoEndSV), 2)
-    svStats.avgSV = round(calculateAverage(svMultipliersNoEndSV, true), 3)
+    svStats.minSV = math.round(calculateMinValue(svMultipliersNoEndSV), 2)
+    svStats.maxSV = math.round(calculateMaxValue(svMultipliersNoEndSV), 2)
+    svStats.avgSV = math.round(table.average(svMultipliersNoEndSV, true), 3)
 end
 
 -- Updates scale stats for SV graphs
@@ -4935,8 +4936,8 @@ end
 --    svMultipliers   : stutter multipliers [Table]
 --    stutterDuration : duration of the stutter (out of 100) [Int]
 function displayStutterSVStats(svMultipliers, stutterDuration)
-    local firstSV = round(svMultipliers[1], 3)
-    local secondSV = round(svMultipliers[2], 3)
+    local firstSV = math.round(svMultipliers[1], 3)
+    local secondSV = math.round(svMultipliers[2], 3)
     local firstDuration = stutterDuration
     local secondDuration = 100 - stutterDuration
     imgui.Columns(2, "SV Stutter Stats", false)
@@ -5219,9 +5220,9 @@ function drawCapybara312(globalVars)
     local o = imgui.GetOverlayDrawList()
     --local sz = state.WindowSize
     local rgbColors = getCurrentRGBColors(globalVars.rgbPeriod)
-    local redRounded = round(255 * rgbColors.red, 0)
-    local greenRounded = round(255 * rgbColors.green, 0)
-    local blueRounded = round(255 * rgbColors.blue, 0)
+    local redRounded = math.round(255 * rgbColors.red, 0)
+    local greenRounded = math.round(255 * rgbColors.green, 0)
+    local blueRounded = math.round(255 * rgbColors.blue, 0)
     local outlineColor = rgbaToUint(redRounded, greenRounded, blueRounded, 255)
 
     local p1 = { 42, 32 }
@@ -5913,7 +5914,7 @@ function getCurrentRGBColors(rgbPeriod)
     local percentIntoRGBCycle = (currentTime % rgbPeriod) / rgbPeriod
     local stagesElapsed = 6 * percentIntoRGBCycle
     local currentStageNumber = math.floor(stagesElapsed)
-    local percentIntoStage = clampToInterval(stagesElapsed - currentStageNumber, 0, 1)
+    local percentIntoStage = math.clamp(stagesElapsed - currentStageNumber, 0, 1)
 
     local red = 0
     local green = 0
@@ -6183,18 +6184,18 @@ end
 --    dustSize      : size of a dust particle [Int/Float]
 function renderDustParticles(rgbPeriod, o, t, dustParticles, dustDuration, dustSize)
     local currentRGBColors = getCurrentRGBColors(rgbPeriod)
-    local currentRed = round(255 * currentRGBColors.red, 0)
-    local currentGreen = round(255 * currentRGBColors.green, 0)
-    local currentBlue = round(255 * currentRGBColors.blue, 0)
+    local currentRed = math.round(255 * currentRGBColors.red, 0)
+    local currentGreen = math.round(255 * currentRGBColors.green, 0)
+    local currentBlue = math.round(255 * currentRGBColors.blue, 0)
     for i = 1, #dustParticles do
         local dustParticle = dustParticles[i]
         if dustParticle.showParticle then
             local time = 1 - ((dustParticle.endTime - t) / dustDuration)
             local dustX = dustParticle.x + dustParticle.xRange * time
-            local dy = dustParticle.yRange * simplifiedQuadraticBezier(0, time)
+            local dy = dustParticle.yRange * math.quadraticBezier(0, time)
             local dustY = dustParticle.y + dy
             local dustCoords = { dustX, dustY }
-            local alpha = round(255 * (1 - time), 0)
+            local alpha = math.round(255 * (1 - time), 0)
             local dustColor = rgbaToUint(currentRed, currentGreen, currentBlue, alpha)
             o.AddCircleFilled(dustCoords, dustSize, dustColor)
         end
@@ -6279,12 +6280,12 @@ function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkle
         if sparkleParticle.showParticle then
             local time = 1 - ((sparkleParticle.endTime - t) / sparkleDuration)
             local sparkleX = sparkleParticle.x + sparkleParticle.xRange * time
-            local dy = -sparkleParticle.yRange * simplifiedQuadraticBezier(0, time)
+            local dy = -sparkleParticle.yRange * math.quadraticBezier(0, time)
             local sparkleY = sparkleParticle.y + dy
             local sparkleCoords = { sparkleX, sparkleY }
-            local alpha = round(255 * (1 - time), 0)
+            local alpha = math.round(255 * (1 - time), 0)
             local white = rgbaToUint(255, 255, 255, 255)
-            local actualSize = sparkleSize * (1 - simplifiedQuadraticBezier(0, time))
+            local actualSize = sparkleSize * (1 - math.quadraticBezier(0, time))
             local sparkleColor = rgbaToUint(255, 255, 100, 30)
             drawGlare(o, sparkleCoords, actualSize, white, sparkleColor)
         end
@@ -6310,7 +6311,7 @@ end
 function chooseArcPercent(settingVars)
     local oldPercent = settingVars.arcPercent
     local _, newPercent = imgui.SliderInt("Arc Percent", oldPercent, 1, 99, oldPercent .. "%%")
-    newPercent = clampToInterval(newPercent, 1, 99)
+    newPercent = math.clamp(newPercent, 1, 99)
     settingVars.arcPercent = newPercent
     return oldPercent ~= newPercent
 end
@@ -6348,10 +6349,10 @@ function chooseBezierPoints(settingVars)
     helpMarker("Coordinates of the second point of the cubic bezier")
     settingVars.x1, settingVars.y1 = table.unpack(newFirstPoint)
     settingVars.x2, settingVars.y2 = table.unpack(newSecondPoint)
-    settingVars.x1 = clampToInterval(settingVars.x1, 0, 1)
-    settingVars.y1 = clampToInterval(settingVars.y1, -1, 2)
-    settingVars.x2 = clampToInterval(settingVars.x2, 0, 1)
-    settingVars.y2 = clampToInterval(settingVars.y2, -1, 2)
+    settingVars.x1 = math.clamp(settingVars.x1, 0, 1)
+    settingVars.y1 = math.clamp(settingVars.y1, -1, 2)
+    settingVars.x2 = math.clamp(settingVars.x2, 0, 1)
+    settingVars.y2 = math.clamp(settingVars.y2, -1, 2)
     local x1Changed = (oldFirstPoint[1] ~= settingVars.x1)
     local y1Changed = (oldFirstPoint[2] ~= settingVars.y1)
     local x2Changed = (oldSecondPoint[1] ~= settingVars.x2)
@@ -6367,7 +6368,7 @@ function chooseChinchillaIntensity(settingVars)
     local oldIntensity = settingVars.chinchillaIntensity
     local _, newIntensity = imgui.SliderFloat("Intensity##chinchilla", oldIntensity, 0, 10, "%.3f")
     helpMarker("Ctrl + click slider to input a specific number")
-    settingVars.chinchillaIntensity = clampToInterval(newIntensity, 0, 727)
+    settingVars.chinchillaIntensity = math.clamp(newIntensity, 0, 727)
     return oldIntensity ~= settingVars.chinchillaIntensity
 end
 
@@ -6412,7 +6413,7 @@ end
 function chooseComboPhase(settingVars, maxComboPhase)
     local oldPhase = settingVars.comboPhase
     _, settingVars.comboPhase = imgui.InputInt("Combo Phase", oldPhase, 1, 1)
-    settingVars.comboPhase = clampToInterval(settingVars.comboPhase, 0, maxComboPhase)
+    settingVars.comboPhase = math.clamp(settingVars.comboPhase, 0, maxComboPhase)
     return oldPhase ~= settingVars.comboPhase
 end
 
@@ -6504,7 +6505,7 @@ function chooseCurrentFrame(settingVars)
         settingVars.currentFrame = settingVars.currentFrame + 1
     end
     imgui.PopButtonRepeat()
-    settingVars.currentFrame = wrapToInterval(settingVars.currentFrame, 1, settingVars.numFrames)
+    settingVars.currentFrame = math.wrap(settingVars.currentFrame, 1, settingVars.numFrames)
     imgui.PopItemWidth()
 end
 
@@ -6586,7 +6587,7 @@ function chooseCurveSharpness(settingVars)
     local _, newSharpness = imgui.DragInt("Curve Sharpness", settingVars.curveSharpness, 1, 1,
         100, "%d%%")
     imgui.PopItemWidth()
-    newSharpness = clampToInterval(newSharpness, 1, 100)
+    newSharpness = math.clamp(newSharpness, 1, 100)
     settingVars.curveSharpness = newSharpness
     return oldSharpness ~= newSharpness
 end
@@ -6657,17 +6658,17 @@ end
 
 function chooseEvery(menuVars)
     _, menuVars.every = imgui.InputInt("Every __ notes", menuVars.every)
-    menuVars.every = clampToInterval(menuVars.every, 1, MAX_SV_POINTS)
+    menuVars.every = math.clamp(menuVars.every, 1, MAX_SV_POINTS)
 end
 
 function chooseOffset(menuVars)
     _, menuVars.offset = imgui.InputInt("From note #__", menuVars.offset)
-    menuVars.offset = clampToInterval(menuVars.offset, 1, menuVars.every)
+    menuVars.offset = math.clamp(menuVars.offset, 1, menuVars.every)
 end
 
 function chooseSnap(menuVars)
     _, menuVars.snap = imgui.InputInt("Snap", menuVars.snap)
-    menuVars.snap = clampToInterval(menuVars.snap, 1, 100)
+    menuVars.snap = math.clamp(menuVars.snap, 1, 100)
 end
 
 -- Lets you choose the distance back for splitscroll between scroll1 and scroll2
@@ -6808,7 +6809,7 @@ function chooseEffectFPS(globalVars)
         write(globalVars)
     end
     helpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
-    globalVars.effectFPS = clampToInterval(globalVars.effectFPS, 2, 1000)
+    globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
 end
 
 -- Lets you choose the final SV to place at the end of SV sets
@@ -6877,7 +6878,7 @@ end
 function chooseFrameSpacing(settingVars)
     _, settingVars.frameDistance = imgui.InputFloat("Frame Spacing", settingVars.frameDistance,
         0, 0, "%.0f msx")
-    settingVars.frameDistance = clampToInterval(settingVars.frameDistance, 2000, 100000)
+    settingVars.frameDistance = math.clamp(settingVars.frameDistance, 2000, 100000)
 end
 
 -- Lets you choose the values for the selected frameTime
@@ -6887,7 +6888,7 @@ function chooseFrameTimeData(settingVars)
     if #settingVars.frameTimes == 0 then return end
     local frameTime = settingVars.frameTimes[settingVars.selectedTimeIndex]
     _, frameTime.frame = imgui.InputInt("Frame #", frameTime.frame)
-    frameTime.frame = clampToInterval(frameTime.frame, 1, settingVars.numFrames)
+    frameTime.frame = math.clamp(frameTime.frame, 1, settingVars.numFrames)
     _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
 end
 
@@ -6913,7 +6914,7 @@ function chooseIntensity(settingVars)
     )
 
     local newIntensity = newStepIndex * userStepSize + 99 % userStepSize + 1
-    settingVars.intensity = clampToInterval(newIntensity, 1, 100)
+    settingVars.intensity = math.clamp(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
 end
@@ -6998,7 +6999,7 @@ function chooseStepSize(globalVars)
     imgui.PushItemWidth(40)
     local oldStepSize = globalVars.stepSize
     local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
-    globalVars.stepSize = clampToInterval(tempStepSize, 1, 100)
+    globalVars.stepSize = math.clamp(tempStepSize, 1, 100)
     imgui.PopItemWidth()
     if (oldStepSize ~= globalVars.stepSize) then
         write(globalVars)
@@ -7058,7 +7059,7 @@ function chooseMenuStep(settingVars)
     end
     imgui.PopButtonRepeat()
     imgui.PopItemWidth()
-    settingVars.menuStep = wrapToInterval(settingVars.menuStep, 1, 3)
+    settingVars.menuStep = math.wrap(settingVars.menuStep, 1, 3)
 end
 
 -- Lets you choose the mspf (milliseconds per frame) for splitscroll
@@ -7066,7 +7067,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseMSPF(settingVars)
     local _, newMSPF = imgui.InputFloat("ms Per Frame", settingVars.msPerFrame, 0.5, 0.5, "%.1f")
-    newMSPF = clampToInterval(newMSPF, 4, 10000)
+    newMSPF = math.clamp(newMSPF, 4, 10000)
     settingVars.msPerFrame = newMSPF
     helpMarker("Number of milliseconds splitscroll will display a set of SVs before jumping to " ..
         "the next set of SVs")
@@ -7105,7 +7106,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseNumFlickers(menuVars)
     _, menuVars.numFlickers = imgui.InputInt("Flickers", menuVars.numFlickers, 1, 1)
-    menuVars.numFlickers = clampToInterval(menuVars.numFlickers, 1, 9999)
+    menuVars.numFlickers = math.clamp(menuVars.numFlickers, 1, 9999)
 end
 
 -- Lets you choose the number of frames
@@ -7113,7 +7114,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseNumFrames(settingVars)
     _, settingVars.numFrames = imgui.InputInt("Total # Frames", settingVars.numFrames)
-    settingVars.numFrames = clampToInterval(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
+    settingVars.numFrames = math.clamp(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
 end
 
 -- Lets you choose the number of periods for a sinusoidal wave
@@ -7123,8 +7124,8 @@ end
 function chooseNumPeriods(settingVars)
     local oldPeriods = settingVars.periods
     local _, newPeriods = imgui.InputFloat("Periods/Cycles", oldPeriods, 0.25, 0.25, "%.2f")
-    newPeriods = forceQuarter(newPeriods)
-    newPeriods = clampToInterval(newPeriods, 0.25, 69420)
+    newPeriods = math.quarter(newPeriods)
+    newPeriods = math.clamp(newPeriods, 0.25, 69420)
     settingVars.periods = newPeriods
     return oldPeriods ~= newPeriods
 end
@@ -7134,7 +7135,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseNumScrolls(settingVars)
     _, settingVars.numScrolls = imgui.InputInt("# of scrolls", settingVars.numScrolls, 1, 1)
-    settingVars.numScrolls = wrapToInterval(settingVars.numScrolls, 2, 4)
+    settingVars.numScrolls = math.wrap(settingVars.numScrolls, 2, 4)
 end
 
 -- Lets you choose the number of periods to shift over for a sinusoidal wave
@@ -7144,8 +7145,8 @@ end
 function choosePeriodShift(settingVars)
     local oldShift = settingVars.periodsShift
     local _, newShift = imgui.InputFloat("Phase Shift", oldShift, 0.25, 0.25, "%.2f")
-    newShift = forceQuarter(newShift)
-    newShift = wrapToInterval(newShift, -0.75, 1)
+    newShift = math.quarter(newShift)
+    newShift = math.wrap(newShift, -0.75, 1)
     settingVars.periodsShift = newShift
     return oldShift ~= newShift
 end
@@ -7215,7 +7216,7 @@ function chooseRGBPeriod(globalVars)
     local oldRGBPeriod = globalVars.rgbPeriod
     _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", oldRGBPeriod, 0, 0,
         "%.0f seconds")
-    globalVars.rgbPeriod = clampToInterval(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
+    globalVars.rgbPeriod = math.clamp(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
         MAX_RGB_CYCLE_TIME)
     if (oldRGBPeriod ~= globalVars.rgbPeriod) then
         write(globalVars)
@@ -7277,7 +7278,7 @@ function chooseScrollIndex(settingVars)
         settingVars.scrollIndex = settingVars.scrollIndex + 1
     end
     helpMarker("Assign notes and SVs for every single scroll in order to place splitscroll SVs")
-    settingVars.scrollIndex = wrapToInterval(settingVars.scrollIndex, 1, settingVars.numScrolls)
+    settingVars.scrollIndex = math.wrap(settingVars.scrollIndex, 1, settingVars.numScrolls)
     imgui.PopItemWidth()
 end
 
@@ -7291,7 +7292,7 @@ function chooseSnakeSpringConstant(globalVars)
     local newValue = globalVars.snakeSpringConstant
     _, newValue = imgui.InputFloat("Reactiveness##snake", newValue, 0, 0, "%.2f")
     helpMarker("Pick any number from 0.01 to 1")
-    globalVars.snakeSpringConstant = clampToInterval(newValue, 0.01, 1)
+    globalVars.snakeSpringConstant = math.clamp(newValue, 0.01, 1)
 end
 
 -- Lets you choose the special SV type
@@ -7507,7 +7508,7 @@ function chooseStutterDuration(settingVars)
     local oldDuration = settingVars.stutterDuration
     if settingVars.controlLastSV then oldDuration = 100 - oldDuration end
     local _, newDuration = imgui.SliderInt("Duration", oldDuration, 1, 99, oldDuration .. "%%")
-    newDuration = clampToInterval(newDuration, 1, 99)
+    newDuration = math.clamp(newDuration, 1, 99)
     local durationChanged = oldDuration ~= newDuration
     if settingVars.controlLastSV then newDuration = 100 - newDuration end
     settingVars.stutterDuration = newDuration
@@ -7522,7 +7523,7 @@ function chooseStuttersPerSection(settingVars)
     local oldNumber = settingVars.stuttersPerSection
     local _, newNumber = imgui.InputInt("Stutters", oldNumber, 1, 1)
     helpMarker("Number of stutters per section")
-    newNumber = clampToInterval(newNumber, 1, 1000)
+    newNumber = math.clamp(newNumber, 1, 1000)
     settingVars.stuttersPerSection = newNumber
     return oldNumber ~= newNumber
 end
@@ -7566,7 +7567,7 @@ function chooseSVPerQuarterPeriod(settingVars)
     local _, newPoints = imgui.InputInt("SV Points##perQuarter", oldPoints, 1, 1)
     helpMarker("Number of SV points per 0.25 period/cycle")
     local maxSVsPerQuarterPeriod = MAX_SV_POINTS / (4 * settingVars.periods)
-    newPoints = clampToInterval(newPoints, 1, maxSVsPerQuarterPeriod)
+    newPoints = math.clamp(newPoints, 1, maxSVsPerQuarterPeriod)
     settingVars.svsPerQuarterPeriod = newPoints
     return oldPoints ~= newPoints
 end
@@ -7584,7 +7585,7 @@ function chooseSVPoints(settingVars, svPointsForce)
 
     local oldPoints = settingVars.svPoints
     _, settingVars.svPoints = imgui.InputInt("SV Points##regular", oldPoints, 1, 1)
-    settingVars.svPoints = clampToInterval(settingVars.svPoints, 1, MAX_SV_POINTS)
+    settingVars.svPoints = math.clamp(settingVars.svPoints, 1, MAX_SV_POINTS)
     return oldPoints ~= settingVars.svPoints
 end
 
@@ -7857,7 +7858,7 @@ function generateBezierSet(x1, y1, x2, y2, avgValue, numValues, verticalShift)
     for i = 1, iterations do
         local timeIncrement = 0.5 ^ (i + 1)
         for j = 1, numValues do
-            local xPositionGuess = simplifiedCubicBezier(x1, x2, timeGuesses[j])
+            local xPositionGuess = math.cubicBezier(x1, x2, timeGuesses[j])
             if xPositionGuess < targetXPositions[j] then
                 timeGuesses[j] = timeGuesses[j] + timeIncrement
             elseif xPositionGuess > targetXPositions[j] then
@@ -7867,7 +7868,7 @@ function generateBezierSet(x1, y1, x2, y2, avgValue, numValues, verticalShift)
     end
     local yPositions = { 0 }
     for i = 1, #timeGuesses do
-        local yPosition = simplifiedCubicBezier(y1, y2, timeGuesses[i])
+        local yPosition = math.cubicBezier(y1, y2, timeGuesses[i])
         table.insert(yPositions, yPosition)
     end
     local bezierSet = {}
@@ -7875,7 +7876,7 @@ function generateBezierSet(x1, y1, x2, y2, avgValue, numValues, verticalShift)
         local slope = (yPositions[i + 1] - yPositions[i]) * numValues
         table.insert(bezierSet, slope)
     end
-    normalizeValues(bezierSet, avgValue, false)
+    table.normalize(bezierSet, avgValue, false)
     for i = 1, #bezierSet do
         bezierSet[i] = bezierSet[i] + verticalShift
     end
@@ -7902,7 +7903,7 @@ function generateChinchillaSet(settingVars)
         local slope = distance * numValues
         chinchillaSet[i] = slope
     end
-    normalizeValues(chinchillaSet, avgValue, true)
+    table.normalize(chinchillaSet, avgValue, true)
     for i = 1, #chinchillaSet do
         chinchillaSet[i] = chinchillaSet[i] + settingVars.verticalShift
     end
@@ -7959,7 +7960,7 @@ function scalePercent(settingVars, percent)
         newPercent = (workingPercent ^ 2) * (1 + c) / (workingPercent + c)
     end
     if slowDownType then newPercent = 1 - newPercent end
-    return clampToInterval(newPercent, 0, 1)
+    return math.clamp(newPercent, 0, 1)
 end
 -- Returns a set of circular values [Table]
 -- Parameters
@@ -7977,7 +7978,7 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
     local angles = generateLinearSet(startingAngle, 0, numValues)
     local yCoords = {}
     for i = 1, #angles do
-        local angle = round(angles[i], 8)
+        local angle = math.round(angles[i], 8)
         local x = math.cos(angle)
         yCoords[i] = -avgValue * math.sqrt(1 - x ^ 2)
     end
@@ -7987,8 +7988,8 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
         local endY = yCoords[i + 1]
         circularSet[i] = (endY - startY) * (numValues - 1)
     end
-    if not increaseValues then circularSet = getReverseList(circularSet) end
-    if not dontNormalize then normalizeValues(circularSet, avgValue, true) end
+    if not increaseValues then circularSet = table.reverse(circularSet) end
+    if not dontNormalize then table.normalize(circularSet, avgValue, true) end
     for i = 1, #circularSet do
         circularSet[i] = circularSet[i] + verticalShift
     end
@@ -8010,9 +8011,9 @@ function generateComboSet(values1, values2, comboPhase, comboType, comboMultipli
                           comboMultiplier2, dontNormalize, avgValue, verticalShift)
     local comboValues = {}
     if comboType == "SV Type 1 Only" then
-        comboValues = makeDuplicateList(values1)
+        comboValues = table.duplicate(values1)
     elseif comboType == "SV Type 2 Only" then
-        comboValues = makeDuplicateList(values2)
+        comboValues = table.duplicate(values2)
     else
         local lastValue1 = table.remove(values1)
         local lastValue2 = table.remove(values2)
@@ -8076,7 +8077,7 @@ function generateComboSet(values1, values2, comboPhase, comboType, comboMultipli
     end
     avgValue = avgValue - verticalShift
     if not dontNormalize then
-        normalizeValues(comboValues, avgValue, false)
+        table.normalize(comboValues, avgValue, false)
     end
     for i = 1, #comboValues do
         comboValues[i] = comboValues[i] + verticalShift
@@ -8088,8 +8089,8 @@ end
 -- Parameters
 --    values : list of custom values [Table]
 function generateCustomSet(values)
-    local newValues = makeDuplicateList(values)
-    local averageMultiplier = calculateAverage(newValues, true)
+    local newValues = table.duplicate(values)
+    local averageMultiplier = table.average(newValues, true)
     table.insert(newValues, averageMultiplier)
     return newValues
 end
@@ -8116,7 +8117,7 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
         local y = math.exp(x - 1) / intensity
         table.insert(exponentialSet, y)
     end
-    normalizeValues(exponentialSet, avgValue, false)
+    table.normalize(exponentialSet, avgValue, false)
     for i = 1, #exponentialSet do
         exponentialSet[i] = exponentialSet[i] + verticalShift
     end
@@ -8157,7 +8158,7 @@ function generateHermiteSet(startValue, endValue, verticalShift, avgValue, numVa
     local xCoords = generateLinearSet(0, 1, numValues)
     local yCoords = {}
     for i = 1, #xCoords do
-        yCoords[i] = simplifiedHermite(startValue, endValue, avgValue, xCoords[i])
+        yCoords[i] = math.hermite(startValue, endValue, avgValue, xCoords[i])
     end
     local hermiteSet = {}
     for i = 1, #yCoords - 1 do
@@ -8165,7 +8166,7 @@ function generateHermiteSet(startValue, endValue, verticalShift, avgValue, numVa
         local endY = yCoords[i + 1]
         hermiteSet[i] = (endY - startY) * (numValues - 1)
     end
-    --normalizeValues(hermiteSet, avgValue, false)
+    --table.normalize(hermiteSet, avgValue, false)
     for i = 1, #hermiteSet do
         hermiteSet[i] = hermiteSet[i] + verticalShift
     end
@@ -8201,7 +8202,7 @@ function getRandomSet(values, avgValue, verticalShift, dontNormalize)
         table.insert(randomSet, values[i])
     end
     if not dontNormalize then
-        normalizeValues(randomSet, avgValue, false)
+        table.normalize(randomSet, avgValue, false)
     end
     for i = 1, #randomSet do
         randomSet[i] = randomSet[i] + verticalShift
@@ -8256,7 +8257,7 @@ function generateSinusoidalSet(startAmplitude, endAmplitude, periods, periodsShi
     for i = 0, totalValues do
         local angle = (math.pi / 2) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
         local value = amplitudes[i + 1] * (math.abs(math.sin(angle)) ^ (normalizedSharpness))
-        value = value * getSignOfNumber(math.sin(angle)) + verticalShift
+        value = value * math.sign(math.sin(angle)) + verticalShift
         table.insert(sinusoidalSet, value)
     end
     return sinusoidalSet
@@ -8353,7 +8354,7 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
             table.insert(newMultipliers, multipliers[i] * interlaceMultiplier)
         end
         if settingVars.avgSV and not settingVars.dontNormalize then
-            normalizeValues(newMultipliers, settingVars.avgSV, false)
+            table.normalize(newMultipliers, settingVars.avgSV, false)
         end
         multipliers = newMultipliers
     end
@@ -8371,12 +8372,12 @@ function calculateDistanceVsTime(globalVars, svValues)
     local multiplier = 1
     if globalVars.upscroll then multiplier = -1 end
     local distancesBackwards = { multiplier * distance }
-    local svValuesBackwards = getReverseList(svValues)
+    local svValuesBackwards = table.reverse(svValues)
     for i = 1, #svValuesBackwards do
         distance = distance + (multiplier * svValuesBackwards[i])
         table.insert(distancesBackwards, distance)
     end
-    return getReverseList(distancesBackwards)
+    return table.reverse(distancesBackwards)
 end
 
 -- Returns the minimum value from a list of values [Int/Float]
@@ -8427,7 +8428,7 @@ function calculateStutterDistanceVsTime(svValues, stutterDuration, stuttersPerSe
         end
         table.insert(distancesBackwards, distance)
     end
-    return getReverseList(distancesBackwards)
+    return table.reverse(distancesBackwards)
 end
 
 -- Creates a distance vs time graph/plot of SV motion
@@ -8594,7 +8595,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
             end
         end
     end
-    noteOffsetsBetween = dedupe(noteOffsetsBetween)
+    noteOffsetsBetween = table.dedupe(noteOffsetsBetween)
     noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
@@ -8618,7 +8619,7 @@ function uniqueSelectedNoteOffsets()
     for i, hitObject in pairs(state.SelectedHitObjects) do
         offsets[i] = hitObject.StartTime
     end
-    offsets = dedupe(offsets)
+    offsets = table.dedupe(offsets)
     offsets = table.sort(offsets, sortAscending)
     return offsets
 end
@@ -8633,7 +8634,7 @@ function updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, skipFin
     local interlaceMultiplier = nil
     if menuVars.interlace then interlaceMultiplier = menuVars.interlaceRatio end
     menuVars.svMultipliers = generateSVMultipliers(currentSVType, settingVars, interlaceMultiplier)
-    local svMultipliersNoEndSV = makeDuplicateList(menuVars.svMultipliers)
+    local svMultipliersNoEndSV = table.duplicate(menuVars.svMultipliers)
     table.remove(svMultipliersNoEndSV)
     menuVars.svDistances = calculateDistanceVsTime(globalVars, svMultipliersNoEndSV)
 
@@ -8665,11 +8666,11 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function updateStutterMenuSVs(settingVars)
     settingVars.svMultipliers = generateSVMultipliers("Stutter1", settingVars, nil)
-    local svMultipliersNoEndSV = makeDuplicateList(settingVars.svMultipliers)
+    local svMultipliersNoEndSV = table.duplicate(settingVars.svMultipliers)
     table.remove(svMultipliersNoEndSV)
 
     settingVars.svMultipliers2 = generateSVMultipliers("Stutter2", settingVars, nil)
-    local svMultipliersNoEndSV2 = makeDuplicateList(settingVars.svMultipliers2)
+    local svMultipliersNoEndSV2 = table.duplicate(settingVars.svMultipliers2)
     table.remove(svMultipliersNoEndSV2)
 
     settingVars.svDistances = calculateStutterDistanceVsTime(svMultipliersNoEndSV,
@@ -8697,7 +8698,7 @@ end
 --    p2 : second coordinate of the cubic bezier [Int/Float]
 --    p3 : third coordinate of the cubic bezier [Int/Float]
 --    t  : time to evaluate the cubic bezier at [Int/Float]
-function simplifiedCubicBezier(p2, p3, t)
+function math.cubicBezier(p2, p3, t)
     return 3 * t * (1 - t) ^ 2 * p2 + 3 * t ^ 2 * (1 - t) * p3 + t ^ 3
 end
 
@@ -8706,7 +8707,7 @@ end
 -- Parameters
 --    p2 : second coordinate of the quadratic bezier [Int/Float]
 --    t  : time to evaluate the quadratic bezier at [Int/Float]
-function simplifiedQuadraticBezier(p2, t)
+function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end
 -- Restricts a number to be within a closed interval
@@ -8715,7 +8716,7 @@ end
 --    number     : number to keep within the interval [Int/Float]
 --    lowerBound : lower bound of the interval [Int/Float]
 --    upperBound : upper bound of the interval [Int/Float]
-function clampToInterval(number, lowerBound, upperBound)
+function math.clamp(number, lowerBound, upperBound)
     if number < lowerBound then return lowerBound end
     if number > upperBound then return upperBound end
     return number
@@ -8724,7 +8725,7 @@ end
 -- Returns the result of the force [Int/Float]
 -- Parameters
 --    number : number to force to be a multiple of one quarter [Int/Float]
-function forceQuarter(number)
+function math.quarter(number)
     return math.floor(number * 4 + 0.5) / 4
 end
 -- Evaluates a simplified one-dimensional hermite related (?) spline for SV purposes
@@ -8734,7 +8735,7 @@ end
 --    m2 : slope at second point [Int/Float]
 --    y2 : y coordinate of second point [Int/Float]
 --    t  : time to evaluate the hermite spline at [Int/Float]
-function simplifiedHermite(m1, m2, y2, t)
+function math.hermite(m1, m2, y2, t)
     local a = m1 + m2 - 2 * y2
     local b = 3 * y2 - 2 * m1 - m2
     local c = m1
@@ -8745,14 +8746,14 @@ end
 -- Parameters
 --    number        : number to round [Int/Float]
 --    decimalPlaces : number of decimal places to round the number to [Int]
-function round(number, decimalPlaces)
+function math.round(number, decimalPlaces)
     local multiplier = 10 ^ decimalPlaces
     return math.floor(multiplier * number + 0.5) / multiplier
 end
 -- Returns the sign of a number: +1 if the number is non-negative, -1 if negative [Int]
 -- Parameters
 --    number : number to get the sign of
-function getSignOfNumber(number)
+function math.sign(number)
     if number >= 0 then return 1 end
     return -1
 end
@@ -8762,7 +8763,7 @@ end
 --    number     : number to keep within the interval [Int/Float]
 --    lowerBound : lower bound of the interval [Int/Float]
 --    upperBound : upper bound of the interval [Int/Float]
-function wrapToInterval(number, lowerBound, upperBound)
+function math.wrap(number, lowerBound, upperBound)
     if number < lowerBound then return upperBound end
     if number > upperBound then return lowerBound end
     return number
@@ -8949,7 +8950,7 @@ end
 -- Parameters
 --    values           : list of numerical values [Table]
 --    includeLastValue : whether or not to include the last value for the average [Boolean]
-function calculateAverage(values, includeLastValue)
+function table.average(values, includeLastValue)
     if #values == 0 then return nil end
     local sum = 0
     for _, value in pairs(values) do
@@ -8975,7 +8976,7 @@ end
 -- Returns a list of only unique values (no duplicates) [Table]
 -- Parameters
 --    list : list of values [Table]
-function dedupe(list)
+function table.dedupe(list)
     local hash = {}
     local newList = {}
     for _, value in ipairs(list) do
@@ -8989,7 +8990,7 @@ end
 -- Returns a new duplicate list [Table]
 -- Parameters
 --    list : list of values [Table]
-function makeDuplicateList(list)
+function table.duplicate(list)
     local duplicateList = {}
     for _, value in ipairs(list) do
         table.insert(duplicateList, value)
@@ -9001,8 +9002,8 @@ end
 --    values                    : set of numbers [Table]
 --    targetAverage             : average value that is aimed for [Int/Float]
 --    includeLastValueInAverage : whether or not to include the last value in the average [Boolean]
-function normalizeValues(values, targetAverage, includeLastValueInAverage)
-    local avgValue = calculateAverage(values, includeLastValueInAverage)
+function table.normalize(values, targetAverage, includeLastValueInAverage)
+    local avgValue = table.average(values, includeLastValueInAverage)
     if avgValue == 0 then return end
     for i = 1, #values do
         values[i] = (values[i] * targetAverage) / avgValue
@@ -9012,7 +9013,7 @@ end
 -- Returns the reversed list [Table]
 -- Parameters
 --    list : list to be reversed [Table]
-function getReverseList(list)
+function table.reverse(list)
     local reverseList = {}
     for i = 1, #list do
         table.insert(reverseList, list[#list + 1 - i])

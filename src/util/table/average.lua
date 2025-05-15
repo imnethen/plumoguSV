@@ -2,7 +2,7 @@
 -- Parameters
 --    values           : list of numerical values [Table]
 --    includeLastValue : whether or not to include the last value for the average [Boolean]
-function calculateAverage(values, includeLastValue)
+function table.average(values, includeLastValue)
     if #values == 0 then return nil end
     local sum = 0
     for _, value in pairs(values) do

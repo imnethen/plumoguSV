@@ -18,7 +18,7 @@ end
 function chooseArcPercent(settingVars)
     local oldPercent = settingVars.arcPercent
     local _, newPercent = imgui.SliderInt("Arc Percent", oldPercent, 1, 99, oldPercent .. "%%")
-    newPercent = clampToInterval(newPercent, 1, 99)
+    newPercent = math.clamp(newPercent, 1, 99)
     settingVars.arcPercent = newPercent
     return oldPercent ~= newPercent
 end
@@ -56,10 +56,10 @@ function chooseBezierPoints(settingVars)
     helpMarker("Coordinates of the second point of the cubic bezier")
     settingVars.x1, settingVars.y1 = table.unpack(newFirstPoint)
     settingVars.x2, settingVars.y2 = table.unpack(newSecondPoint)
-    settingVars.x1 = clampToInterval(settingVars.x1, 0, 1)
-    settingVars.y1 = clampToInterval(settingVars.y1, -1, 2)
-    settingVars.x2 = clampToInterval(settingVars.x2, 0, 1)
-    settingVars.y2 = clampToInterval(settingVars.y2, -1, 2)
+    settingVars.x1 = math.clamp(settingVars.x1, 0, 1)
+    settingVars.y1 = math.clamp(settingVars.y1, -1, 2)
+    settingVars.x2 = math.clamp(settingVars.x2, 0, 1)
+    settingVars.y2 = math.clamp(settingVars.y2, -1, 2)
     local x1Changed = (oldFirstPoint[1] ~= settingVars.x1)
     local y1Changed = (oldFirstPoint[2] ~= settingVars.y1)
     local x2Changed = (oldSecondPoint[1] ~= settingVars.x2)
@@ -75,7 +75,7 @@ function chooseChinchillaIntensity(settingVars)
     local oldIntensity = settingVars.chinchillaIntensity
     local _, newIntensity = imgui.SliderFloat("Intensity##chinchilla", oldIntensity, 0, 10, "%.3f")
     helpMarker("Ctrl + click slider to input a specific number")
-    settingVars.chinchillaIntensity = clampToInterval(newIntensity, 0, 727)
+    settingVars.chinchillaIntensity = math.clamp(newIntensity, 0, 727)
     return oldIntensity ~= settingVars.chinchillaIntensity
 end
 
@@ -120,7 +120,7 @@ end
 function chooseComboPhase(settingVars, maxComboPhase)
     local oldPhase = settingVars.comboPhase
     _, settingVars.comboPhase = imgui.InputInt("Combo Phase", oldPhase, 1, 1)
-    settingVars.comboPhase = clampToInterval(settingVars.comboPhase, 0, maxComboPhase)
+    settingVars.comboPhase = math.clamp(settingVars.comboPhase, 0, maxComboPhase)
     return oldPhase ~= settingVars.comboPhase
 end
 
@@ -212,7 +212,7 @@ function chooseCurrentFrame(settingVars)
         settingVars.currentFrame = settingVars.currentFrame + 1
     end
     imgui.PopButtonRepeat()
-    settingVars.currentFrame = wrapToInterval(settingVars.currentFrame, 1, settingVars.numFrames)
+    settingVars.currentFrame = math.wrap(settingVars.currentFrame, 1, settingVars.numFrames)
     imgui.PopItemWidth()
 end
 
@@ -294,7 +294,7 @@ function chooseCurveSharpness(settingVars)
     local _, newSharpness = imgui.DragInt("Curve Sharpness", settingVars.curveSharpness, 1, 1,
         100, "%d%%")
     imgui.PopItemWidth()
-    newSharpness = clampToInterval(newSharpness, 1, 100)
+    newSharpness = math.clamp(newSharpness, 1, 100)
     settingVars.curveSharpness = newSharpness
     return oldSharpness ~= newSharpness
 end
@@ -365,17 +365,17 @@ end
 
 function chooseEvery(menuVars)
     _, menuVars.every = imgui.InputInt("Every __ notes", menuVars.every)
-    menuVars.every = clampToInterval(menuVars.every, 1, MAX_SV_POINTS)
+    menuVars.every = math.clamp(menuVars.every, 1, MAX_SV_POINTS)
 end
 
 function chooseOffset(menuVars)
     _, menuVars.offset = imgui.InputInt("From note #__", menuVars.offset)
-    menuVars.offset = clampToInterval(menuVars.offset, 1, menuVars.every)
+    menuVars.offset = math.clamp(menuVars.offset, 1, menuVars.every)
 end
 
 function chooseSnap(menuVars)
     _, menuVars.snap = imgui.InputInt("Snap", menuVars.snap)
-    menuVars.snap = clampToInterval(menuVars.snap, 1, 100)
+    menuVars.snap = math.clamp(menuVars.snap, 1, 100)
 end
 
 -- Lets you choose the distance back for splitscroll between scroll1 and scroll2
@@ -516,7 +516,7 @@ function chooseEffectFPS(globalVars)
         write(globalVars)
     end
     helpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
-    globalVars.effectFPS = clampToInterval(globalVars.effectFPS, 2, 1000)
+    globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
 end
 
 -- Lets you choose the final SV to place at the end of SV sets
@@ -585,7 +585,7 @@ end
 function chooseFrameSpacing(settingVars)
     _, settingVars.frameDistance = imgui.InputFloat("Frame Spacing", settingVars.frameDistance,
         0, 0, "%.0f msx")
-    settingVars.frameDistance = clampToInterval(settingVars.frameDistance, 2000, 100000)
+    settingVars.frameDistance = math.clamp(settingVars.frameDistance, 2000, 100000)
 end
 
 -- Lets you choose the values for the selected frameTime
@@ -595,7 +595,7 @@ function chooseFrameTimeData(settingVars)
     if #settingVars.frameTimes == 0 then return end
     local frameTime = settingVars.frameTimes[settingVars.selectedTimeIndex]
     _, frameTime.frame = imgui.InputInt("Frame #", frameTime.frame)
-    frameTime.frame = clampToInterval(frameTime.frame, 1, settingVars.numFrames)
+    frameTime.frame = math.clamp(frameTime.frame, 1, settingVars.numFrames)
     _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
 end
 
@@ -621,7 +621,7 @@ function chooseIntensity(settingVars)
     )
 
     local newIntensity = newStepIndex * userStepSize + 99 % userStepSize + 1
-    settingVars.intensity = clampToInterval(newIntensity, 1, 100)
+    settingVars.intensity = math.clamp(newIntensity, 1, 100)
 
     return oldIntensity ~= settingVars.intensity
 end
@@ -706,7 +706,7 @@ function chooseStepSize(globalVars)
     imgui.PushItemWidth(40)
     local oldStepSize = globalVars.stepSize
     local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
-    globalVars.stepSize = clampToInterval(tempStepSize, 1, 100)
+    globalVars.stepSize = math.clamp(tempStepSize, 1, 100)
     imgui.PopItemWidth()
     if (oldStepSize ~= globalVars.stepSize) then
         write(globalVars)
@@ -766,7 +766,7 @@ function chooseMenuStep(settingVars)
     end
     imgui.PopButtonRepeat()
     imgui.PopItemWidth()
-    settingVars.menuStep = wrapToInterval(settingVars.menuStep, 1, 3)
+    settingVars.menuStep = math.wrap(settingVars.menuStep, 1, 3)
 end
 
 -- Lets you choose the mspf (milliseconds per frame) for splitscroll
@@ -774,7 +774,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseMSPF(settingVars)
     local _, newMSPF = imgui.InputFloat("ms Per Frame", settingVars.msPerFrame, 0.5, 0.5, "%.1f")
-    newMSPF = clampToInterval(newMSPF, 4, 10000)
+    newMSPF = math.clamp(newMSPF, 4, 10000)
     settingVars.msPerFrame = newMSPF
     helpMarker("Number of milliseconds splitscroll will display a set of SVs before jumping to " ..
         "the next set of SVs")
@@ -813,7 +813,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseNumFlickers(menuVars)
     _, menuVars.numFlickers = imgui.InputInt("Flickers", menuVars.numFlickers, 1, 1)
-    menuVars.numFlickers = clampToInterval(menuVars.numFlickers, 1, 9999)
+    menuVars.numFlickers = math.clamp(menuVars.numFlickers, 1, 9999)
 end
 
 -- Lets you choose the number of frames
@@ -821,7 +821,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseNumFrames(settingVars)
     _, settingVars.numFrames = imgui.InputInt("Total # Frames", settingVars.numFrames)
-    settingVars.numFrames = clampToInterval(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
+    settingVars.numFrames = math.clamp(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
 end
 
 -- Lets you choose the number of periods for a sinusoidal wave
@@ -831,8 +831,8 @@ end
 function chooseNumPeriods(settingVars)
     local oldPeriods = settingVars.periods
     local _, newPeriods = imgui.InputFloat("Periods/Cycles", oldPeriods, 0.25, 0.25, "%.2f")
-    newPeriods = forceQuarter(newPeriods)
-    newPeriods = clampToInterval(newPeriods, 0.25, 69420)
+    newPeriods = math.quarter(newPeriods)
+    newPeriods = math.clamp(newPeriods, 0.25, 69420)
     settingVars.periods = newPeriods
     return oldPeriods ~= newPeriods
 end
@@ -842,7 +842,7 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseNumScrolls(settingVars)
     _, settingVars.numScrolls = imgui.InputInt("# of scrolls", settingVars.numScrolls, 1, 1)
-    settingVars.numScrolls = wrapToInterval(settingVars.numScrolls, 2, 4)
+    settingVars.numScrolls = math.wrap(settingVars.numScrolls, 2, 4)
 end
 
 -- Lets you choose the number of periods to shift over for a sinusoidal wave
@@ -852,8 +852,8 @@ end
 function choosePeriodShift(settingVars)
     local oldShift = settingVars.periodsShift
     local _, newShift = imgui.InputFloat("Phase Shift", oldShift, 0.25, 0.25, "%.2f")
-    newShift = forceQuarter(newShift)
-    newShift = wrapToInterval(newShift, -0.75, 1)
+    newShift = math.quarter(newShift)
+    newShift = math.wrap(newShift, -0.75, 1)
     settingVars.periodsShift = newShift
     return oldShift ~= newShift
 end
@@ -923,7 +923,7 @@ function chooseRGBPeriod(globalVars)
     local oldRGBPeriod = globalVars.rgbPeriod
     _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", oldRGBPeriod, 0, 0,
         "%.0f seconds")
-    globalVars.rgbPeriod = clampToInterval(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
+    globalVars.rgbPeriod = math.clamp(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
         MAX_RGB_CYCLE_TIME)
     if (oldRGBPeriod ~= globalVars.rgbPeriod) then
         write(globalVars)
@@ -985,7 +985,7 @@ function chooseScrollIndex(settingVars)
         settingVars.scrollIndex = settingVars.scrollIndex + 1
     end
     helpMarker("Assign notes and SVs for every single scroll in order to place splitscroll SVs")
-    settingVars.scrollIndex = wrapToInterval(settingVars.scrollIndex, 1, settingVars.numScrolls)
+    settingVars.scrollIndex = math.wrap(settingVars.scrollIndex, 1, settingVars.numScrolls)
     imgui.PopItemWidth()
 end
 
@@ -999,7 +999,7 @@ function chooseSnakeSpringConstant(globalVars)
     local newValue = globalVars.snakeSpringConstant
     _, newValue = imgui.InputFloat("Reactiveness##snake", newValue, 0, 0, "%.2f")
     helpMarker("Pick any number from 0.01 to 1")
-    globalVars.snakeSpringConstant = clampToInterval(newValue, 0.01, 1)
+    globalVars.snakeSpringConstant = math.clamp(newValue, 0.01, 1)
 end
 
 -- Lets you choose the special SV type
@@ -1215,7 +1215,7 @@ function chooseStutterDuration(settingVars)
     local oldDuration = settingVars.stutterDuration
     if settingVars.controlLastSV then oldDuration = 100 - oldDuration end
     local _, newDuration = imgui.SliderInt("Duration", oldDuration, 1, 99, oldDuration .. "%%")
-    newDuration = clampToInterval(newDuration, 1, 99)
+    newDuration = math.clamp(newDuration, 1, 99)
     local durationChanged = oldDuration ~= newDuration
     if settingVars.controlLastSV then newDuration = 100 - newDuration end
     settingVars.stutterDuration = newDuration
@@ -1230,7 +1230,7 @@ function chooseStuttersPerSection(settingVars)
     local oldNumber = settingVars.stuttersPerSection
     local _, newNumber = imgui.InputInt("Stutters", oldNumber, 1, 1)
     helpMarker("Number of stutters per section")
-    newNumber = clampToInterval(newNumber, 1, 1000)
+    newNumber = math.clamp(newNumber, 1, 1000)
     settingVars.stuttersPerSection = newNumber
     return oldNumber ~= newNumber
 end
@@ -1274,7 +1274,7 @@ function chooseSVPerQuarterPeriod(settingVars)
     local _, newPoints = imgui.InputInt("SV Points##perQuarter", oldPoints, 1, 1)
     helpMarker("Number of SV points per 0.25 period/cycle")
     local maxSVsPerQuarterPeriod = MAX_SV_POINTS / (4 * settingVars.periods)
-    newPoints = clampToInterval(newPoints, 1, maxSVsPerQuarterPeriod)
+    newPoints = math.clamp(newPoints, 1, maxSVsPerQuarterPeriod)
     settingVars.svsPerQuarterPeriod = newPoints
     return oldPoints ~= newPoints
 end
@@ -1292,7 +1292,7 @@ function chooseSVPoints(settingVars, svPointsForce)
 
     local oldPoints = settingVars.svPoints
     _, settingVars.svPoints = imgui.InputInt("SV Points##regular", oldPoints, 1, 1)
-    settingVars.svPoints = clampToInterval(settingVars.svPoints, 1, MAX_SV_POINTS)
+    settingVars.svPoints = math.clamp(settingVars.svPoints, 1, MAX_SV_POINTS)
     return oldPoints ~= settingVars.svPoints
 end
 

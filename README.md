@@ -54,3 +54,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Lint code~~ (v1.1.2)
 * Move to vector system (v1.2)
 * ~~Improved SV/SSF window~~ (v1.1.2)
+* ~~Upgrade dev ops by adding fns to libraries~~ (v1.1.2)

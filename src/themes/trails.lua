@@ -198,18 +198,18 @@ end
 --    dustSize      : size of a dust particle [Int/Float]
 function renderDustParticles(rgbPeriod, o, t, dustParticles, dustDuration, dustSize)
     local currentRGBColors = getCurrentRGBColors(rgbPeriod)
-    local currentRed = round(255 * currentRGBColors.red, 0)
-    local currentGreen = round(255 * currentRGBColors.green, 0)
-    local currentBlue = round(255 * currentRGBColors.blue, 0)
+    local currentRed = math.round(255 * currentRGBColors.red, 0)
+    local currentGreen = math.round(255 * currentRGBColors.green, 0)
+    local currentBlue = math.round(255 * currentRGBColors.blue, 0)
     for i = 1, #dustParticles do
         local dustParticle = dustParticles[i]
         if dustParticle.showParticle then
             local time = 1 - ((dustParticle.endTime - t) / dustDuration)
             local dustX = dustParticle.x + dustParticle.xRange * time
-            local dy = dustParticle.yRange * simplifiedQuadraticBezier(0, time)
+            local dy = dustParticle.yRange * math.quadraticBezier(0, time)
             local dustY = dustParticle.y + dy
             local dustCoords = { dustX, dustY }
-            local alpha = round(255 * (1 - time), 0)
+            local alpha = math.round(255 * (1 - time), 0)
             local dustColor = rgbaToUint(currentRed, currentGreen, currentBlue, alpha)
             o.AddCircleFilled(dustCoords, dustSize, dustColor)
         end
@@ -294,12 +294,12 @@ function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkle
         if sparkleParticle.showParticle then
             local time = 1 - ((sparkleParticle.endTime - t) / sparkleDuration)
             local sparkleX = sparkleParticle.x + sparkleParticle.xRange * time
-            local dy = -sparkleParticle.yRange * simplifiedQuadraticBezier(0, time)
+            local dy = -sparkleParticle.yRange * math.quadraticBezier(0, time)
             local sparkleY = sparkleParticle.y + dy
             local sparkleCoords = { sparkleX, sparkleY }
-            local alpha = round(255 * (1 - time), 0)
+            local alpha = math.round(255 * (1 - time), 0)
             local white = rgbaToUint(255, 255, 255, 255)
-            local actualSize = sparkleSize * (1 - simplifiedQuadraticBezier(0, time))
+            local actualSize = sparkleSize * (1 - math.quadraticBezier(0, time))
             local sparkleColor = rgbaToUint(255, 255, 100, 30)
             drawGlare(o, sparkleCoords, actualSize, white, sparkleColor)
         end

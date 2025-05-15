@@ -4,7 +4,7 @@
 --    p2 : second coordinate of the cubic bezier [Int/Float]
 --    p3 : third coordinate of the cubic bezier [Int/Float]
 --    t  : time to evaluate the cubic bezier at [Int/Float]
-function simplifiedCubicBezier(p2, p3, t)
+function math.cubicBezier(p2, p3, t)
     return 3 * t * (1 - t) ^ 2 * p2 + 3 * t ^ 2 * (1 - t) * p3 + t ^ 3
 end
 
@@ -13,6 +13,6 @@ end
 -- Parameters
 --    p2 : second coordinate of the quadratic bezier [Int/Float]
 --    t  : time to evaluate the quadratic bezier at [Int/Float]
-function simplifiedQuadraticBezier(p2, t)
+function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end

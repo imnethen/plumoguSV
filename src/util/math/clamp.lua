@@ -4,7 +4,7 @@
 --    number     : number to keep within the interval [Int/Float]
 --    lowerBound : lower bound of the interval [Int/Float]
 --    upperBound : upper bound of the interval [Int/Float]
-function clampToInterval(number, lowerBound, upperBound)
+function math.clamp(number, lowerBound, upperBound)
     if number < lowerBound then return lowerBound end
     if number > upperBound then return upperBound end
     return number
