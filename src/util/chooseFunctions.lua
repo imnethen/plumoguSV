@@ -887,13 +887,16 @@ function chooseCurrentScrollGroup(globalVars)
     imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
     local groups = { "$Default", "$Global" }
-    for k, _ in pairs(map.TimingGroups) do
+    local cols = { map.TimingGroups["$Default"].ColorRgb or "255,255,255", map.TimingGroups["$Global"].ColorRgb or
+    "255,255,255" }
+    for k, v in pairs(map.TimingGroups) do
         if string.find(k, "%$") then goto continue end
         table.insert(groups, k)
+        table.insert(cols, v.ColorRgb or "255,255,255")
         ::continue::
     end
     local prevIndex = globalVars.scrollGroupIndex
-    globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex)
+    globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols)
     addSeparator()
     if (prevIndex ~= globalVars.scrollGroupIndex) then
         state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
