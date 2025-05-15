@@ -43,7 +43,7 @@ function draw()
     focusWindowIfHotkeysPressed()
     centerWindowIfHotkeysPressed()
 
-    imgui.Begin("plumoguSV", imgui_window_flags.AlwaysAutoResize)
+    imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
     if globalVars.keyboardMode then
         imgui.BeginTabBar("Quick tabs")

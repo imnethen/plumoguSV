@@ -49,7 +49,7 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 ## TO-DO
 * Automate TG effects (v2)
 * Migrate affine vibrato (v1.2)
-* Add SSF vibrato (v1.2)
+* ~~Add SSF vibrato (v1.2)~~
 * ~~Improve dev exp~~ (v1.1.2)
 * ~~Lint code~~ (v1.1.2)
 * Move to vector system (v1.2)

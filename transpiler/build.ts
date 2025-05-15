@@ -14,6 +14,21 @@ transpiler();
 
 const versionNumber = `v${fs.readFileSync(".version", "utf-8")}`;
 
+
+console.log(
+    chalk.blueBright(chalk.bold(`Modfifying version number of ${chalk.redBright("plugin.lua")}...`))
+);
+
+const pluginLines = fs.readFileSync("plugin.lua", "utf-8").split("\n");
+
+pluginLines.forEach((line, idx) => {
+    if (line.includes("plumoguSV") && line.includes("AlwaysAutoResize")) {
+        pluginLines[idx] = pluginLines[idx].replaceAll(/".+"/g, `"plumoguSV-${versionNumber}"`)
+    }
+})
+
+fs.writeFileSync("plugin.lua", pluginLines.join("\n"));
+
 console.log(
     chalk.blueBright(chalk.bold(`Updating ${chalk.redBright("README.md")}...`))
 );
