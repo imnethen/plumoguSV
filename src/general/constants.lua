@@ -1,15 +1,15 @@
-DEFAULT_WIDGET_HEIGHT = 26            -- value determining the height of GUI widgets
-DEFAULT_WIDGET_WIDTH = 160            -- value determining the width of GUI widgets
-PADDING_WIDTH = 8                     -- value determining window and frame padding
-RADIO_BUTTON_SPACING = 7.5            -- value determining spacing between radio buttons
-SAMELINE_SPACING = 5                  -- value determining spacing between GUI items on the same row
-ACTION_BUTTON_SIZE = { 255, 42 }      -- dimensions of the button that does important things
-PLOT_GRAPH_SIZE = { 255, 100 }        -- dimensions of the plot graph for SVs and note motion
-HALF_ACTION_BUTTON_SIZE = { 125, 42 } -- dimensions of a button that does kinda important things
-SECONDARY_BUTTON_SIZE = { 48, 24 }    -- dimensions of a button that does less important things
-TERTIARY_BUTTON_SIZE = { 21.5, 24 }   -- dimensions of a button that does much less important things
-EXPORT_BUTTON_SIZE = { 40, 24 }       -- dimensions of the export menu settings button
-BEEG_BUTTON_SIZE = { 255, 24 }        -- beeg button
+DEFAULT_WIDGET_HEIGHT = 26                    -- value determining the height of GUI widgets
+DEFAULT_WIDGET_WIDTH = 160                    -- value determining the width of GUI widgets
+PADDING_WIDTH = 8                             -- value determining window and frame padding
+RADIO_BUTTON_SPACING = 7.5                    -- value determining spacing between radio buttons
+SAMELINE_SPACING = 5                          -- value determining spacing between GUI items on the same row
+ACTION_BUTTON_SIZE = vector.New(255, 42)      -- dimensions of the button that does important things
+PLOT_GRAPH_SIZE = vector.New(255, 100)        -- dimensions of the plot graph for SVs and note motion
+HALF_ACTION_BUTTON_SIZE = vector.New(125, 42) -- dimensions of a button that does kinda important things
+SECONDARY_BUTTON_SIZE = vector.New(48, 24)    -- dimensions of a button that does less important things
+TERTIARY_BUTTON_SIZE = vector.New(21.5, 24)   -- dimensions of a button that does much less important things
+EXPORT_BUTTON_SIZE = vector.New(40, 24)       -- dimensions of the export menu settings button
+BEEG_BUTTON_SIZE = vector.New(255, 24)        -- beeg button
 
 ------------------------------------------------------------------------------- Number restrictions
 

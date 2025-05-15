@@ -29,7 +29,7 @@ function animationFramesSetupMenu(globalVars, settingVars)
         chooseCurrentFrame(settingVars)
         drawCurrentFrame(globalVars, settingVars)
         imgui.Columns(1)
-        local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE[1] + 1.5 * SAMELINE_SPACING), 1 }
+        local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.y + 1.5 * SAMELINE_SPACING), 1 }
         imgui.invisibleButton("sv isnt a real skill", invisibleButtonSize)
     else
         imgui.SameLine(0, SAMELINE_SPACING)
