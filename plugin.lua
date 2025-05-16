@@ -2185,6 +2185,7 @@ function awake()
     state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
     state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))
     state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
+    state.SetValue("global_snakeSpringConstant", tonumber(tempGlobalVars.snakeSpringConstant))
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
@@ -2370,7 +2371,7 @@ function draw()
         cursorTrailShapeIndex = 1,
         cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
         cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
-        snakeSpringConstant = 1,
+        snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
         cursorTrailGhost = false,
         rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
         drawCapybara = state.GetValue("global_drawCapybara") or false,
@@ -7320,10 +7321,13 @@ function chooseSnakeSpringConstant(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
-    local newValue = globalVars.snakeSpringConstant
-    _, newValue = imgui.InputFloat("Reactiveness##snake", newValue, 0, 0, "%.2f")
+    local oldValue = globalVars.snakeSpringConstant
+    _, globalVars.snakeSpringConstant = imgui.InputFloat("Reactiveness##snake", oldValue, 0, 0, "%.2f")
     helpMarker("Pick any number from 0.01 to 1")
-    globalVars.snakeSpringConstant = math.clamp(newValue, 0.01, 1)
+    globalVars.snakeSpringConstant = math.clamp(globalVars.snakeSpringConstant, 0.01, 1)
+    if (globalVars.snakeSpringConstant ~= oldValue) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the special SV type

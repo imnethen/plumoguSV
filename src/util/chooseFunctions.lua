@@ -1014,10 +1014,13 @@ function chooseSnakeSpringConstant(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
-    local newValue = globalVars.snakeSpringConstant
-    _, newValue = imgui.InputFloat("Reactiveness##snake", newValue, 0, 0, "%.2f")
+    local oldValue = globalVars.snakeSpringConstant
+    _, globalVars.snakeSpringConstant = imgui.InputFloat("Reactiveness##snake", oldValue, 0, 0, "%.2f")
     helpMarker("Pick any number from 0.01 to 1")
-    globalVars.snakeSpringConstant = math.clamp(newValue, 0.01, 1)
+    globalVars.snakeSpringConstant = math.clamp(globalVars.snakeSpringConstant, 0.01, 1)
+    if (globalVars.snakeSpringConstant ~= oldValue) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the special SV type

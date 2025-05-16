@@ -13,7 +13,7 @@ function draw()
         cursorTrailShapeIndex = 1,
         cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
         cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
-        snakeSpringConstant = 1,
+        snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
         cursorTrailGhost = false,
         rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
         drawCapybara = state.GetValue("global_drawCapybara") or false,
