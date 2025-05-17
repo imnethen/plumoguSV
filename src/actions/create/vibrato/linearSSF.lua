@@ -5,7 +5,8 @@ function linearSSFVibrato(menuVars)
     local exponent = 2 ^ (menuVars.curvature / 100)
     local delta = 500 / menuVars.resolution
     local time = startTime
-    local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime), map.GetScrollSpeedFactorAt(time) or 1) }
+    local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
+        map.GetScrollSpeedFactorAt(time).Multiplier or 1) }
     while time < endTime do
         local x = ((time - startTime) / (endTime - startTime)) ^ exponent
         local y = ((time + delta - startTime) / (endTime - startTime)) ^ exponent

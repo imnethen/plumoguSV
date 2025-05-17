@@ -1,20 +1,23 @@
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 
+    local prevVal = state.GetValue("prevVal") or 0
+    local colStatus = state.GetValue("colStatus") or 0
+
     local globalVars = {
         stepSize = state.GetValue("global_stepSize") or 5,
-        keyboardMode = false,
-        dontReplaceSV = false,
+        keyboardMode = state.GetValue("global_keyboardMode") or false,
+        dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
         upscroll = state.GetValue("global_upscroll") or false,
         colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
         styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
         effectFPS = state.GetValue("global_effectFPS") or 90,
         cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
-        cursorTrailShapeIndex = 1,
+        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex") or 1,
         cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
         cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
         snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
-        cursorTrailGhost = false,
+        cursorTrailGhost = state.GetValue("global_cursorTrailGhost") or false,
         rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
         drawCapybara = state.GetValue("global_drawCapybara") or false,
         drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
@@ -29,7 +32,8 @@ function draw()
         debugText = "debug",
         scrollGroupIndex = 1,
         BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
-        advancedMode = state.GetValue("global_advancedMode") or false
+        advancedMode = state.GetValue("global_advancedMode") or false,
+        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0
     }
 
     getVariables("globalVars", globalVars)
@@ -62,8 +66,38 @@ function draw()
     saveVariables("globalVars", globalVars)
 
     local clockTime = 0.2
-    if ((os.clock() or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
-        state.SetValue("lastRecordedTime", os.clock() or 0)
+    if ((state.UnixTime or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
+        state.SetValue("lastRecordedTime", state.UnixTime or 0)
         updateDirectEdit()
     end
+
+    local modTime = (state.SongTime - map.GetTimingPointAt(state.SongTime).StartTime) %
+        ((60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+
+    local frameTime = modTime - prevVal
+
+    if ((modTime < prevVal)) then
+        colStatus = 1
+    else
+        colStatus = (colStatus - frameTime / (60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+    end
+
+
+    if ((state.SongTime - map.GetTimingPointAt(state.SongTime).StartTime) < 0) then
+        colStatus = 0
+    end
+
+    state.SetValue("colStatus", math.max(colStatus, 0))
+    state.SetValue("prevVal", modTime)
+
+    colStatus = colStatus * globalVars
+        .pulseCoefficient
+
+    local borderColor = state.GetValue("global_baseBorderColor") or { 1, 1, 1, 1 }
+    local negatedBorderColor = { 1 - borderColor[1], 1 - borderColor[2], 1 - borderColor[3], 1 - borderColor[4] }
+
+    imgui.PushStyleColor(imgui_col.Border,
+        { negatedBorderColor[1] * colStatus + borderColor[1] * (1 - colStatus), negatedBorderColor[2] * colStatus +
+        borderColor[2] * (1 - colStatus), negatedBorderColor[3] * colStatus + borderColor[3] * (1 - colStatus),
+            1 })
 end

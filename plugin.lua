@@ -902,7 +902,8 @@ function linearSSFVibrato(menuVars)
     local exponent = 2 ^ (menuVars.curvature / 100)
     local delta = 500 / menuVars.resolution
     local time = startTime
-    local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime), map.GetScrollSpeedFactorAt(time) or 1) }
+    local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
+        map.GetScrollSpeedFactorAt(time).Multiplier or 1) }
     while time < endTime do
         local x = ((time - startTime) / (endTime - startTime)) ^ exponent
         local y = ((time + delta - startTime) / (endTime - startTime)) ^ exponent
@@ -2176,16 +2177,21 @@ end
 function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
+    state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
+    state.SetValue("global_keyboardMode", tempGlobalVars.keyboardMode == "true" and true or false)
+    state.SetValue("global_dontReplaceSV", tempGlobalVars.dontReplaceSV == "true" and true or false)
     state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
     state.SetValue("global_cursorTrailIndex", tonumber(tempGlobalVars.cursorTrailIndex))
+    state.SetValue("global_cursorTrailShapeIndex", tonumber(tempGlobalVars.cursorTrailShapeIndex))
     state.SetValue("global_effectFPS", tonumber(tempGlobalVars.effectFPS))
     state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))
     state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
     state.SetValue("global_snakeSpringConstant", tonumber(tempGlobalVars.snakeSpringConstant))
+    state.SetValue("global_cursorTrailGhost", tempGlobalVars.cursorTrailGhost == "true" and true or false)
     state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
@@ -2359,20 +2365,23 @@ DISTANCE_TYPES = {
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 
+    local prevVal = state.GetValue("prevVal") or 0
+    local colStatus = state.GetValue("colStatus") or 0
+
     local globalVars = {
         stepSize = state.GetValue("global_stepSize") or 5,
-        keyboardMode = false,
-        dontReplaceSV = false,
+        keyboardMode = state.GetValue("global_keyboardMode") or false,
+        dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
         upscroll = state.GetValue("global_upscroll") or false,
         colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
         styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
         effectFPS = state.GetValue("global_effectFPS") or 90,
         cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
-        cursorTrailShapeIndex = 1,
+        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex") or 1,
         cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
         cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
         snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
-        cursorTrailGhost = false,
+        cursorTrailGhost = state.GetValue("global_cursorTrailGhost") or false,
         rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
         drawCapybara = state.GetValue("global_drawCapybara") or false,
         drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
@@ -2387,7 +2396,8 @@ function draw()
         debugText = "debug",
         scrollGroupIndex = 1,
         BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
-        advancedMode = state.GetValue("global_advancedMode") or false
+        advancedMode = state.GetValue("global_advancedMode") or false,
+        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0
     }
 
     getVariables("globalVars", globalVars)
@@ -2420,10 +2430,40 @@ function draw()
     saveVariables("globalVars", globalVars)
 
     local clockTime = 0.2
-    if ((os.clock() or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
-        state.SetValue("lastRecordedTime", os.clock() or 0)
+    if ((state.UnixTime or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
+        state.SetValue("lastRecordedTime", state.UnixTime or 0)
         updateDirectEdit()
     end
+
+    local modTime = (state.SongTime - map.GetTimingPointAt(state.SongTime).StartTime) %
+        ((60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+
+    local frameTime = modTime - prevVal
+
+    if ((modTime < prevVal)) then
+        colStatus = 1
+    else
+        colStatus = (colStatus - frameTime / (60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+    end
+
+
+    if ((state.SongTime - map.GetTimingPointAt(state.SongTime).StartTime) < 0) then
+        colStatus = 0
+    end
+
+    state.SetValue("colStatus", math.max(colStatus, 0))
+    state.SetValue("prevVal", modTime)
+
+    colStatus = colStatus * globalVars
+        .pulseCoefficient
+
+    local borderColor = state.GetValue("global_baseBorderColor") or { 1, 1, 1, 1 }
+    local negatedBorderColor = { 1 - borderColor[1], 1 - borderColor[2], 1 - borderColor[3], 1 - borderColor[4] }
+
+    imgui.PushStyleColor(imgui_col.Border,
+        { negatedBorderColor[1] * colStatus + borderColor[1] * (1 - colStatus), negatedBorderColor[2] * colStatus +
+        borderColor[2] * (1 - colStatus), negatedBorderColor[3] * colStatus + borderColor[3] * (1 - colStatus),
+            1 })
 end
 -- Creates the "Info" tab for "keyboard" mode
 -- Parameters
@@ -2857,7 +2897,7 @@ CREATE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
     "Still",
-    -- "Vibrato"
+    "Vibrato"
 }
 
 -- Creates the "Place SVs" tab
@@ -5297,28 +5337,33 @@ end
 --    colorTheme : currently selected color theme [String]
 --    rgbPeriod  : length in seconds of one RGB color cycle [Int/Float]
 function setPluginAppearanceColors(colorTheme, rgbPeriod)
-    if colorTheme == "Classic" then setClassicColors() end
-    if colorTheme == "Strawberry" then setStrawberryColors() end
-    if colorTheme == "Amethyst" then setAmethystColors() end
-    if colorTheme == "Tree" then setTreeColors() end
-    if colorTheme == "Barbie" then setBarbieColors() end
-    if colorTheme == "Incognito" then setIncognitoColors() end
-    if colorTheme == "Incognito + RGB" then setIncognitoRGBColors(rgbPeriod) end
-    if colorTheme == "Tobi's Glass" then setTobiGlassColors() end
-    if colorTheme == "Tobi's RGB Glass" then setTobiRGBGlassColors(rgbPeriod) end
-    if colorTheme == "Glass" then setGlassColors() end
-    if colorTheme == "Glass + RGB" then setGlassRGBColors(rgbPeriod) end
-    if colorTheme == "RGB Gamer Mode" then setRGBGamerColors(rgbPeriod) end
-    if colorTheme == "edom remag BGR" then setInvertedRGBGamerColors(rgbPeriod) end
-    if colorTheme == "BGR + otingocnI" then setInvertedIncognitoRGBColors(rgbPeriod) end
-    if colorTheme == "otingocnI" then setInvertedIncognitoColors() end
+    local borderColor = { 1, 1, 1, 1 }
+
+    if colorTheme == "Classic" then borderColor = setClassicColors() end
+    if colorTheme == "Strawberry" then borderColor = setStrawberryColors() end
+    if colorTheme == "Amethyst" then borderColor = setAmethystColors() end
+    if colorTheme == "Tree" then borderColor = setTreeColors() end
+    if colorTheme == "Barbie" then borderColor = setBarbieColors() end
+    if colorTheme == "Incognito" then borderColor = setIncognitoColors() end
+    if colorTheme == "Incognito + RGB" then borderColor = setIncognitoRGBColors(rgbPeriod) end
+    if colorTheme == "Tobi's Glass" then borderColor = setTobiGlassColors() end
+    if colorTheme == "Tobi's RGB Glass" then borderColor = setTobiRGBGlassColors(rgbPeriod) end
+    if colorTheme == "Glass" then borderColor = setGlassColors() end
+    if colorTheme == "Glass + RGB" then borderColor = setGlassRGBColors(rgbPeriod) end
+    if colorTheme == "RGB Gamer Mode" then borderColor = setRGBGamerColors(rgbPeriod) end
+    if colorTheme == "edom remag BGR" then borderColor = setInvertedRGBGamerColors(rgbPeriod) end
+    if colorTheme == "BGR + otingocnI" then borderColor = setInvertedIncognitoRGBColors(rgbPeriod) end
+    if colorTheme == "otingocnI" then borderColor = setInvertedIncognitoColors() end
+
+    state.SetValue("global_baseBorderColor", borderColor)
 end
 
 -- Sets plugin colors to the "Classic" theme
 function setClassicColors()
+    local borderColor = { 0.81, 0.88, 1.00, 0.30 }
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.00, 0.00, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 0.81, 0.88, 1.00, 0.30 })
+    --  -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.14, 0.24, 0.28, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.24, 0.34, 0.38, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.29, 0.39, 0.43, 1.00 })
@@ -5347,13 +5392,16 @@ function setClassicColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Strawberry" theme
 function setStrawberryColors()
+    local borderColor = { 1.00, 0.81, 0.88, 0.30 }
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.00, 0.00, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 1.00, 0.81, 0.88, 0.30 })
+    -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.28, 0.14, 0.24, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.38, 0.24, 0.34, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.43, 0.29, 0.39, 1.00 })
@@ -5382,13 +5430,17 @@ function setStrawberryColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Amethyst" theme
 function setAmethystColors()
+    local borderColor = { 0.90, 0.00, 0.81, 0.30 }
+
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.16, 0.00, 0.20, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 0.90, 0.00, 0.81, 0.30 })
+    -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.40, 0.20, 0.40, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.50, 0.30, 0.50, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.55, 0.35, 0.55, 1.00 })
@@ -5417,13 +5469,17 @@ function setAmethystColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.70, 0.30, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 1.00, 0.80, 1.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.70, 0.30, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Tree" theme
 function setTreeColors()
+    local borderColor = { 0.81, 0.90, 0.00, 0.30 }
+
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.20, 0.16, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 0.81, 0.90, 0.00, 0.30 })
+    -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.40, 0.40, 0.20, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.50, 0.50, 0.30, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.55, 0.55, 0.35, 1.00 })
@@ -5452,6 +5508,8 @@ function setTreeColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 0.30, 1.00, 0.70, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 1.00, 1.00, 0.80, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 0.30, 1.00, 0.70, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Barbie" theme
@@ -5463,7 +5521,7 @@ function setBarbieColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, pink)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, pinkTint)
+    -- imgui.PushStyleColor(imgui_col.Border, pinkTint)
     imgui.PushStyleColor(imgui_col.FrameBg, blue)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, pinkTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, pinkTint)
@@ -5492,6 +5550,8 @@ function setBarbieColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, pinkTint)
     imgui.PushStyleColor(imgui_col.PlotHistogram, pink)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, pinkTint)
+
+    return pinkTint
 end
 
 -- Sets plugin colors to the "Incognito" theme
@@ -5504,7 +5564,7 @@ function setIncognitoColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, whiteTint)
+    -- imgui.PushStyleColor(imgui_col.Border, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, whiteTint)
@@ -5533,6 +5593,8 @@ function setIncognitoColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, red)
     imgui.PushStyleColor(imgui_col.PlotHistogram, white)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, red)
+
+    return whiteTint
 end
 
 -- Sets plugin colors to the "Incognito + RGB" theme
@@ -5548,7 +5610,7 @@ function setIncognitoRGBColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, rgbColor)
+    -- imgui.PushStyleColor(imgui_col.Border, rgbColor)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, rgbColor)
@@ -5577,6 +5639,8 @@ function setIncognitoRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, rgbColor)
     imgui.PushStyleColor(imgui_col.PlotHistogram, white)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, rgbColor)
+
+    return rgbColor
 end
 
 -- Sets plugin colors to the "Tobi's Glass" theme
@@ -5590,7 +5654,7 @@ function setTobiGlassColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparentBlack)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, frameColor)
+    -- imgui.PushStyleColor(imgui_col.Border, frameColor)
     imgui.PushStyleColor(imgui_col.FrameBg, buttonColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, whiteTint)
@@ -5619,6 +5683,8 @@ function setTobiGlassColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, transparentWhite)
     imgui.PushStyleColor(imgui_col.PlotHistogram, whiteTint)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, transparentWhite)
+
+    return frameColor
 end
 
 -- Sets plugin colors to the "Tobi's RGB Glass" theme
@@ -5633,7 +5699,7 @@ function setTobiRGBGlassColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparent)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, activeColor)
+    -- imgui.PushStyleColor(imgui_col.Border, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBg, transparent)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, colorTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, colorTint)
@@ -5662,6 +5728,8 @@ function setTobiRGBGlassColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, colorTint)
     imgui.PushStyleColor(imgui_col.PlotHistogram, activeColor)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, colorTint)
+
+    return activeColor
 end
 
 -- Sets plugin colors to the "Glass" theme
@@ -5673,7 +5741,7 @@ function setGlassColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparentBlack)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, transparentWhite)
+    -- imgui.PushStyleColor(imgui_col.Border, transparentWhite)
     imgui.PushStyleColor(imgui_col.FrameBg, transparentBlack)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, whiteTint)
@@ -5702,6 +5770,8 @@ function setGlassColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, transparentWhite)
     imgui.PushStyleColor(imgui_col.PlotHistogram, whiteTint)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, transparentWhite)
+
+    return transparentWhite
 end
 
 -- Sets plugin colors to the "Glass + RGB" theme
@@ -5716,7 +5786,7 @@ function setGlassRGBColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparent)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, activeColor)
+    -- imgui.PushStyleColor(imgui_col.Border, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBg, transparent)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, colorTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, colorTint)
@@ -5745,6 +5815,8 @@ function setGlassRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, colorTint)
     imgui.PushStyleColor(imgui_col.PlotHistogram, activeColor)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, colorTint)
+
+    return activeColor
 end
 
 -- Sets plugin colors to the "RGB Gamer Mode" theme
@@ -5760,7 +5832,7 @@ function setRGBGamerColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, inactiveColor)
+    -- imgui.PushStyleColor(imgui_col.Border, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBg, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBgActive, activeColor)
@@ -5789,6 +5861,8 @@ function setRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+
+    return inactiveColor
 end
 
 -- Sets plugin colors to the "edom remag BGR" theme
@@ -5804,7 +5878,7 @@ function setInvertedRGBGamerColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, inactiveColor)
+    -- imgui.PushStyleColor(imgui_col.Border, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBg, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBgActive, activeColor)
@@ -5833,6 +5907,8 @@ function setInvertedRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 0.00, 0.57, 0.65, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.10, 0.30, 1.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 0.00, 0.40, 1.00, 1.00 })
+
+    return inactiveColor
 end
 
 -- Sets plugin colors to the "BGR + otingocnI" theme
@@ -5848,7 +5924,7 @@ function setInvertedIncognitoRGBColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, rgbColor)
+    -- imgui.PushStyleColor(imgui_col.Border, rgbColor)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, blackTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, rgbColor)
@@ -5877,6 +5953,8 @@ function setInvertedIncognitoRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, rgbColor)
     imgui.PushStyleColor(imgui_col.PlotHistogram, black)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, rgbColor)
+
+    return rgbColor
 end
 
 -- Sets plugin colors to the "otingocnI" theme
@@ -5889,7 +5967,7 @@ function setInvertedIncognitoColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, blackTint)
+    -- imgui.PushStyleColor(imgui_col.Border, blackTint)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, blackTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, blackTint)
@@ -5918,6 +5996,8 @@ function setInvertedIncognitoColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, notRed)
     imgui.PushStyleColor(imgui_col.PlotHistogram, black)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, notRed)
+
+    return blackTint
 end
 
 -- Returns the RGB colors based on the current time [Table]
@@ -6541,7 +6621,13 @@ function chooseCursorTrailGhost(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
-    _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", globalVars.cursorTrailGhost)
+    local oldCursorTrailGhost = globalVars.cursorTrailGhost
+
+    _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", oldCursorTrailGhost)
+
+    if (oldCursorTrailGhost ~= globalVars.cursorTrailGhost) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the number of points for the cursor trail
@@ -6567,7 +6653,11 @@ function chooseCursorTrailShape(globalVars)
     if currentTrail ~= "Snake" then return end
 
     local label = "Trail Shape"
-    globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, globalVars.cursorTrailShapeIndex)
+    local oldTrailShapeIndex = globalVars.cursorTrailShapeIndex
+    globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, oldTrailShapeIndex)
+    if (oldTrailShapeIndex ~= globalVars.cursorTrailShapeIndex) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the size of the cursor shapes
@@ -6717,7 +6807,11 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseDontReplaceSV(globalVars)
     local label = "Dont replace SVs when placing regular SVs"
-    _, globalVars.dontReplaceSV = imgui.Checkbox(label, globalVars.dontReplaceSV)
+    local oldDontReplaceSV = globalVars.dontReplaceSV
+    _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
+    if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose whether or not to replace SVs when placing SVs
@@ -6980,12 +7074,16 @@ function chooseKeyboardMode(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Plugin Mode:")
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    local oldKeyboardMode = globalVars.keyboardMode
     if imgui.RadioButton("Default", not globalVars.keyboardMode) then
         globalVars.keyboardMode = false
     end
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     if imgui.RadioButton("Keyboard", globalVars.keyboardMode) then
         globalVars.keyboardMode = true
+    end
+    if (oldKeyboardMode ~= globalVars.keyboardMode) then
+        write(globalVars)
     end
 end
 
@@ -7704,6 +7802,18 @@ function choosePluginAppearance(globalVars)
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     chooseDrawCapybara2(globalVars)
     chooseDrawCapybara312(globalVars)
+    addSeparator()
+    choosePulseCoefficient(globalVars)
+end
+
+function choosePulseCoefficient(globalVars)
+    local oldCoefficient = globalVars.pulseCoefficient
+    _, globalVars.pulseCoefficient = imgui.SliderFloat("Pulse Strength", oldCoefficient, 0, 1,
+        math.round(globalVars.pulseCoefficient * 100) .. "%%")
+    globalVars.pulseCoefficient = math.clamp(globalVars.pulseCoefficient, 0, 1)
+    if (oldCoefficient ~= globalVars.pulseCoefficient) then
+        write(globalVars)
+    end
 end
 
 function computableInputFloat(label, var, decimalPlaces, suffix)
@@ -8782,6 +8892,7 @@ end
 --    number        : number to round [Int/Float]
 --    decimalPlaces : number of decimal places to round the number to [Int]
 function math.round(number, decimalPlaces)
+    if (not decimalPlaces) then decimalPlaces = 0 end
     local multiplier = 10 ^ decimalPlaces
     return math.floor(multiplier * number + 0.5) / multiplier
 end

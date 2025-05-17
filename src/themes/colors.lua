@@ -3,28 +3,33 @@
 --    colorTheme : currently selected color theme [String]
 --    rgbPeriod  : length in seconds of one RGB color cycle [Int/Float]
 function setPluginAppearanceColors(colorTheme, rgbPeriod)
-    if colorTheme == "Classic" then setClassicColors() end
-    if colorTheme == "Strawberry" then setStrawberryColors() end
-    if colorTheme == "Amethyst" then setAmethystColors() end
-    if colorTheme == "Tree" then setTreeColors() end
-    if colorTheme == "Barbie" then setBarbieColors() end
-    if colorTheme == "Incognito" then setIncognitoColors() end
-    if colorTheme == "Incognito + RGB" then setIncognitoRGBColors(rgbPeriod) end
-    if colorTheme == "Tobi's Glass" then setTobiGlassColors() end
-    if colorTheme == "Tobi's RGB Glass" then setTobiRGBGlassColors(rgbPeriod) end
-    if colorTheme == "Glass" then setGlassColors() end
-    if colorTheme == "Glass + RGB" then setGlassRGBColors(rgbPeriod) end
-    if colorTheme == "RGB Gamer Mode" then setRGBGamerColors(rgbPeriod) end
-    if colorTheme == "edom remag BGR" then setInvertedRGBGamerColors(rgbPeriod) end
-    if colorTheme == "BGR + otingocnI" then setInvertedIncognitoRGBColors(rgbPeriod) end
-    if colorTheme == "otingocnI" then setInvertedIncognitoColors() end
+    local borderColor = { 1, 1, 1, 1 }
+
+    if colorTheme == "Classic" then borderColor = setClassicColors() end
+    if colorTheme == "Strawberry" then borderColor = setStrawberryColors() end
+    if colorTheme == "Amethyst" then borderColor = setAmethystColors() end
+    if colorTheme == "Tree" then borderColor = setTreeColors() end
+    if colorTheme == "Barbie" then borderColor = setBarbieColors() end
+    if colorTheme == "Incognito" then borderColor = setIncognitoColors() end
+    if colorTheme == "Incognito + RGB" then borderColor = setIncognitoRGBColors(rgbPeriod) end
+    if colorTheme == "Tobi's Glass" then borderColor = setTobiGlassColors() end
+    if colorTheme == "Tobi's RGB Glass" then borderColor = setTobiRGBGlassColors(rgbPeriod) end
+    if colorTheme == "Glass" then borderColor = setGlassColors() end
+    if colorTheme == "Glass + RGB" then borderColor = setGlassRGBColors(rgbPeriod) end
+    if colorTheme == "RGB Gamer Mode" then borderColor = setRGBGamerColors(rgbPeriod) end
+    if colorTheme == "edom remag BGR" then borderColor = setInvertedRGBGamerColors(rgbPeriod) end
+    if colorTheme == "BGR + otingocnI" then borderColor = setInvertedIncognitoRGBColors(rgbPeriod) end
+    if colorTheme == "otingocnI" then borderColor = setInvertedIncognitoColors() end
+
+    state.SetValue("global_baseBorderColor", borderColor)
 end
 
 -- Sets plugin colors to the "Classic" theme
 function setClassicColors()
+    local borderColor = { 0.81, 0.88, 1.00, 0.30 }
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.00, 0.00, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 0.81, 0.88, 1.00, 0.30 })
+    --  -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.14, 0.24, 0.28, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.24, 0.34, 0.38, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.29, 0.39, 0.43, 1.00 })
@@ -53,13 +58,16 @@ function setClassicColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Strawberry" theme
 function setStrawberryColors()
+    local borderColor = { 1.00, 0.81, 0.88, 0.30 }
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.00, 0.00, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 1.00, 0.81, 0.88, 0.30 })
+    -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.28, 0.14, 0.24, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.38, 0.24, 0.34, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.43, 0.29, 0.39, 1.00 })
@@ -88,13 +96,17 @@ function setStrawberryColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Amethyst" theme
 function setAmethystColors()
+    local borderColor = { 0.90, 0.00, 0.81, 0.30 }
+
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.16, 0.00, 0.20, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 0.90, 0.00, 0.81, 0.30 })
+    -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.40, 0.20, 0.40, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.50, 0.30, 0.50, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.55, 0.35, 0.55, 1.00 })
@@ -123,13 +135,17 @@ function setAmethystColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.70, 0.30, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 1.00, 0.80, 1.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.70, 0.30, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Tree" theme
 function setTreeColors()
+    local borderColor = { 0.81, 0.90, 0.00, 0.30 }
+
     imgui.PushStyleColor(imgui_col.WindowBg, { 0.20, 0.16, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, { 0.81, 0.90, 0.00, 0.30 })
+    -- imgui.PushStyleColor(imgui_col.Border, borderColor)
     imgui.PushStyleColor(imgui_col.FrameBg, { 0.40, 0.40, 0.20, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.50, 0.50, 0.30, 1.00 })
     imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.55, 0.55, 0.35, 1.00 })
@@ -158,6 +174,8 @@ function setTreeColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 0.30, 1.00, 0.70, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 1.00, 1.00, 0.80, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 0.30, 1.00, 0.70, 1.00 })
+
+    return borderColor
 end
 
 -- Sets plugin colors to the "Barbie" theme
@@ -169,7 +187,7 @@ function setBarbieColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, pink)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, pinkTint)
+    -- imgui.PushStyleColor(imgui_col.Border, pinkTint)
     imgui.PushStyleColor(imgui_col.FrameBg, blue)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, pinkTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, pinkTint)
@@ -198,6 +216,8 @@ function setBarbieColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, pinkTint)
     imgui.PushStyleColor(imgui_col.PlotHistogram, pink)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, pinkTint)
+
+    return pinkTint
 end
 
 -- Sets plugin colors to the "Incognito" theme
@@ -210,7 +230,7 @@ function setIncognitoColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, whiteTint)
+    -- imgui.PushStyleColor(imgui_col.Border, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, whiteTint)
@@ -239,6 +259,8 @@ function setIncognitoColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, red)
     imgui.PushStyleColor(imgui_col.PlotHistogram, white)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, red)
+
+    return whiteTint
 end
 
 -- Sets plugin colors to the "Incognito + RGB" theme
@@ -254,7 +276,7 @@ function setIncognitoRGBColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, rgbColor)
+    -- imgui.PushStyleColor(imgui_col.Border, rgbColor)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, rgbColor)
@@ -283,6 +305,8 @@ function setIncognitoRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, rgbColor)
     imgui.PushStyleColor(imgui_col.PlotHistogram, white)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, rgbColor)
+
+    return rgbColor
 end
 
 -- Sets plugin colors to the "Tobi's Glass" theme
@@ -296,7 +320,7 @@ function setTobiGlassColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparentBlack)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, frameColor)
+    -- imgui.PushStyleColor(imgui_col.Border, frameColor)
     imgui.PushStyleColor(imgui_col.FrameBg, buttonColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, whiteTint)
@@ -325,6 +349,8 @@ function setTobiGlassColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, transparentWhite)
     imgui.PushStyleColor(imgui_col.PlotHistogram, whiteTint)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, transparentWhite)
+
+    return frameColor
 end
 
 -- Sets plugin colors to the "Tobi's RGB Glass" theme
@@ -339,7 +365,7 @@ function setTobiRGBGlassColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparent)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, activeColor)
+    -- imgui.PushStyleColor(imgui_col.Border, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBg, transparent)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, colorTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, colorTint)
@@ -368,6 +394,8 @@ function setTobiRGBGlassColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, colorTint)
     imgui.PushStyleColor(imgui_col.PlotHistogram, activeColor)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, colorTint)
+
+    return activeColor
 end
 
 -- Sets plugin colors to the "Glass" theme
@@ -379,7 +407,7 @@ function setGlassColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparentBlack)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, transparentWhite)
+    -- imgui.PushStyleColor(imgui_col.Border, transparentWhite)
     imgui.PushStyleColor(imgui_col.FrameBg, transparentBlack)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, whiteTint)
@@ -408,6 +436,8 @@ function setGlassColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, transparentWhite)
     imgui.PushStyleColor(imgui_col.PlotHistogram, whiteTint)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, transparentWhite)
+
+    return transparentWhite
 end
 
 -- Sets plugin colors to the "Glass + RGB" theme
@@ -422,7 +452,7 @@ function setGlassRGBColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparent)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, activeColor)
+    -- imgui.PushStyleColor(imgui_col.Border, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBg, transparent)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, colorTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, colorTint)
@@ -451,6 +481,8 @@ function setGlassRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, colorTint)
     imgui.PushStyleColor(imgui_col.PlotHistogram, activeColor)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, colorTint)
+
+    return activeColor
 end
 
 -- Sets plugin colors to the "RGB Gamer Mode" theme
@@ -466,7 +498,7 @@ function setRGBGamerColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, inactiveColor)
+    -- imgui.PushStyleColor(imgui_col.Border, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBg, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBgActive, activeColor)
@@ -495,6 +527,8 @@ function setRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+
+    return inactiveColor
 end
 
 -- Sets plugin colors to the "edom remag BGR" theme
@@ -510,7 +544,7 @@ function setInvertedRGBGamerColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, inactiveColor)
+    -- imgui.PushStyleColor(imgui_col.Border, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBg, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBgActive, activeColor)
@@ -539,6 +573,8 @@ function setInvertedRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 0.00, 0.57, 0.65, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.10, 0.30, 1.00, 1.00 })
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 0.00, 0.40, 1.00, 1.00 })
+
+    return inactiveColor
 end
 
 -- Sets plugin colors to the "BGR + otingocnI" theme
@@ -554,7 +590,7 @@ function setInvertedIncognitoRGBColors(rgbPeriod)
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, rgbColor)
+    -- imgui.PushStyleColor(imgui_col.Border, rgbColor)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, blackTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, rgbColor)
@@ -583,6 +619,8 @@ function setInvertedIncognitoRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, rgbColor)
     imgui.PushStyleColor(imgui_col.PlotHistogram, black)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, rgbColor)
+
+    return rgbColor
 end
 
 -- Sets plugin colors to the "otingocnI" theme
@@ -595,7 +633,7 @@ function setInvertedIncognitoColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
     imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
-    imgui.PushStyleColor(imgui_col.Border, blackTint)
+    -- imgui.PushStyleColor(imgui_col.Border, blackTint)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, blackTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, blackTint)
@@ -624,6 +662,8 @@ function setInvertedIncognitoColors()
     imgui.PushStyleColor(imgui_col.PlotLinesHovered, notRed)
     imgui.PushStyleColor(imgui_col.PlotHistogram, black)
     imgui.PushStyleColor(imgui_col.PlotHistogramHovered, notRed)
+
+    return blackTint
 end
 
 -- Returns the RGB colors based on the current time [Table]

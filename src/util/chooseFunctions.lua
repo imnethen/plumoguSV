@@ -234,7 +234,13 @@ function chooseCursorTrailGhost(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
-    _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", globalVars.cursorTrailGhost)
+    local oldCursorTrailGhost = globalVars.cursorTrailGhost
+
+    _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", oldCursorTrailGhost)
+
+    if (oldCursorTrailGhost ~= globalVars.cursorTrailGhost) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the number of points for the cursor trail
@@ -260,7 +266,11 @@ function chooseCursorTrailShape(globalVars)
     if currentTrail ~= "Snake" then return end
 
     local label = "Trail Shape"
-    globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, globalVars.cursorTrailShapeIndex)
+    local oldTrailShapeIndex = globalVars.cursorTrailShapeIndex
+    globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, oldTrailShapeIndex)
+    if (oldTrailShapeIndex ~= globalVars.cursorTrailShapeIndex) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose the size of the cursor shapes
@@ -410,7 +420,11 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseDontReplaceSV(globalVars)
     local label = "Dont replace SVs when placing regular SVs"
-    _, globalVars.dontReplaceSV = imgui.Checkbox(label, globalVars.dontReplaceSV)
+    local oldDontReplaceSV = globalVars.dontReplaceSV
+    _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
+    if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then
+        write(globalVars)
+    end
 end
 
 -- Lets you choose whether or not to replace SVs when placing SVs
@@ -673,12 +687,16 @@ function chooseKeyboardMode(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Plugin Mode:")
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    local oldKeyboardMode = globalVars.keyboardMode
     if imgui.RadioButton("Default", not globalVars.keyboardMode) then
         globalVars.keyboardMode = false
     end
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     if imgui.RadioButton("Keyboard", globalVars.keyboardMode) then
         globalVars.keyboardMode = true
+    end
+    if (oldKeyboardMode ~= globalVars.keyboardMode) then
+        write(globalVars)
     end
 end
 
@@ -1397,6 +1415,18 @@ function choosePluginAppearance(globalVars)
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     chooseDrawCapybara2(globalVars)
     chooseDrawCapybara312(globalVars)
+    addSeparator()
+    choosePulseCoefficient(globalVars)
+end
+
+function choosePulseCoefficient(globalVars)
+    local oldCoefficient = globalVars.pulseCoefficient
+    _, globalVars.pulseCoefficient = imgui.SliderFloat("Pulse Strength", oldCoefficient, 0, 1,
+        math.round(globalVars.pulseCoefficient * 100) .. "%%")
+    globalVars.pulseCoefficient = math.clamp(globalVars.pulseCoefficient, 0, 1)
+    if (oldCoefficient ~= globalVars.pulseCoefficient) then
+        write(globalVars)
+    end
 end
 
 function computableInputFloat(label, var, decimalPlaces, suffix)
