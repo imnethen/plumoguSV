@@ -71,7 +71,7 @@ function draw()
         updateDirectEdit()
     end
 
-    local modTime = (state.SongTime - map.GetTimingPointAt(state.SongTime).StartTime) %
+    local modTime = ((state.SongTime + 60) - map.GetTimingPointAt(state.SongTime).StartTime) %
         ((60000 / map.GetTimingPointAt(state.SongTime).Bpm))
 
     local frameTime = modTime - prevVal
