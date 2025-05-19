@@ -32,21 +32,20 @@ function generateExponentialSet2(behavior, numValues, startValue, endValue, inte
     local exponentialSet = {}
     -- reduce intensity scaling to produce more useful/practical values
     intensity = intensity / 5
+    if (behavior == "Slow down" and startValue ~= endValue) then
+        local temp = startValue
+        startValue = endValue
+        endValue = temp
+    end
     for i = 0, numValues - 1 do
         fx = startValue
         local x = i / (numValues - 1)
-        if (behavior == "Slow down" and startValue ~= endValue) then
-            local k = 1 / (math.exp(intensity * math.abs(endValue - startValue)) - 1)
-            fx = 1 / intensity * math.log((x + k) / (1 + k))
-            if (startValue > endValue) then
-                fx = -fx
-            end
-            fx = fx + endValue
-        else
-            local k = (endValue - startValue) / (math.exp(intensity) - 1)
-            fx = k * math.exp(intensity * x) + startValue - k
-        end
+        local k = (endValue - startValue) / (math.exp(intensity) - 1)
+        fx = k * math.exp(intensity * x) + startValue - k
         table.insert(exponentialSet, fx)
+    end
+    if (behavior == "Slow down" and startValue ~= endValue) then
+        exponentialSet = table.reverse(exponentialSet)
     end
     return exponentialSet
 end
