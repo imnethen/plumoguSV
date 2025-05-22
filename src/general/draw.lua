@@ -65,12 +65,6 @@ function draw()
 
     saveVariables("globalVars", globalVars)
 
-    local clockTime = 0.2
-    if ((state.UnixTime or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
-        state.SetValue("lastRecordedTime", state.UnixTime or 0)
-        updateDirectEdit()
-    end
-
     local modTime = ((state.SongTime + 60) - map.GetTimingPointAt(state.SongTime).StartTime) %
         ((60000 / map.GetTimingPointAt(state.SongTime).Bpm))
 
