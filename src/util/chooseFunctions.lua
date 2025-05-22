@@ -504,6 +504,7 @@ function chooseEditTool(globalVars)
     if svTool == "Add Teleport" then toolTip("Add a large teleport SV to move far away") end
     if svTool == "Align Timing Lines" then toolTip("Create timing lines at notes to avoid desync") end
     if svTool == "Copy & Paste" then toolTip("Copy SVs and SSFs and paste them somewhere else") end
+    if svTool == "Direct SV" then toolTip("Directly update SVs within your selection") end
     if svTool == "Displace Note" then toolTip("Move where notes are hit on the screen") end
     if svTool == "Displace View" then toolTip("Temporarily displace the playfield view") end
     if svTool == "Dynamic Scale" then toolTip("Dynamically scale SVs across notes") end
@@ -914,7 +915,9 @@ function chooseCurrentScrollGroup(globalVars)
         ::continue::
     end
     local prevIndex = globalVars.scrollGroupIndex
+    imgui.PushItemWidth(155)
     globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols)
+    imgui.PopItemWidth()
     addSeparator()
     if (prevIndex ~= globalVars.scrollGroupIndex) then
         state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
