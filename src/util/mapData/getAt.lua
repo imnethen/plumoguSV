@@ -35,3 +35,9 @@ function getSVMultiplierAt(offset)
     if sv then return sv.Multiplier end
     return map.InitialScrollVelocity or 1
 end
+
+function getTimingPointAt(offset)
+    local line = map.GetTimingPointAt(offset)
+    if line then return line end
+    return { StartTime = 0, Bpm = 100 }
+end

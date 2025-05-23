@@ -4,7 +4,7 @@ function selectBySnap(menuVars)
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
 
-    local timingPoint = map.GetTimingPointAt(startOffset)
+    local timingPoint = getBPMAt(startOffset)
     local bpm = timingPoint.Bpm
     local times = {}
     local disallowedTimes = {}

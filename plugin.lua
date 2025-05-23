@@ -2123,7 +2123,7 @@ function selectBySnap(menuVars)
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
 
-    local timingPoint = map.GetTimingPointAt(startOffset)
+    local timingPoint = getBPMAt(startOffset)
     local bpm = timingPoint.Bpm
     local times = {}
     local disallowedTimes = {}
@@ -2429,19 +2429,19 @@ function draw()
 
     saveVariables("globalVars", globalVars)
 
-    local modTime = ((state.SongTime + 60) - map.GetTimingPointAt(state.SongTime).StartTime) %
-        ((60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+    local modTime = ((state.SongTime + 60) - getTimingPointAt(state.SongTime).StartTime) %
+        ((60000 / getTimingPointAt(state.SongTime).Bpm))
 
     local frameTime = modTime - prevVal
 
     if ((modTime < prevVal)) then
         colStatus = 1
     else
-        colStatus = (colStatus - frameTime / (60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+        colStatus = (colStatus - frameTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
     end
 
 
-    if ((state.SongTime - map.GetTimingPointAt(state.SongTime).StartTime) < 0) then
+    if ((state.SongTime - getTimingPointAt(state.SongTime).StartTime) < 0) then
         colStatus = 0
     end
 
@@ -8667,6 +8667,12 @@ function getSVMultiplierAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.Multiplier end
     return map.InitialScrollVelocity or 1
+end
+
+function getTimingPointAt(offset)
+    local line = map.GetTimingPointAt(offset)
+    if line then return line end
+    return { StartTime = 0, Bpm = 100 }
 end
 function getNotesBetweenOffsets(startOffset, endOffset)
     local notesBetweenOffsets = {}

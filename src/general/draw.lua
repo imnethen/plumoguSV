@@ -65,19 +65,19 @@ function draw()
 
     saveVariables("globalVars", globalVars)
 
-    local modTime = ((state.SongTime + 60) - map.GetTimingPointAt(state.SongTime).StartTime) %
-        ((60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+    local modTime = ((state.SongTime + 60) - getTimingPointAt(state.SongTime).StartTime) %
+        ((60000 / getTimingPointAt(state.SongTime).Bpm))
 
     local frameTime = modTime - prevVal
 
     if ((modTime < prevVal)) then
         colStatus = 1
     else
-        colStatus = (colStatus - frameTime / (60000 / map.GetTimingPointAt(state.SongTime).Bpm))
+        colStatus = (colStatus - frameTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
     end
 
 
-    if ((state.SongTime - map.GetTimingPointAt(state.SongTime).StartTime) < 0) then
+    if ((state.SongTime - getTimingPointAt(state.SongTime).StartTime) < 0) then
         colStatus = 0
     end
 
