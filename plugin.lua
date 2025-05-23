@@ -2891,7 +2891,7 @@ CREATE_TYPES = { -- general categories of SVs to place
     "Standard",
     "Special",
     "Still",
-    "Vibrato"
+    "Vibrato",
 }
 
 -- Creates the "Place SVs" tab
@@ -2899,12 +2899,16 @@ CREATE_TYPES = { -- general categories of SVs to place
 --    globalVars : list of variables used globally across all menus [Table]
 function createSVTab(globalVars)
     if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
+    if (devMode and not CREATE_TYPES[5]) then
+        table.insert(CREATE_TYPES, "Automate")
+    end
     choosePlaceSVType(globalVars)
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
     if placeType == "Vibrato" then placeVibratoSVMenu(globalVars) end
+    if placeType == "Automate" and devMode then automateSVMenu(globalVars) end
 end
 -- Creates the menu for advanced splitscroll SV
 -- Parameters
@@ -9125,6 +9129,12 @@ function table.combine(t1, t2)
     end
     return t1
 end
+function table.contains(tbl, item)
+    for _, v in pairs(tbl) do
+        if (v == item) then return true end
+    end
+    return false
+end
 -- Combs through a list and locates unique values
 -- Returns a list of only unique values (no duplicates) [Table]
 -- Parameters
@@ -9149,6 +9159,21 @@ function table.duplicate(list)
         table.insert(duplicateList, value)
     end
     return duplicateList
+end
+---In a nested table `tbl`, returns a table of keys.
+---@param tbl table
+---@param key string
+---@return table
+function table.keys(tbl)
+    local resultsTbl = {}
+
+    for k, _ in pairs(tbl) do
+        if (not table.contains(resultsTbl, k)) then
+            table.insert(resultsTbl, k)
+        end
+    end
+
+    return resultsTbl
 end
 -- Normalizes a set of values to achieve a target average
 -- Parameters

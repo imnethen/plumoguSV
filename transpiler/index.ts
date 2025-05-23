@@ -7,13 +7,15 @@ import {
 } from "fs";
 import { getFilesRecursively } from "./getFilesRecursively.js";
 
-export default async function transpiler() {
+export default async function transpiler(devMode = false) {
     let fileCount = 0;
     let output = "";
 
     const files = getFilesRecursively("./src");
 
     const ignoredFiles = ["classes.lua", "intellisense.lua"];
+
+    if (!devMode) ignoredFiles.push("src\\dev")
 
     files.forEach((file) => {
         if (ignoredFiles.some((f) => file.includes(f))) return;

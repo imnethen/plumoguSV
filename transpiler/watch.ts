@@ -8,6 +8,8 @@ console.log(
     )
 );
 
+let devMode = false
+
 chokidar
     .watch("src", { ignoreInitial: true })
     .on("all", async (event, path) => {
@@ -17,7 +19,13 @@ chokidar
                 path
             )}. Now retranspiling...`
         );
-        const fileCount = await transpiler();
+        if (path.includes("src\\dev\\unlock")) {
+            devMode = true
+        }
+        if (path.includes("src\\dev\\lock")) {
+            devMode = false
+        }
+        const fileCount = await transpiler(devMode);
         const endTime = Date.now();
         console.log(
             `Successfully transpiled ${chalk.green(
