@@ -212,6 +212,12 @@ function getSettingVars(svType, label)
             sCurvature = 100,
             bCurvature = 100
         }
+    elseif svType == "Automate" then
+        settingVars = {
+            copiedSVs = {},
+            maintainMs = true,
+            ms = 1000
+        }
     end
     local labelText = table.concat({ svType, "Settings", label })
     getVariables(labelText, settingVars)

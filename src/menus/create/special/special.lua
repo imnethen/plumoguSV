@@ -5,7 +5,8 @@ SPECIAL_SVS = { -- types of special SVs
     "Splitscroll (Advanced)",
     "Splitscroll (Adv v2)",
     "Penis",
-    "Frames Setup"
+    "Frames Setup",
+    "Automate"
 }
 
 -- Creates the menu for placing special SVs
@@ -35,6 +36,8 @@ function placeSpecialSVMenu(globalVars)
     if currentSVType == "Frames Setup" then
         animationFramesSetupMenu(globalVars, settingVars)
     end
+    if currentSVType == "Automate" and devMode then automateSVMenu(settingVars) end
+
 
     local labelText = table.concat({ currentSVType, "SettingsSpecial" })
     saveVariables(labelText, settingVars)

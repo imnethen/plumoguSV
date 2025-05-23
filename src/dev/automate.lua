@@ -1,41 +1,32 @@
-function automateSVMenu(globalVars)
-    local menuVars = {
-        copiedSVs = {},
-        maintainMs = true,
-        ms = 1000
-    }
-    addSeparator()
-    getVariables("copyMenu", menuVars)
-    local copiedSVCount = #menuVars.copiedSVs
+function automateSVMenu(settingVars)
+    local copiedSVCount = #settingVars.copiedSVs
 
     if (copiedSVCount == 0) then
-        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, nil, menuVars)
-        saveVariables("copyMenu", menuVars)
+        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, nil, settingVars)
+        saveVariables("copyMenu", settingVars)
         return
     end
 
-    button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, menuVars)
+    button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, settingVars)
     addSeparator()
-    _, menuVars.maintainMs = imgui.Checkbox("Maintain Time?", true)
-    if (menuVars.maintainMs) then
+    _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", true)
+    if (settingVars.maintainMs) then
         imgui.SameLine()
         imgui.PushItemWidth(90)
-        menuVars.ms = computableInputFloat("Time", menuVars.ms, 2, "ms")
+        settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
         imgui.PopItemWidth()
     end
     addSeparator()
-    simpleActionMenu("Automate SVs for selected notes", 1, automateSVs, nil, menuVars)
-
-    saveVariables("copyMenu", menuVars)
+    simpleActionMenu("Automate SVs for selected notes", 1, automateSVs, nil, settingVars)
 end
 
-function automateCopySVs(menuVars)
-    menuVars.copiedSVs = {}
+function automateCopySVs(settingVars)
+    settingVars.copiedSVs = {}
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svs = getSVsBetweenOffsets(startOffset, endOffset)
-    if (not #svs) then
+    if (not #svs or #svs == 0) then
         print("W!", "No SVs found within the copiable region.")
         return
     end
@@ -45,16 +36,16 @@ function automateCopySVs(menuVars)
             relativeOffset = sv.StartTime - firstSVTime,
             multiplier = sv.Multiplier
         }
-        table.insert(menuVars.copiedSVs, copiedSV)
+        table.insert(settingVars.copiedSVs, copiedSV)
     end
-    if (#menuVars.copiedSVs > 0) then print("S!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
+    if (#settingVars.copiedSVs > 0) then print("S!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
 end
 
-function clearAutomateSVs(menuVars)
-    menuVars.copiedSVs = {}
+function clearAutomateSVs(settingVars)
+    settingVars.copiedSVs = {}
 end
 
-function automateSVs(menuVars)
+function automateSVs(settingVars)
     local selected = state.SelectedHitObjects
 
     local timeDict = {}
@@ -76,11 +67,11 @@ function automateSVs(menuVars)
     for k, v in pairs(timeDict) do
         local startTime = tonumber(k:sub(3))
         local svsToAdd = {}
-        for _, sv in ipairs(menuVars.copiedSVs) do
-            local timeDistance = menuVars.copiedSVs[#menuVars.copiedSVs].relativeOffset -
-                menuVars.copiedSVs[1].relativeOffset
+        for _, sv in ipairs(settingVars.copiedSVs) do
+            local timeDistance = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset -
+                settingVars.copiedSVs[1].relativeOffset
             local progress = sv.relativeOffset / timeDistance
-            local timeToPasteSV = startTime - menuVars.ms * (1 - progress)
+            local timeToPasteSV = startTime - settingVars.ms * (1 - progress)
             table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
         end
         local r = math.random(255)

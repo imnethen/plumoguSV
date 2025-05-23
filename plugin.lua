@@ -2174,6 +2174,93 @@ function selectBySnap(menuVars)
     actions.SetHitObjectSelection(notesToSelect)
     print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
 end
+function automateSVMenu(settingVars)
+    local copiedSVCount = #settingVars.copiedSVs
+
+    if (copiedSVCount == 0) then
+        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, nil, settingVars)
+        saveVariables("copyMenu", settingVars)
+        return
+    end
+
+    button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, settingVars)
+    addSeparator()
+    _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", true)
+    if (settingVars.maintainMs) then
+        imgui.SameLine()
+        imgui.PushItemWidth(90)
+        settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
+        imgui.PopItemWidth()
+    end
+    addSeparator()
+    simpleActionMenu("Automate SVs for selected notes", 1, automateSVs, nil, settingVars)
+end
+
+function automateCopySVs(settingVars)
+    settingVars.copiedSVs = {}
+    local offsets = uniqueSelectedNoteOffsets()
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+    local svs = getSVsBetweenOffsets(startOffset, endOffset)
+    if (not #svs or #svs == 0) then
+        print("W!", "No SVs found within the copiable region.")
+        return
+    end
+    local firstSVTime = svs[1].StartTime
+    for _, sv in pairs(getSVsBetweenOffsets(startOffset, endOffset)) do
+        local copiedSV = {
+            relativeOffset = sv.StartTime - firstSVTime,
+            multiplier = sv.Multiplier
+        }
+        table.insert(settingVars.copiedSVs, copiedSV)
+    end
+    if (#settingVars.copiedSVs > 0) then print("S!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
+end
+
+function clearAutomateSVs(settingVars)
+    settingVars.copiedSVs = {}
+end
+
+function automateSVs(settingVars)
+    local selected = state.SelectedHitObjects
+
+    local timeDict = {}
+
+    for _, v in pairs(selected) do
+        if (not table.contains(table.keys(timeDict), "t_" .. v.StartTime)) then
+            timeDict["t_" .. v.StartTime] = { v }
+        else
+            table.insert(timeDict["t_" .. v.StartTime], v)
+        end
+    end
+
+
+    local ids = utils.GenerateTimingGroupIds(#table.keys(timeDict), "automate_")
+    local index = 1
+
+    local actionList = {}
+
+    for k, v in pairs(timeDict) do
+        local startTime = tonumber(k:sub(3))
+        local svsToAdd = {}
+        for _, sv in ipairs(settingVars.copiedSVs) do
+            local timeDistance = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset -
+                settingVars.copiedSVs[1].relativeOffset
+            local progress = sv.relativeOffset / timeDistance
+            local timeToPasteSV = startTime - settingVars.ms * (1 - progress)
+            table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+        end
+        local r = math.random(255)
+        local g = math.random(255)
+        local b = math.random(255)
+        local tg = utils.CreateScrollGroup(svsToAdd, 1, r .. "," .. g .. "," .. b)
+        local id = ids[index]
+        table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, v))
+        index = index + 1
+    end
+    actions.PerformBatch(actionList)
+end
+devMode = true
 function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
@@ -2899,16 +2986,12 @@ CREATE_TYPES = { -- general categories of SVs to place
 --    globalVars : list of variables used globally across all menus [Table]
 function createSVTab(globalVars)
     if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
-    if (devMode and not CREATE_TYPES[5]) then
-        table.insert(CREATE_TYPES, "Automate")
-    end
     choosePlaceSVType(globalVars)
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
     if placeType == "Vibrato" then placeVibratoSVMenu(globalVars) end
-    if placeType == "Automate" and devMode then automateSVMenu(globalVars) end
 end
 -- Creates the menu for advanced splitscroll SV
 -- Parameters
@@ -3058,7 +3141,8 @@ SPECIAL_SVS = { -- types of special SVs
     "Splitscroll (Advanced)",
     "Splitscroll (Adv v2)",
     "Penis",
-    "Frames Setup"
+    "Frames Setup",
+    "Automate"
 }
 
 -- Creates the menu for placing special SVs
@@ -3088,6 +3172,8 @@ function placeSpecialSVMenu(globalVars)
     if currentSVType == "Frames Setup" then
         animationFramesSetupMenu(globalVars, settingVars)
     end
+    if currentSVType == "Automate" and devMode then automateSVMenu(settingVars) end
+
 
     local labelText = table.concat({ currentSVType, "SettingsSpecial" })
     saveVariables(labelText, settingVars)
@@ -9441,6 +9527,12 @@ function getSettingVars(svType, label)
             sWidth = 100,
             sCurvature = 100,
             bCurvature = 100
+        }
+    elseif svType == "Automate" then
+        settingVars = {
+            copiedSVs = {},
+            maintainMs = true,
+            ms = 1000
         }
     end
     local labelText = table.concat({ svType, "Settings", label })
