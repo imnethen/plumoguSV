@@ -1789,7 +1789,7 @@ function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 function utils.CreateBookmark(startTime, note) end
 
-function utils.CreateEditorAction(type, args) end
+function utils.CreateEditorAction(type, ...) end
 
 function utils.EditorActionPlaceHitObject() end
 
