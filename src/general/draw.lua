@@ -31,9 +31,12 @@ function draw()
         exportData = "",
         debugText = "debug",
         scrollGroupIndex = 1,
+        showColorPicker = false,
         BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
         advancedMode = state.GetValue("global_advancedMode") or false,
-        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0
+        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0,
+        pulseColor = state.GetValue("global_pulseColor") or { 1, 1, 1, 1 },
+        useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
     }
 
     getVariables("globalVars", globalVars)
@@ -90,8 +93,10 @@ function draw()
     local borderColor = state.GetValue("global_baseBorderColor") or { 1, 1, 1, 1 }
     local negatedBorderColor = { 1 - borderColor[1], 1 - borderColor[2], 1 - borderColor[3], 1 - borderColor[4] }
 
+    local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
+
     imgui.PushStyleColor(imgui_col.Border,
-        { negatedBorderColor[1] * colStatus + borderColor[1] * (1 - colStatus), negatedBorderColor[2] * colStatus +
-        borderColor[2] * (1 - colStatus), negatedBorderColor[3] * colStatus + borderColor[3] * (1 - colStatus),
+        { pulseColor[1] * colStatus + borderColor[1] * (1 - colStatus), pulseColor[2] * colStatus +
+        borderColor[2] * (1 - colStatus), pulseColor[3] * colStatus + borderColor[3] * (1 - colStatus),
             1 })
 end

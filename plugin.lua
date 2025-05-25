@@ -2174,96 +2174,11 @@ function selectBySnap(menuVars)
     actions.SetHitObjectSelection(notesToSelect)
     print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
 end
-function automateSVMenu(settingVars)
-    local copiedSVCount = #settingVars.copiedSVs
-
-    if (copiedSVCount == 0) then
-        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, nil, settingVars)
-        saveVariables("copyMenu", settingVars)
-        return
-    end
-
-    button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, settingVars)
-    addSeparator()
-    _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", true)
-    if (settingVars.maintainMs) then
-        imgui.SameLine()
-        imgui.PushItemWidth(90)
-        settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
-        imgui.PopItemWidth()
-    end
-    addSeparator()
-    simpleActionMenu("Automate SVs for selected notes", 1, automateSVs, nil, settingVars)
-end
-
-function automateCopySVs(settingVars)
-    settingVars.copiedSVs = {}
-    local offsets = uniqueSelectedNoteOffsets()
-    local startOffset = offsets[1]
-    local endOffset = offsets[#offsets]
-    local svs = getSVsBetweenOffsets(startOffset, endOffset)
-    if (not #svs or #svs == 0) then
-        print("W!", "No SVs found within the copiable region.")
-        return
-    end
-    local firstSVTime = svs[1].StartTime
-    for _, sv in pairs(getSVsBetweenOffsets(startOffset, endOffset)) do
-        local copiedSV = {
-            relativeOffset = sv.StartTime - firstSVTime,
-            multiplier = sv.Multiplier
-        }
-        table.insert(settingVars.copiedSVs, copiedSV)
-    end
-    if (#settingVars.copiedSVs > 0) then print("S!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
-end
-
-function clearAutomateSVs(settingVars)
-    settingVars.copiedSVs = {}
-end
-
-function automateSVs(settingVars)
-    local selected = state.SelectedHitObjects
-
-    local timeDict = {}
-
-    for _, v in pairs(selected) do
-        if (not table.contains(table.keys(timeDict), "t_" .. v.StartTime)) then
-            timeDict["t_" .. v.StartTime] = { v }
-        else
-            table.insert(timeDict["t_" .. v.StartTime], v)
-        end
-    end
-
-
-    local ids = utils.GenerateTimingGroupIds(#table.keys(timeDict), "automate_")
-    local index = 1
-
-    local actionList = {}
-
-    for k, v in pairs(timeDict) do
-        local startTime = tonumber(k:sub(3))
-        local svsToAdd = {}
-        for _, sv in ipairs(settingVars.copiedSVs) do
-            local timeDistance = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset -
-                settingVars.copiedSVs[1].relativeOffset
-            local progress = sv.relativeOffset / timeDistance
-            local timeToPasteSV = startTime - settingVars.ms * (1 - progress)
-            table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
-        end
-        local r = math.random(255)
-        local g = math.random(255)
-        local b = math.random(255)
-        local tg = utils.CreateScrollGroup(svsToAdd, 1, r .. "," .. g .. "," .. b)
-        local id = ids[index]
-        table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, v))
-        index = index + 1
-    end
-    actions.PerformBatch(actionList)
-end
-devMode = true
 function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
+    state.SetValue("global_useCustomPulseColor", tempGlobalVars.useCustomPulseColor == "true" and true or false)
+    state.SetValue("global_pulseColor", tempGlobalVars.pulseColor)
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_keyboardMode", tempGlobalVars.keyboardMode == "true" and true or false)
@@ -2482,9 +2397,12 @@ function draw()
         exportData = "",
         debugText = "debug",
         scrollGroupIndex = 1,
+        showColorPicker = false,
         BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
         advancedMode = state.GetValue("global_advancedMode") or false,
-        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0
+        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0,
+        pulseColor = state.GetValue("global_pulseColor") or { 1, 1, 1, 1 },
+        useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
     }
 
     getVariables("globalVars", globalVars)
@@ -2541,9 +2459,11 @@ function draw()
     local borderColor = state.GetValue("global_baseBorderColor") or { 1, 1, 1, 1 }
     local negatedBorderColor = { 1 - borderColor[1], 1 - borderColor[2], 1 - borderColor[3], 1 - borderColor[4] }
 
+    local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
+
     imgui.PushStyleColor(imgui_col.Border,
-        { negatedBorderColor[1] * colStatus + borderColor[1] * (1 - colStatus), negatedBorderColor[2] * colStatus +
-        borderColor[2] * (1 - colStatus), negatedBorderColor[3] * colStatus + borderColor[3] * (1 - colStatus),
+        { pulseColor[1] * colStatus + borderColor[1] * (1 - colStatus), pulseColor[2] * colStatus +
+        borderColor[2] * (1 - colStatus), pulseColor[3] * colStatus + borderColor[3] * (1 - colStatus),
             1 })
 end
 -- Creates the "Info" tab for "keyboard" mode
@@ -7864,6 +7784,16 @@ function choosePluginAppearance(globalVars)
     chooseDrawCapybara312(globalVars)
     addSeparator()
     choosePulseCoefficient(globalVars)
+    _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
+    if (globalVars.useCustomPulseColor) then
+        imgui.SameLine()
+        if (imgui.Button("Edit Color")) then
+            globalVars.showColorPicker = true
+        end
+        choosePulseColor(globalVars)
+    else
+        globalVars.showColorPicker = false
+    end
 end
 
 function choosePulseCoefficient(globalVars)
@@ -7873,6 +7803,23 @@ function choosePulseCoefficient(globalVars)
     globalVars.pulseCoefficient = math.clamp(globalVars.pulseCoefficient, 0, 1)
     if (oldCoefficient ~= globalVars.pulseCoefficient) then
         write(globalVars)
+    end
+end
+
+function choosePulseColor(globalVars)
+    if (globalVars.showColorPicker) then
+        _, opened = imgui.Begin("plumoguSV Pulse Color Picker", globalVars.showColorPicker,
+            imgui_window_flags.AlwaysAutoResize)
+        local oldColor = globalVars.pulseColor
+        _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
+        if (oldColor ~= globalVars.pulseColor) then
+            write(globalVars)
+        end
+        if (not opened) then
+            globalVars.showColorPicker = false
+            write(globalVars)
+        end
+        imgui.End()
     end
 end
 

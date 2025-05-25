@@ -1420,6 +1420,16 @@ function choosePluginAppearance(globalVars)
     chooseDrawCapybara312(globalVars)
     addSeparator()
     choosePulseCoefficient(globalVars)
+    _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
+    if (globalVars.useCustomPulseColor) then
+        imgui.SameLine()
+        if (imgui.Button("Edit Color")) then
+            globalVars.showColorPicker = true
+        end
+        choosePulseColor(globalVars)
+    else
+        globalVars.showColorPicker = false
+    end
 end
 
 function choosePulseCoefficient(globalVars)
@@ -1429,6 +1439,23 @@ function choosePulseCoefficient(globalVars)
     globalVars.pulseCoefficient = math.clamp(globalVars.pulseCoefficient, 0, 1)
     if (oldCoefficient ~= globalVars.pulseCoefficient) then
         write(globalVars)
+    end
+end
+
+function choosePulseColor(globalVars)
+    if (globalVars.showColorPicker) then
+        _, opened = imgui.Begin("plumoguSV Pulse Color Picker", globalVars.showColorPicker,
+            imgui_window_flags.AlwaysAutoResize)
+        local oldColor = globalVars.pulseColor
+        _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
+        if (oldColor ~= globalVars.pulseColor) then
+            write(globalVars)
+        end
+        if (not opened) then
+            globalVars.showColorPicker = false
+            write(globalVars)
+        end
+        imgui.End()
     end
 end
 

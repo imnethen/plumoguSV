@@ -1,6 +1,8 @@
 function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
+    state.SetValue("global_useCustomPulseColor", tempGlobalVars.useCustomPulseColor == "true" and true or false)
+    state.SetValue("global_pulseColor", tempGlobalVars.pulseColor)
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_keyboardMode", tempGlobalVars.keyboardMode == "true" and true or false)
