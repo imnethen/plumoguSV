@@ -24,13 +24,13 @@ exportCustomSVData: ''
 exportData: ''
 debugText: debug
 scrollGroupIndex: 1
-showColorPicker: true
+showColorPicker: false
 BETA_IGNORE_NOTES_OUTSIDE_TG: false
 advancedMode: true
 pulseCoefficient: 1
 pulseColor:
-- 0.42268037796020508
 - 0
-- 1
+- 0
+- 0
 - 1
 useCustomPulseColor: true

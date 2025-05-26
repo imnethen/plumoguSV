@@ -11,7 +11,7 @@ console.log(
 let devMode = false
 
 chokidar
-    .watch("src", { ignoreInitial: true })
+    .watch(["src", "packages"], { ignoreInitial: true })
     .on("all", async (event, path) => {
         const startTime = Date.now();
         console.log(
