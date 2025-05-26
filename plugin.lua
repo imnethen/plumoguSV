@@ -2177,13 +2177,13 @@ end
 function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
-    state.SetValue("global_useCustomPulseColor", tempGlobalVars.useCustomPulseColor == "true" and true or false)
+    state.SetValue("global_useCustomPulseColor", truthy(tempGlobalVars.useCustomPulseColor))
     state.SetValue("global_pulseColor", tempGlobalVars.pulseColor)
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
-    state.SetValue("global_keyboardMode", tempGlobalVars.keyboardMode == "true" and true or false)
-    state.SetValue("global_dontReplaceSV", tempGlobalVars.dontReplaceSV == "true" and true or false)
-    state.SetValue("global_upscroll", tempGlobalVars.upscroll == "true" and true or false)
+    state.SetValue("global_keyboardMode", truthy(tempGlobalVars.keyboardMode))
+    state.SetValue("global_dontReplaceSV", truthy(tempGlobalVars.dontReplaceSV))
+    state.SetValue("global_upscroll", truthy(tempGlobalVars.upscroll))
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
     state.SetValue("global_styleThemeIndex", tonumber(tempGlobalVars.styleThemeIndex))
     state.SetValue("global_rgbPeriod", tonumber(tempGlobalVars.rgbPeriod))
@@ -2193,12 +2193,12 @@ function awake()
     state.SetValue("global_cursorTrailPoints", tonumber(tempGlobalVars.cursorTrailPoints))
     state.SetValue("global_cursorTrailSize", tonumber(tempGlobalVars.cursorTrailSize))
     state.SetValue("global_snakeSpringConstant", tonumber(tempGlobalVars.snakeSpringConstant))
-    state.SetValue("global_cursorTrailGhost", tempGlobalVars.cursorTrailGhost == "true" and true or false)
-    state.SetValue("global_drawCapybara", tempGlobalVars.drawCapybara == "true" and true or false)
+    state.SetValue("global_cursorTrailGhost", truthy(tempGlobalVars.cursorTrailGhost))
+    state.SetValue("global_drawCapybara", truthy(tempGlobalVars.drawCapybara))
     state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
     state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
-    state.SetValue("global_ignoreNotes", tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG == "true" and true or false)
-    state.SetValue("global_advancedMode", tempGlobalVars.advancedMode == "true" and true or false)
+    state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG))
+    state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
 
     -- listen(function (event, history_type) print(event, history_type) end)
 end
@@ -2444,7 +2444,6 @@ function draw()
     else
         colStatus = (colStatus - frameTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
     end
-
 
     if ((state.SongTime - getTimingPointAt(state.SongTime).StartTime) < 0) then
         colStatus = 0
@@ -8717,7 +8716,7 @@ end
 function getTimingPointAt(offset)
     local line = map.GetTimingPointAt(offset)
     if line then return line end
-    return { StartTime = 0, Bpm = 100 }
+    return { StartTime = -69420, Bpm = 42.69 }
 end
 function getNotesBetweenOffsets(startOffset, endOffset)
     local notesBetweenOffsets = {}
@@ -9203,7 +9202,6 @@ function table.duplicate(list)
 end
 ---In a nested table `tbl`, returns a table of keys.
 ---@param tbl table
----@param key string
 ---@return table
 function table.keys(tbl)
     local resultsTbl = {}
@@ -9494,47 +9492,21 @@ function getSettingVars(svType, label)
     getVariables(labelText, settingVars)
     return settingVars
 end
-function overloaded()
-    local fns = {}
-    local mt = {}
-
-    local function oerror()
-        return error("Invalid argument types to overloaded function")
-    end
-
-    function mt:__call(...)
-        local arg = { ... }
-        local default = self.default
-
-        local signature = {}
-        for i, arg in ipairs { ... } do
-            signature[i] = type(arg)
+function truthy(param)
+    local t = type(param)
+    if (t == "string") then
+        return param:lower() == "true" and true or false
+    else
+        if t == "number" then
+            return param > 0 and true or false
+        else
+            if t == "table" then
+                return #param > 0 and true or false
+            else
+                if t == "boolean" then
+                    return param
+                end
+            end
         end
-
-        signature = table.concat(signature, ",")
-
-        return (fns[signature] or self.default)(...)
     end
-
-    function mt:__index(key)
-        local signature = {}
-        local function __newindex(self, key, value)
-            print(key, type(key), value, type(value))
-            signature[#signature + 1] = key
-            fns[table.concat(signature, ",")] = value
-            print("bind", table.concat(signature, ", "))
-        end
-        local function __index(self, key)
-            print("I", key, type(key))
-            signature[#signature + 1] = key
-            return setmetatable({}, { __index = __index, __newindex = __newindex })
-        end
-        return __index(self, key)
-    end
-
-    function mt:__newindex(key, value)
-        fns[key] = value
-    end
-
-    return setmetatable({ default = oerror }, mt)
 end

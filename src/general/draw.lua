@@ -79,7 +79,6 @@ function draw()
         colStatus = (colStatus - frameTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
     end
 
-
     if ((state.SongTime - getTimingPointAt(state.SongTime).StartTime) < 0) then
         colStatus = 0
     end

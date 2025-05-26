@@ -1,6 +1,5 @@
 ---In a nested table `tbl`, returns a table of keys.
 ---@param tbl table
----@param key string
 ---@return table
 function table.keys(tbl)
     local resultsTbl = {}
