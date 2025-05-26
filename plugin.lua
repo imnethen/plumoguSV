@@ -2195,8 +2195,8 @@ function awake()
     state.SetValue("global_snakeSpringConstant", tonumber(tempGlobalVars.snakeSpringConstant))
     state.SetValue("global_cursorTrailGhost", truthy(tempGlobalVars.cursorTrailGhost))
     state.SetValue("global_drawCapybara", truthy(tempGlobalVars.drawCapybara))
-    state.SetValue("global_drawCapybara2", tempGlobalVars.drawCapybara2 == "true" and true or false)
-    state.SetValue("global_drawCapybara312", tempGlobalVars.drawCapybara312 == "true" and true or false)
+    state.SetValue("global_drawCapybara2", truthy(tempGlobalVars.drawCapybara2))
+    state.SetValue("global_drawCapybara312", truthy(tempGlobalVars.drawCapybara312))
     state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
 
@@ -9143,10 +9143,10 @@ end
 function ssf(startTime, multiplier)
     return utils.CreateScrollSpeedFactor(startTime, multiplier)
 end
--- Returns the average value from a list of values [Int/Float]
--- Parameters
---    values           : list of numerical values [Table]
---    includeLastValue : whether or not to include the last value for the average [Boolean]
+---Returns the average value of a numeric table.
+---@param values number[]
+---@param includeLastValue boolean
+---@return number | nil
 function table.average(values, includeLastValue)
     if #values == 0 then return nil end
     local sum = 0
@@ -9169,38 +9169,41 @@ function table.combine(t1, t2)
     end
     return t1
 end
+---Returns a boolean value corresponding to whether or not an element exists within a table.
+---@param tbl table
+---@param item any
+---@return boolean
 function table.contains(tbl, item)
     for _, v in pairs(tbl) do
         if (v == item) then return true end
     end
     return false
 end
--- Combs through a list and locates unique values
--- Returns a list of only unique values (no duplicates) [Table]
--- Parameters
---    list : list of values [Table]
-function table.dedupe(list)
+---Removes duplicate values from a table.
+---@param tbl table
+---@return table
+function table.dedupe(tbl)
     local hash = {}
-    local newList = {}
-    for _, value in ipairs(list) do
+    local newTbl = {}
+    for _, value in ipairs(tbl) do
         if (not hash[value]) then
-            newList[#newList + 1] = value
+            newTbl[#newTbl + 1] = value
             hash[value] = true
         end
     end
-    return newList
+    return newTbl
 end
--- Returns a new duplicate list [Table]
--- Parameters
---    list : list of values [Table]
-function table.duplicate(list)
-    local duplicateList = {}
-    for _, value in ipairs(list) do
-        table.insert(duplicateList, value)
+---Returns a deep copy of a table.
+---@param tbl table
+---@return table
+function table.duplicate(tbl)
+    local dupeTbl = {}
+    for _, value in ipairs(tbl) do
+        table.insert(dupeTbl, value)
     end
-    return duplicateList
+    return dupeTbl
 end
----In a nested table `tbl`, returns a table of keys.
+---Returns a table of keys for a string-indexed table.
 ---@param tbl table
 ---@return table
 function table.keys(tbl)
@@ -9214,11 +9217,10 @@ function table.keys(tbl)
 
     return resultsTbl
 end
--- Normalizes a set of values to achieve a target average
--- Parameters
---    values                    : set of numbers [Table]
---    targetAverage             : average value that is aimed for [Int/Float]
---    includeLastValueInAverage : whether or not to include the last value in the average [Boolean]
+---Normalizes a table of numbers to achieve a target average
+---@param values number[]
+---@param targetAverage number
+---@param includeLastValueInAverage boolean
 function table.normalize(values, targetAverage, includeLastValueInAverage)
     local avgValue = table.average(values, includeLastValueInAverage)
     if avgValue == 0 then return end
@@ -9239,16 +9241,15 @@ function table.property(tbl, property)
 
     return resultsTbl
 end
--- Constructs a new reverse-order list from an existing list
--- Returns the reversed list [Table]
--- Parameters
---    list : list to be reversed [Table]
-function table.reverse(list)
-    local reverseList = {}
-    for i = 1, #list do
-        table.insert(reverseList, list[#list + 1 - i])
+---Reverses the order of a numerically-indexed table.
+---@param tbl table
+---@return table
+function table.reverse(tbl)
+    local reverseTbl = {}
+    for i = 1, #tbl do
+        table.insert(reverseTbl, tbl[#tbl + 1 - i])
     end
-    return reverseList
+    return reverseTbl
 end
 -- Sorting function for numbers that returns whether a < b [Boolean]
 -- Parameters
@@ -9505,6 +9506,8 @@ function truthy(param)
             else
                 if t == "boolean" then
                     return param
+                else
+                    return false
                 end
             end
         end

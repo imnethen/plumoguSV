@@ -11,6 +11,8 @@ function truthy(param)
             else
                 if t == "boolean" then
                     return param
+                else
+                    return false
                 end
             end
         end

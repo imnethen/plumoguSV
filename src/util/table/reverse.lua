@@ -1,11 +1,10 @@
--- Constructs a new reverse-order list from an existing list
--- Returns the reversed list [Table]
--- Parameters
---    list : list to be reversed [Table]
-function table.reverse(list)
-    local reverseList = {}
-    for i = 1, #list do
-        table.insert(reverseList, list[#list + 1 - i])
+---Reverses the order of a numerically-indexed table.
+---@param tbl table
+---@return table
+function table.reverse(tbl)
+    local reverseTbl = {}
+    for i = 1, #tbl do
+        table.insert(reverseTbl, tbl[#tbl + 1 - i])
     end
-    return reverseList
+    return reverseTbl
 end

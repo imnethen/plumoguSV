@@ -1,15 +1,14 @@
--- Combs through a list and locates unique values
--- Returns a list of only unique values (no duplicates) [Table]
--- Parameters
---    list : list of values [Table]
-function table.dedupe(list)
+---Removes duplicate values from a table.
+---@param tbl table
+---@return table
+function table.dedupe(tbl)
     local hash = {}
-    local newList = {}
-    for _, value in ipairs(list) do
+    local newTbl = {}
+    for _, value in ipairs(tbl) do
         if (not hash[value]) then
-            newList[#newList + 1] = value
+            newTbl[#newTbl + 1] = value
             hash[value] = true
         end
     end
-    return newList
+    return newTbl
 end

@@ -1,4 +1,4 @@
----In a nested table `tbl`, returns a table of keys.
+---Returns a table of keys for a string-indexed table.
 ---@param tbl table
 ---@return table
 function table.keys(tbl)

@@ -1,10 +1,10 @@
--- Returns a new duplicate list [Table]
--- Parameters
---    list : list of values [Table]
-function table.duplicate(list)
-    local duplicateList = {}
-    for _, value in ipairs(list) do
-        table.insert(duplicateList, value)
+---Returns a deep copy of a table.
+---@param tbl table
+---@return table
+function table.duplicate(tbl)
+    local dupeTbl = {}
+    for _, value in ipairs(tbl) do
+        table.insert(dupeTbl, value)
     end
-    return duplicateList
+    return dupeTbl
 end
