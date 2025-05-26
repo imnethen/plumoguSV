@@ -7871,6 +7871,14 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
     return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
+function table.construct(...)
+    local tbl = {}
+    for _, v in ipairs({ ... }) do
+        table.insert(tbl, v)
+    end
+    setmetatable(tbl, { __index = table })
+    return tbl
+end
 -- Calculates the total msx displacements over time at offsets
 -- Returns a table of total displacements [Table]
 -- Parameters
