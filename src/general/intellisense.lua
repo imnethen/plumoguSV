@@ -38,24 +38,24 @@ For more information, please refer to <https://unlicense.org>
 
 ---@class (exact) ScrollGroup
 --- ##### (READ-ONLY)
---- #### The initial SV multiplier of this scroll group.
+--- #### The initial SV multiplier of this [scroll group](lua://ScrollGroup).
 ---@field InitialScrollVelocity number
 --- ##### (READ-ONLY)
---- #### All scroll velocities within the scroll group.
+--- #### All [scroll velocities](lua://ScrollVelocity) within the [scroll group](lua://ScrollGroup).
 ---@field ScrollVelocities ScrollVelocity[]
 --- ##### (READ-ONLY)
---- #### All scroll speed factors within the scroll group.
+--- #### All [scroll speed factors](lua://ScrollSpeedFactor) within the [scroll group](lua://ScrollGroup).
 ---@field ScrollSpeedFactors ScrollSpeedFactor[]
 --- ##### (READ-ONLY)
---- #### Gets the nearest scroll velocity before the `time` parameter.
+--- #### Gets the nearest [scroll velocity](lua://ScrollVelocity) before the `time` parameter.
 ---@field GetScrollVelocityAt fun(time: number): ScrollVelocity
 --- ##### (READ-ONLY)
---- #### Gets the nearest scroll speed factor before the `time` parameter
+--- #### Gets the nearest [scroll speed factor](lua://ScrollSpeedFactor) before the `time` parameter
 ---@field GetScrollSpeedFactorAt fun(time: number): ScrollSpeedFactor
 
 ---@class (exact) ScrollSpeedFactor
 --- ##### (READ-ONLY)
---- #### The time at which the scroll speed factor takes effect.
+--- #### The time at which the [scroll speed factor](lua://ScrollSpeedFactor) takes effect.
 ---@field StartTime number
 --- ##### (READ-ONLY)
 --- #### The factor at which to multiply the player's scroll speed.
@@ -63,18 +63,18 @@ For more information, please refer to <https://unlicense.org>
 
 ---@class (exact) ScrollVelocity
 --- ##### (READ-ONLY)
---- #### The time at which the scroll velocity takes effect.
+--- #### The time at which the [scroll velocity](lua://ScrollVelocity) takes effect.
 ---@field StartTime number
 --- ##### (READ-ONLY)
---- #### The factor at which to multiply the player's scroll velocity.
+--- #### The factor at which to multiply the player's [scroll velocity](lua://ScrollVelocity).
 ---@field Multiplier number
 
 ---@class (exact) Bookmark
 --- ##### (READ-ONLY)
---- #### The time the bookmark is attached to.
+--- #### The time the [bookmark](lua://Bookmark) is attached to.
 ---@field StartTime integer
 --- ##### (READ-ONLY)
---- #### The contents of the bookmark.
+--- #### The contents of the [bookmark](lua://Bookmark).
 ---@field Note string
 
 ---@class (exact) HitObject
@@ -98,9 +98,17 @@ For more information, please refer to <https://unlicense.org>
 ---@field IsLongNote boolean
 
 ---@class (exact) TimingPoint
+--- ##### (READ-ONLY)
+--- #### The time in which the [timing point](lua://TimingPoint) is located..
 ---@field StartTime number
+--- ##### (READ-ONLY)
+--- #### The beats per minute, or bpm of the [timing point](lua://TimingPoint).
 ---@field Bpm number
+--- ##### (READ-ONLY)
+--- #### The time signature of the [timing point](lua://TimingPoint).
 ---@field Signature number
+--- ##### (READ-ONLY)
+--- #### Determines whether or not the timing lines are rendered.
 ---@field Hidden boolean
 
 ---@class (exact) EditorLayer
@@ -127,23 +135,24 @@ For more information, please refer to <https://unlicense.org>
 --- #### The current song time in milliseconds.
 state.SongTime                 = 0.0 ---@type number
 --- ##### (READ-ONLY)
---- #### A list of all `HitObjects` within the current selection.
+--- #### A list of all [hit objects](lua://HitObject) within the current selection.
 state.SelectedHitObjects       = {} ---@type HitObject[]
-state.SelectedScrollGroupId    = "$Default" ---@type string The `id`, or name, of the current selected scroll group.
+state.SelectedScrollGroupId    =
+"$Default" ---@type string The `id`, or name, of the current selected [scroll group](lua://ScrollGroup).
 --- ##### (READ-ONLY)
---- #### The current selected scroll group.
+--- #### The current selected [scroll group](lua://ScrollGroup).
 state.SelectedScrollGroup      = {} ---@type ScrollGroup
 --- ##### (READ-ONLY)
---- #### The nearest bookmark before the current `state.SongTime`.
+--- #### The nearest [bookmark](lua://Bookmark) before the current `state.SongTime`.
 state.CurrentBookmark          = {} ---@type Bookmark
 --- ##### (READ-ONLY)
---- #### The nearest scroll velocity before the current `state.SongTime`.
+--- #### The nearest [scroll velocity](lua://ScrollVelocity) before the current `state.SongTime`.
 state.CurrentScrollVelocity    = {} ---@type ScrollVelocity
 --- ##### (READ-ONLY)
---- #### The nearest scroll speed factor before the current `state.SongTime`.
+--- #### The nearest [scroll speed factor](lua://ScrollSpeedFactor) before the current `state.SongTime`.
 state.CurrentScrollSpeedFactor = {} ---@type ScrollSpeedFactor
 --- ##### (READ-ONLY)
---- #### The nearest timing point before the current `state.SongTime`.
+--- #### The nearest [timing point](lua://TimingPoint) before the current `state.SongTime`.
 state.CurrentTimingPoint       = {} ---@type TimingPoint
 --- ##### (READ-ONLY)
 --- #### The current selected editor layer.
@@ -163,34 +172,34 @@ state.IsWindowHovered          = false ---@type boolean MUST BE SET MANUALLY - I
 state.Scale                    = 1 ---@type number
 
 --- ##### (READ-ONLY)
---- #### Stores a value that can be retrieved by `state.GetValue()`. Mainly used to persist data between hot-reloads.
+--- #### Stores a value that can be retrieved by `state.GetValue`. Mainly used to persist data between hot-reloads.
 ---@param key string The identifier for this particular value.
 ---@param value any The value to store.
 function state.SetValue(key, value) end
 
 --- ##### (READ-ONLY)
---- #### Gets a value previously stored by `state.SetValue()`. If the value doesn't exist, return `fallback` instead.
----@param key string The identifier for the value set by `state.SetValue()`.
+--- #### Gets a value previously stored by [`state.SetValue`](lua://state.SetValue). If the value doesn't exist, return `fallback` instead.
+---@param key string The identifier for the value set by `state.SetValue`.
 ---@param fallback? any An optional term to return if the result is `nil`.
 ---@return any value The stored value.
 function state.GetValue(key, fallback) end
 
 --- ##### (READ-ONLY)
---- #### Creates a `ScrollVelocity`, to later be placed with an `action`.
----@param startTime number The time to create the scroll velocity, in milliseconds.
----@param multiplier number The factor at which to scale the player's scroll velocity.
----@return ScrollVelocity ScrollVelocity The requested scroll velocity.
+--- #### Creates a [scroll velocity](lua://ScrollVelocity), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+---@param startTime number The time to create the [scroll velocity](lua://ScrollVelocity), in milliseconds.
+---@param multiplier number The factor at which to scale the player's [scroll velocity](lua://ScrollVelocity).
+---@return ScrollVelocity ScrollVelocity The requested [scroll velocity](lua://ScrollVelocity).
 function utils.CreateScrollVelocity(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
---- #### Creates a `ScrollSpeedFactor`, to later be placed with an `action`.
----@param startTime number The time to create the scroll speed factor, in milliseconds.
+--- #### Creates a [scroll speed factor](lua://ScrollSpeedFactor), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+---@param startTime number The time to create the [scroll speed factor](lua://ScrollSpeedFactor), in milliseconds.
 ---@param multiplier number The factor at which to scale the player's scroll speed.
----@return ScrollSpeedFactor ScrollSpeedFactor The requested scroll speed factor.
+---@return ScrollSpeedFactor ScrollSpeedFactor The requested [scroll speed factor](lua://ScrollSpeedFactor).
 function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
---- #### Creates a `HitObject`, to later be placed with an `action`.
+--- #### Creates a [hit object](lua://HitObject), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 --- @param startTime number The time to create the note, in milliseconds.
 --- @param lane 1|2|3|4|5|6|7 The lane to create the note in.
 --- @param endTime? number If given and non-zero, the note becomes a long note. This parameter determines when the long note will end.
@@ -200,16 +209,16 @@ function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer) end
 
 --- ##### (READ-ONLY)
---- #### Creates a `TimingPoint`, to later be placed with an `action`
---- @param startTime number The time to create the timing point, in milliseconds.
---- @param bpm number The beats per minute of the timing point.
---- @param signature integer The time signature of the timing point.
+--- #### Creates a [[timing point](lua://TimingPoint)](lua://TimingPoint), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
+--- @param startTime number The time to create the [timing point](lua://TimingPoint), in milliseconds.
+--- @param bpm number The beats per minute of the [timing point](lua://TimingPoint).
+--- @param signature integer The time signature of the [timing point](lua://TimingPoint).
 --- @param hidden boolean Whether or not to hide the timing line in gameplay.
---- @return TimingPoint TimingPoint The requested timing point.
+--- @return TimingPoint TimingPoint The requested [timing point](lua://TimingPoint).
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
 --- ##### (READ-ONLY)
---- #### Creates an `EditorLayer`, to later be placed with an `action`. `colorRgb`
+--- #### Creates an [editor layer](lua://EditorLayer), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param name string The name of this layer.
 ---@param hidden boolean Whether or not to hide this layer in the editor.
 ---@param colorRgb string The color of the editor layer. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
@@ -217,31 +226,31 @@ function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 --- ##### (READ-ONLY)
---- #### Creates a `Bookmark`, to later be placed with an `action`.
+--- #### Creates a [bookmark](lua://Bookmark), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param startTime number The time to create the bookmark, in milliseconds.
----@param note string The contents of the bookmark.
----@return Bookmark Bookmark The requested bookmark.
+---@param note string The contents of the [bookmark](lua://Bookmark).
+---@return Bookmark Bookmark The requested [bookmark](lua://Bookmark).
 function utils.CreateBookmark(startTime, note) end
 
 --- ##### (READ-ONLY)
---- #### Creates a `ScrollGroup`, to later be placed with an `action`.
---- @param svs ScrollVelocity[] The svs to add to the scroll group.
---- @param initialSV number The initial scroll velocity of the scroll group.
---- @param colorRgb string The color of the scroll group. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
----@return ScrollGroup ScrollGroup The requested scroll group.
+--- #### Creates a [scroll group](lua://ScrollGroup), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+--- @param svs ScrollVelocity[] The svs to add to the [scroll group](lua://ScrollGroup).
+--- @param initialSV number The initial [scroll velocity](lua://ScrollVelocity) of the [scroll group](lua://ScrollGroup).
+--- @param colorRgb string The color of the [scroll group](lua://ScrollGroup). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
+---@return ScrollGroup ScrollGroup The requested [scroll group](lua://ScrollGroup).
 function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 
 --- ##### (READ-ONLY)
---- #### Creates an  `EditorAction`, to later be executed with `actions.Perform()`.
+--- #### Creates an  [editor action](lua://EditorAction), to later be executed with `actions.Perform`.
 ---@param type EditorActionType The type of action to perform.
----@param ... any[] The parameters of the action. Depending on the prefix of the action, different parameters should be passed in:
+---@vararg any The parameters of the action. Depending on the prefix of the action, different parameters should be passed in:
 --- - Place/Add/Remove // ... should only be one term, the object to add.
 --- - Place/Add/Remove Batch // ... should only be one term, a table of the objects to add.
 --- - Move/Swap/Flip/Change/Toggle // ... should be two terms, the first being the objects to manipulate, the second being the instruction for the manipulation.
 --- - CreateTimingGroup // ... should be three terms:
 ---     1. The id of the timing group.
 ---     2. The timing group previously created by `utils.CreateScrollGroup`.
----     3. The HitObjects to add to the scroll group.
+---     3. The HitObjects to add to the [scroll group](lua://ScrollGroup).
 ---@return EditorAction EditorAction The requested editor action.
 function utils.CreateEditorAction(type, ...) end
 
@@ -292,34 +301,34 @@ function utils.GenerateTimingGroupIds(count, prefix) end
 --- #### Returns `1` in 4k, `2` in 7k.
 map.Mode                  = 1 --- @type number
 --- ##### (READ-ONLY)
---- #### `true` if BPM does not affect scroll velocity.
+--- #### `true` if BPM does not affect [scroll velocity](lua://ScrollVelocity).
 map.Normalized            = true --- @type boolean
 --- ##### (READ-ONLY)
---- #### A table of all scroll velocities in the map.
+--- #### A table of all [scroll velocities](lua://ScrollVelocity) in the map.
 map.ScrollVelocities      = {} --- @type ScrollVelocity[]
 --- ##### (READ-ONLY)
---- #### A table of all scroll speed factors in the map.
+--- #### A table of all [scroll speed factors](lua://ScrollSpeedFactor) in the map.
 map.ScrollSpeedFactors    = {} --- @type ScrollSpeedFactor[]
 --- ##### (READ-ONLY)
 --- #### A table of all timing groups in the map.
 map.TimingGroups          = {} --- @type ScrollGroup[]
 --- ##### (READ-ONLY)
---- #### The default scroll group.
+--- #### The default [scroll group](lua://ScrollGroup).
 map.DefaultScrollGroup    = {} --- @type ScrollGroup
 --- ##### (READ-ONLY)
---- #### The global scroll group.
+--- #### The global [scroll group](lua://ScrollGroup).
 map.GlobalScrollGroup     = {} --- @type ScrollGroup
 --- ##### (READ-ONLY)
---- #### A table of all hit objects in the map.
+--- #### A table of all [hit objects](lua://HitObject) in the map.
 map.HitObjects            = {} --- @type HitObject[]
 --- ##### (READ-ONLY)
---- #### A table of all timing points in the map.
+--- #### A table of all [timing point](lua://TimingPoint)s in the map.
 map.TimingPoints          = {} --- @type TimingPoint[]
 --- ##### (READ-ONLY)
 --- #### A table of all editor layers in the map.
 map.EditorLayers          = {} --- @type EditorLayer[]
 --- ##### (READ-ONLY)
---- #### A table of all bookmarks in the map.
+--- #### A table of all [bookmarks](lua://Bookmark) in the map.
 map.Bookmarks             = {} --- @type Bookmark[]
 --- ##### (READ-ONLY)
 --- #### The default editor layer.
@@ -331,7 +340,7 @@ map.TrackLength           = 0 --- @type number
 --- #### `true` if the "Legacy LN Rendering" option is enabled.
 map.LegacyLNRendering     = false --- @type boolean
 --- ##### (READ-ONLY)
---- #### The initial scroll velocity multiplier of the current scroll group. Defaults to 1.
+--- #### The initial [scroll velocity](lua://ScrollVelocity) multiplier of the current [scroll group](lua://ScrollGroup). Defaults to 1.
 map.InitialScrollVelocity = 1 --- @type number
 
 --- ##### (READ-ONLY)
@@ -347,27 +356,27 @@ function map.GetKeyCount(includeScratch) end
 
 --- ##### (READ-ONLY)
 --- #### Returns the most common BPM in the map, determined by how much time a particular BPM is used.
---- @return number Bpm The BPM. This number should be identical to the BPM displayed in the song select menu.
+--- @return number | nil Bpm The BPM. This number should be identical to the BPM displayed in the song select menu.
 function map.GetCommonBpm() end
 
 --- ##### (READ-ONLY)
---- #### Returns the nearest timing point before the given `time`.
+--- #### Returns the nearest [timing point](lua://TimingPoint) before the given `time`.
 ---@param time number The time to start looking from, in milliseconds.
----@return TimingPoint | nil TimingPoint The requested timing point.
+---@return TimingPoint | nil TimingPoint The requested [timing point](lua://TimingPoint).
 function map.GetTimingPointAt(time) end
 
 --- ##### (READ-ONLY)
---- #### Returns the nearest scroll velocity before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected scroll group.
+--- #### Returns the nearest [scroll velocity](lua://ScrollVelocity) before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected [scroll group](lua://ScrollGroup).
 ---@param time number The time to start looking from, in milliseconds.
 ---@param timingGroupId? string The timing group to look within. If this option is omitted, the function will search within the currently selected timing group.
----@return ScrollVelocity | nil ScrollVelocity The requested scroll velocity.
+---@return ScrollVelocity | nil ScrollVelocity The requested [scroll velocity](lua://ScrollVelocity).
 function map.GetScrollVelocityAt(time, timingGroupId) end
 
 --- ##### (READ-ONLY)
---- #### Returns the nearest scroll speed factor before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected scroll group.
+--- #### Returns the nearest [scroll speed factor](lua://ScrollSpeedFactor) before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected [scroll group](lua://ScrollGroup).
 ---@param time number The time to start looking from, in milliseconds.
 ---@param timingGroupId? string The timing group to look within. If this option is omitted, the function will search within the currently selected timing group.
----@return ScrollSpeedFactor | nil ScrollSpeedFactor The requested scroll speed factor.
+---@return ScrollSpeedFactor | nil ScrollSpeedFactor The requested [scroll speed factor](lua://ScrollSpeedFactor).
 function map.GetScrollSpeedFactorAt(time, timingGroupId) end
 
 --- ##### (READ-ONLY)
@@ -382,22 +391,22 @@ function map.GetTimingGroup(timingGroupId) end
 function map.GetTimingGroupIds() end
 
 --- ##### (READ-ONLY)
---- #### Returns all hit objects within the id's corresponding timing group.
+--- #### Returns all [hit objects](lua://HitObject) within the id's corresponding timing group.
 ---@param timingGroupId string The timing group to look within.
 ---@return HitObject[] | nil HitObjects All objects within the requested timing group.
 ---@overload fun(timingGroupIds: string[]): HitObject[] | nil If a table is passed as the argument, all objects from all listed timing groups will be returned.
 function map.GetTimingGroupObjects(timingGroupId) end
 
 --- ##### (READ-ONLY)
---- #### Returns the nearest bookmark before the given `time`.
+--- #### Returns the nearest [bookmark](lua://Bookmark) before the given `time`.
 ---@param time number The time to start looking from, in milliseconds.
----@return Bookmark | nil Bookmark The requested bookmark.
+---@return Bookmark | nil Bookmark The requested [bookmark](lua://Bookmark).
 function map.GetBookmarkAt(time) end
 
 --- ##### (READ-ONLY)
---- #### Returns the length of the nearest timing point before `time`, in milliseconds.
+--- #### Returns the length of the nearest [timing point](lua://TimingPoint) before `time`, in milliseconds.
 ---@param time number The time to start looking from, in milliseconds.
----@return number | nil duration The duration between the previous timing point and the next timing point.
+---@return number | nil duration The duration between the previous [timing point](lua://TimingPoint) and the next [timing point](lua://TimingPoint).
 function map.GetTimingPointLength(time) end
 
 --- ##### (READ-ONLY)
@@ -405,7 +414,7 @@ function map.GetTimingPointLength(time) end
 ---@param forwards boolean Whether or not the nearest snap should be searched forwards or backwards in time.
 ---@param snap integer The denominator of the desired snap.
 ---@param time number The time to start looking from, in milliseconds.
----@return number snapTime The nearest time which follows the given snap.
+---@return number | nil snapTime The nearest time which follows the given snap.
 function map.GetNearestSnapTimeFromTime(forwards, snap, time) end
 
 -- actions global, vector globals
@@ -422,7 +431,7 @@ function read() end
 
 --- ##### (READ-ONLY)
 --- #### Stores the given value in the `config.yaml` file located in the plugin's directory. If multiple arguments are given, they are packed as an array before being stored.
---- @param ... any[] The contents that should be stored.
+--- @vararg any The contents that should be stored.
 function write(...) end
 
 --- ##### (READ-ONLY)
@@ -439,13 +448,13 @@ function eval(str) end
 
 --- ##### (READ-ONLY)
 --- ####  Displays a notification in Quaver.
----@param ... any[] The notification contents.
+---@vararg any The notification contents.
 function print(...) end
 
 --- ##### (READ-ONLY)
 --- #### Displays a notification in Quaver with a specific color and icon.
 --- @param notificationType "info"|"success"|"warning"|"error"|"info!"|"success!"|"warning!"|"error!" The type of notification sent. Appending an `!` will omit the plugin name in the notification.
---- @param ... any[] The contents of the notification.
+--- @vararg any The contents of the notification.
 function print(notificationType, ...) end
 
 ---@enum HitSounds
