@@ -9,7 +9,7 @@ DM kvrosakura on Discord if there are any errors within this file.
 
 ]]
 
---[[ LICENSE
+--[[ UNLICENSE
 This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -131,6 +131,108 @@ For more information, please refer to <https://unlicense.org>
 ---@field Perform fun(): nil
 
 
+-- vector globals
+
+actions = {}
+
+--- ##### (READ-ONLY)
+--- #### Performs a given [editor action](lua://EditorAction).
+---@param action EditorAction The [editor action](lua://EditorAction) to perform.
+function actions.Perform(action) end
+
+--- ##### (READ-ONLY)
+--- #### Performs a given set of [editor actions](lua://EditorAction).
+---@param actionList EditorAction[] The [editor actions](lua://EditorAction) to perform.
+function actions.PerformBatch(actionList) end
+
+--- ##### (READ-ONLY)
+--- #### Undoes the most recent [editor action](lua://EditorAction).
+function actions.Undo(fromLua) end
+
+--- ##### (READ-ONLY)
+--- #### Redoes the most recent undo.
+function actions.Redo(fromLua) end
+
+--- ##### (READ-ONLY)
+--- #### Places a given [hit object](lua://HitObject), without the need to create an [editor action](lua://EditorAction).
+--- @param hitObject HitObject The [hit object](lua://HitObject) to place.
+function actions.PlaceHitObject(hitObject) end
+
+--- ##### (READ-ONLY)
+--- #### Places a given [hit object](lua://HitObject), without the need to create an [editor action](lua://EditorAction).
+---@param lane 1|2|3|4|5|6|7 The lane of the [hit object](lua://HitObject).
+---@param startTime integer The start time of the [hit object](lua://HitObject).
+---@param endTime? integer If placing a rice note, this value should be 0. Otherwise, this should be the time the long note ends.
+---@param editorLayer? integer The id of the layer in which the [hit object](lua://HitObject) will lie.
+---@param hitsounds? HitSounds The hitsounds attached to the [hit object](lua://HitObject).
+---@param timingGroupId? integer The id of the timing group this [hit object](lua://HitObject) will be in.
+function actions.PlaceHitObject(lane, startTime, endTime, editorLayer, hitsounds, timingGroupId) end
+
+--- ##### (READ-ONLY)
+--- #### Places a given set of [hit objects](lua://HitObject), without the need to create an [editor action](lua://EditorAction).
+--- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to place.
+function actions.PlaceHitObjectBatch(hitObjects) end
+
+--- ##### (READ-ONLY)
+--- #### Removes a given [hit object](lua://HitObject), assuming it already exists.
+--- @param hitObject HitObject The [hit object](lua://HitObject) to remove.
+function actions.RemoveHitObject(hitObject) end
+
+--- ##### (READ-ONLY)
+--- #### Removes a given set of [hit objects](lua://HitObject), assuming they already exist.
+--- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to remove.
+function actions.RemoveHitObjectBatch(hitObjects) end
+
+--- ##### (READ-ONLY)
+--- #### Changes the length of a long-note type [hit object](lua://HitObject).
+---@param hitObject HitObject The  [hit object](lua://HitObject) to modify.
+---@param originalEndTime integer The original end time of the  [hit object](lua://HitObject), or `hitObject.endTime`.
+---@param newEndTime integer The desired time to move the LN end to.
+function actions.ResizeLongNote(hitObject, originalEndTime, newEndTime) end
+
+--- ##### (READ-ONLY)
+--- #### Places a given [scroll velocity](lua://ScrollVelocity), without the need to create an [editor action](lua://EditorAction).
+--- @param sv ScrollVelocity The [scroll velocity](lua://ScrollVelocity) to place.
+function actions.PlaceScrollVelocity(sv) end
+
+--- ##### (READ-ONLY)
+--- #### Places a given set of [scroll velocities](lua://ScrollVelocity), without the need to create an [editor action](lua://EditorAction).
+--- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to place.
+function actions.PlaceScrollVelocityBatch(svs) end
+
+--- ##### (READ-ONLY)
+--- #### Removes a given [scroll velocity](lua://ScrollVelocity), assuming it already exists.
+--- @param sv ScrollVelocity The [scroll velocity](lua://ScrollVelocity) to remove.
+function actions.RemoveScrollVelocity(sv) end
+
+--- ##### (READ-ONLY)
+--- #### Removes a given set of [scroll velocities](lua://ScrollVelocity), assuming they already exist.
+--- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to remove.
+function actions.RemoveScrollVelocityBatch(svs) end
+
+--- ##### (READ-ONLY)
+--- #### Places a given [timing point](lua://TimingPoint), without the need to create an [editor action](lua://EditorAction).
+--- @param line TimingPoint The [timing point](lua://TimingPoint) to place.
+function actions.PlaceTimingPoint(line) end
+
+--- ##### (READ-ONLY)
+--- #### Places a given set of [timing points](lua://TimingPoint), without the need to create an [editor action](lua://EditorAction).
+--- @param lines TimingPoint[] The [timing points](lua://TimingPoint) to place.
+function actions.PlaceTimingPointBatch(lines) end
+
+--- ##### (READ-ONLY)
+--- #### Removes a given [timing point](lua://TimingPoint), assuming it already exists.
+--- @param line TimingPoint The [timing point](lua://TimingPoint) to remove.
+function actions.RemoveTimingPoint(line) end
+
+--- ##### (READ-ONLY)
+--- #### Removes a given set of [timing points](lua://TimingPoint), assuming they already exist.
+--- @param lines TimingPoint[] The [timing points](lua://TimingPoint) to remove.
+function actions.RemoveTimingPointBatch(lines) end
+
+state = {}
+
+
 --- ##### (READ-ONLY)
 --- #### The current song time in milliseconds.
 state.SongTime                 = 0.0 ---@type number
@@ -184,6 +286,8 @@ function state.SetValue(key, value) end
 ---@return any value The stored value.
 function state.GetValue(key, fallback) end
 
+utils = {}
+
 --- ##### (READ-ONLY)
 --- #### Creates a [scroll velocity](lua://ScrollVelocity), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param startTime number The time to create the [scroll velocity](lua://ScrollVelocity), in milliseconds.
@@ -212,16 +316,16 @@ function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer)
 --- #### Creates a [[timing point](lua://TimingPoint)](lua://TimingPoint), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 --- @param startTime number The time to create the [timing point](lua://TimingPoint), in milliseconds.
 --- @param bpm number The beats per minute of the [timing point](lua://TimingPoint).
---- @param signature integer The time signature of the [timing point](lua://TimingPoint).
---- @param hidden boolean Whether or not to hide the timing line in gameplay.
+--- @param signature? integer The time signature of the [timing point](lua://TimingPoint).
+--- @param hidden? boolean Whether or not to hide the timing line in gameplay.
 --- @return TimingPoint TimingPoint The requested [timing point](lua://TimingPoint).
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
 --- ##### (READ-ONLY)
 --- #### Creates an [editor layer](lua://EditorLayer), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param name string The name of this layer.
----@param hidden boolean Whether or not to hide this layer in the editor.
----@param colorRgb string The color of the editor layer. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
+---@param hidden? boolean Whether or not to hide this layer in the editor.
+---@param colorRgb? string The color of the editor layer. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
 ---@return EditorLayer EditorLayer The requested editor layer.
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
@@ -235,13 +339,13 @@ function utils.CreateBookmark(startTime, note) end
 --- ##### (READ-ONLY)
 --- #### Creates a [scroll group](lua://ScrollGroup), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 --- @param svs ScrollVelocity[] The svs to add to the [scroll group](lua://ScrollGroup).
---- @param initialSV number The initial [scroll velocity](lua://ScrollVelocity) of the [scroll group](lua://ScrollGroup).
---- @param colorRgb string The color of the [scroll group](lua://ScrollGroup). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
+--- @param initialSV? number The initial [scroll velocity](lua://ScrollVelocity) of the [scroll group](lua://ScrollGroup).
+--- @param colorRgb? string The color of the [scroll group](lua://ScrollGroup). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
 ---@return ScrollGroup ScrollGroup The requested [scroll group](lua://ScrollGroup).
 function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 
 --- ##### (READ-ONLY)
---- #### Creates an  [editor action](lua://EditorAction), to later be executed with `actions.Perform`.
+--- #### Creates an  [editor action](lua://EditorAction), to later be executed with [`actions.Perform`](lua://actions.Perform).
 ---@param type EditorActionType The type of action to perform.
 ---@vararg any The parameters of the action. Depending on the prefix of the action, different parameters should be passed in:
 --- - Place/Add/Remove // ... should only be one term, the object to add.
@@ -286,16 +390,18 @@ function utils.IsKeyUp(key) end
 
 --- ##### (READ-ONLY)
 --- #### Returns a unique `timingGroupId` with the given prefix. If no prefix is given, defaults to `SG_`.
----@param prefix string
+---@param prefix? string
 ---@return string
 function utils.GenerateTimingGroupId(prefix) end
 
 --- ##### (READ-ONLY)
 --- #### Returns `count` number of `timingGroupIds` with the given prefix. If no prefix is given, defaults to `SG_`.
 ---@param count integer
----@param prefix string
+---@param prefix? string
 ---@return string
 function utils.GenerateTimingGroupIds(count, prefix) end
+
+map                       = {}
 
 --- ##### (READ-ONLY)
 --- #### Returns `1` in 4k, `2` in 7k.
@@ -417,11 +523,9 @@ function map.GetTimingPointLength(time) end
 ---@return number | nil snapTime The nearest time which follows the given snap.
 function map.GetNearestSnapTimeFromTime(forwards, snap, time) end
 
--- actions global, vector globals
-
 --- ##### (READ-ONLY)
 --- #### Invokes the function whenever any editor action has occurred. This includes actions invoked by this and other plugins.
----@param fn fun(action: EditorAction, type: HistoryType, fromLua: boolean): nil The function that will be invoked during any editor action.
+---@param fn fun(action: EditorAction, type: HistoryType: boolean): nil The function that will be invoked during any editor action.
 function listen(fn) end
 
 --- ##### (READ-ONLY)

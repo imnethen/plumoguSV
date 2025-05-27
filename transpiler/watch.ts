@@ -10,9 +10,19 @@ console.log(
 
 let devMode = false
 
+const debounce = (fn: Function, ms = 300) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return function (this: any, ...args: any[]) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), ms);
+  };
+};
+
 chokidar
     .watch(["src", "packages"], { ignoreInitial: true })
-    .on("all", async (event, path) => {
+    .on("all", debounce((event, path) => main(event, path), 100));
+
+async function main(event, path) {
         const startTime = Date.now();
         console.log(
             `\nEvent ${chalk.red(event)} detected on file ${chalk.red(
@@ -32,4 +42,6 @@ chokidar
                 fileCount
             )} files in ${chalk.green(`${endTime - startTime}ms`)}.\n`
         );
-    });
+    
+}
+
