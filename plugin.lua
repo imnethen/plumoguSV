@@ -2431,6 +2431,13 @@ function draw()
     end
     state.IsWindowHovered = imgui.IsWindowHovered()
 
+    local v1 = vector.New(1, 2, 3)
+    local v2 = vector.New(1, 2)
+
+    if (imgui.Button("hi")) then
+        print(vector.Table(v2))
+    end
+
     imgui.End()
 
     saveVariables("globalVars", globalVars)

@@ -130,8 +130,258 @@ For more information, please refer to <https://unlicense.org>
 --- #### Performs the action.
 ---@field Perform fun(): nil
 
+---@class (exact) Vector2
+---@field x number The first component of the vector.
+---@field y number The second component of the vector.
 
--- vector globals
+---@class (exact) Vector3
+---@field x number The first component of the vector.
+---@field y number The second component of the vector.
+---@field z number The third component of the vector.
+
+---@class (exact) Vector4
+---@field x number The first component of the vector.
+---@field y number The second component of the vector.
+---@field z number The third component of the vector.
+---@field w number The fourth component of the vector.
+
+vector = {}
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns the absolute value of each element of a vector.
+---@param v T The initial vector.
+---@return T vctr The resultant vector.
+function vector.Abs(v) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns the sum of two vectors.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.Add(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Clamps a vector between two others.
+---@param v T The vector to clamp.
+---@param min T  The floor of the resultant vector.
+---@param max T The ceiling of the resultant vector.
+---@return T vctr The resultant vector.
+function vector.Clamp(v, min, max) end
+
+--- ##### (READ-ONLY)
+--- #### Takes a cross product between two vectors (only works with [`Vector3`](lua://Vector3)).
+---@param v1 Vector3 The first vector.
+---@param v2 Vector3 The second vector.
+---@return Vector3 vctr The resultant vector, with a magnitude equal to the area of a parallelogram projected by `v1` and `v2`.
+function vector.Cross(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Finds the distance between two vectors.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return number distance The distance between the two vectors.
+function vector.Distance(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Finds the distance between two vectors,  squared.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return number distanceSq The squared distance between the two vectors.
+function vector.DistanceSquared(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Divides two vectors, termwise.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.Divide(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Takes the dot product of two vectors; that is, multiplies the two vectors termwise then returns the sum of the resulting terms.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return number product The dot product of the two vectors.
+function vector.Dot(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Determines the length of a vector.
+---@param v T The vector to measure.
+---@return number length The magnitude of the vector.
+function vector.Length(v) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns a vector that is `(f * 100)%` of the way from travelling between `v1` and `v2`.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@param f number A number within [0-1] which determines the weight of `v2`.
+---@return T vctr The resultant vector.
+function vector.Lerp(v1, v2, f) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns a vector which has the maximum value of both vectors, termwise.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.Max(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns a vector which has the minimum value of both vectors, termwise.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.Min(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns a vector which has the remainder of the first vector divided by the second, termwise.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.Modulo(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Multiplies the two vectors termwise and returns the product.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.Multiply(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Negates the given vector termwise.
+---@param v T The vector to negate.
+---@return T vctr The resultant vector.
+function vector.Negate(v) end
+
+--- ##### (READ-ONLY)
+--- #### Creates a new [`Vector2`](lua://Vector2).
+---@param s1 number The first element.
+---@param s2 number The second element.
+---@return Vector2 vctr The output vector.
+function vector.New(s1, s2) end
+
+--- ##### (READ-ONLY)
+--- #### Creates a new [`Vector3`](lua://Vector3).
+---@param s1 number The first element.
+---@param s2 number The second element.
+---@param s3 number The third element.
+---@return Vector3 vctr The output vector.
+function vector.New(s1, s2, s3) end
+
+--- ##### (READ-ONLY)
+--- #### Creates a new [`Vector4`](lua://Vector4).
+---@param s1 number The first element.
+---@param s2 number The second element.
+---@param s3 number The third element.
+---@param s4 number The fourth element.
+---@return Vector4 vctr The output vector.
+function vector.New(s1, s2, s3, s4) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Normalizes the given vector such that it has a magnitude of 1.
+---@param v T The vector to normalize.
+---@return T vctr The resultant vector.
+function vector.Normalize(v) end
+
+---@generic T : integer | Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns a vector of a requested dimension, with all elements being `1`.
+---@param n T The dimension of the vector. If a vector is given as the argument, the dimension of that vector is used.
+---@return T vctr A vector of dimension `n` with all elements being `1`.
+function vector.One(n) end
+
+---@generic T : number | Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Reflects a vector across a surface given by its normal vector and pivot point [`vector.Zero`](lua://vector.Zero).
+---@param v T The vector to reflect.
+---@param norm T The normal vector of the surface in which to reflect `v`.
+---@return T vctr The resultant vector.
+function vector.Reflect(v, norm) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns a vector which has the euclidean remainder of the first vector divided by the second, termwise. A euclidean remainder is like a normal remainder, but if the closest normal remainder is negative then the divisor is added to make it positive.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.RemEuclid(v1, v2) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Square roots the given vector, termwise.
+---@param v T The vector to root.
+---@return T vctr The resultant vector.
+function vector.SquareRoot(v) end
+
+---@generic T : Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns the difference of two vectors.
+---@param v1 T The first vector.
+---@param v2 T The second vector.
+---@return T vctr The resultant vector.
+function vector.Subtract(v1, v2) end
+
+--- ##### (READ-ONLY)
+--- #### Coerces a [`Vector2`](lua://Vector2) to become a numerically-indexed table.
+--- @param v Vector2 The vector to pack.
+--- @return [number, number] table The resultant table.
+function vector.Table(v) end
+
+--- ##### (READ-ONLY)
+--- #### Coerces a [`Vector3`](lua://Vector3) to become a numerically-indexed table.
+--- @param v Vector3 The vector to pack.
+--- @return [number, number, number] table The resultant table.
+function vector.Table(v) end
+
+--- ##### (READ-ONLY)
+--- #### Coerces a [`Vector4`](lua://Vector4) to become a numerically-indexed table.
+--- @param v Vector4 The vector to pack.
+--- @return [number, number, number, number] table The resultant table.
+function vector.Table(v) end
+
+--- ##### (READ-ONLY)
+--- #### Creates a unit vector in the `W` direction with the given dimension.
+--- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
+--- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+function vector.UnitW(dim) end
+
+--- ##### (READ-ONLY)
+--- #### Creates a unit vector in the `X` direction with the given dimension.
+--- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
+--- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+function vector.UnitX(dim) end
+
+--- ##### (READ-ONLY)
+--- #### Creates a unit vector in the `Y` direction with the given dimension.
+--- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
+--- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+function vector.UnitY(dim) end
+
+--- ##### (READ-ONLY)
+--- #### Creates a unit vector in the `Z` direction with the given dimension.
+--- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
+--- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+function vector.UnitZ(dim) end
+
+---@generic T : integer | Vector2 | Vector3 | Vector4
+--- ##### (READ-ONLY)
+--- #### Returns a vector of a requested dimension, with all elements being `0`.
+---@param n T The dimension of the vector. If a vector is given as the argument, the dimension of that vector is used instead.
+---@return T vctr A vector of dimension `n` with all elements being `0`.
+function vector.Zero(n) end
 
 actions = {}
 
@@ -281,30 +531,30 @@ function actions.SetHitObjectSelection(HitObjects) end
 function actions.SetPreviewTime(time) end
 
 --- ##### (READ-ONLY)
---- Creates the given [editor layer](lua://EditorLayer), without the need to create an [editor action](lua://EditorAction).
+--- #### Creates the given [editor layer](lua://EditorLayer), without the need to create an [editor action](lua://EditorAction).
 --- @param layer EditorLayer The [editor layer](lua://EditorLayer) to create.
 --- @param index? integer An optional index for the editor layer to be placed in. If none is given, the next available index is used.
 function actions.CreateLayer(layer, index) end
 
 --- ##### (READ-ONLY)
---- Removes the given [editor layer](lua://EditorLayer), assuming it exists.
+--- #### Removes the given [editor layer](lua://EditorLayer), assuming it exists.
 --- @param layer EditorLayer The [editor layer](lua://EditorLayer) to remove.
 function actions.RemoveLayer(layer) end
 
 --- ##### (READ-ONLY)
---- Renames the given [editor layer](lua://EditorLayer), assuming it exists.
+--- #### Renames the given [editor layer](lua://EditorLayer), assuming it exists.
 --- @param layer EditorLayer The [editor layer](lua://EditorLayer) to rename.
 --- @param newName string The new name the [editor layer](lua://EditorLayer) should have.
 function actions.RenameLayer(layer, newName) end
 
 --- ##### (READ-ONLY)
---- Moves the given [hit objects](lua://HitObject) to the given [editor layer](lua://EditorLayer).
+--- #### Moves the given [hit objects](lua://HitObject) to the given [editor layer](lua://EditorLayer).
 --- @param layer EditorLayer The [editor layer](lua://EditorLayer) to move the [hit objects](lua://HitObject) to.
 --- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to move.
 function actions.MoveHitObjectsToLayer(layer, hitObjects) end
 
 --- ##### (READ-ONLY)
---- Changes the color of the given [editor layer](lua://EditorLayer).
+--- #### Changes the color of the given [editor layer](lua://EditorLayer).
 --- @param layer EditorLayer The [editor layer](lua://EditorLayer) to alter the color of.
 --- @param r integer The strength of the red part of the color. Should be within [0-255].
 --- @param g integer The strength of the green part of the color. Should be within [0-255].
@@ -312,12 +562,12 @@ function actions.MoveHitObjectsToLayer(layer, hitObjects) end
 function actions.ChangeLayerColor(layer, r, g, b) end
 
 --- ##### (READ-ONLY)
---- Toggles the visibility of the given [editor layer](lua://EditorLayer).
+--- #### Toggles the visibility of the given [editor layer](lua://EditorLayer).
 --- @param layer EditorLayer The [editor layer](lua://EditorLayer) to alter.
 function actions.ToggleLayerVisibility(layer) end
 
 --- ##### (READ-ONLY)
---- Snaps the given [hit objects](lua://HitObject) to the nearest snap within the table of `snaps`.
+--- #### Snaps the given [hit objects](lua://HitObject) to the nearest snap within the table of `snaps`.
 --- @param snaps integer[] The list of snap denominators to use.
 --- @param hitObjects HitObject[] The hit objects to snap.
 function actions.ResnapNotes(snaps, hitObjects) end
@@ -379,7 +629,7 @@ function actions.RemoveTimingGroup(id) end
 function actions.RenameTimingGroup(id, newId) end
 
 --- ##### (READ-ONLY)
---- Changes the color of the given [timing group](lua://ScrollGroup).
+--- #### Changes the color of the given [timing group](lua://ScrollGroup).
 --- @param id string The id of the [timing group](lua://ScrollGroup) to alter the color of.
 --- @param r integer The strength of the red part of the color. Should be within [0-255].
 --- @param g integer The strength of the green part of the color. Should be within [0-255].
@@ -387,7 +637,7 @@ function actions.RenameTimingGroup(id, newId) end
 function actions.ChangeTimingGroupColor(id, r, g, b) end
 
 --- ##### (READ-ONLY)
---- Moves all given [hit objects](lua://HitObject) to the given [timing group](lua://ScrollGroup).
+--- #### Moves all given [hit objects](lua://HitObject) to the given [timing group](lua://ScrollGroup).
 --- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to move.
 --- @param id string The id of the [timing group](lua://ScrollGroup) to move the [hit objects](lua://HitObject) to.
 function actions.MoveObjectsToTimingGroup(hitObjects, id) end
