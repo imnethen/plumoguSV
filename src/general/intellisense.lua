@@ -91,7 +91,7 @@ For more information, please refer to <https://unlicense.org>
 --- #### A bitwise mask representing hitsounds.
 ---@field HitSound HitSounds
 --- ##### (READ-ONLY)
---- #### The id of the editor layer this note is in.
+--- #### The id of the [editor layer](lua://EditorLayer) this note is in.
 ---@field EditorLayer integer
 --- ##### (READ-ONLY)
 --- #### `true` if this note is a long note, false otherwise.
@@ -113,13 +113,13 @@ For more information, please refer to <https://unlicense.org>
 
 ---@class (exact) EditorLayer
 --- ##### (READ-ONLY)
---- #### The name of the editor layer.
+--- #### The name of the [editor layer](lua://EditorLayer).
 ---@field Name string
 --- ##### (READ-ONLY)
 --- #### `true` if the layer is hidden within the editor.
 ---@field Hidden boolean
 --- ##### (READ-ONLY)
---- #### A string of format `r,g,b` representing the color of the editor layer. `r`, `g`, and `b` are integers within [0,255].
+--- #### A string of format `r,g,b` representing the color of the [editor layer](lua://EditorLayer). `r`, `g`, and `b` are integers within [0,255].
 ---@field ColorRgb string
 
 ---@class (exact) EditorAction
@@ -533,7 +533,7 @@ function actions.SetPreviewTime(time) end
 --- ##### (READ-ONLY)
 --- #### Creates the given [editor layer](lua://EditorLayer), without the need to create an [editor action](lua://EditorAction).
 --- @param layer EditorLayer The [editor layer](lua://EditorLayer) to create, which must be created via [`utils.CreateEditorLayer`](lua://utils.CreateEditorLayer).
---- @param index? integer An optional index for the editor layer to be placed in. If none is given, the next available index is used.
+--- @param index? integer An optional index for the [editor layer](lua://EditorLayer) to be placed in. If none is given, the next available index is used.
 function actions.CreateLayer(layer, index) end
 
 --- ##### (READ-ONLY)
@@ -669,7 +669,7 @@ state.CurrentScrollSpeedFactor = {} ---@type ScrollSpeedFactor
 --- #### The nearest [timing point](lua://TimingPoint) before the current `state.SongTime`.
 state.CurrentTimingPoint       = {} ---@type TimingPoint
 --- ##### (READ-ONLY)
---- #### The current selected editor layer.
+--- #### The current selected [editor layer](lua://EditorLayer).
 state.CurrentEditorLayer       = {} ---@type EditorLayer
 --- ##### (READ-ONLY)
 --- #### The selected snap's denominator. (e.g. 1/3 snap returns `3`, etc.)
@@ -720,7 +720,7 @@ function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 --- @param lane 1|2|3|4|5|6|7 The lane to create the note in.
 --- @param endTime? number If given and non-zero, the note becomes a long note. This parameter determines when the long note will end.
 --- @param hitsounds? HitSounds The hitsounds that should be applied to the note.
---- @param editorLayer? integer The index of the editor layer that this note should be added to.
+--- @param editorLayer? integer The index of the [editor layer](lua://EditorLayer) that this note should be added to.
 --- @return HitObject HitObject The requested note.
 function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer) end
 
@@ -737,8 +737,8 @@ function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 --- #### Creates an [editor layer](lua://EditorLayer), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param name string The name of this layer.
 ---@param hidden? boolean Whether or not to hide this layer in the editor.
----@param colorRgb? string The color of the editor layer. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
----@return EditorLayer EditorLayer The requested editor layer.
+---@param colorRgb? string The color of the [editor layer](lua://EditorLayer). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
+---@return EditorLayer EditorLayer The requested [editor layer](lua://EditorLayer).
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 --- ##### (READ-ONLY)
@@ -767,7 +767,7 @@ function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 ---     1. The id of the [timing group](lua://ScrollGroup).
 ---     2. The [timing group](lua://ScrollGroup) previously created by `utils.CreateScrollGroup`.
 ---     3. The [hit objects](lua://HitObject) to add to the [scroll group](lua://ScrollGroup).
----@return EditorAction EditorAction The requested editor action.
+---@return EditorAction EditorAction The requested [editor action](lua://EditorAction).
 function utils.CreateEditorAction(type, ...) end
 
 --- ##### (READ-ONLY)
@@ -843,13 +843,13 @@ map.HitObjects            = {} --- @type HitObject[]
 --- #### A table of all [timing point](lua://TimingPoint)s in the map.
 map.TimingPoints          = {} --- @type TimingPoint[]
 --- ##### (READ-ONLY)
---- #### A table of all editor layers in the map.
+--- #### A table of all [editor layers](lua://EditorLayer) in the map.
 map.EditorLayers          = {} --- @type EditorLayer[]
 --- ##### (READ-ONLY)
 --- #### A table of all [bookmarks](lua://Bookmark) in the map.
 map.Bookmarks             = {} --- @type Bookmark[]
 --- ##### (READ-ONLY)
---- #### The default editor layer.
+--- #### The default [editor layer](lua://EditorLayer).
 map.DefaultLayer          = {} --- @type EditorLayer
 --- ##### (READ-ONLY)
 --- #### The length of the song, in milliseconds.
@@ -936,8 +936,8 @@ function map.GetTimingPointLength(time) end
 function map.GetNearestSnapTimeFromTime(forwards, snap, time) end
 
 --- ##### (READ-ONLY)
---- #### Invokes the function whenever any editor action has occurred. This includes actions invoked by this and other plugins.
----@param fn fun(action: EditorAction, type: HistoryType, fromLua: boolean): nil The function that will be invoked during any editor action.
+--- #### Invokes the function whenever any [editor action](lua://EditorAction) has occurred. This includes actions invoked by this and other plugins.
+---@param fn fun(action: EditorAction, type: HistoryType, fromLua: boolean): nil The function that will be invoked during any [editor action](lua://EditorAction).
 function listen(fn) end
 
 --- ##### (READ-ONLY)
