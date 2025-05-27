@@ -704,14 +704,14 @@ utils = {}
 --- #### Creates a [scroll velocity](lua://ScrollVelocity), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param startTime number The time to create the [scroll velocity](lua://ScrollVelocity), in milliseconds.
 ---@param multiplier number The factor at which to scale the player's [scroll velocity](lua://ScrollVelocity).
----@return ScrollVelocity ScrollVelocity The requested [scroll velocity](lua://ScrollVelocity).
+---@return ScrollVelocity scrollVelocity The requested [scroll velocity](lua://ScrollVelocity).
 function utils.CreateScrollVelocity(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
 --- #### Creates a [scroll speed factor](lua://ScrollSpeedFactor), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param startTime number The time to create the [scroll speed factor](lua://ScrollSpeedFactor), in milliseconds.
 ---@param multiplier number The factor at which to scale the player's scroll speed.
----@return ScrollSpeedFactor ScrollSpeedFactor The requested [scroll speed factor](lua://ScrollSpeedFactor).
+---@return ScrollSpeedFactor scrollSpeedFactor The requested [scroll speed factor](lua://ScrollSpeedFactor).
 function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
@@ -721,7 +721,7 @@ function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 --- @param endTime? number If given and non-zero, the note becomes a long note. This parameter determines when the long note will end.
 --- @param hitsounds? HitSounds The hitsounds that should be applied to the note.
 --- @param editorLayer? integer The index of the [editor layer](lua://EditorLayer) that this note should be added to.
---- @return HitObject HitObject The requested note.
+--- @return HitObject hitObject The requested note.
 function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer) end
 
 --- ##### (READ-ONLY)
@@ -730,7 +730,7 @@ function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer)
 --- @param bpm number The beats per minute of the [timing point](lua://TimingPoint).
 --- @param signature? integer The time signature of the [timing point](lua://TimingPoint).
 --- @param hidden? boolean Whether or not to hide the timing lines in gameplay.
---- @return TimingPoint TimingPoint The requested [timing point](lua://TimingPoint).
+--- @return TimingPoint timingPoint The requested [timing point](lua://TimingPoint).
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
 --- ##### (READ-ONLY)
@@ -738,14 +738,14 @@ function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 ---@param name string The name of this layer.
 ---@param hidden? boolean Whether or not to hide this layer in the editor.
 ---@param colorRgb? string The color of the [editor layer](lua://EditorLayer). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
----@return EditorLayer EditorLayer The requested [editor layer](lua://EditorLayer).
+---@return EditorLayer editorLayer The requested [editor layer](lua://EditorLayer).
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 --- ##### (READ-ONLY)
 --- #### Creates a [bookmark](lua://Bookmark), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
 ---@param startTime number The time to create the [bookmark](lua://Bookmark), in milliseconds.
 ---@param note string The contents of the [bookmark](lua://Bookmark).
----@return Bookmark Bookmark The requested [bookmark](lua://Bookmark).
+---@return Bookmark bookmark The requested [bookmark](lua://Bookmark).
 function utils.CreateBookmark(startTime, note) end
 
 --- ##### (READ-ONLY)
@@ -753,7 +753,7 @@ function utils.CreateBookmark(startTime, note) end
 --- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to add to the [scroll group](lua://ScrollGroup).
 --- @param initialSV? number The initial [scroll velocity](lua://ScrollVelocity) of the [scroll group](lua://ScrollGroup).
 --- @param colorRgb? string The color of the [scroll group](lua://ScrollGroup). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
----@return ScrollGroup ScrollGroup The requested [scroll group](lua://ScrollGroup).
+---@return ScrollGroup scrollGroup The requested [scroll group](lua://ScrollGroup).
 function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 
 --- ##### (READ-ONLY)
@@ -767,7 +767,7 @@ function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 ---     1. The id of the [timing group](lua://ScrollGroup).
 ---     2. The [timing group](lua://ScrollGroup) previously created by `utils.CreateScrollGroup`.
 ---     3. The [hit objects](lua://HitObject) to add to the [scroll group](lua://ScrollGroup).
----@return EditorAction EditorAction The requested [editor action](lua://EditorAction).
+---@return EditorAction editorAction The requested [editor action](lua://EditorAction).
 function utils.CreateEditorAction(type, ...) end
 
 --- ##### (READ-ONLY)
@@ -905,7 +905,7 @@ function map.GetTimingGroup(timingGroupId) end
 
 --- ##### (READ-ONLY)
 --- #### Returns a list of all [timing group](lua://ScrollGroup) ids.
---- @return string[] Ids The list of [timing group](lua://ScrollGroup) ids.
+--- @return string[] ids The list of [timing group](lua://ScrollGroup) ids.
 function map.GetTimingGroupIds() end
 
 --- ##### (READ-ONLY)

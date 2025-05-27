@@ -15,3 +15,13 @@ function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 --    a : first object
 --    b : second object
 function sortAscendingTime(a, b) return a.time < b.time end
+
+---@generic T
+---@param tbl T[]
+---@param compFn fun(a: T, b: T): boolean
+---@return T[]
+function sort(tbl, compFn)
+    newTbl = table.duplicate(tbl)
+    table.sort(newTbl, compFn)
+    return newTbl
+end

@@ -2367,27 +2367,27 @@ DISTANCE_TYPES = {
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 
-    local prevVal = state.GetValue("prevVal") or 0
-    local colStatus = state.GetValue("colStatus") or 0
+    local prevVal = state.GetValue("prevVal", 0)
+    local colStatus = state.GetValue("colStatus", 0)
 
     local globalVars = {
-        stepSize = state.GetValue("global_stepSize") or 5,
-        keyboardMode = state.GetValue("global_keyboardMode") or false,
-        dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
-        upscroll = state.GetValue("global_upscroll") or false,
-        colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
-        styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
-        effectFPS = state.GetValue("global_effectFPS") or 90,
-        cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
-        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex") or 1,
-        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
-        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
-        snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
-        cursorTrailGhost = state.GetValue("global_cursorTrailGhost") or false,
-        rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
-        drawCapybara = state.GetValue("global_drawCapybara") or false,
-        drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
-        drawCapybara312 = state.GetValue("global_drawCapybara312") or false,
+        stepSize = state.GetValue("global_stepSize", 5),
+        keyboardMode = state.GetValue("global_keyboardMode", false),
+        dontReplaceSV = state.GetValue("global_dontReplaceSV", false),
+        upscroll = state.GetValue("global_upscroll", false),
+        colorThemeIndex = state.GetValue("global_colorThemeIndex", 9),
+        styleThemeIndex = state.GetValue("global_styleThemeIndex", 1),
+        effectFPS = state.GetValue("global_effectFPS", 90),
+        cursorTrailIndex = state.GetValue("global_cursorTrailIndex", 1),
+        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex", 1),
+        cursorTrailPoints = state.GetValue("global_cursorTrailPoints", 10),
+        cursorTrailSize = state.GetValue("global_cursorTrailSize", 5),
+        snakeSpringConstant = state.GetValue("global_snakeSpringConstant", 1),
+        cursorTrailGhost = state.GetValue("global_cursorTrailGhost", false),
+        rgbPeriod = state.GetValue("global_rgbPeriod", 2),
+        drawCapybara = state.GetValue("global_drawCapybara", false),
+        drawCapybara2 = state.GetValue("global_drawCapybara2", false),
+        drawCapybara312 = state.GetValue("global_drawCapybara312", false),
         selectTypeIndex = 1,
         placeTypeIndex = 1,
         editToolIndex = 1,
@@ -2398,11 +2398,11 @@ function draw()
         debugText = "debug",
         scrollGroupIndex = 1,
         showColorPicker = false,
-        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
-        advancedMode = state.GetValue("global_advancedMode") or false,
-        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0,
-        pulseColor = state.GetValue("global_pulseColor") or { 1, 1, 1, 1 },
-        useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
+        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes", false),
+        advancedMode = state.GetValue("global_advancedMode", false),
+        pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
+        pulseColor = state.GetValue("global_pulseColor", { 1, 1, 1, 1 }),
+        useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
     }
 
     getVariables("globalVars", globalVars)
@@ -2463,7 +2463,7 @@ function draw()
     colStatus = colStatus * globalVars
         .pulseCoefficient
 
-    local borderColor = state.GetValue("global_baseBorderColor") or { 1, 1, 1, 1 }
+    local borderColor = state.GetValue("global_baseBorderColor", { 1, 1, 1, 1 })
     local negatedBorderColor = { 1 - borderColor[1], 1 - borderColor[2], 1 - borderColor[3], 1 - borderColor[4] }
 
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
@@ -8726,53 +8726,77 @@ function getTimingPointAt(offset)
     if line then return line end
     return { StartTime = -69420, Bpm = 42.69 }
 end
+--- Returns a list of [hit objects](lua://HitObject) between two times, inclusive.
+---@param startOffset number The lower bound of the search area.
+---@param endOffset number The upper bound of the search area.
+---@return HitObject[] objs All of the [hit objects](lua://HitObject) within the area.
 function getNotesBetweenOffsets(startOffset, endOffset)
-    local notesBetweenOffsets = {}
+    local notesBetweenOffsets = {} ---@type HitObject[]
     for _, note in pairs(map.HitObjects) do
         local noteIsInRange = note.StartTime >= startOffset and note.StartTime <= endOffset
         if noteIsInRange then table.insert(notesBetweenOffsets, note) end
     end
-    return table.sort(notesBetweenOffsets, sortAscendingStartTime)
+    return sort(notesBetweenOffsets, sortAscendingStartTime)
 end
 
+--- Returns a list of [timing points](lua://TimingPoint) between two times, inclusive.
+---@param startOffset number The lower bound of the search area.
+---@param endOffset number The upper bound of the search area.
+---@return TimingPoint[] tps All of the [timing points](lua://TimingPoint) within the area.
 function getLinesBetweenOffsets(startOffset, endOffset)
-    local linesBetweenoffsets = {}
+    local linesBetweenoffsets = {} ---@type TimingPoint[]
     for _, line in pairs(map.TimingPoints) do
         local lineIsInRange = line.StartTime >= startOffset and line.StartTime < endOffset
         if lineIsInRange then table.insert(linesBetweenoffsets, line) end
     end
-    return table.sort(linesBetweenoffsets, sortAscendingStartTime)
+    return sort(linesBetweenoffsets, sortAscendingStartTime)
 end
 
+--- Returns a list of [scroll velocities](lua://ScrollVelocity) between two times, inclusive.
+---@param startOffset number The lower bound of the search area.
+---@param endOffset number The upper bound of the search area.
+---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
 function getSVsBetweenOffsets(startOffset, endOffset)
-    local svsBetweenOffsets = {}
+    local svsBetweenOffsets = {} ---@type ScrollVelocity[]
     for _, sv in pairs(map.ScrollVelocities) do
         local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
-    return table.sort(svsBetweenOffsets, sortAscendingStartTime)
+    return sort(svsBetweenOffsets, sortAscendingStartTime)
 end
 
+--- Returns a list of [bookmarks](lua://Bookmark) between two times, inclusive.
+---@param startOffset number The lower bound of the search area.
+---@param endOffset number The upper bound of the search area.
+---@return Bookmark[] bms All of the [bookmarks](lua://Bookmark) within the area.
 function getBookmarksBetweenOffsets(startOffset, endOffset)
-    local bookmarksBetweenOffsets = {}
+    local bookmarksBetweenOffsets = {} ---@type Bookmark[]
     for _, bm in pairs(map.Bookmarks) do
         local bmIsInRange = bm.StartTime >= startOffset and bm.StartTime < endOffset
         if bmIsInRange then table.insert(bookmarksBetweenOffsets, bm) end
     end
-    return table.sort(bookmarksBetweenOffsets, sortAscendingStartTime)
+    return sort(bookmarksBetweenOffsets, sortAscendingStartTime)
 end
 
+--- Given a predetermined set of SVs, returns a list of [scroll velocities](lua://ScrollVelocity) within a temporal boundary.
+---@param startOffset number The lower bound of the search area.
+---@param endOffset number The upper bound of the search area.
+---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
 function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
-    local svsBetweenOffsets = {}
+    local svsBetweenOffsets = {} --- @type ScrollVelocity[]
     for _, sv in pairs(svs) do
         local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime < endOffset + 1
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
-    return table.sort(svsBetweenOffsets, sortAscendingStartTime)
+    return sort(svsBetweenOffsets, sortAscendingStartTime)
 end
 
+--- Returns a list of [scroll speed factors](lua://ScrollSpeedFactor) between two times, inclusive.
+---@param startOffset number The lower bound of the search area.
+---@param endOffset number The upper bound of the search area.
+---@return ScrollSpeedFactor[] ssfs All of the [scroll speed factors](lua://ScrollSpeedFactor) within the area.
 function getSSFsBetweenOffsets(startOffset, endOffset)
-    local ssfsBetweenOffsets = {}
+    local ssfsBetweenOffsets = {} ---@type ScrollSpeedFactor[]
     local ssfs = map.ScrollSpeedFactors
     if (ssfs == nil) then
         ssfs = {}
@@ -8782,7 +8806,7 @@ function getSSFsBetweenOffsets(startOffset, endOffset)
             if ssfIsInRange then table.insert(ssfsBetweenOffsets, ssf) end
         end
     end
-    return table.sort(ssfsBetweenOffsets, sortAscendingStartTime)
+    return sort(ssfsBetweenOffsets, sortAscendingStartTime)
 end
 -- Finds and returns a list of all unique offsets of notes between a start and an end time [Table]
 -- Parameters
@@ -9276,6 +9300,16 @@ function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 --    a : first object
 --    b : second object
 function sortAscendingTime(a, b) return a.time < b.time end
+
+---@generic T
+---@param tbl T[]
+---@param compFn fun(a: T, b: T): boolean
+---@return T[]
+function sort(tbl, compFn)
+    newTbl = table.duplicate(tbl)
+    table.sort(newTbl, compFn)
+    return newTbl
+end
 ---Gets the current menu's setting variables.
 ---@param svType string The SV type - that is, the shape of the SV once plotted.
 ---@param label string A delineator to separate two categories with similar SV types (Standard/Still, etc).

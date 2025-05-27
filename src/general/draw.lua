@@ -1,27 +1,27 @@
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 
-    local prevVal = state.GetValue("prevVal") or 0
-    local colStatus = state.GetValue("colStatus") or 0
+    local prevVal = state.GetValue("prevVal", 0)
+    local colStatus = state.GetValue("colStatus", 0)
 
     local globalVars = {
-        stepSize = state.GetValue("global_stepSize") or 5,
-        keyboardMode = state.GetValue("global_keyboardMode") or false,
-        dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
-        upscroll = state.GetValue("global_upscroll") or false,
-        colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
-        styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
-        effectFPS = state.GetValue("global_effectFPS") or 90,
-        cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
-        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex") or 1,
-        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
-        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
-        snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
-        cursorTrailGhost = state.GetValue("global_cursorTrailGhost") or false,
-        rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
-        drawCapybara = state.GetValue("global_drawCapybara") or false,
-        drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
-        drawCapybara312 = state.GetValue("global_drawCapybara312") or false,
+        stepSize = state.GetValue("global_stepSize", 5),
+        keyboardMode = state.GetValue("global_keyboardMode", false),
+        dontReplaceSV = state.GetValue("global_dontReplaceSV", false),
+        upscroll = state.GetValue("global_upscroll", false),
+        colorThemeIndex = state.GetValue("global_colorThemeIndex", 9),
+        styleThemeIndex = state.GetValue("global_styleThemeIndex", 1),
+        effectFPS = state.GetValue("global_effectFPS", 90),
+        cursorTrailIndex = state.GetValue("global_cursorTrailIndex", 1),
+        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex", 1),
+        cursorTrailPoints = state.GetValue("global_cursorTrailPoints", 10),
+        cursorTrailSize = state.GetValue("global_cursorTrailSize", 5),
+        snakeSpringConstant = state.GetValue("global_snakeSpringConstant", 1),
+        cursorTrailGhost = state.GetValue("global_cursorTrailGhost", false),
+        rgbPeriod = state.GetValue("global_rgbPeriod", 2),
+        drawCapybara = state.GetValue("global_drawCapybara", false),
+        drawCapybara2 = state.GetValue("global_drawCapybara2", false),
+        drawCapybara312 = state.GetValue("global_drawCapybara312", false),
         selectTypeIndex = 1,
         placeTypeIndex = 1,
         editToolIndex = 1,
@@ -32,11 +32,11 @@ function draw()
         debugText = "debug",
         scrollGroupIndex = 1,
         showColorPicker = false,
-        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes") or false,
-        advancedMode = state.GetValue("global_advancedMode") or false,
-        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0,
-        pulseColor = state.GetValue("global_pulseColor") or { 1, 1, 1, 1 },
-        useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
+        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes", false),
+        advancedMode = state.GetValue("global_advancedMode", false),
+        pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
+        pulseColor = state.GetValue("global_pulseColor", { 1, 1, 1, 1 }),
+        useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
     }
 
     getVariables("globalVars", globalVars)
@@ -97,7 +97,7 @@ function draw()
     colStatus = colStatus * globalVars
         .pulseCoefficient
 
-    local borderColor = state.GetValue("global_baseBorderColor") or { 1, 1, 1, 1 }
+    local borderColor = state.GetValue("global_baseBorderColor", { 1, 1, 1, 1 })
     local negatedBorderColor = { 1 - borderColor[1], 1 - borderColor[2], 1 - borderColor[3], 1 - borderColor[4] }
 
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
