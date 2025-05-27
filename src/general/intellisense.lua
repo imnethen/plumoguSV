@@ -95,62 +95,76 @@ state.IsWindowHovered          = false ---@type boolean MUST BE SET MANUALLY - I
 state.Scale                    = 1 ---@type number READ-ONLY // The current ImGui scale.
 
 --- READ-ONLY // Stores a value that can be retrieved by `state.GetValue()`. Mainly used to persist data between hot-reloads.
----@param key string
----@param value any
+---@param key string The identifier for this particular value.
+---@param value any The value to store.
 function state.SetValue(key, value) end
 
 --- READ-ONLY // Gets a value previously stored by `state.SetValue()`. If the value doesn't exist, return `fallback` instead.
----@param key string
----@param fallback any
----@return any
+---@param key string The identifier for the value set by `state.SetValue()`.
+---@param fallback? any An optional term to return if the result is `nil`.
+---@return any value The stored value.
 function state.GetValue(key, fallback) end
 
 --- READ-ONLY // Creates a `ScrollVelocity`, to later be placed with an `action`.
----@param startTime number
----@param multiplier number
----@return ScrollVelocity
+---@param startTime number The time to create the scroll velocity, in milliseconds.
+---@param multiplier number The factor at which to scale the player's scroll velocity.
+---@return ScrollVelocity ScrollVelocity The requested scroll velocity.
 function utils.CreateScrollVelocity(startTime, multiplier) end
 
 --- READ-ONLY // Creates a `ScrollSpeedFactor`, to later be placed with an `action`.
----@param startTime number
----@param multiplier number
----@return ScrollSpeedFactor
+---@param startTime number The time to create the scroll speed factor, in milliseconds.
+---@param multiplier number The factor at which to scale the player's scroll speed.
+---@return ScrollSpeedFactor ScrollSpeedFactor The requested scroll speed factor.
 function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 
 --- READ-ONLY // Creates a `HitObject`, to later be placed with an `action`.
---- @param startTime number
---- @param lane 1|2|3|4|5|6|7
---- @param endTime number
---- @param hitsounds HitSounds
---- @param editorLayer integer
---- @return HitObject
+--- @param startTime number The time to create the note, in milliseconds.
+--- @param lane 1|2|3|4|5|6|7 The lane to create the note in.
+--- @param endTime? number If given and non-zero, the note becomes a long note. This parameter determines when the long note will end.
+--- @param hitsounds? HitSounds The hitsounds that should be applied to the note.
+--- @param editorLayer? integer The index of the editor layer that this note should be added to.
+--- @return HitObject HitObject The requested note.
 function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer) end
 
 --- READ-ONLY // Creates a `TimingPoint`, to later be placed with an `action`
---- @param startTime number
---- @param bpm number
---- @param signature integer
---- @param hidden boolean
---- @return TimingPoint
+--- @param startTime number The time to create the timing point, in milliseconds.
+--- @param bpm number The beats per minute of the timing point.
+--- @param signature integer The time signature of the timing point.
+--- @param hidden boolean Whether or not to hide the timing line in gameplay.
+--- @return TimingPoint TimingPoint The requested timing point.
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
---- READ-ONLY // Creates an `EditorLayer`, to later be placed with an `action`. `colorRgb` should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
----@param name string
----@param hidden boolean
----@param colorRgb string
----@return EditorLayer
+--- READ-ONLY // Creates an `EditorLayer`, to later be placed with an `action`. `colorRgb`
+---@param name string The name of this layer.
+---@param hidden boolean Whether or not to hide this layer in the editor.
+---@param colorRgb string The color of the editor layer. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
+---@return EditorLayer EditorLayer The requested editor layer.
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 --- READ-ONLY // Creates a `Bookmark`, to later be placed with an `action`.
----@param startTime number
----@param note string
----@return Bookmark
+---@param startTime number The time to create the bookmark, in milliseconds.
+---@param note string The contents of the bookmark.
+---@return Bookmark Bookmark The requested bookmark.
 function utils.CreateBookmark(startTime, note) end
 
+--- READ-ONLY // Creates a `ScrollGroup`, to later be placed with an `action`.
+--- @param svs ScrollVelocity[] The svs to add to the scroll group.
+--- @param initialSV number The initial scroll velocity of the scroll group.
+--- @param colorRgb string The color of the scroll group. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
+---@return ScrollGroup ScrollGroup The requested scroll group.
+function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
+
 --- READ-ONLY // Creates an  `EditorAction`, to later be executed with `actions.Perform()`.
----@param type EditorActionType
----@param ... any[]
----@return EditorAction
+---@param type EditorActionType The type of action to perform.
+---@param ... any[] The parameters of the action. Depending on the prefix of the action, different parameters should be passed in:
+--- - Place/Add/Remove // ... should only be one term, the object to add.
+--- - Place/Add/Remove Batch // ... should only be one term, a table of the objects to add.
+--- - Move/Swap/Flip/Change/Toggle // ... should be two terms, the first being the objects to manipulate, the second being the instruction for the manipulation.
+--- - CreateTimingGroup // ... should be three terms:
+---     1. The id of the timing group.
+---     2. The timing group previously created by `utils.CreateScrollGroup`.
+---     3. The HitObjects to add to the scroll group.
+---@return EditorAction EditorAction The requested editor action.
 function utils.CreateEditorAction(type, ...) end
 
 --- READ-ONLY // Returns a formatted version of the inputted `time`.
@@ -355,7 +369,21 @@ action_type  = {
     EditBookmark = 41,
     RemoveBookmark = 42,
     RemoveBookmarkBatch = 43,
-    ChangeBookmarkOffsetBatch = 44
+    ChangeBookmarkOffsetBatch = 44,
+    CreateTimingGroup = 45,
+    RemoveTimingGroup = 46,
+    RenameTimingGroup = 47,
+    MoveObjectsToTimingGroup = 48,
+    ColorTimingGroup = 49,
+    AddTimingGroupBatch = 50,
+    RemoveTimingGroupBatch = 51,
+    AddScrollSpeedFactor = 52,
+    AddScrollSpeedFactorBatch = 53,
+    ChangeScrollSpeedFactorMultiplierBatch = 54,
+    ChangeScrollSpeedFactorLaneMaskBatch = 55,
+    ChangeScrollSpeedFactorOffsetBatch = 56,
+    RemoveScrollSpeedFactor = 57,
+    RemoveScrollSpeedFactorBatch = 58
 }
 
 ---@enum Key
