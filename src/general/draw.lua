@@ -65,10 +65,6 @@ function draw()
     end
     state.IsWindowHovered = imgui.IsWindowHovered()
 
-    if (imgui.Button("hgi")) then
-        print(eval("return 1", "return 69"))
-    end
-
     imgui.End()
 
     saveVariables("globalVars", globalVars)

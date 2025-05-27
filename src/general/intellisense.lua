@@ -2607,11 +2607,6 @@ function imgui.GetStyle() end
 function imgui.GetStyleColorName(idx) end
 
 --- READ-ONLY
----@param idx ImGuiCol|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|"Text"|"TextDisabled"|"WindowBg"|"ChildBg"|"PopupBg"|"Border"|"BorderShadow"|"FrameBg"|"FrameBgHovered"|"FrameBgActive"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"MenuBarBg"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabHovered"|"ScrollbarGrabActive"|"CheckMark"|"SliderGrab"|"SliderGrabActive"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"HeaderHovered"|"HeaderActive"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"ResizeGripHovered"|"ResizeGripActive"|"TabHovered"|"Tab"|"TabSelected"|"TabSelectedOverline"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"DockingPreview"|"DockingEmptyBg"|"PlotLines"|"PlotLinesHovered"|"PlotHistogram"|"PlotHistogramHovered"|"TableHeaderBg"|"TableBorderStrong"|"TableBorderLight"|"TableRowBg"|"TableRowBgAlt"|"TextLink"|"TextSelectedBg"|"DragDropTarget"|"NavHighlight"|"NavWindowingHighlight"|"NavWindowingDimBg"|"ModalWindowDimBg"|"COUNT"
----@return Vector4*
-function imgui.GetStyleColorVec4(idx) end
-
---- READ-ONLY
 ---@return number
 function imgui.GetTextLineHeight() end
 
@@ -8537,7 +8532,6 @@ imgui_window_flags = {
 ---@field Data lightuserdata READ-ONLY
 
 ---@class ImVector
----@field Ref fun(index: integer): T READ-ONLY
 ---@field Address fun(index: integer): lightuserdata READ-ONLY
 ---@field Equals fun(obj: any): boolean READ-ONLY
 ---@field GetHashCode fun(): integer READ-ONLY
