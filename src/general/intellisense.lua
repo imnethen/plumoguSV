@@ -1242,69 +1242,69 @@ history_type = {
 
 
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param type string
 ---@return ImGuiPayloadPtr
 function imgui.AcceptDragDropPayload(type) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param type string
 ---@param flags ImGuiDragDropFlags|integer|"None"|"SourceNoPreviewTooltip"|"SourceNoDisableHover"|"SourceNoHoldToOpenOthers"|"SourceAllowNullID"|"SourceExtern"|"PayloadAutoExpire"|"PayloadNoCrossContext"|"PayloadNoCrossProcess"|"AcceptBeforeDelivery"|"AcceptNoDrawDefaultRect"|"AcceptPeekOnly"|"AcceptNoPreviewTooltip"
 ---@return ImGuiPayloadPtr
 function imgui.AcceptDragDropPayload(type, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.AlignTextToFramePadding() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param dir ImGuiDir|0|1|2|3|4|-1|"Left"|"Right"|"Up"|"Down"|"COUNT"|"None"
 ---@return boolean
 function imgui.ArrowButton(str_id, dir) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@return boolean
 function imgui.Begin(name) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param p_open boolean
 ---@return boolean, boolean
 function imgui.Begin(name, p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param p_open boolean
 ---@param flags ImGuiWindowFlags|integer|"None"|"NoTitleBar"|"NoResize"|"NoMove"|"NoScrollbar"|"NoScrollWithMouse"|"NoCollapse"|"NoDecoration"|"AlwaysAutoResize"|"NoBackground"|"NoSavedSettings"|"NoMouseInputs"|"MenuBar"|"HorizontalScrollbar"|"NoFocusOnAppearing"|"NoBringToFrontOnFocus"|"AlwaysVerticalScrollbar"|"AlwaysHorizontalScrollbar"|"NoNavInputs"|"NoNavFocus"|"NoNav"|"NoInputs"|"UnsavedDocument"|"NoDocking"|"ChildWindow"|"Tooltip"|"Popup"|"Modal"|"ChildMenu"|"DockNodeHost"
 ---@return boolean, boolean
 function imgui.Begin(name, p_open, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param flags ImGuiWindowFlags|integer|"None"|"NoTitleBar"|"NoResize"|"NoMove"|"NoScrollbar"|"NoScrollWithMouse"|"NoCollapse"|"NoDecoration"|"AlwaysAutoResize"|"NoBackground"|"NoSavedSettings"|"NoMouseInputs"|"MenuBar"|"HorizontalScrollbar"|"NoFocusOnAppearing"|"NoBringToFrontOnFocus"|"AlwaysVerticalScrollbar"|"AlwaysHorizontalScrollbar"|"NoNavInputs"|"NoNavFocus"|"NoNav"|"NoInputs"|"UnsavedDocument"|"NoDocking"|"ChildWindow"|"Tooltip"|"Popup"|"Modal"|"ChildMenu"|"DockNodeHost"
 ---@return boolean
 function imgui.Begin(name, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@return boolean
 function imgui.BeginChild(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param size Vector2
 ---@return boolean
 function imgui.BeginChild(str_id, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param size Vector2
 ---@param child_flags ImGuiChildFlags|integer|"None"|"Border"|"AlwaysUseWindowPadding"|"ResizeX"|"ResizeY"|"AutoResizeX"|"AutoResizeY"|"AlwaysAutoResize"|"FrameStyle"|"NavFlattened"
 ---@return boolean
 function imgui.BeginChild(str_id, size, child_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param size Vector2
 ---@param child_flags ImGuiChildFlags|integer|"None"|"Border"|"AlwaysUseWindowPadding"|"ResizeX"|"ResizeY"|"AutoResizeX"|"AutoResizeY"|"AlwaysAutoResize"|"FrameStyle"|"NavFlattened"
@@ -1312,25 +1312,25 @@ function imgui.BeginChild(str_id, size, child_flags) end
 ---@return boolean
 function imgui.BeginChild(str_id, size, child_flags, window_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param id integer
 ---@return boolean
 function imgui.BeginChild(id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param id integer
 ---@param size Vector2
 ---@return boolean
 function imgui.BeginChild(id, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param id integer
 ---@param size Vector2
 ---@param child_flags ImGuiChildFlags|integer|"None"|"Border"|"AlwaysUseWindowPadding"|"ResizeX"|"ResizeY"|"AutoResizeX"|"AutoResizeY"|"AlwaysAutoResize"|"FrameStyle"|"NavFlattened"
 ---@return boolean
 function imgui.BeginChild(id, size, child_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param id integer
 ---@param size Vector2
 ---@param child_flags ImGuiChildFlags|integer|"None"|"Border"|"AlwaysUseWindowPadding"|"ResizeX"|"ResizeY"|"AutoResizeX"|"AutoResizeY"|"AlwaysAutoResize"|"FrameStyle"|"NavFlattened"
@@ -1338,220 +1338,220 @@ function imgui.BeginChild(id, size, child_flags) end
 ---@return boolean
 function imgui.BeginChild(id, size, child_flags, window_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param preview_value string
 ---@return boolean
 function imgui.BeginCombo(label, preview_value) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param preview_value string
 ---@param flags ImGuiComboFlags|integer|"None"|"PopupAlignLeft"|"HeightSmall"|"HeightRegular"|"HeightLarge"|"HeightLargest"|"HeightMask"|"NoArrowButton"|"NoPreview"|"WidthFitPreview"
 ---@return boolean
 function imgui.BeginCombo(label, preview_value, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.BeginDisabled() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param disabled boolean
 function imgui.BeginDisabled(disabled) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginDragDropSource() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiDragDropFlags|integer|"None"|"SourceNoPreviewTooltip"|"SourceNoDisableHover"|"SourceNoHoldToOpenOthers"|"SourceAllowNullID"|"SourceExtern"|"PayloadAutoExpire"|"PayloadNoCrossContext"|"PayloadNoCrossProcess"|"AcceptBeforeDelivery"|"AcceptNoDrawDefaultRect"|"AcceptPeekOnly"|"AcceptNoPreviewTooltip"
 ---@return boolean
 function imgui.BeginDragDropSource(flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginDragDropTarget() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.BeginGroup() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginItemTooltip() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.BeginListBox(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@return boolean
 function imgui.BeginListBox(label, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginMainMenuBar() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.BeginMenu(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param enabled boolean
 ---@return boolean
 function imgui.BeginMenu(label, enabled) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginMenuBar() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiMultiSelectFlags|integer|"None"|"SingleSelect"|"NoSelectAll"|"NoRangeSelect"|"NoAutoSelect"|"NoAutoClear"|"NoAutoClearOnReselect"|"BoxSelect1d"|"BoxSelect2d"|"BoxSelectNoScroll"|"ClearOnEscape"|"ClearOnClickVoid"|"ScopeWindow"|"ScopeRect"|"SelectOnClick"|"SelectOnClickRelease"|"NavWrapX"
 ---@return ImGuiMultiSelectIOPtr
 function imgui.BeginMultiSelect(flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiMultiSelectFlags|integer|"None"|"SingleSelect"|"NoSelectAll"|"NoRangeSelect"|"NoAutoSelect"|"NoAutoClear"|"NoAutoClearOnReselect"|"BoxSelect1d"|"BoxSelect2d"|"BoxSelectNoScroll"|"ClearOnEscape"|"ClearOnClickVoid"|"ScopeWindow"|"ScopeRect"|"SelectOnClick"|"SelectOnClickRelease"|"NavWrapX"
 ---@param selection_size integer
 ---@return ImGuiMultiSelectIOPtr
 function imgui.BeginMultiSelect(flags, selection_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiMultiSelectFlags|integer|"None"|"SingleSelect"|"NoSelectAll"|"NoRangeSelect"|"NoAutoSelect"|"NoAutoClear"|"NoAutoClearOnReselect"|"BoxSelect1d"|"BoxSelect2d"|"BoxSelectNoScroll"|"ClearOnEscape"|"ClearOnClickVoid"|"ScopeWindow"|"ScopeRect"|"SelectOnClick"|"SelectOnClickRelease"|"NavWrapX"
 ---@param selection_size integer
 ---@param items_count integer
 ---@return ImGuiMultiSelectIOPtr
 function imgui.BeginMultiSelect(flags, selection_size, items_count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@return boolean
 function imgui.BeginPopup(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param flags ImGuiWindowFlags|integer|"None"|"NoTitleBar"|"NoResize"|"NoMove"|"NoScrollbar"|"NoScrollWithMouse"|"NoCollapse"|"NoDecoration"|"AlwaysAutoResize"|"NoBackground"|"NoSavedSettings"|"NoMouseInputs"|"MenuBar"|"HorizontalScrollbar"|"NoFocusOnAppearing"|"NoBringToFrontOnFocus"|"AlwaysVerticalScrollbar"|"AlwaysHorizontalScrollbar"|"NoNavInputs"|"NoNavFocus"|"NoNav"|"NoInputs"|"UnsavedDocument"|"NoDocking"|"ChildWindow"|"Tooltip"|"Popup"|"Modal"|"ChildMenu"|"DockNodeHost"
 ---@return boolean
 function imgui.BeginPopup(str_id, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginPopupContextItem() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@return boolean
 function imgui.BeginPopupContextItem(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param popup_flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 ---@return boolean
 function imgui.BeginPopupContextItem(str_id, popup_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginPopupContextVoid() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@return boolean
 function imgui.BeginPopupContextVoid(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param popup_flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 ---@return boolean
 function imgui.BeginPopupContextVoid(str_id, popup_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.BeginPopupContextWindow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 function imgui.BeginPopupContextWindow(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param popup_flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 function imgui.BeginPopupContextWindow(str_id, popup_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param popup_flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 ---@param also_over_items boolean
 function imgui.BeginPopupContextWindow(str_id, popup_flags, also_over_items) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@return boolean
 function imgui.BeginPopupModal(name) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param p_open boolean
 ---@return boolean, boolean
 function imgui.BeginPopupModal(name, p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param p_open boolean
 ---@param flags ImGuiWindowFlags|integer|"None"|"NoTitleBar"|"NoResize"|"NoMove"|"NoScrollbar"|"NoScrollWithMouse"|"NoCollapse"|"NoDecoration"|"AlwaysAutoResize"|"NoBackground"|"NoSavedSettings"|"NoMouseInputs"|"MenuBar"|"HorizontalScrollbar"|"NoFocusOnAppearing"|"NoBringToFrontOnFocus"|"AlwaysVerticalScrollbar"|"AlwaysHorizontalScrollbar"|"NoNavInputs"|"NoNavFocus"|"NoNav"|"NoInputs"|"UnsavedDocument"|"NoDocking"|"ChildWindow"|"Tooltip"|"Popup"|"Modal"|"ChildMenu"|"DockNodeHost"
 ---@return boolean, boolean
 function imgui.BeginPopupModal(name, p_open, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param flags ImGuiWindowFlags|integer|"None"|"NoTitleBar"|"NoResize"|"NoMove"|"NoScrollbar"|"NoScrollWithMouse"|"NoCollapse"|"NoDecoration"|"AlwaysAutoResize"|"NoBackground"|"NoSavedSettings"|"NoMouseInputs"|"MenuBar"|"HorizontalScrollbar"|"NoFocusOnAppearing"|"NoBringToFrontOnFocus"|"AlwaysVerticalScrollbar"|"AlwaysHorizontalScrollbar"|"NoNavInputs"|"NoNavFocus"|"NoNav"|"NoInputs"|"UnsavedDocument"|"NoDocking"|"ChildWindow"|"Tooltip"|"Popup"|"Modal"|"ChildMenu"|"DockNodeHost"
 ---@return boolean
 function imgui.BeginPopupModal(name, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@return boolean
 function imgui.BeginTabBar(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param flags ImGuiTabBarFlags|integer|"None"|"Reorderable"|"AutoSelectNewTabs"|"TabListPopupButton"|"NoCloseWithMiddleMouseButton"|"NoTabListScrollingButtons"|"NoTooltip"|"DrawSelectedOverline"|"FittingPolicyResizeDown"|"FittingPolicyDefault"|"FittingPolicyScroll"|"FittingPolicyMask"
 ---@return boolean
 function imgui.BeginTabBar(str_id, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.BeginTabItem(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param p_open boolean
 ---@return boolean, boolean
 function imgui.BeginTabItem(label, p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param p_open boolean
 ---@param flags ImGuiTabItemFlags|integer|"None"|"UnsavedDocument"|"SetSelected"|"NoCloseWithMiddleMouseButton"|"NoPushId"|"NoTooltip"|"NoReorder"|"Leading"|"Trailing"|"NoAssumedClosure"
 ---@return boolean, boolean
 function imgui.BeginTabItem(label, p_open, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param columns integer
 ---@return boolean
 function imgui.BeginTable(str_id, columns) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param columns integer
 ---@param flags ImGuiTableFlags|integer|"None"|"Resizable"|"Reorderable"|"Hideable"|"Sortable"|"NoSavedSettings"|"ContextMenuInBody"|"RowBg"|"BordersInnerH"|"BordersOuterH"|"BordersH"|"BordersInnerV"|"BordersInner"|"BordersOuterV"|"BordersOuter"|"BordersV"|"Borders"|"NoBordersInBody"|"NoBordersInBodyUntilResize"|"SizingFixedFit"|"SizingFixedSame"|"SizingStretchProp"|"SizingStretchSame"|"SizingMask"|"NoHostExtendX"|"NoHostExtendY"|"NoKeepColumnsVisible"|"PreciseWidths"|"NoClip"|"PadOuterX"|"NoPadOuterX"|"NoPadInnerX"|"ScrollX"|"ScrollY"|"SortMulti"|"SortTristate"|"HighlightHoveredColumn"
 ---@return boolean
 function imgui.BeginTable(str_id, columns, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param columns integer
 ---@param flags ImGuiTableFlags|integer|"None"|"Resizable"|"Reorderable"|"Hideable"|"Sortable"|"NoSavedSettings"|"ContextMenuInBody"|"RowBg"|"BordersInnerH"|"BordersOuterH"|"BordersH"|"BordersInnerV"|"BordersInner"|"BordersOuterV"|"BordersOuter"|"BordersV"|"Borders"|"NoBordersInBody"|"NoBordersInBodyUntilResize"|"SizingFixedFit"|"SizingFixedSame"|"SizingStretchProp"|"SizingStretchSame"|"SizingMask"|"NoHostExtendX"|"NoHostExtendY"|"NoKeepColumnsVisible"|"PreciseWidths"|"NoClip"|"PadOuterX"|"NoPadOuterX"|"NoPadInnerX"|"ScrollX"|"ScrollY"|"SortMulti"|"SortTristate"|"HighlightHoveredColumn"
@@ -1559,7 +1559,7 @@ function imgui.BeginTable(str_id, columns, flags) end
 ---@return boolean
 function imgui.BeginTable(str_id, columns, flags, outer_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param columns integer
 ---@param flags ImGuiTableFlags|integer|"None"|"Resizable"|"Reorderable"|"Hideable"|"Sortable"|"NoSavedSettings"|"ContextMenuInBody"|"RowBg"|"BordersInnerH"|"BordersOuterH"|"BordersH"|"BordersInnerV"|"BordersInner"|"BordersOuterV"|"BordersOuter"|"BordersV"|"Borders"|"NoBordersInBody"|"NoBordersInBodyUntilResize"|"SizingFixedFit"|"SizingFixedSame"|"SizingStretchProp"|"SizingStretchSame"|"SizingMask"|"NoHostExtendX"|"NoHostExtendY"|"NoKeepColumnsVisible"|"PreciseWidths"|"NoClip"|"PadOuterX"|"NoPadOuterX"|"NoPadInnerX"|"ScrollX"|"ScrollY"|"SortMulti"|"SortTristate"|"HighlightHoveredColumn"
@@ -1568,84 +1568,84 @@ function imgui.BeginTable(str_id, columns, flags, outer_size) end
 ---@return boolean
 function imgui.BeginTable(str_id, columns, flags, outer_size, inner_width) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.BeginTooltip() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.Bullet() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.BulletText(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.Button(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@return boolean
 function imgui.Button(label, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.CalcItemWidth() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@return Vector2
 function imgui.CalcTextSize(text) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param hide_text_after_double_hash boolean
 ---@return Vector2
 function imgui.CalcTextSize(text, hide_text_after_double_hash) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param hide_text_after_double_hash boolean
 ---@param wrap_width number
 ---@return Vector2
 function imgui.CalcTextSize(text, hide_text_after_double_hash, wrap_width) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param start integer
 ---@return Vector2
 function imgui.CalcTextSize(text, start) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param wrapWidth number
 ---@return Vector2
 function imgui.CalcTextSize(text, wrapWidth) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param start integer
 ---@param length integer
 ---@return Vector2
 function imgui.CalcTextSize(text, start, length) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param start integer
 ---@param hideTextAfterDoubleHash boolean
 ---@return Vector2
 function imgui.CalcTextSize(text, start, hideTextAfterDoubleHash) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param start integer
 ---@param wrapWidth number
 ---@return Vector2
 function imgui.CalcTextSize(text, start, wrapWidth) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param start integer
 ---@param length integer
@@ -1653,7 +1653,7 @@ function imgui.CalcTextSize(text, start, wrapWidth) end
 ---@return Vector2
 function imgui.CalcTextSize(text, start, length, hideTextAfterDoubleHash) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param start integer
 ---@param length integer
@@ -1661,7 +1661,7 @@ function imgui.CalcTextSize(text, start, length, hideTextAfterDoubleHash) end
 ---@return Vector2
 function imgui.CalcTextSize(text, start, length, wrapWidth) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 ---@param start integer
 ---@param length integer
@@ -1670,67 +1670,67 @@ function imgui.CalcTextSize(text, start, length, wrapWidth) end
 ---@return Vector2
 function imgui.CalcTextSize(text, start, length, hideTextAfterDoubleHash, wrapWidth) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v boolean
 ---@return boolean, boolean
 function imgui.Checkbox(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags integer
 ---@param flags_value integer
 ---@return boolean, integer
 function imgui.CheckboxFlags(label, flags, flags_value) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags integer
 ---@param flags_value integer
 ---@return boolean, integer
 function imgui.CheckboxFlags(label, flags, flags_value) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.CloseCurrentPopup() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.CollapsingHeader(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags ImGuiTreeNodeFlags|integer|"None"|"Selected"|"Framed"|"AllowOverlap"|"NoTreePushOnOpen"|"NoAutoOpenOnLog"|"CollapsingHeader"|"DefaultOpen"|"OpenOnDoubleClick"|"OpenOnArrow"|"Leaf"|"Bullet"|"FramePadding"|"SpanAvailWidth"|"SpanFullWidth"|"SpanTextWidth"|"SpanAllColumns"|"NavLeftJumpsBackHere"
 ---@return boolean
 function imgui.CollapsingHeader(label, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param p_visible boolean
 ---@return boolean, boolean
 function imgui.CollapsingHeader(label, p_visible) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param p_visible boolean
 ---@param flags ImGuiTreeNodeFlags|integer|"None"|"Selected"|"Framed"|"AllowOverlap"|"NoTreePushOnOpen"|"NoAutoOpenOnLog"|"CollapsingHeader"|"DefaultOpen"|"OpenOnDoubleClick"|"OpenOnArrow"|"Leaf"|"Bullet"|"FramePadding"|"SpanAvailWidth"|"SpanFullWidth"|"SpanTextWidth"|"SpanAllColumns"|"NavLeftJumpsBackHere"
 ---@return boolean, boolean
 function imgui.CollapsingHeader(label, p_visible, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param desc_id string
 ---@param col Vector4
 ---@return boolean
 function imgui.ColorButton(desc_id, col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param desc_id string
 ---@param col Vector4
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
 ---@return boolean
 function imgui.ColorButton(desc_id, col, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param desc_id string
 ---@param col Vector4
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
@@ -1738,12 +1738,12 @@ function imgui.ColorButton(desc_id, col, flags) end
 ---@return boolean
 function imgui.ColorButton(desc_id, col, flags, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param input Vector4
 ---@return integer
 function imgui.ColorConvertFloat4ToU32(input) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param h number
 ---@param s number
 ---@param v number
@@ -1752,7 +1752,7 @@ function imgui.ColorConvertFloat4ToU32(input) end
 ---@param out_b number
 function imgui.ColorConvertHSVtoRGB(h, s, v, out_r, out_g, out_b) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param r number
 ---@param g number
 ---@param b number
@@ -1761,64 +1761,64 @@ function imgui.ColorConvertHSVtoRGB(h, s, v, out_r, out_g, out_b) end
 ---@param out_v number
 function imgui.ColorConvertRGBtoHSV(r, g, b, out_h, out_s, out_v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param input integer
 ---@return Vector4
 function imgui.ColorConvertU32ToFloat4(input) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector3
 ---@return boolean, Vector3
 function imgui.ColorEdit3(label, col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector3
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
 ---@return boolean, Vector3
 function imgui.ColorEdit3(label, col, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector4
 ---@return boolean, Vector4
 function imgui.ColorEdit4(label, col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector4
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
 ---@return boolean, Vector4
 function imgui.ColorEdit4(label, col, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector3
 ---@return boolean, Vector3
 function imgui.ColorPicker3(label, col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector3
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
 ---@return boolean, Vector3
 function imgui.ColorPicker3(label, col, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector4
 ---@return boolean, Vector4
 function imgui.ColorPicker4(label, col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector4
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
 ---@return boolean, Vector4
 function imgui.ColorPicker4(label, col, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param col Vector4
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
@@ -1826,25 +1826,25 @@ function imgui.ColorPicker4(label, col, flags) end
 ---@return boolean, Vector4, number
 function imgui.ColorPicker4(label, col, flags, ref_col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.Columns() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param count integer
 function imgui.Columns(count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param count integer
 ---@param id string
 function imgui.Columns(count, id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param count integer
 ---@param id string
 ---@param border boolean
 function imgui.Columns(count, id, border) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param current_item integer
 ---@param items string[]
@@ -1852,7 +1852,7 @@ function imgui.Columns(count, id, border) end
 ---@return boolean, integer
 function imgui.Combo(label, current_item, items, items_count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param current_item integer
 ---@param items string[]
@@ -1861,14 +1861,14 @@ function imgui.Combo(label, current_item, items, items_count) end
 ---@return boolean, integer
 function imgui.Combo(label, current_item, items, items_count, popup_max_height_in_items) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param current_item integer
 ---@param items_separated_by_zeros string
 ---@return boolean, integer
 function imgui.Combo(label, current_item, items_separated_by_zeros) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param current_item integer
 ---@param items_separated_by_zeros string
@@ -1876,31 +1876,31 @@ function imgui.Combo(label, current_item, items_separated_by_zeros) end
 ---@return boolean, integer
 function imgui.Combo(label, current_item, items_separated_by_zeros, popup_max_height_in_items) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return lightuserdata
 function imgui.CreateContext() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param shared_font_atlas ImFontAtlasPtr
 ---@return lightuserdata
 function imgui.CreateContext(shared_font_atlas) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param values any[]
 ---@return any
 function imgui.CreateVector2(values) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param values any[]
 ---@return any
 function imgui.CreateVector3(values) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param values any[]
 ---@return any
 function imgui.CreateVector4(values) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param version_str string
 ---@param sz_io integer
 ---@param sz_style integer
@@ -1911,50 +1911,50 @@ function imgui.CreateVector4(values) end
 ---@return boolean
 function imgui.DebugCheckVersionAndDataLayout(version_str, sz_io, sz_style, sz_vec2, sz_vec4, sz_drawvert, sz_drawidx) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiCol|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|"Text"|"TextDisabled"|"WindowBg"|"ChildBg"|"PopupBg"|"Border"|"BorderShadow"|"FrameBg"|"FrameBgHovered"|"FrameBgActive"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"MenuBarBg"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabHovered"|"ScrollbarGrabActive"|"CheckMark"|"SliderGrab"|"SliderGrabActive"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"HeaderHovered"|"HeaderActive"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"ResizeGripHovered"|"ResizeGripActive"|"TabHovered"|"Tab"|"TabSelected"|"TabSelectedOverline"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"DockingPreview"|"DockingEmptyBg"|"PlotLines"|"PlotLinesHovered"|"PlotHistogram"|"PlotHistogramHovered"|"TableHeaderBg"|"TableBorderStrong"|"TableBorderLight"|"TableRowBg"|"TableRowBgAlt"|"TextLink"|"TextSelectedBg"|"DragDropTarget"|"NavHighlight"|"NavWindowingHighlight"|"NavWindowingDimBg"|"ModalWindowDimBg"|"COUNT"
 function imgui.DebugFlashStyleColor(idx) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.DebugLog(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.DebugStartItemPicker() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 function imgui.DebugTextEncoding(text) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.DestroyContext() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ctx lightuserdata
 function imgui.DestroyContext(ctx) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.DestroyPlatformWindows() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@return integer
 function imgui.DockSpace(dockspace_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@param size Vector2
 ---@return integer
 function imgui.DockSpace(dockspace_id, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@param size Vector2
 ---@param flags ImGuiDockNodeFlags|integer|"None"|"KeepAliveOnly"|"NoDockingOverCentralNode"|"PassthruCentralNode"|"NoDockingSplit"|"NoResize"|"AutoHideTabBar"|"NoUndocking"
 ---@return integer
 function imgui.DockSpace(dockspace_id, size, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@param size Vector2
 ---@param flags ImGuiDockNodeFlags|integer|"None"|"KeepAliveOnly"|"NoDockingOverCentralNode"|"PassthruCentralNode"|"NoDockingSplit"|"NoResize"|"AutoHideTabBar"|"NoUndocking"
@@ -1962,29 +1962,29 @@ function imgui.DockSpace(dockspace_id, size, flags) end
 ---@return integer
 function imgui.DockSpace(dockspace_id, size, flags, window_class) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.DockSpaceOverViewport() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@return integer
 function imgui.DockSpaceOverViewport(dockspace_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@param viewport ImGuiViewportPtr
 ---@return integer
 function imgui.DockSpaceOverViewport(dockspace_id, viewport) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@param viewport ImGuiViewportPtr
 ---@param flags ImGuiDockNodeFlags|integer|"None"|"KeepAliveOnly"|"NoDockingOverCentralNode"|"PassthruCentralNode"|"NoDockingSplit"|"NoResize"|"AutoHideTabBar"|"NoUndocking"
 ---@return integer
 function imgui.DockSpaceOverViewport(dockspace_id, viewport, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dockspace_id integer
 ---@param viewport ImGuiViewportPtr
 ---@param flags ImGuiDockNodeFlags|integer|"None"|"KeepAliveOnly"|"NoDockingOverCentralNode"|"PassthruCentralNode"|"NoDockingSplit"|"NoResize"|"AutoHideTabBar"|"NoUndocking"
@@ -1992,20 +1992,20 @@ function imgui.DockSpaceOverViewport(dockspace_id, viewport, flags) end
 ---@return integer
 function imgui.DockSpaceOverViewport(dockspace_id, viewport, flags, window_class) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@return boolean, number
 function imgui.DragFloat(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_speed number
 ---@return boolean, number
 function imgui.DragFloat(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_speed number
@@ -2013,7 +2013,7 @@ function imgui.DragFloat(label, v, v_speed) end
 ---@return boolean, number
 function imgui.DragFloat(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_speed number
@@ -2022,7 +2022,7 @@ function imgui.DragFloat(label, v, v_speed, v_min) end
 ---@return boolean, number
 function imgui.DragFloat(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_speed number
@@ -2032,7 +2032,7 @@ function imgui.DragFloat(label, v, v_speed, v_min, v_max) end
 ---@return boolean, number
 function imgui.DragFloat(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_speed number
@@ -2043,20 +2043,20 @@ function imgui.DragFloat(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, number
 function imgui.DragFloat(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@return boolean, Vector2
 function imgui.DragFloat2(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
 ---@return boolean, Vector2
 function imgui.DragFloat2(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2064,7 +2064,7 @@ function imgui.DragFloat2(label, v, v_speed) end
 ---@return boolean, Vector2
 function imgui.DragFloat2(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2073,7 +2073,7 @@ function imgui.DragFloat2(label, v, v_speed, v_min) end
 ---@return boolean, Vector2
 function imgui.DragFloat2(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2083,7 +2083,7 @@ function imgui.DragFloat2(label, v, v_speed, v_min, v_max) end
 ---@return boolean, Vector2
 function imgui.DragFloat2(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2094,20 +2094,20 @@ function imgui.DragFloat2(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, Vector2
 function imgui.DragFloat2(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@return boolean, Vector3
 function imgui.DragFloat3(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
 ---@return boolean, Vector3
 function imgui.DragFloat3(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2115,7 +2115,7 @@ function imgui.DragFloat3(label, v, v_speed) end
 ---@return boolean, Vector3
 function imgui.DragFloat3(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2124,7 +2124,7 @@ function imgui.DragFloat3(label, v, v_speed, v_min) end
 ---@return boolean, Vector3
 function imgui.DragFloat3(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2134,7 +2134,7 @@ function imgui.DragFloat3(label, v, v_speed, v_min, v_max) end
 ---@return boolean, Vector3
 function imgui.DragFloat3(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2145,20 +2145,20 @@ function imgui.DragFloat3(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, Vector3
 function imgui.DragFloat3(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@return boolean, Vector4
 function imgui.DragFloat4(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
 ---@return boolean, Vector4
 function imgui.DragFloat4(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2166,7 +2166,7 @@ function imgui.DragFloat4(label, v, v_speed) end
 ---@return boolean, Vector4
 function imgui.DragFloat4(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2175,7 +2175,7 @@ function imgui.DragFloat4(label, v, v_speed, v_min) end
 ---@return boolean, Vector4
 function imgui.DragFloat4(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2185,7 +2185,7 @@ function imgui.DragFloat4(label, v, v_speed, v_min, v_max) end
 ---@return boolean, Vector4
 function imgui.DragFloat4(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2196,14 +2196,14 @@ function imgui.DragFloat4(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, Vector4
 function imgui.DragFloat4(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min number
 ---@param v_current_max number
 ---@return boolean, number, number
 function imgui.DragFloatRange2(label, v_current_min, v_current_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min number
 ---@param v_current_max number
@@ -2211,7 +2211,7 @@ function imgui.DragFloatRange2(label, v_current_min, v_current_max) end
 ---@return boolean, number, number
 function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min number
 ---@param v_current_max number
@@ -2220,7 +2220,7 @@ function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed) end
 ---@return boolean, number, number
 function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min number
 ---@param v_current_max number
@@ -2230,7 +2230,7 @@ function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_m
 ---@return boolean, number, number
 function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min number
 ---@param v_current_max number
@@ -2241,7 +2241,7 @@ function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_m
 ---@return boolean, number, number
 function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min number
 ---@param v_current_max number
@@ -2253,7 +2253,7 @@ function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_m
 ---@return boolean, number, number
 function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min number
 ---@param v_current_max number
@@ -2266,20 +2266,20 @@ function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_m
 ---@return boolean, number, number
 function imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@return boolean, integer
 function imgui.DragInt(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_speed number
 ---@return boolean, integer
 function imgui.DragInt(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_speed number
@@ -2287,7 +2287,7 @@ function imgui.DragInt(label, v, v_speed) end
 ---@return boolean, integer
 function imgui.DragInt(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_speed number
@@ -2296,7 +2296,7 @@ function imgui.DragInt(label, v, v_speed, v_min) end
 ---@return boolean, integer
 function imgui.DragInt(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_speed number
@@ -2306,7 +2306,7 @@ function imgui.DragInt(label, v, v_speed, v_min, v_max) end
 ---@return boolean, integer
 function imgui.DragInt(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_speed number
@@ -2317,20 +2317,20 @@ function imgui.DragInt(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, integer
 function imgui.DragInt(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@return boolean, integer[]
 function imgui.DragInt2(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
 ---@return boolean, integer[]
 function imgui.DragInt2(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2338,7 +2338,7 @@ function imgui.DragInt2(label, v, v_speed) end
 ---@return boolean, integer[]
 function imgui.DragInt2(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2347,7 +2347,7 @@ function imgui.DragInt2(label, v, v_speed, v_min) end
 ---@return boolean, integer[]
 function imgui.DragInt2(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2357,7 +2357,7 @@ function imgui.DragInt2(label, v, v_speed, v_min, v_max) end
 ---@return boolean, integer[]
 function imgui.DragInt2(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2368,14 +2368,14 @@ function imgui.DragInt2(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, integer[]
 function imgui.DragInt2(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
 ---@return boolean, Vector2
 function imgui.DragInt2(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2383,7 +2383,7 @@ function imgui.DragInt2(label, v, v_speed) end
 ---@return boolean, Vector2
 function imgui.DragInt2(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2392,7 +2392,7 @@ function imgui.DragInt2(label, v, v_speed, v_min) end
 ---@return boolean, Vector2
 function imgui.DragInt2(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2402,7 +2402,7 @@ function imgui.DragInt2(label, v, v_speed, v_min, v_max) end
 ---@return boolean, Vector2
 function imgui.DragInt2(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_speed number
@@ -2413,20 +2413,20 @@ function imgui.DragInt2(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, Vector2
 function imgui.DragInt2(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@return boolean, integer[]
 function imgui.DragInt3(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
 ---@return boolean, integer[]
 function imgui.DragInt3(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2434,7 +2434,7 @@ function imgui.DragInt3(label, v, v_speed) end
 ---@return boolean, integer[]
 function imgui.DragInt3(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2443,7 +2443,7 @@ function imgui.DragInt3(label, v, v_speed, v_min) end
 ---@return boolean, integer[]
 function imgui.DragInt3(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2453,7 +2453,7 @@ function imgui.DragInt3(label, v, v_speed, v_min, v_max) end
 ---@return boolean, integer[]
 function imgui.DragInt3(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2464,14 +2464,14 @@ function imgui.DragInt3(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, integer[]
 function imgui.DragInt3(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
 ---@return boolean, Vector3
 function imgui.DragInt3(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2479,7 +2479,7 @@ function imgui.DragInt3(label, v, v_speed) end
 ---@return boolean, Vector3
 function imgui.DragInt3(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2488,7 +2488,7 @@ function imgui.DragInt3(label, v, v_speed, v_min) end
 ---@return boolean, Vector3
 function imgui.DragInt3(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2498,7 +2498,7 @@ function imgui.DragInt3(label, v, v_speed, v_min, v_max) end
 ---@return boolean, Vector3
 function imgui.DragInt3(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_speed number
@@ -2509,20 +2509,20 @@ function imgui.DragInt3(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, Vector3
 function imgui.DragInt3(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@return boolean, integer[]
 function imgui.DragInt4(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
 ---@return boolean, integer[]
 function imgui.DragInt4(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2530,7 +2530,7 @@ function imgui.DragInt4(label, v, v_speed) end
 ---@return boolean, integer[]
 function imgui.DragInt4(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2539,7 +2539,7 @@ function imgui.DragInt4(label, v, v_speed, v_min) end
 ---@return boolean, integer[]
 function imgui.DragInt4(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2549,7 +2549,7 @@ function imgui.DragInt4(label, v, v_speed, v_min, v_max) end
 ---@return boolean, integer[]
 function imgui.DragInt4(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_speed number
@@ -2560,14 +2560,14 @@ function imgui.DragInt4(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, integer[]
 function imgui.DragInt4(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
 ---@return boolean, Vector4
 function imgui.DragInt4(label, v, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2575,7 +2575,7 @@ function imgui.DragInt4(label, v, v_speed) end
 ---@return boolean, Vector4
 function imgui.DragInt4(label, v, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2584,7 +2584,7 @@ function imgui.DragInt4(label, v, v_speed, v_min) end
 ---@return boolean, Vector4
 function imgui.DragInt4(label, v, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2594,7 +2594,7 @@ function imgui.DragInt4(label, v, v_speed, v_min, v_max) end
 ---@return boolean, Vector4
 function imgui.DragInt4(label, v, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_speed number
@@ -2605,14 +2605,14 @@ function imgui.DragInt4(label, v, v_speed, v_min, v_max, format) end
 ---@return boolean, Vector4
 function imgui.DragInt4(label, v, v_speed, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min integer
 ---@param v_current_max integer
 ---@return boolean, integer, integer
 function imgui.DragIntRange2(label, v_current_min, v_current_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min integer
 ---@param v_current_max integer
@@ -2620,7 +2620,7 @@ function imgui.DragIntRange2(label, v_current_min, v_current_max) end
 ---@return boolean, integer, integer
 function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min integer
 ---@param v_current_max integer
@@ -2629,7 +2629,7 @@ function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed) end
 ---@return boolean, integer, integer
 function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min integer
 ---@param v_current_max integer
@@ -2639,7 +2639,7 @@ function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min
 ---@return boolean, integer, integer
 function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min integer
 ---@param v_current_max integer
@@ -2650,7 +2650,7 @@ function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min
 ---@return boolean, integer, integer
 function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min integer
 ---@param v_current_max integer
@@ -2662,7 +2662,7 @@ function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min
 ---@return boolean, integer, integer
 function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_current_min integer
 ---@param v_current_max integer
@@ -2675,14 +2675,14 @@ function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min
 ---@return boolean, integer, integer
 function imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
 ---@return boolean
 function imgui.DragScalar(label, data_type, p_data) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2690,7 +2690,7 @@ function imgui.DragScalar(label, data_type, p_data) end
 ---@return boolean
 function imgui.DragScalar(label, data_type, p_data, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2699,7 +2699,7 @@ function imgui.DragScalar(label, data_type, p_data, v_speed) end
 ---@return boolean
 function imgui.DragScalar(label, data_type, p_data, v_speed, p_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2709,7 +2709,7 @@ function imgui.DragScalar(label, data_type, p_data, v_speed, p_min) end
 ---@return boolean
 function imgui.DragScalar(label, data_type, p_data, v_speed, p_min, p_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2720,7 +2720,7 @@ function imgui.DragScalar(label, data_type, p_data, v_speed, p_min, p_max) end
 ---@return boolean
 function imgui.DragScalar(label, data_type, p_data, v_speed, p_min, p_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2732,7 +2732,7 @@ function imgui.DragScalar(label, data_type, p_data, v_speed, p_min, p_max, forma
 ---@return boolean
 function imgui.DragScalar(label, data_type, p_data, v_speed, p_min, p_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2740,7 +2740,7 @@ function imgui.DragScalar(label, data_type, p_data, v_speed, p_min, p_max, forma
 ---@return boolean
 function imgui.DragScalarN(label, data_type, p_data, components) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2749,7 +2749,7 @@ function imgui.DragScalarN(label, data_type, p_data, components) end
 ---@return boolean
 function imgui.DragScalarN(label, data_type, p_data, components, v_speed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2759,7 +2759,7 @@ function imgui.DragScalarN(label, data_type, p_data, components, v_speed) end
 ---@return boolean
 function imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2770,7 +2770,7 @@ function imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min)
 ---@return boolean
 function imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min, p_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2782,7 +2782,7 @@ function imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min,
 ---@return boolean
 function imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min, p_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -2795,426 +2795,426 @@ function imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min,
 ---@return boolean
 function imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min, p_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size Vector2
 function imgui.Dummy(size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.End() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndChild() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndCombo() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndDisabled() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndDragDropSource() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndDragDropTarget() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndFrame() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndGroup() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndListBox() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndMainMenuBar() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndMenu() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndMenuBar() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiMultiSelectIOPtr
 function imgui.EndMultiSelect() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndPopup() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndTabBar() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndTabItem() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndTable() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.EndTooltip() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param id integer
 ---@return ImGuiViewportPtr
 function imgui.FindViewportByID(id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param platform_handle lightuserdata
 ---@return ImGuiViewportPtr
 function imgui.FindViewportByPlatformHandle(platform_handle) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImDrawListPtr
 function imgui.GetBackgroundDrawList() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param viewport ImGuiViewportPtr
 ---@return ImDrawListPtr
 function imgui.GetBackgroundDrawList(viewport) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return string
 function imgui.GetClipboardText() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiCol|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|"Text"|"TextDisabled"|"WindowBg"|"ChildBg"|"PopupBg"|"Border"|"BorderShadow"|"FrameBg"|"FrameBgHovered"|"FrameBgActive"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"MenuBarBg"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabHovered"|"ScrollbarGrabActive"|"CheckMark"|"SliderGrab"|"SliderGrabActive"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"HeaderHovered"|"HeaderActive"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"ResizeGripHovered"|"ResizeGripActive"|"TabHovered"|"Tab"|"TabSelected"|"TabSelectedOverline"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"DockingPreview"|"DockingEmptyBg"|"PlotLines"|"PlotLinesHovered"|"PlotHistogram"|"PlotHistogramHovered"|"TableHeaderBg"|"TableBorderStrong"|"TableBorderLight"|"TableRowBg"|"TableRowBgAlt"|"TextLink"|"TextSelectedBg"|"DragDropTarget"|"NavHighlight"|"NavWindowingHighlight"|"NavWindowingDimBg"|"ModalWindowDimBg"|"COUNT"
 ---@return integer
 function imgui.GetColorU32(idx) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiCol|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|"Text"|"TextDisabled"|"WindowBg"|"ChildBg"|"PopupBg"|"Border"|"BorderShadow"|"FrameBg"|"FrameBgHovered"|"FrameBgActive"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"MenuBarBg"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabHovered"|"ScrollbarGrabActive"|"CheckMark"|"SliderGrab"|"SliderGrabActive"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"HeaderHovered"|"HeaderActive"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"ResizeGripHovered"|"ResizeGripActive"|"TabHovered"|"Tab"|"TabSelected"|"TabSelectedOverline"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"DockingPreview"|"DockingEmptyBg"|"PlotLines"|"PlotLinesHovered"|"PlotHistogram"|"PlotHistogramHovered"|"TableHeaderBg"|"TableBorderStrong"|"TableBorderLight"|"TableRowBg"|"TableRowBgAlt"|"TextLink"|"TextSelectedBg"|"DragDropTarget"|"NavHighlight"|"NavWindowingHighlight"|"NavWindowingDimBg"|"ModalWindowDimBg"|"COUNT"
 ---@param alpha_mul number
 ---@return integer
 function imgui.GetColorU32(idx, alpha_mul) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param col Vector4
 ---@return integer
 function imgui.GetColorU32(col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param col integer
 ---@return integer
 function imgui.GetColorU32(col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param col integer
 ---@param alpha_mul number
 ---@return integer
 function imgui.GetColorU32(col, alpha_mul) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.GetColumnIndex() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetColumnOffset() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_index integer
 ---@return number
 function imgui.GetColumnOffset(column_index) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.GetColumnsCount() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetColumnWidth() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_index integer
 ---@return number
 function imgui.GetColumnWidth(column_index) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetContentRegionAvail() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetContentRegionAvailWidth() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetContentRegionMax() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return lightuserdata
 function imgui.GetCurrentContext() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetCursorPos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetCursorPosX() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetCursorPosY() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetCursorScreenPos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetCursorStartPos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiPayloadPtr
 function imgui.GetDragDropPayload() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImDrawDataPtr
 function imgui.GetDrawData() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return lightuserdata
 function imgui.GetDrawListSharedData() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImFontPtr
 function imgui.GetFont() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetFontSize() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetFontTexUvWhitePixel() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImDrawListPtr
 function imgui.GetForegroundDrawList() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param viewport ImGuiViewportPtr
 ---@return ImDrawListPtr
 function imgui.GetForegroundDrawList(viewport) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.GetFrameCount() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetFrameHeight() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetFrameHeightWithSpacing() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@return integer
 function imgui.GetID(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ptr_id lightuserdata
 ---@return integer
 function imgui.GetID(ptr_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param int_id integer
 ---@return integer
 function imgui.GetID(int_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiIOPtr
 function imgui.GetIO() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.GetItemID() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetItemRectMax() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetItemRectMin() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetItemRectSize() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@return integer
 function imgui.GetKeyIndex(key) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@return string
 function imgui.GetKeyName(key) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@param repeat_delay number
 ---@param rate number
 ---@return integer
 function imgui.GetKeyPressedAmount(key, repeat_delay, rate) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiViewportPtr
 function imgui.GetMainViewport() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return integer
 function imgui.GetMouseClickedCount(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiMouseCursor|0|1|2|3|4|5|6|7|8|9|-1|"Arrow"|"TextInput"|"ResizeAll"|"ResizeNS"|"ResizeEW"|"ResizeNESW"|"ResizeNWSE"|"Hand"|"NotAllowed"|"COUNT"|"None"
 function imgui.GetMouseCursor() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetMouseDragDelta() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return Vector2
 function imgui.GetMouseDragDelta(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@param lock_threshold number
 ---@return Vector2
 function imgui.GetMouseDragDelta(button, lock_threshold) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetMousePos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetMousePosOnOpeningCurrentPopup() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiPlatformIOPtr
 function imgui.GetPlatformIO() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetScrollMaxX() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetScrollMaxY() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetScrollX() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetScrollY() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiStoragePtr
 function imgui.GetStateStorage() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiStylePtr
 function imgui.GetStyle() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiCol|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|"Text"|"TextDisabled"|"WindowBg"|"ChildBg"|"PopupBg"|"Border"|"BorderShadow"|"FrameBg"|"FrameBgHovered"|"FrameBgActive"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"MenuBarBg"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabHovered"|"ScrollbarGrabActive"|"CheckMark"|"SliderGrab"|"SliderGrabActive"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"HeaderHovered"|"HeaderActive"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"ResizeGripHovered"|"ResizeGripActive"|"TabHovered"|"Tab"|"TabSelected"|"TabSelectedOverline"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"DockingPreview"|"DockingEmptyBg"|"PlotLines"|"PlotLinesHovered"|"PlotHistogram"|"PlotHistogramHovered"|"TableHeaderBg"|"TableBorderStrong"|"TableBorderLight"|"TableRowBg"|"TableRowBgAlt"|"TextLink"|"TextSelectedBg"|"DragDropTarget"|"NavHighlight"|"NavWindowingHighlight"|"NavWindowingDimBg"|"ModalWindowDimBg"|"COUNT"
 ---@return string
 function imgui.GetStyleColorName(idx) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetTextLineHeight() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetTextLineHeightWithSpacing() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetTime() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetTreeNodeToLabelSpacing() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return string
 function imgui.GetVersion() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetWindowContentRegionMax() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetWindowContentRegionMin() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.GetWindowDockID() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetWindowDpiScale() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImDrawListPtr
 function imgui.GetWindowDrawList() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetWindowHeight() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetWindowPos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetWindowRegionAvailWidth() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetWindowSize() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiViewportPtr
 function imgui.GetWindowViewport() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return number
 function imgui.GetWindowWidth() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
 function imgui.Image(user_texture_id, image_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
 ---@param uv0 Vector2
 function imgui.Image(user_texture_id, image_size, uv0) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
 ---@param uv0 Vector2
 ---@param uv1 Vector2
 function imgui.Image(user_texture_id, image_size, uv0, uv1) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
 ---@param uv0 Vector2
@@ -3222,7 +3222,7 @@ function imgui.Image(user_texture_id, image_size, uv0, uv1) end
 ---@param tint_col Vector4
 function imgui.Image(user_texture_id, image_size, uv0, uv1, tint_col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
 ---@param uv0 Vector2
@@ -3231,14 +3231,14 @@ function imgui.Image(user_texture_id, image_size, uv0, uv1, tint_col) end
 ---@param border_col Vector4
 function imgui.Image(user_texture_id, image_size, uv0, uv1, tint_col, border_col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
 ---@return boolean
 function imgui.ImageButton(str_id, user_texture_id, image_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
@@ -3246,7 +3246,7 @@ function imgui.ImageButton(str_id, user_texture_id, image_size) end
 ---@return boolean
 function imgui.ImageButton(str_id, user_texture_id, image_size, uv0) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
@@ -3255,7 +3255,7 @@ function imgui.ImageButton(str_id, user_texture_id, image_size, uv0) end
 ---@return boolean
 function imgui.ImageButton(str_id, user_texture_id, image_size, uv0, uv1) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
@@ -3265,7 +3265,7 @@ function imgui.ImageButton(str_id, user_texture_id, image_size, uv0, uv1) end
 ---@return boolean
 function imgui.ImageButton(str_id, user_texture_id, image_size, uv0, uv1, bg_col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param user_texture_id lightuserdata
 ---@param image_size Vector2
@@ -3276,27 +3276,27 @@ function imgui.ImageButton(str_id, user_texture_id, image_size, uv0, uv1, bg_col
 ---@return boolean
 function imgui.ImageButton(str_id, user_texture_id, image_size, uv0, uv1, bg_col, tint_col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.Indent() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param indent_w number
 function imgui.Indent(indent_w) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@return boolean, number
 function imgui.InputDouble(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
 ---@return boolean, number
 function imgui.InputDouble(label, v, step) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
@@ -3304,7 +3304,7 @@ function imgui.InputDouble(label, v, step) end
 ---@return boolean, number
 function imgui.InputDouble(label, v, step, step_fast) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
@@ -3313,7 +3313,7 @@ function imgui.InputDouble(label, v, step, step_fast) end
 ---@return boolean, number
 function imgui.InputDouble(label, v, step, step_fast, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
@@ -3323,20 +3323,20 @@ function imgui.InputDouble(label, v, step, step_fast, format) end
 ---@return boolean, number
 function imgui.InputDouble(label, v, step, step_fast, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@return boolean, number
 function imgui.InputFloat(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
 ---@return boolean, number
 function imgui.InputFloat(label, v, step) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
@@ -3344,7 +3344,7 @@ function imgui.InputFloat(label, v, step) end
 ---@return boolean, number
 function imgui.InputFloat(label, v, step, step_fast) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
@@ -3353,7 +3353,7 @@ function imgui.InputFloat(label, v, step, step_fast) end
 ---@return boolean, number
 function imgui.InputFloat(label, v, step, step_fast, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param step number
@@ -3363,20 +3363,20 @@ function imgui.InputFloat(label, v, step, step_fast, format) end
 ---@return boolean, number
 function imgui.InputFloat(label, v, step, step_fast, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@return boolean, Vector2
 function imgui.InputFloat2(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param format string
 ---@return boolean, Vector2
 function imgui.InputFloat2(label, v, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param format string
@@ -3384,20 +3384,20 @@ function imgui.InputFloat2(label, v, format) end
 ---@return boolean, Vector2
 function imgui.InputFloat2(label, v, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@return boolean, Vector3
 function imgui.InputFloat3(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param format string
 ---@return boolean, Vector3
 function imgui.InputFloat3(label, v, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param format string
@@ -3405,20 +3405,20 @@ function imgui.InputFloat3(label, v, format) end
 ---@return boolean, Vector3
 function imgui.InputFloat3(label, v, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@return boolean, Vector4
 function imgui.InputFloat4(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param format string
 ---@return boolean, Vector4
 function imgui.InputFloat4(label, v, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param format string
@@ -3426,20 +3426,20 @@ function imgui.InputFloat4(label, v, format) end
 ---@return boolean, Vector4
 function imgui.InputFloat4(label, v, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@return boolean, integer
 function imgui.InputInt(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param step integer
 ---@return boolean, integer
 function imgui.InputInt(label, v, step) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param step integer
@@ -3447,7 +3447,7 @@ function imgui.InputInt(label, v, step) end
 ---@return boolean, integer
 function imgui.InputInt(label, v, step, step_fast) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param step integer
@@ -3456,92 +3456,92 @@ function imgui.InputInt(label, v, step, step_fast) end
 ---@return boolean, integer
 function imgui.InputInt(label, v, step, step_fast, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@return boolean, integer[]
 function imgui.InputInt2(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
 ---@return boolean, integer[]
 function imgui.InputInt2(label, v, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@return boolean, Vector2
 function imgui.InputInt2(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
 ---@return boolean, Vector2
 function imgui.InputInt2(label, v, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@return boolean, integer[]
 function imgui.InputInt3(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
 ---@return boolean, integer[]
 function imgui.InputInt3(label, v, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@return boolean, Vector3
 function imgui.InputInt3(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
 ---@return boolean, Vector3
 function imgui.InputInt3(label, v, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@return boolean, integer[]
 function imgui.InputInt4(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
 ---@return boolean, integer[]
 function imgui.InputInt4(label, v, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@return boolean, Vector4
 function imgui.InputInt4(label, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
 ---@return boolean, Vector4
 function imgui.InputInt4(label, v, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
 ---@return boolean
 function imgui.InputScalar(label, data_type, p_data) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3549,7 +3549,7 @@ function imgui.InputScalar(label, data_type, p_data) end
 ---@return boolean
 function imgui.InputScalar(label, data_type, p_data, p_step) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3558,7 +3558,7 @@ function imgui.InputScalar(label, data_type, p_data, p_step) end
 ---@return boolean
 function imgui.InputScalar(label, data_type, p_data, p_step, p_step_fast) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3568,7 +3568,7 @@ function imgui.InputScalar(label, data_type, p_data, p_step, p_step_fast) end
 ---@return boolean
 function imgui.InputScalar(label, data_type, p_data, p_step, p_step_fast, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3579,7 +3579,7 @@ function imgui.InputScalar(label, data_type, p_data, p_step, p_step_fast, format
 ---@return boolean
 function imgui.InputScalar(label, data_type, p_data, p_step, p_step_fast, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3587,7 +3587,7 @@ function imgui.InputScalar(label, data_type, p_data, p_step, p_step_fast, format
 ---@return boolean
 function imgui.InputScalarN(label, data_type, p_data, components) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3596,7 +3596,7 @@ function imgui.InputScalarN(label, data_type, p_data, components) end
 ---@return boolean
 function imgui.InputScalarN(label, data_type, p_data, components, p_step) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3606,7 +3606,7 @@ function imgui.InputScalarN(label, data_type, p_data, components, p_step) end
 ---@return boolean
 function imgui.InputScalarN(label, data_type, p_data, components, p_step, p_step_fast) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3617,7 +3617,7 @@ function imgui.InputScalarN(label, data_type, p_data, components, p_step, p_step
 ---@return boolean
 function imgui.InputScalarN(label, data_type, p_data, components, p_step, p_step_fast, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -3629,14 +3629,14 @@ function imgui.InputScalarN(label, data_type, p_data, components, p_step, p_step
 ---@return boolean
 function imgui.InputScalarN(label, data_type, p_data, components, p_step, p_step_fast, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param buf integer[]
 ---@param buf_size integer
 ---@return boolean
 function imgui.InputText(label, buf, buf_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param buf integer[]
 ---@param buf_size integer
@@ -3644,14 +3644,14 @@ function imgui.InputText(label, buf, buf_size) end
 ---@return boolean
 function imgui.InputText(label, buf, buf_size, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param input string
 ---@param maxLength integer
 ---@return boolean, string
 function imgui.InputText(label, input, maxLength) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param input string
 ---@param maxLength integer
@@ -3659,14 +3659,14 @@ function imgui.InputText(label, input, maxLength) end
 ---@return boolean, string
 function imgui.InputText(label, input, maxLength, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param buf lightuserdata
 ---@param buf_size integer
 ---@return boolean
 function imgui.InputText(label, buf, buf_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param buf lightuserdata
 ---@param buf_size integer
@@ -3674,7 +3674,7 @@ function imgui.InputText(label, buf, buf_size) end
 ---@return boolean
 function imgui.InputText(label, buf, buf_size, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param input string
 ---@param maxLength integer
@@ -3682,7 +3682,7 @@ function imgui.InputText(label, buf, buf_size, flags) end
 ---@return boolean, string
 function imgui.InputTextMultiline(label, input, maxLength, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param input string
 ---@param maxLength integer
@@ -3691,7 +3691,7 @@ function imgui.InputTextMultiline(label, input, maxLength, size) end
 ---@return boolean, string
 function imgui.InputTextMultiline(label, input, maxLength, size, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param hint string
 ---@param input string
@@ -3699,7 +3699,7 @@ function imgui.InputTextMultiline(label, input, maxLength, size, flags) end
 ---@return boolean, string
 function imgui.InputTextWithHint(label, hint, input, maxLength) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param hint string
 ---@param input string
@@ -3708,236 +3708,236 @@ function imgui.InputTextWithHint(label, hint, input, maxLength) end
 ---@return boolean, string
 function imgui.InputTextWithHint(label, hint, input, maxLength, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param size Vector2
 ---@return boolean
 function imgui.InvisibleButton(str_id, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param size Vector2
 ---@param flags ImGuiButtonFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonMiddle"|"MouseButtonMask"
 ---@return boolean
 function imgui.InvisibleButton(str_id, size, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsAnyItemActive() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsAnyItemFocused() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsAnyItemHovered() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsAnyMouseDown() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemActivated() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemActive() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemClicked() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param mouse_button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return boolean
 function imgui.IsItemClicked(mouse_button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemDeactivated() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemDeactivatedAfterEdit() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemEdited() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemFocused() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemHovered() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiHoveredFlags|integer|"None"|"ChildWindows"|"RootWindow"|"RootAndChildWindows"|"AnyWindow"|"NoPopupHierarchy"|"DockHierarchy"|"AllowWhenBlockedByPopup"|"AllowWhenBlockedByActiveItem"|"AllowWhenOverlappedByItem"|"AllowWhenOverlappedByWindow"|"AllowWhenOverlapped"|"RectOnly"|"AllowWhenDisabled"|"NoNavOverride"|"ForTooltip"|"Stationary"|"DelayNone"|"DelayShort"|"DelayNormal"|"NoSharedDelay"
 ---@return boolean
 function imgui.IsItemHovered(flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemToggledOpen() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemToggledSelection() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsItemVisible() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key_chord ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@return boolean
 function imgui.IsKeyChordPressed(key_chord) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@return boolean
 function imgui.IsKeyDown(key) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@return boolean
 function imgui.IsKeyPressed(key) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@param repeating boolean
 ---@return boolean
 function imgui.IsKeyPressed(key, repeating) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@return boolean
 function imgui.IsKeyReleased(key) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return boolean
 function imgui.IsMouseClicked(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@param repeating boolean
 ---@return boolean
 function imgui.IsMouseClicked(button, repeating) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return boolean
 function imgui.IsMouseDoubleClicked(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return boolean
 function imgui.IsMouseDown(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsMouseDragging() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return boolean
 function imgui.IsMouseDragging(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@param lock_threshold number
 ---@return boolean
 function imgui.IsMouseDragging(button, lock_threshold) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param r_min Vector2
 ---@param r_max Vector2
 ---@return boolean
 function imgui.IsMouseHoveringRect(r_min, r_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param r_min Vector2
 ---@param r_max Vector2
 ---@param clip boolean
 ---@return boolean
 function imgui.IsMouseHoveringRect(r_min, r_max, clip) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsMousePosValid() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param mouse_pos Vector2
 ---@return boolean, Vector2
 function imgui.IsMousePosValid(mouse_pos) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 ---@return boolean
 function imgui.IsMouseReleased(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@return boolean
 function imgui.IsPopupOpen(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 ---@return boolean
 function imgui.IsPopupOpen(str_id, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size Vector2
 ---@return boolean
 function imgui.IsRectVisible(size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param rect_min Vector2
 ---@param rect_max Vector2
 ---@return boolean
 function imgui.IsRectVisible(rect_min, rect_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsWindowAppearing() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsWindowCollapsed() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsWindowDocked() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsWindowFocused() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiFocusedFlags|integer|"None"|"ChildWindows"|"RootWindow"|"RootAndChildWindows"|"AnyWindow"|"NoPopupHierarchy"|"DockHierarchy"
 ---@return boolean
 function imgui.IsWindowFocused(flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.IsWindowHovered() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiHoveredFlags|integer|"None"|"ChildWindows"|"RootWindow"|"RootAndChildWindows"|"AnyWindow"|"NoPopupHierarchy"|"DockHierarchy"|"AllowWhenBlockedByPopup"|"AllowWhenBlockedByActiveItem"|"AllowWhenOverlappedByItem"|"AllowWhenOverlappedByWindow"|"AllowWhenOverlapped"|"RectOnly"|"AllowWhenDisabled"|"NoNavOverride"|"ForTooltip"|"Stationary"|"DelayNone"|"DelayShort"|"DelayNormal"|"NoSharedDelay"
 ---@return boolean
 function imgui.IsWindowHovered(flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param fmt string
 function imgui.LabelText(label, fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param current_item integer
 ---@param items string[]
@@ -3945,7 +3945,7 @@ function imgui.LabelText(label, fmt) end
 ---@return boolean, integer
 function imgui.ListBox(label, current_item, items, items_count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param current_item integer
 ---@param items string[]
@@ -3954,83 +3954,83 @@ function imgui.ListBox(label, current_item, items, items_count) end
 ---@return boolean, integer
 function imgui.ListBox(label, current_item, items, items_count, height_in_items) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ini_filename string
 function imgui.LoadIniSettingsFromDisk(ini_filename) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ini_data string
 function imgui.LoadIniSettingsFromMemory(ini_data) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ini_data string
 ---@param ini_size integer
 function imgui.LoadIniSettingsFromMemory(ini_data, ini_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.LogButtons() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.LogFinish() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.LogText(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.LogToClipboard() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param auto_open_depth integer
 function imgui.LogToClipboard(auto_open_depth) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.LogToFile() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param auto_open_depth integer
 function imgui.LogToFile(auto_open_depth) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param auto_open_depth integer
 ---@param filename string
 function imgui.LogToFile(auto_open_depth, filename) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.LogToTTY() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param auto_open_depth integer
 function imgui.LogToTTY(auto_open_depth) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size integer
 ---@return lightuserdata
 function imgui.MemAlloc(size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ptr lightuserdata
 function imgui.MemFree(ptr) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.MenuItem(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param shortcut string
 ---@return boolean
 function imgui.MenuItem(label, shortcut) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param shortcut string
 ---@param selected boolean
 ---@return boolean
 function imgui.MenuItem(label, shortcut, selected) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param shortcut string
 ---@param selected boolean
@@ -4038,14 +4038,14 @@ function imgui.MenuItem(label, shortcut, selected) end
 ---@return boolean
 function imgui.MenuItem(label, shortcut, selected, enabled) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param shortcut string
 ---@param p_selected boolean
 ---@return boolean, boolean
 function imgui.MenuItem(label, shortcut, p_selected) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param shortcut string
 ---@param p_selected boolean
@@ -4053,70 +4053,70 @@ function imgui.MenuItem(label, shortcut, p_selected) end
 ---@return boolean, boolean
 function imgui.MenuItem(label, shortcut, p_selected, enabled) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param enabled boolean
 ---@return boolean
 function imgui.MenuItem(label, enabled) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.NewFrame() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.NewLine() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.NextColumn() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 function imgui.OpenPopup(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param popup_flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 function imgui.OpenPopup(str_id, popup_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param id integer
 function imgui.OpenPopup(id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param id integer
 ---@param popup_flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 function imgui.OpenPopup(id, popup_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.OpenPopupOnItemClick() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 function imgui.OpenPopupOnItemClick(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param popup_flags ImGuiPopupFlags|integer|"None"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonDefault"|"MouseButtonMiddle"|"MouseButtonMask"|"NoReopen"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
 function imgui.OpenPopupOnItemClick(str_id, popup_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 function imgui.PlotHistogram(label, values) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
 function imgui.PlotHistogram(label, values, values_count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
 ---@param values_offset integer
 function imgui.PlotHistogram(label, values, values_count, values_offset) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4124,7 +4124,7 @@ function imgui.PlotHistogram(label, values, values_count, values_offset) end
 ---@param overlay_text string
 function imgui.PlotHistogram(label, values, values_count, values_offset, overlay_text) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4133,7 +4133,7 @@ function imgui.PlotHistogram(label, values, values_count, values_offset, overlay
 ---@param scale_min number
 function imgui.PlotHistogram(label, values, values_count, values_offset, overlay_text, scale_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4143,7 +4143,7 @@ function imgui.PlotHistogram(label, values, values_count, values_offset, overlay
 ---@param scale_max number
 function imgui.PlotHistogram(label, values, values_count, values_offset, overlay_text, scale_min, scale_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4154,7 +4154,7 @@ function imgui.PlotHistogram(label, values, values_count, values_offset, overlay
 ---@param graph_size Vector2
 function imgui.PlotHistogram(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4168,25 +4168,25 @@ function imgui.PlotHistogram(label, values, values_count, values_offset, overlay
                              stride)
 end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 function imgui.PlotLines(label, values) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
 function imgui.PlotLines(label, values, values_count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
 ---@param values_offset integer
 function imgui.PlotLines(label, values, values_count, values_offset) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4194,7 +4194,7 @@ function imgui.PlotLines(label, values, values_count, values_offset) end
 ---@param overlay_text string
 function imgui.PlotLines(label, values, values_count, values_offset, overlay_text) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4203,7 +4203,7 @@ function imgui.PlotLines(label, values, values_count, values_offset, overlay_tex
 ---@param scale_min number
 function imgui.PlotLines(label, values, values_count, values_offset, overlay_text, scale_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4213,7 +4213,7 @@ function imgui.PlotLines(label, values, values_count, values_offset, overlay_tex
 ---@param scale_max number
 function imgui.PlotLines(label, values, values_count, values_offset, overlay_text, scale_min, scale_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4224,7 +4224,7 @@ function imgui.PlotLines(label, values, values_count, values_offset, overlay_tex
 ---@param graph_size Vector2
 function imgui.PlotLines(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param values number[]
 ---@param values_count integer
@@ -4238,200 +4238,200 @@ function imgui.PlotLines(label, values, values_count, values_offset, overlay_tex
                          stride)
 end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopClipRect() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopFont() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopID() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopItemFlag() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopItemWidth() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopStyleColor() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param count integer
 function imgui.PopStyleColor(count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopStyleVar() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param count integer
 function imgui.PopStyleVar(count) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PopTextWrapPos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fraction number
 function imgui.ProgressBar(fraction) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fraction number
 ---@param size_arg Vector2
 function imgui.ProgressBar(fraction, size_arg) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fraction number
 ---@param size_arg Vector2
 ---@param overlay string
 function imgui.ProgressBar(fraction, size_arg, overlay) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PushAllowKeyboardFocus() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PushButtonRepeat() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param clip_rect_min Vector2
 ---@param clip_rect_max Vector2
 ---@param intersect_with_current_clip_rect boolean
 function imgui.PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param font ImFontPtr
 function imgui.PushFont(font) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 function imgui.PushID(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ptr_id lightuserdata
 function imgui.PushID(ptr_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param int_id integer
 function imgui.PushID(int_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param option ImGuiItemFlags|integer|"None"|"NoTabStop"|"NoNav"|"NoNavDefaultFocus"|"ButtonRepeat"|"AutoClosePopups"
 ---@param enabled boolean
 function imgui.PushItemFlag(option, enabled) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param item_width number
 function imgui.PushItemWidth(item_width) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiCol|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|"Text"|"TextDisabled"|"WindowBg"|"ChildBg"|"PopupBg"|"Border"|"BorderShadow"|"FrameBg"|"FrameBgHovered"|"FrameBgActive"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"MenuBarBg"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabHovered"|"ScrollbarGrabActive"|"CheckMark"|"SliderGrab"|"SliderGrabActive"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"HeaderHovered"|"HeaderActive"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"ResizeGripHovered"|"ResizeGripActive"|"TabHovered"|"Tab"|"TabSelected"|"TabSelectedOverline"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"DockingPreview"|"DockingEmptyBg"|"PlotLines"|"PlotLinesHovered"|"PlotHistogram"|"PlotHistogramHovered"|"TableHeaderBg"|"TableBorderStrong"|"TableBorderLight"|"TableRowBg"|"TableRowBgAlt"|"TextLink"|"TextSelectedBg"|"DragDropTarget"|"NavHighlight"|"NavWindowingHighlight"|"NavWindowingDimBg"|"ModalWindowDimBg"|"COUNT"
 ---@param col integer
 function imgui.PushStyleColor(idx, col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiCol|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|46|47|48|49|50|51|52|53|54|55|56|57|58|"Text"|"TextDisabled"|"WindowBg"|"ChildBg"|"PopupBg"|"Border"|"BorderShadow"|"FrameBg"|"FrameBgHovered"|"FrameBgActive"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"MenuBarBg"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabHovered"|"ScrollbarGrabActive"|"CheckMark"|"SliderGrab"|"SliderGrabActive"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"HeaderHovered"|"HeaderActive"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"ResizeGripHovered"|"ResizeGripActive"|"TabHovered"|"Tab"|"TabSelected"|"TabSelectedOverline"|"TabDimmed"|"TabDimmedSelected"|"TabDimmedSelectedOverline"|"DockingPreview"|"DockingEmptyBg"|"PlotLines"|"PlotLinesHovered"|"PlotHistogram"|"PlotHistogramHovered"|"TableHeaderBg"|"TableBorderStrong"|"TableBorderLight"|"TableRowBg"|"TableRowBgAlt"|"TextLink"|"TextSelectedBg"|"DragDropTarget"|"NavHighlight"|"NavWindowingHighlight"|"NavWindowingDimBg"|"ModalWindowDimBg"|"COUNT"
 ---@param col Vector4
 function imgui.PushStyleColor(idx, col) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiStyleVar|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|"Alpha"|"DisabledAlpha"|"WindowPadding"|"WindowRounding"|"WindowBorderSize"|"WindowMinSize"|"WindowTitleAlign"|"ChildRounding"|"ChildBorderSize"|"PopupRounding"|"PopupBorderSize"|"FramePadding"|"FrameRounding"|"FrameBorderSize"|"ItemSpacing"|"ItemInnerSpacing"|"IndentSpacing"|"CellPadding"|"ScrollbarSize"|"ScrollbarRounding"|"GrabMinSize"|"GrabRounding"|"TabRounding"|"TabBorderSize"|"TabBarBorderSize"|"TabBarOverlineSize"|"TableAngledHeadersAngle"|"TableAngledHeadersTextAlign"|"ButtonTextAlign"|"SelectableTextAlign"|"SeparatorTextBorderSize"|"SeparatorTextAlign"|"SeparatorTextPadding"|"DockingSeparatorSize"|"COUNT"
 ---@param val number
 function imgui.PushStyleVar(idx, val) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param idx ImGuiStyleVar|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32|33|34|"Alpha"|"DisabledAlpha"|"WindowPadding"|"WindowRounding"|"WindowBorderSize"|"WindowMinSize"|"WindowTitleAlign"|"ChildRounding"|"ChildBorderSize"|"PopupRounding"|"PopupBorderSize"|"FramePadding"|"FrameRounding"|"FrameBorderSize"|"ItemSpacing"|"ItemInnerSpacing"|"IndentSpacing"|"CellPadding"|"ScrollbarSize"|"ScrollbarRounding"|"GrabMinSize"|"GrabRounding"|"TabRounding"|"TabBorderSize"|"TabBarBorderSize"|"TabBarOverlineSize"|"TableAngledHeadersAngle"|"TableAngledHeadersTextAlign"|"ButtonTextAlign"|"SelectableTextAlign"|"SeparatorTextBorderSize"|"SeparatorTextAlign"|"SeparatorTextPadding"|"DockingSeparatorSize"|"COUNT"
 ---@param val Vector2
 function imgui.PushStyleVar(idx, val) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PushTabStop() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.PushTextWrapPos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param wrap_local_pos_x number
 function imgui.PushTextWrapPos(wrap_local_pos_x) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param active boolean
 ---@return boolean
 function imgui.RadioButton(label, active) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_button integer
 ---@return boolean, integer
 function imgui.RadioButton(label, v, v_button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.Render() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.RenderPlatformWindowsDefault() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param platform_render_arg lightuserdata
 function imgui.RenderPlatformWindowsDefault(platform_render_arg) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param platform_render_arg lightuserdata
 ---@param renderer_render_arg lightuserdata
 function imgui.RenderPlatformWindowsDefault(platform_render_arg, renderer_render_arg) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ResetMouseDragDelta() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param button ImGuiMouseButton|0|1|2|5|"Left"|"Right"|"Middle"|"COUNT"
 function imgui.ResetMouseDragDelta(button) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SameLine() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param offset_from_start_x number
 function imgui.SameLine(offset_from_start_x) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param offset_from_start_x number
 ---@param spacing number
 function imgui.SameLine(offset_from_start_x, spacing) end
 
 ---@deprecated
---- READ-ONLY // Use the `write()` global for persistent storage instead.
+--- ##### (READ-ONLY) // Use the `write()` global for persistent storage instead.
 ---@param ini_filename string
 function imgui.SaveIniSettingsToDisk(ini_filename) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return string
 function imgui.SaveIniSettingsToMemory() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param out_ini_size integer
 ---@return string, integer
 function imgui.SaveIniSettingsToMemory(out_ini_size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.Selectable(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param selected boolean
 ---@return boolean
 function imgui.Selectable(label, selected) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param selected boolean
 ---@param flags ImGuiSelectableFlags|integer|"None"|"NoAutoClosePopups"|"SpanAllColumns"|"AllowDoubleClick"|"Disabled"|"AllowOverlap"|"Highlight"
 ---@return boolean
 function imgui.Selectable(label, selected, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param selected boolean
 ---@param flags ImGuiSelectableFlags|integer|"None"|"NoAutoClosePopups"|"SpanAllColumns"|"AllowDoubleClick"|"Disabled"|"AllowOverlap"|"Highlight"
@@ -4439,20 +4439,20 @@ function imgui.Selectable(label, selected, flags) end
 ---@return boolean
 function imgui.Selectable(label, selected, flags, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param p_selected boolean
 ---@return boolean, boolean
 function imgui.Selectable(label, p_selected) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param p_selected boolean
 ---@param flags ImGuiSelectableFlags|integer|"None"|"NoAutoClosePopups"|"SpanAllColumns"|"AllowDoubleClick"|"Disabled"|"AllowOverlap"|"Highlight"
 ---@return boolean, boolean
 function imgui.Selectable(label, p_selected, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param p_selected boolean
 ---@param flags ImGuiSelectableFlags|integer|"None"|"NoAutoClosePopups"|"SpanAllColumns"|"AllowDoubleClick"|"Disabled"|"AllowOverlap"|"Highlight"
@@ -4460,70 +4460,70 @@ function imgui.Selectable(label, p_selected, flags) end
 ---@return boolean, boolean
 function imgui.Selectable(label, p_selected, flags, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.Separator() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 function imgui.SeparatorText(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param alloc_func lightuserdata
 ---@param free_func lightuserdata
 function imgui.SetAllocatorFunctions(alloc_func, free_func) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param alloc_func lightuserdata
 ---@param free_func lightuserdata
 ---@param user_data lightuserdata
 function imgui.SetAllocatorFunctions(alloc_func, free_func, user_data) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 function imgui.SetClipboardText(text) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param flags ImGuiColorEditFlags|integer|"None"|"NoAlpha"|"NoPicker"|"NoOptions"|"NoSmallPreview"|"NoInputs"|"NoTooltip"|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"DisplayMask"|"Uint8"|"Float"|"DataTypeMask"|"PickerHueBar"|"PickerHueWheel"|"PickerMask"|"InputRGB"|"DefaultOptions"|"InputHSV"|"InputMask"
 function imgui.SetColorEditOptions(flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_index integer
 ---@param offset_x number
 function imgui.SetColumnOffset(column_index, offset_x) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_index integer
 ---@param width number
 function imgui.SetColumnWidth(column_index, width) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ctx lightuserdata
 function imgui.SetCurrentContext(ctx) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param local_pos Vector2
 function imgui.SetCursorPos(local_pos) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param local_x number
 function imgui.SetCursorPosX(local_x) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param local_y number
 function imgui.SetCursorPosY(local_y) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param pos Vector2
 function imgui.SetCursorScreenPos(pos) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param type string
 ---@param data lightuserdata
 ---@param sz integer
 ---@return boolean
 function imgui.SetDragDropPayload(type, data, sz) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param type string
 ---@param data lightuserdata
 ---@param sz integer
@@ -4531,341 +4531,341 @@ function imgui.SetDragDropPayload(type, data, sz) end
 ---@return boolean
 function imgui.SetDragDropPayload(type, data, sz, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SetItemDefaultFocus() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 function imgui.SetItemKeyOwner(key) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.SetItemTooltip(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SetKeyboardFocusHere() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param offset integer
 function imgui.SetKeyboardFocusHere(offset) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param cursor_type ImGuiMouseCursor|0|1|2|3|4|5|6|7|8|9|-1|"Arrow"|"TextInput"|"ResizeAll"|"ResizeNS"|"ResizeEW"|"ResizeNESW"|"ResizeNWSE"|"Hand"|"NotAllowed"|"COUNT"|"None"
 function imgui.SetMouseCursor(cursor_type) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param want_capture_keyboard boolean
 function imgui.SetNextFrameWantCaptureKeyboard(want_capture_keyboard) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param want_capture_mouse boolean
 function imgui.SetNextFrameWantCaptureMouse(want_capture_mouse) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SetNextItemAllowOverlap() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param is_open boolean
 function imgui.SetNextItemOpen(is_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param is_open boolean
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetNextItemOpen(is_open, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param selection_user_data integer
 function imgui.SetNextItemSelectionUserData(selection_user_data) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key_chord ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 function imgui.SetNextItemShortcut(key_chord) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key_chord ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@param flags ImGuiInputFlags|integer|"None"|"Repeat"|"RouteActive"|"RouteFocused"|"RouteGlobal"|"RouteAlways"|"RouteOverFocused"|"RouteOverActive"|"RouteUnlessBgFocused"|"RouteFromRootWindow"|"Tooltip"
 function imgui.SetNextItemShortcut(key_chord, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param storage_id integer
 function imgui.SetNextItemStorageID(storage_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param item_width number
 function imgui.SetNextItemWidth(item_width) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param alpha number
 function imgui.SetNextWindowBgAlpha(alpha) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param window_class ImGuiWindowClassPtr
 function imgui.SetNextWindowClass(window_class) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param collapsed boolean
 function imgui.SetNextWindowCollapsed(collapsed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param collapsed boolean
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetNextWindowCollapsed(collapsed, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size Vector2
 function imgui.SetNextWindowContentSize(size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dock_id integer
 function imgui.SetNextWindowDockID(dock_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dock_id integer
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetNextWindowDockID(dock_id, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SetNextWindowFocus() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param pos Vector2
 function imgui.SetNextWindowPos(pos) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param pos Vector2
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetNextWindowPos(pos, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param pos Vector2
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 ---@param pivot Vector2
 function imgui.SetNextWindowPos(pos, cond, pivot) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param scroll Vector2
 function imgui.SetNextWindowScroll(scroll) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size Vector2
 function imgui.SetNextWindowSize(size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size Vector2
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetNextWindowSize(size, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size_min Vector2
 ---@param size_max Vector2
 function imgui.SetNextWindowSizeConstraints(size_min, size_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param viewport_id integer
 function imgui.SetNextWindowViewport(viewport_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param local_x number
 function imgui.SetScrollFromPosX(local_x) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param local_x number
 ---@param center_x_ratio number
 function imgui.SetScrollFromPosX(local_x, center_x_ratio) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param local_y number
 function imgui.SetScrollFromPosY(local_y) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param local_y number
 ---@param center_y_ratio number
 function imgui.SetScrollFromPosY(local_y, center_y_ratio) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SetScrollHereX() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param center_x_ratio number
 function imgui.SetScrollHereX(center_x_ratio) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SetScrollHereY() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param center_y_ratio number
 function imgui.SetScrollHereY(center_y_ratio) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param scroll_x number
 function imgui.SetScrollX(scroll_x) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param scroll_y number
 function imgui.SetScrollY(scroll_y) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param storage ImGuiStoragePtr
 function imgui.SetStateStorage(storage) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param tab_or_docked_window_label string
 function imgui.SetTabItemClosed(tab_or_docked_window_label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.SetTooltip(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param collapsed boolean
 function imgui.SetWindowCollapsed(collapsed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param collapsed boolean
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetWindowCollapsed(collapsed, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param collapsed boolean
 function imgui.SetWindowCollapsed(name, collapsed) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param collapsed boolean
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetWindowCollapsed(name, collapsed, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.SetWindowFocus() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 function imgui.SetWindowFocus(name) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param scale number
 function imgui.SetWindowFontScale(scale) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param pos Vector2
 function imgui.SetWindowPos(pos) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param pos Vector2
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetWindowPos(pos, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param pos Vector2
 function imgui.SetWindowPos(name, pos) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param pos Vector2
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetWindowPos(name, pos, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size Vector2
 function imgui.SetWindowSize(size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param size Vector2
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetWindowSize(size, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param size Vector2
 function imgui.SetWindowSize(name, size) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param name string
 ---@param size Vector2
 ---@param cond ImGuiCond|0|1|2|4|8|"None"|"Always"|"Once"|"FirstUseEver"|"Appearing"
 function imgui.SetWindowSize(name, size, cond) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key_chord ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@return boolean
 function imgui.Shortcut(key_chord) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param key_chord ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"
 ---@param flags ImGuiInputFlags|integer|"None"|"Repeat"|"RouteActive"|"RouteFocused"|"RouteGlobal"|"RouteAlways"|"RouteOverFocused"|"RouteOverActive"|"RouteUnlessBgFocused"|"RouteFromRootWindow"|"Tooltip"
 ---@return boolean
 function imgui.Shortcut(key_chord, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ShowAboutWindow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param p_open boolean
 function imgui.ShowAboutWindow(p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ShowDebugLogWindow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param p_open boolean
 function imgui.ShowDebugLogWindow(p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ShowDemoWindow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param p_open boolean
 function imgui.ShowDemoWindow(p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 function imgui.ShowFontSelector(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ShowIDStackToolWindow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param p_open boolean
 function imgui.ShowIDStackToolWindow(p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ShowMetricsWindow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param p_open boolean
 function imgui.ShowMetricsWindow(p_open) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ShowStyleEditor() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ref ImGuiStylePtr
 function imgui.ShowStyleEditor(ref) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.ShowStyleSelector(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.ShowUserGuide() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_rad number
 ---@return boolean, number
 function imgui.SliderAngle(label, v_rad) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_rad number
 ---@param v_degrees_min number
 ---@return boolean, number
 function imgui.SliderAngle(label, v_rad, v_degrees_min) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_rad number
 ---@param v_degrees_min number
@@ -4873,7 +4873,7 @@ function imgui.SliderAngle(label, v_rad, v_degrees_min) end
 ---@return boolean, number
 function imgui.SliderAngle(label, v_rad, v_degrees_min, v_degrees_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_rad number
 ---@param v_degrees_min number
@@ -4882,7 +4882,7 @@ function imgui.SliderAngle(label, v_rad, v_degrees_min, v_degrees_max) end
 ---@return boolean, number
 function imgui.SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v_rad number
 ---@param v_degrees_min number
@@ -4892,7 +4892,7 @@ function imgui.SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format) e
 ---@return boolean, number
 function imgui.SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_min number
@@ -4900,7 +4900,7 @@ function imgui.SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, f
 ---@return boolean, number
 function imgui.SliderFloat(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_min number
@@ -4909,7 +4909,7 @@ function imgui.SliderFloat(label, v, v_min, v_max) end
 ---@return boolean, number
 function imgui.SliderFloat(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v number
 ---@param v_min number
@@ -4919,7 +4919,7 @@ function imgui.SliderFloat(label, v, v_min, v_max, format) end
 ---@return boolean, number
 function imgui.SliderFloat(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_min number
@@ -4927,7 +4927,7 @@ function imgui.SliderFloat(label, v, v_min, v_max, format, flags) end
 ---@return boolean, Vector2
 function imgui.SliderFloat2(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_min number
@@ -4936,7 +4936,7 @@ function imgui.SliderFloat2(label, v, v_min, v_max) end
 ---@return boolean, Vector2
 function imgui.SliderFloat2(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_min number
@@ -4946,7 +4946,7 @@ function imgui.SliderFloat2(label, v, v_min, v_max, format) end
 ---@return boolean, Vector2
 function imgui.SliderFloat2(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_min number
@@ -4954,7 +4954,7 @@ function imgui.SliderFloat2(label, v, v_min, v_max, format, flags) end
 ---@return boolean, Vector3
 function imgui.SliderFloat3(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_min number
@@ -4963,7 +4963,7 @@ function imgui.SliderFloat3(label, v, v_min, v_max) end
 ---@return boolean, Vector3
 function imgui.SliderFloat3(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_min number
@@ -4973,7 +4973,7 @@ function imgui.SliderFloat3(label, v, v_min, v_max, format) end
 ---@return boolean, Vector3
 function imgui.SliderFloat3(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_min number
@@ -4981,7 +4981,7 @@ function imgui.SliderFloat3(label, v, v_min, v_max, format, flags) end
 ---@return boolean, Vector4
 function imgui.SliderFloat4(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_min number
@@ -4990,7 +4990,7 @@ function imgui.SliderFloat4(label, v, v_min, v_max) end
 ---@return boolean, Vector4
 function imgui.SliderFloat4(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_min number
@@ -5000,7 +5000,7 @@ function imgui.SliderFloat4(label, v, v_min, v_max, format) end
 ---@return boolean, Vector4
 function imgui.SliderFloat4(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_min integer
@@ -5008,7 +5008,7 @@ function imgui.SliderFloat4(label, v, v_min, v_max, format, flags) end
 ---@return boolean, integer
 function imgui.SliderInt(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_min integer
@@ -5017,7 +5017,7 @@ function imgui.SliderInt(label, v, v_min, v_max) end
 ---@return boolean, integer
 function imgui.SliderInt(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer
 ---@param v_min integer
@@ -5027,7 +5027,7 @@ function imgui.SliderInt(label, v, v_min, v_max, format) end
 ---@return boolean, integer
 function imgui.SliderInt(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5035,7 +5035,7 @@ function imgui.SliderInt(label, v, v_min, v_max, format, flags) end
 ---@return boolean, integer[]
 function imgui.SliderInt2(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5044,7 +5044,7 @@ function imgui.SliderInt2(label, v, v_min, v_max) end
 ---@return boolean, integer[]
 function imgui.SliderInt2(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5054,7 +5054,7 @@ function imgui.SliderInt2(label, v, v_min, v_max, format) end
 ---@return boolean, integer[]
 function imgui.SliderInt2(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_min integer
@@ -5062,7 +5062,7 @@ function imgui.SliderInt2(label, v, v_min, v_max, format, flags) end
 ---@return boolean, Vector2
 function imgui.SliderInt2(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_min integer
@@ -5071,7 +5071,7 @@ function imgui.SliderInt2(label, v, v_min, v_max) end
 ---@return boolean, Vector2
 function imgui.SliderInt2(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector2
 ---@param v_min integer
@@ -5081,7 +5081,7 @@ function imgui.SliderInt2(label, v, v_min, v_max, format) end
 ---@return boolean, Vector2
 function imgui.SliderInt2(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5089,7 +5089,7 @@ function imgui.SliderInt2(label, v, v_min, v_max, format, flags) end
 ---@return boolean, integer[]
 function imgui.SliderInt3(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5098,7 +5098,7 @@ function imgui.SliderInt3(label, v, v_min, v_max) end
 ---@return boolean, integer[]
 function imgui.SliderInt3(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5108,7 +5108,7 @@ function imgui.SliderInt3(label, v, v_min, v_max, format) end
 ---@return boolean, integer[]
 function imgui.SliderInt3(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_min integer
@@ -5116,7 +5116,7 @@ function imgui.SliderInt3(label, v, v_min, v_max, format, flags) end
 ---@return boolean, Vector3
 function imgui.SliderInt3(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_min integer
@@ -5125,7 +5125,7 @@ function imgui.SliderInt3(label, v, v_min, v_max) end
 ---@return boolean, Vector3
 function imgui.SliderInt3(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector3
 ---@param v_min integer
@@ -5135,7 +5135,7 @@ function imgui.SliderInt3(label, v, v_min, v_max, format) end
 ---@return boolean, Vector3
 function imgui.SliderInt3(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5143,7 +5143,7 @@ function imgui.SliderInt3(label, v, v_min, v_max, format, flags) end
 ---@return boolean, integer[]
 function imgui.SliderInt4(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5152,7 +5152,7 @@ function imgui.SliderInt4(label, v, v_min, v_max) end
 ---@return boolean, integer[]
 function imgui.SliderInt4(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param v_min integer
@@ -5162,7 +5162,7 @@ function imgui.SliderInt4(label, v, v_min, v_max, format) end
 ---@return boolean, integer[]
 function imgui.SliderInt4(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_min integer
@@ -5170,7 +5170,7 @@ function imgui.SliderInt4(label, v, v_min, v_max, format, flags) end
 ---@return boolean, Vector4
 function imgui.SliderInt4(label, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_min integer
@@ -5179,7 +5179,7 @@ function imgui.SliderInt4(label, v, v_min, v_max) end
 ---@return boolean, Vector4
 function imgui.SliderInt4(label, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param v Vector4
 ---@param v_min integer
@@ -5189,7 +5189,7 @@ function imgui.SliderInt4(label, v, v_min, v_max, format) end
 ---@return boolean, Vector4
 function imgui.SliderInt4(label, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -5198,7 +5198,7 @@ function imgui.SliderInt4(label, v, v_min, v_max, format, flags) end
 ---@return boolean
 function imgui.SliderScalar(label, data_type, p_data, p_min, p_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -5208,7 +5208,7 @@ function imgui.SliderScalar(label, data_type, p_data, p_min, p_max) end
 ---@return boolean
 function imgui.SliderScalar(label, data_type, p_data, p_min, p_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -5219,7 +5219,7 @@ function imgui.SliderScalar(label, data_type, p_data, p_min, p_max, format) end
 ---@return boolean
 function imgui.SliderScalar(label, data_type, p_data, p_min, p_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -5229,7 +5229,7 @@ function imgui.SliderScalar(label, data_type, p_data, p_min, p_max, format, flag
 ---@return boolean
 function imgui.SliderScalarN(label, data_type, p_data, components, p_min, p_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -5240,7 +5240,7 @@ function imgui.SliderScalarN(label, data_type, p_data, components, p_min, p_max)
 ---@return boolean
 function imgui.SliderScalarN(label, data_type, p_data, components, p_min, p_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
 ---@param p_data lightuserdata
@@ -5252,289 +5252,289 @@ function imgui.SliderScalarN(label, data_type, p_data, components, p_min, p_max,
 ---@return boolean
 function imgui.SliderScalarN(label, data_type, p_data, components, p_min, p_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.SmallButton(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.Spacing() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.StyleColorsClassic() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dst ImGuiStylePtr
 function imgui.StyleColorsClassic(dst) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.StyleColorsDark() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dst ImGuiStylePtr
 function imgui.StyleColorsDark(dst) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.StyleColorsLight() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param dst ImGuiStylePtr
 function imgui.StyleColorsLight(dst) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.TabItemButton(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags ImGuiTabItemFlags|integer|"None"|"UnsavedDocument"|"SetSelected"|"NoCloseWithMiddleMouseButton"|"NoPushId"|"NoTooltip"|"NoReorder"|"Leading"|"Trailing"|"NoAssumedClosure"
 ---@return boolean
 function imgui.TabItemButton(label, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.TableAngledHeadersRow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.TableGetColumnCount() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiTableColumnFlags|integer|"None"|"Disabled"|"DefaultHide"|"DefaultSort"|"WidthStretch"|"WidthFixed"|"WidthMask"|"NoResize"|"NoReorder"|"NoHide"|"NoClip"|"NoSort"|"NoSortAscending"|"NoSortDescending"|"NoHeaderLabel"|"NoHeaderWidth"|"PreferSortAscending"|"PreferSortDescending"|"IndentEnable"|"IndentDisable"|"IndentMask"|"AngledHeader"|"IsEnabled"|"IsVisible"|"IsSorted"|"IsHovered"|"StatusMask"|"NoDirectResize"
 function imgui.TableGetColumnFlags() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_n integer
 ---@return ImGuiTableColumnFlags|integer|"None"|"Disabled"|"DefaultHide"|"DefaultSort"|"WidthStretch"|"WidthFixed"|"WidthMask"|"NoResize"|"NoReorder"|"NoHide"|"NoClip"|"NoSort"|"NoSortAscending"|"NoSortDescending"|"NoHeaderLabel"|"NoHeaderWidth"|"PreferSortAscending"|"PreferSortDescending"|"IndentEnable"|"IndentDisable"|"IndentMask"|"AngledHeader"|"IsEnabled"|"IsVisible"|"IsSorted"|"IsHovered"|"StatusMask"|"NoDirectResize"
 function imgui.TableGetColumnFlags(column_n) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.TableGetColumnIndex() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return string
 function imgui.TableGetColumnName() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_n integer
 ---@return string
 function imgui.TableGetColumnName(column_n) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.TableGetHoveredColumn() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return integer
 function imgui.TableGetRowIndex() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return ImGuiTableSortSpecsPtr
 function imgui.TableGetSortSpecs() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 function imgui.TableHeader(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.TableHeadersRow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@return boolean
 function imgui.TableNextColumn() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.TableNextRow() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param row_flags ImGuiTableRowFlags|integer|"None"|"Headers"
 function imgui.TableNextRow(row_flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param row_flags ImGuiTableRowFlags|integer|"None"|"Headers"
 ---@param min_row_height number
 function imgui.TableNextRow(row_flags, min_row_height) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param target ImGuiTableBgTarget|0|1|2|3|"None"|"RowBg0"|"RowBg1"|"CellBg"
 ---@param color integer
 function imgui.TableSetBgColor(target, color) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param target ImGuiTableBgTarget|0|1|2|3|"None"|"RowBg0"|"RowBg1"|"CellBg"
 ---@param color integer
 ---@param column_n integer
 function imgui.TableSetBgColor(target, color, column_n) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_n integer
 ---@param v boolean
 function imgui.TableSetColumnEnabled(column_n, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param column_n integer
 ---@return boolean
 function imgui.TableSetColumnIndex(column_n) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 function imgui.TableSetupColumn(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags ImGuiTableColumnFlags|integer|"None"|"Disabled"|"DefaultHide"|"DefaultSort"|"WidthStretch"|"WidthFixed"|"WidthMask"|"NoResize"|"NoReorder"|"NoHide"|"NoClip"|"NoSort"|"NoSortAscending"|"NoSortDescending"|"NoHeaderLabel"|"NoHeaderWidth"|"PreferSortAscending"|"PreferSortDescending"|"IndentEnable"|"IndentDisable"|"IndentMask"|"AngledHeader"|"IsEnabled"|"IsVisible"|"IsSorted"|"IsHovered"|"StatusMask"|"NoDirectResize"
 function imgui.TableSetupColumn(label, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags ImGuiTableColumnFlags|integer|"None"|"Disabled"|"DefaultHide"|"DefaultSort"|"WidthStretch"|"WidthFixed"|"WidthMask"|"NoResize"|"NoReorder"|"NoHide"|"NoClip"|"NoSort"|"NoSortAscending"|"NoSortDescending"|"NoHeaderLabel"|"NoHeaderWidth"|"PreferSortAscending"|"PreferSortDescending"|"IndentEnable"|"IndentDisable"|"IndentMask"|"AngledHeader"|"IsEnabled"|"IsVisible"|"IsSorted"|"IsHovered"|"StatusMask"|"NoDirectResize"
 ---@param init_width_or_weight number
 function imgui.TableSetupColumn(label, flags, init_width_or_weight) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags ImGuiTableColumnFlags|integer|"None"|"Disabled"|"DefaultHide"|"DefaultSort"|"WidthStretch"|"WidthFixed"|"WidthMask"|"NoResize"|"NoReorder"|"NoHide"|"NoClip"|"NoSort"|"NoSortAscending"|"NoSortDescending"|"NoHeaderLabel"|"NoHeaderWidth"|"PreferSortAscending"|"PreferSortDescending"|"IndentEnable"|"IndentDisable"|"IndentMask"|"AngledHeader"|"IsEnabled"|"IsVisible"|"IsSorted"|"IsHovered"|"StatusMask"|"NoDirectResize"
 ---@param init_width_or_weight number
 ---@param user_id integer
 function imgui.TableSetupColumn(label, flags, init_width_or_weight, user_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param cols integer
 ---@param rows integer
 function imgui.TableSetupScrollFreeze(cols, rows) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.Text(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param col Vector4
 ---@param fmt string
 function imgui.TextColored(col, fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.TextDisabled(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.TextLink(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 function imgui.TextLinkOpenURL(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param url string
 function imgui.TextLinkOpenURL(label, url) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param text string
 function imgui.TextUnformatted(text) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param fmt string
 function imgui.TextWrapped(fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.TreeAdvanceToLabelPos() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.TreeNode(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param fmt string
 ---@return boolean
 function imgui.TreeNode(str_id, fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ptr_id lightuserdata
 ---@param fmt string
 ---@return boolean
 function imgui.TreeNode(ptr_id, fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@return boolean
 function imgui.TreeNodeEx(label) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param flags ImGuiTreeNodeFlags|integer|"None"|"Selected"|"Framed"|"AllowOverlap"|"NoTreePushOnOpen"|"NoAutoOpenOnLog"|"CollapsingHeader"|"DefaultOpen"|"OpenOnDoubleClick"|"OpenOnArrow"|"Leaf"|"Bullet"|"FramePadding"|"SpanAvailWidth"|"SpanFullWidth"|"SpanTextWidth"|"SpanAllColumns"|"NavLeftJumpsBackHere"
 ---@return boolean
 function imgui.TreeNodeEx(label, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 ---@param flags ImGuiTreeNodeFlags|integer|"None"|"Selected"|"Framed"|"AllowOverlap"|"NoTreePushOnOpen"|"NoAutoOpenOnLog"|"CollapsingHeader"|"DefaultOpen"|"OpenOnDoubleClick"|"OpenOnArrow"|"Leaf"|"Bullet"|"FramePadding"|"SpanAvailWidth"|"SpanFullWidth"|"SpanTextWidth"|"SpanAllColumns"|"NavLeftJumpsBackHere"
 ---@param fmt string
 ---@return boolean
 function imgui.TreeNodeEx(str_id, flags, fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ptr_id lightuserdata
 ---@param flags ImGuiTreeNodeFlags|integer|"None"|"Selected"|"Framed"|"AllowOverlap"|"NoTreePushOnOpen"|"NoAutoOpenOnLog"|"CollapsingHeader"|"DefaultOpen"|"OpenOnDoubleClick"|"OpenOnArrow"|"Leaf"|"Bullet"|"FramePadding"|"SpanAvailWidth"|"SpanFullWidth"|"SpanTextWidth"|"SpanAllColumns"|"NavLeftJumpsBackHere"
 ---@param fmt string
 ---@return boolean
 function imgui.TreeNodeEx(ptr_id, flags, fmt) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.TreePop() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.TreePush() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param ptr_id lightuserdata
 function imgui.TreePush(ptr_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param str_id string
 function imgui.TreePush(str_id) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.Unindent() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param indent_w number
 function imgui.Unindent(indent_w) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 function imgui.UpdatePlatformWindows() end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param prefix string
 ---@param b boolean
 function imgui.Value(prefix, b) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param prefix string
 ---@param v integer
 function imgui.Value(prefix, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param prefix string
 ---@param v integer
 function imgui.Value(prefix, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param prefix string
 ---@param v number
 function imgui.Value(prefix, v) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param prefix string
 ---@param v number
 ---@param float_format string
 function imgui.Value(prefix, v, float_format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param v number
@@ -5543,7 +5543,7 @@ function imgui.Value(prefix, v, float_format) end
 ---@return boolean, number
 function imgui.VSliderFloat(label, size, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param v number
@@ -5553,7 +5553,7 @@ function imgui.VSliderFloat(label, size, v, v_min, v_max) end
 ---@return boolean, number
 function imgui.VSliderFloat(label, size, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param v number
@@ -5564,7 +5564,7 @@ function imgui.VSliderFloat(label, size, v, v_min, v_max, format) end
 ---@return boolean, number
 function imgui.VSliderFloat(label, size, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param v integer
@@ -5573,7 +5573,7 @@ function imgui.VSliderFloat(label, size, v, v_min, v_max, format, flags) end
 ---@return boolean, integer
 function imgui.VSliderInt(label, size, v, v_min, v_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param v integer
@@ -5583,7 +5583,7 @@ function imgui.VSliderInt(label, size, v, v_min, v_max) end
 ---@return boolean, integer
 function imgui.VSliderInt(label, size, v, v_min, v_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param v integer
@@ -5594,7 +5594,7 @@ function imgui.VSliderInt(label, size, v, v_min, v_max, format) end
 ---@return boolean, integer
 function imgui.VSliderInt(label, size, v, v_min, v_max, format, flags) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
@@ -5604,7 +5604,7 @@ function imgui.VSliderInt(label, size, v, v_min, v_max, format, flags) end
 ---@return boolean
 function imgui.VSliderScalar(label, size, data_type, p_data, p_min, p_max) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
@@ -5615,7 +5615,7 @@ function imgui.VSliderScalar(label, size, data_type, p_data, p_min, p_max) end
 ---@return boolean
 function imgui.VSliderScalar(label, size, data_type, p_data, p_min, p_max, format) end
 
---- READ-ONLY
+--- ##### (READ-ONLY)
 ---@param label string
 ---@param size Vector2
 ---@param data_type ImGuiDataType|0|1|2|3|4|5|6|7|8|9|10|11|"S8"|"U8"|"S16"|"U16"|"S32"|"U32"|"S64"|"U64"|"Float"|"Double"|"Bool"|"COUNT"
