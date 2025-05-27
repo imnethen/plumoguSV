@@ -38,7 +38,7 @@ For more information, please refer to <https://unlicense.org>
 
 ---@class (exact) ScrollGroup
 --- ##### (READ-ONLY)
---- #### The initial SV multiplier of this [scroll group](lua://ScrollGroup).
+--- #### The initial [sv](lua://ScrollVelocity) multiplier of this [scroll group](lua://ScrollGroup).
 ---@field InitialScrollVelocity number
 --- ##### (READ-ONLY)
 --- #### All [scroll velocities](lua://ScrollVelocity) within the [scroll group](lua://ScrollGroup).
@@ -405,7 +405,7 @@ function actions.Redo(fromLua) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given [hit object](lua://HitObject), without the need to create an [editor action](lua://EditorAction).
---- @param hitObject HitObject The [hit object](lua://HitObject) to place.
+--- @param hitObject HitObject The [hit object](lua://HitObject) to place, which must be created via [`utils.CreateHitObject`](lua://utils.CreateHitObject).
 function actions.PlaceHitObject(hitObject) end
 
 --- ##### (READ-ONLY)
@@ -415,114 +415,114 @@ function actions.PlaceHitObject(hitObject) end
 ---@param endTime? integer If placing a rice note, this value should be 0. Otherwise, this should be the time the long note ends.
 ---@param editorLayer? integer The id of the layer in which the [hit object](lua://HitObject) will lie.
 ---@param hitsounds? HitSounds The hitsounds attached to the [hit object](lua://HitObject).
----@param timingGroupId? integer The id of the timing group this [hit object](lua://HitObject) will be in.
+---@param timingGroupId? integer The id of the [timing group](lua://ScrollGroup) this [hit object](lua://HitObject) will be in.
 function actions.PlaceHitObject(lane, startTime, endTime, editorLayer, hitsounds, timingGroupId) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given set of [hit objects](lua://HitObject), without the need to create an [editor action](lua://EditorAction).
---- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to place.
+--- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to place, which must be created via [`utils.CreateHitObject`](lua://utils.CreateHitObject).
 function actions.PlaceHitObjectBatch(hitObjects) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given [hit object](lua://HitObject), assuming it already exists.
---- @param hitObject HitObject The [hit object](lua://HitObject) to remove.
+--- @param hitObject HitObject The [hit object](lua://HitObject) to remove, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
 function actions.RemoveHitObject(hitObject) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given set of [hit objects](lua://HitObject), assuming they already exist.
---- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to remove.
+--- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to remove, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
 function actions.RemoveHitObjectBatch(hitObjects) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the length of a long-note type [hit object](lua://HitObject).
----@param hitObject HitObject The  [hit object](lua://HitObject) to modify.
+---@param hitObject HitObject The [hit object](lua://HitObject) to modify, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
 ---@param originalEndTime integer The original end time of the  [hit object](lua://HitObject), or `hitObject.endTime`.
 ---@param newEndTime integer The desired time to move the LN end to.
 function actions.ResizeLongNote(hitObject, originalEndTime, newEndTime) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given [scroll velocity](lua://ScrollVelocity), without the need to create an [editor action](lua://EditorAction).
---- @param sv ScrollVelocity The [scroll velocity](lua://ScrollVelocity) to place.
+--- @param sv ScrollVelocity The [scroll velocity](lua://ScrollVelocity) to place, which must be created via [`utils.CreateScrollVelocity`](lua://utils.CreateScrollVelocity).
 function actions.PlaceScrollVelocity(sv) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given set of [scroll velocities](lua://ScrollVelocity), without the need to create an [editor action](lua://EditorAction).
---- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to place.
+--- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to place, which must be created via [`utils.CreateScrollVelocity`](lua://utils.CreateScrollVelocity).
 function actions.PlaceScrollVelocityBatch(svs) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given [scroll velocity](lua://ScrollVelocity), assuming it already exists.
---- @param sv ScrollVelocity The [scroll velocity](lua://ScrollVelocity) to remove.
+--- @param sv ScrollVelocity The [scroll velocity](lua://ScrollVelocity) to remove, which must be obtained via [`map.ScrollVelocities`](lua://map.ScrollVelocities) or something similar.
 function actions.RemoveScrollVelocity(sv) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given set of [scroll velocities](lua://ScrollVelocity), assuming they already exist.
---- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to remove.
+--- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to remove, which must be obtained via [`map.ScrollVelocities`](lua://map.ScrollVelocities) or something similar.
 function actions.RemoveScrollVelocityBatch(svs) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given [timing point](lua://TimingPoint), without the need to create an [editor action](lua://EditorAction).
---- @param tp TimingPoint The [timing point](lua://TimingPoint) to place.
+--- @param tp TimingPoint The [timing point](lua://TimingPoint) to place, which must be created via [`utils.CreateTimingPoint`](lua://utils.CreateTimingPoint).
 function actions.PlaceTimingPoint(tp) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given set of [timing points](lua://TimingPoint), without the need to create an [editor action](lua://EditorAction).
---- @param tps TimingPoint[] The [timing points](lua://TimingPoint) to place.
+--- @param tps TimingPoint[] The [timing points](lua://TimingPoint) to place, which must be created via [`utils.CreateTimingPoint`](lua://utils.CreateTimingPoint).
 function actions.PlaceTimingPointBatch(tps) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given [timing point](lua://TimingPoint), assuming it already exists.
---- @param tp TimingPoint The [timing point](lua://TimingPoint) to remove.
+--- @param tp TimingPoint The [timing point](lua://TimingPoint) to remove, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 function actions.RemoveTimingPoint(tp) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given set of [timing points](lua://TimingPoint), assuming they already exist.
---- @param tps TimingPoint[] The [timing points](lua://TimingPoint) to remove.
+--- @param tps TimingPoint[] The [timing points](lua://TimingPoint) to remove, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 function actions.RemoveTimingPointBatch(tps) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the `startTime` of a given [timing point](lua://TimingPoint).
----@param tp TimingPoint The [timing point](lua://TimingPoint) to modify.
+---@param tp TimingPoint The [timing point](lua://TimingPoint) to modify, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 ---@param newTime number The new `startTime`.
 function actions.ChangeTimingPointOffset(tp, newTime) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the `Bpm` of a given [timing point](lua://TimingPoint).
----@param tp TimingPoint The [timing point](lua://TimingPoint) to modify.
+---@param tp TimingPoint The [timing point](lua://TimingPoint) to modify, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 ---@param newBpm number The new `Bpm`.
 function actions.ChangeTimingPointBpm(tp, newBpm) end
 
 --- ##### (READ-ONLY)
 --- #### Changes if a given [timing point](lua://TimingPoint) should be `Hidden`.
----@param tp TimingPoint The [timing point](lua://TimingPoint) to modify.
+---@param tp TimingPoint The [timing point](lua://TimingPoint) to modify, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 ---@param newHidden boolean The new `Hidden` property..
 function actions.ChangeTimingPointHidden(tp, newHidden) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the `startTime` of the given [timing points](lua://TimingPoint).
----@param tps TimingPoint[] The [timing points](lua://TimingPoint) to modify.
+---@param tps TimingPoint[] The [timing points](lua://TimingPoint) to modify, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 ---@param newTime number The new `startTime`.
 function actions.ChangeTimingPointOffsetBatch(tps, newTime) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the `Bpm` of the given [timing points](lua://TimingPoint).
----@param tps TimingPoint[] The [timing points](lua://TimingPoint) to modify.
+---@param tps TimingPoint[] The [timing points](lua://TimingPoint) to modify, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 ---@param newBpm number The new `Bpm`.
 function actions.ChangeTimingPointBpmBatch(tps, newBpm) end
 
 --- ##### (READ-ONLY)
 --- #### Resets the given[timing point](lua://TimingPoint).
----@param tp TimingPoint The timing point to reset.
+---@param tp TimingPoint The [timing point](lua://TimingPoint) to reset, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
 function actions.ResetTimingPoint(tp) end
 
 --- ##### (READ-ONLY)
---- #### Changes the `Bpm` of the given [timing points](lua://TimingPoint).
+--- #### Moves the [`song time`](lua://state.SongTime) to the designated objects.
 --- @param input string The input string with navigation directions, usually obtained from copying notes in-game.
 function actions.GoToObjects(input) end
 
 --- ##### (READ-ONLY)
 --- #### Sets the [hit object selection](lua://state.SelectedHitObjects) to be the [hit objects](lua://HitObject) passed as the argument.
---- @param HitObjects HitObject[] The [hit objects](lua://HitObject) to select.
+--- @param HitObjects HitObject[] The [hit objects](lua://HitObject) to select, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
 function actions.SetHitObjectSelection(HitObjects) end
 
 --- ##### (READ-ONLY)
@@ -532,30 +532,30 @@ function actions.SetPreviewTime(time) end
 
 --- ##### (READ-ONLY)
 --- #### Creates the given [editor layer](lua://EditorLayer), without the need to create an [editor action](lua://EditorAction).
---- @param layer EditorLayer The [editor layer](lua://EditorLayer) to create.
+--- @param layer EditorLayer The [editor layer](lua://EditorLayer) to create, which must be created via [`utils.CreateEditorLayer`](lua://utils.CreateEditorLayer).
 --- @param index? integer An optional index for the editor layer to be placed in. If none is given, the next available index is used.
 function actions.CreateLayer(layer, index) end
 
 --- ##### (READ-ONLY)
 --- #### Removes the given [editor layer](lua://EditorLayer), assuming it exists.
---- @param layer EditorLayer The [editor layer](lua://EditorLayer) to remove.
+--- @param layer EditorLayer The [editor layer](lua://EditorLayer) to remove, which must be obtained via [`map.EditorLayers`](lua://map.EditorLayers) or something similar.
 function actions.RemoveLayer(layer) end
 
 --- ##### (READ-ONLY)
 --- #### Renames the given [editor layer](lua://EditorLayer), assuming it exists.
---- @param layer EditorLayer The [editor layer](lua://EditorLayer) to rename.
+--- @param layer EditorLayer The [editor layer](lua://EditorLayer) to rename, which must be obtained via [`map.EditorLayers`](lua://map.EditorLayers) or something similar.
 --- @param newName string The new name the [editor layer](lua://EditorLayer) should have.
 function actions.RenameLayer(layer, newName) end
 
 --- ##### (READ-ONLY)
 --- #### Moves the given [hit objects](lua://HitObject) to the given [editor layer](lua://EditorLayer).
---- @param layer EditorLayer The [editor layer](lua://EditorLayer) to move the [hit objects](lua://HitObject) to.
---- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to move.
+--- @param layer EditorLayer The [editor layer](lua://EditorLayer) to move the [hit objects](lua://HitObject) to, which must be obtained via [`map.EditorLayers`](lua://map.EditorLayers) or something similar.
+--- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to move, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
 function actions.MoveHitObjectsToLayer(layer, hitObjects) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the color of the given [editor layer](lua://EditorLayer).
---- @param layer EditorLayer The [editor layer](lua://EditorLayer) to alter the color of.
+--- @param layer EditorLayer The [editor layer](lua://EditorLayer) to alter the color of, which must be obtained via [`map.EditorLayers`](lua://map.EditorLayers) or something similar.
 --- @param r integer The strength of the red part of the color. Should be within [0-255].
 --- @param g integer The strength of the green part of the color. Should be within [0-255].
 --- @param b integer The strength of the blue part of the color. Should be within [0-255].
@@ -563,74 +563,74 @@ function actions.ChangeLayerColor(layer, r, g, b) end
 
 --- ##### (READ-ONLY)
 --- #### Toggles the visibility of the given [editor layer](lua://EditorLayer).
---- @param layer EditorLayer The [editor layer](lua://EditorLayer) to alter.
+--- @param layer EditorLayer The [editor layer](lua://EditorLayer) to alter, which must be obtained via [`map.EditorLayers`](lua://map.EditorLayers) or something similar.
 function actions.ToggleLayerVisibility(layer) end
 
 --- ##### (READ-ONLY)
 --- #### Snaps the given [hit objects](lua://HitObject) to the nearest snap within the table of `snaps`.
 --- @param snaps integer[] The list of snap denominators to use.
---- @param hitObjects HitObject[] The hit objects to snap.
+--- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to snap, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
 function actions.ResnapNotes(snaps, hitObjects) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given [bookmark](lua://Bookmark), without the need to create an [editor action](lua://EditorAction).
---- @param bm Bookmark The bookmark to place.
+--- @param bm Bookmark The [bookmark](lua://Bookmark) to place, which must be created via [`utils.CreateBookmark`](lua://utils.CreateBookmark).
 function actions.AddBookmark(bm) end
 
 --- ##### (READ-ONLY)
 --- #### Places a new [bookmark](lua://Bookmark), without the need to create an [editor action](lua://EditorAction).
---- @param time integer The time to place the bookmark.
---- @param info string The content of the bookmark.
+--- @param time integer The time to place the [bookmark](lua://Bookmark).
+--- @param info string The content of the [bookmark](lua://Bookmark).
 function actions.AddBookmark(time, info) end
 
 --- ##### (READ-ONLY)
 --- #### Places a given set of [bookmarks](lua://Bookmark), without the need to create an [editor action](lua://EditorAction).
---- @param bms Bookmark[] The bookmarks to place.
+--- @param bms Bookmark[] The [bookmarks](lua://Bookmark) to place, which must be created via [`utils.CreateBookmark`](lua://utils.CreateBookmark).
 function actions.AddBookmarkBatch(bms) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given [bookmark](lua://Bookmark), assuming it exists.
---- @param bm Bookmark The bookmark to remove.
+--- @param bm Bookmark The [bookmark](lua://Bookmark) to remove, which must be obtained via [`map.Bookmarks`](lua://map.Bookmarks) or something similar.
 function actions.RemoveBookmark(bm) end
 
 --- ##### (READ-ONLY)
 --- #### Removes a given set of [bookmarks](lua://Bookmark), assuming they exist.
---- @param bms Bookmark[] The bookmarks to remove.
+--- @param bms Bookmark[] The [bookmarks](lua://Bookmark) to remove, which must be obtained via [`map.Bookmarks`](lua://map.Bookmarks) or something similar.
 function actions.RemoveBookmarkBatch(bms) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the contents of a [bookmark](lua://Bookmark).
---- @param bm Bookmark The bookmarks to edit.
---- @param newNote string The new contents of the bookmark.
+--- @param bm Bookmark The [bookmark](lua://Bookmark) to edit, which must be obtained via [`map.Bookmarks`](lua://map.Bookmarks) or something similar.
+--- @param newNote string The new contents of the [bookmark](lua://Bookmark).
 function actions.EditBookmark(bm, newNote) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the start time of the given [bookmarks](lua://Bookmark).
---- @param bms Bookmark[] The [bookmarks](lua://Bookmark) to edit.
+--- @param bms Bookmark[] The [bookmarks](lua://Bookmark) to edit, which must be obtained via [`map.Bookmarks`](lua://map.Bookmarks) or something similar.
 --- @param offset integer The new `startTime` of the [bookmarks](lua://Bookmark).
 function actions.ChangeBookmarkBatchOffset(bms, offset) end
 
 --- ##### (READ-ONLY)
 --- #### Places the given [timing group](lua://ScrollGroup), without the need to create an [editor action](lua://EditorAction).
 --- @param id string The id of the [timing group](lua://ScrollGroup) to place, usually generated by [`utils.GenerateTimingGroupId`](lua://utils.GenerateTimingGroupId).
---- @param tg ScrollGroup The [timing group](lua://ScrollGroup) to place.
---- @param hitObjects HitObject[] A list of [hit objects](lua://HitObject) that should be placed within the timing group.
+--- @param tg ScrollGroup The [timing group](lua://ScrollGroup) to place, which must be created via [`utils.CreateScrollGroup`](lua://utils.CreateScrollGroup).
+--- @param hitObjects HitObject[] A list of [hit objects](lua://HitObject) that should be placed within the [timing group](lua://ScrollGroup), which must be created via [`utils.CreateHitObject`](lua://utils.CreateHitObject), or obtained via [`map.HitObjects](lua://map.HitObjects) or something similar.
 function actions.PlaceTimingGroup(id, tg, hitObjects) end
 
 --- ##### (READ-ONLY)
 --- #### Removes the given [timing group](lua://ScrollGroup), assuming it exists.
---- @param id string The id of the [timing group](lua://ScrollGroup) to remove.
+--- @param id string The id of the [timing group](lua://ScrollGroup) to remove, which must be obtained via [`state.SelectedScrollGroup`](lua://state.SelectedScrollGroup) or something similar.
 function actions.RemoveTimingGroup(id) end
 
 --- ##### (READ-ONLY)
 --- #### Renames the given [timing group](lua://ScrollGroup).
---- @param id string The id of the [timing group](lua://ScrollGroup) to rename.
+--- @param id string The id of the [timing group](lua://ScrollGroup) to rename, which must be obtained via [`state.SelectedScrollGroup`](lua://state.SelectedScrollGroup) or something similar.
 --- @param newId string The new id.
 function actions.RenameTimingGroup(id, newId) end
 
 --- ##### (READ-ONLY)
 --- #### Changes the color of the given [timing group](lua://ScrollGroup).
---- @param id string The id of the [timing group](lua://ScrollGroup) to alter the color of.
+--- @param id string The id of the [timing group](lua://ScrollGroup) to alter the color of, which must be obtained via [`state.SelectedScrollGroup`](lua://state.SelectedScrollGroup) or something similar.
 --- @param r integer The strength of the red part of the color. Should be within [0-255].
 --- @param g integer The strength of the green part of the color. Should be within [0-255].
 --- @param b integer The strength of the blue part of the color. Should be within [0-255].
@@ -638,8 +638,8 @@ function actions.ChangeTimingGroupColor(id, r, g, b) end
 
 --- ##### (READ-ONLY)
 --- #### Moves all given [hit objects](lua://HitObject) to the given [timing group](lua://ScrollGroup).
---- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to move.
---- @param id string The id of the [timing group](lua://ScrollGroup) to move the [hit objects](lua://HitObject) to.
+--- @param hitObjects HitObject[] The [hit objects](lua://HitObject) to move, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
+--- @param id string The id of the [timing group](lua://ScrollGroup) to move the [hit objects](lua://HitObject) to, which must be obtained via [`state.SelectedScrollGroup`](lua://state.SelectedScrollGroup) or something similar.
 function actions.MoveObjectsToTimingGroup(hitObjects, id) end
 
 state = {}
@@ -686,7 +686,7 @@ state.IsWindowHovered          = false ---@type boolean MUST BE SET MANUALLY - I
 state.Scale                    = 1 ---@type number
 
 --- ##### (READ-ONLY)
---- #### Stores a value that can be retrieved by `state.GetValue`. Mainly used to persist data between hot-reloads.
+--- #### Stores a value that can be retrieved by [`state.GetValue`](lua://state.GetValue). Mainly used to persist data between hot-reloads.
 ---@param key string The identifier for this particular value.
 ---@param value any The value to store.
 function state.SetValue(key, value) end
@@ -694,7 +694,7 @@ function state.SetValue(key, value) end
 --- ##### (READ-ONLY)
 --- #### Gets a value previously stored by [`state.SetValue`](lua://state.SetValue). If the value doesn't exist, return `fallback` instead.
 ---@param key string The identifier for the value set by `state.SetValue`.
----@param fallback? any An optional term to return if the result is `nil`.
+---@param fallback? any An optional term to return, if the result is `nil`.
 ---@return any value The stored value.
 function state.GetValue(key, fallback) end
 
@@ -729,7 +729,7 @@ function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer)
 --- @param startTime number The time to create the [timing point](lua://TimingPoint), in milliseconds.
 --- @param bpm number The beats per minute of the [timing point](lua://TimingPoint).
 --- @param signature? integer The time signature of the [timing point](lua://TimingPoint).
---- @param hidden? boolean Whether or not to hide the timing line in gameplay.
+--- @param hidden? boolean Whether or not to hide the timing lines in gameplay.
 --- @return TimingPoint TimingPoint The requested [timing point](lua://TimingPoint).
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
@@ -743,14 +743,14 @@ function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 --- ##### (READ-ONLY)
 --- #### Creates a [bookmark](lua://Bookmark), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
----@param startTime number The time to create the bookmark, in milliseconds.
+---@param startTime number The time to create the [bookmark](lua://Bookmark), in milliseconds.
 ---@param note string The contents of the [bookmark](lua://Bookmark).
 ---@return Bookmark Bookmark The requested [bookmark](lua://Bookmark).
 function utils.CreateBookmark(startTime, note) end
 
 --- ##### (READ-ONLY)
 --- #### Creates a [scroll group](lua://ScrollGroup), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
---- @param svs ScrollVelocity[] The svs to add to the [scroll group](lua://ScrollGroup).
+--- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to add to the [scroll group](lua://ScrollGroup).
 --- @param initialSV? number The initial [scroll velocity](lua://ScrollVelocity) of the [scroll group](lua://ScrollGroup).
 --- @param colorRgb? string The color of the [scroll group](lua://ScrollGroup). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
 ---@return ScrollGroup ScrollGroup The requested [scroll group](lua://ScrollGroup).
@@ -764,9 +764,9 @@ function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 --- - Place/Add/Remove Batch // ... should only be one term, a table of the objects to add.
 --- - Move/Swap/Flip/Change/Toggle // ... should be two terms, the first being the objects to manipulate, the second being the instruction for the manipulation.
 --- - CreateTimingGroup // ... should be three terms:
----     1. The id of the timing group.
----     2. The timing group previously created by `utils.CreateScrollGroup`.
----     3. The HitObjects to add to the [scroll group](lua://ScrollGroup).
+---     1. The id of the [timing group](lua://ScrollGroup).
+---     2. The [timing group](lua://ScrollGroup) previously created by `utils.CreateScrollGroup`.
+---     3. The [hit objects](lua://HitObject) to add to the [scroll group](lua://ScrollGroup).
 ---@return EditorAction EditorAction The requested editor action.
 function utils.CreateEditorAction(type, ...) end
 
@@ -828,7 +828,7 @@ map.ScrollVelocities      = {} --- @type ScrollVelocity[]
 --- #### A table of all [scroll speed factors](lua://ScrollSpeedFactor) in the map.
 map.ScrollSpeedFactors    = {} --- @type ScrollSpeedFactor[]
 --- ##### (READ-ONLY)
---- #### A table of all timing groups in the map.
+--- #### A table of all [timing groups](lua://ScrollGroup) in the map.
 map.TimingGroups          = {} --- @type ScrollGroup[]
 --- ##### (READ-ONLY)
 --- #### The default [scroll group](lua://ScrollGroup).
@@ -886,33 +886,33 @@ function map.GetTimingPointAt(time) end
 --- ##### (READ-ONLY)
 --- #### Returns the nearest [scroll velocity](lua://ScrollVelocity) before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected [scroll group](lua://ScrollGroup).
 ---@param time number The time to start looking from, in milliseconds.
----@param timingGroupId? string The timing group to look within. If this option is omitted, the function will search within the currently selected timing group.
+---@param timingGroupId? string The [timing group](lua://ScrollGroup) to look within. If this option is omitted, the function will search within the currently selected [timing group](lua://ScrollGroup).
 ---@return ScrollVelocity | nil ScrollVelocity The requested [scroll velocity](lua://ScrollVelocity).
 function map.GetScrollVelocityAt(time, timingGroupId) end
 
 --- ##### (READ-ONLY)
 --- #### Returns the nearest [scroll speed factor](lua://ScrollSpeedFactor) before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected [scroll group](lua://ScrollGroup).
 ---@param time number The time to start looking from, in milliseconds.
----@param timingGroupId? string The timing group to look within. If this option is omitted, the function will search within the currently selected timing group.
+---@param timingGroupId? string The [timing group](lua://ScrollGroup) to look within. If this option is omitted, the function will search within the currently selected [timing group](lua://ScrollGroup).
 ---@return ScrollSpeedFactor | nil ScrollSpeedFactor The requested [scroll speed factor](lua://ScrollSpeedFactor).
 function map.GetScrollSpeedFactorAt(time, timingGroupId) end
 
 --- ##### (READ-ONLY)
---- #### Returns the timing group corresponding with the given id.
+--- #### Returns the [timing group](lua://ScrollGroup) corresponding with the given id.
 ---@param timingGroupId string The id to search with.
----@return ScrollGroup | nil ScrollGroup The timing group corresponding to the id.
+---@return ScrollGroup | nil ScrollGroup The [timing group](lua://ScrollGroup) corresponding to the id.
 function map.GetTimingGroup(timingGroupId) end
 
 --- ##### (READ-ONLY)
---- #### Returns a list of all timing group ids.
---- @return string[] Ids The list of timing group ids.
+--- #### Returns a list of all [timing group](lua://ScrollGroup) ids.
+--- @return string[] Ids The list of [timing group](lua://ScrollGroup) ids.
 function map.GetTimingGroupIds() end
 
 --- ##### (READ-ONLY)
---- #### Returns all [hit objects](lua://HitObject) within the id's corresponding timing group.
----@param timingGroupId string The timing group to look within.
----@return HitObject[] | nil HitObjects All objects within the requested timing group.
----@overload fun(timingGroupIds: string[]): HitObject[] | nil If a table is passed as the argument, all objects from all listed timing groups will be returned.
+--- #### Returns all [hit objects](lua://HitObject) within the id's corresponding [timing group](lua://ScrollGroup).
+---@param timingGroupId string The [timing group](lua://ScrollGroup) to look within.
+---@return HitObject[] | nil HitObjects All [hit objects](lua://HitObject) within the requested [timing group](lua://ScrollGroup).
+---@overload fun(timingGroupIds: string[]): HitObject[] | nil If a table is passed as the argument, all objects from all listed [timing groups](lua://ScrollGroup) will be returned.
 function map.GetTimingGroupObjects(timingGroupId) end
 
 --- ##### (READ-ONLY)
