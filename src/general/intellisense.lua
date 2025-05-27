@@ -693,9 +693,10 @@ function state.SetValue(key, value) end
 
 --- ##### (READ-ONLY)
 --- #### Gets a value previously stored by [`state.SetValue`](lua://state.SetValue). If the value doesn't exist, return `fallback` instead.
+--- @generic T
 ---@param key string The identifier for the value set by `state.SetValue`.
----@param fallback? any An optional term to return, if the result is `nil`.
----@return any value The stored value.
+---@param fallback? T An optional term to return, if the result is `nil`.
+---@return T value The stored value.
 function state.GetValue(key, fallback) end
 
 utils = {}
@@ -3527,14 +3528,14 @@ function imgui.InputFloat(label, v, step, step_fast, format, flags) end
 --- ##### (READ-ONLY)
 ---@param label string
 ---@param v number[]
----@return [boolean, number[]]
+---@return boolean, number[]
 function imgui.InputFloat2(label, v) end
 
 --- ##### (READ-ONLY)
 ---@param label string
 ---@param v number[]
 ---@param format string
----@return [boolean, number[]]
+---@return boolean, number[]
 function imgui.InputFloat2(label, v, format) end
 
 --- ##### (READ-ONLY)
