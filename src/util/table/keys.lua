@@ -1,6 +1,6 @@
----Returns a table of keys for a string-indexed table.
----@param tbl table
----@return table
+---Returns a table of keys from a table.
+---@param tbl { [string]: any }
+---@return string[]
 function table.keys(tbl)
     local resultsTbl = {}
 

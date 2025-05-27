@@ -2430,6 +2430,11 @@ function draw()
         imgui.EndTabBar()
     end
     state.IsWindowHovered = imgui.IsWindowHovered()
+
+    if (imgui.Button("hgi")) then
+        print(eval("return 1", "return 69"))
+    end
+
     imgui.End()
 
     saveVariables("globalVars", globalVars)
@@ -9203,9 +9208,9 @@ function table.duplicate(tbl)
     end
     return dupeTbl
 end
----Returns a table of keys for a string-indexed table.
----@param tbl table
----@return table
+---Returns a table of keys from a table.
+---@param tbl { [string]: any }
+---@return string[]
 function table.keys(tbl)
     local resultsTbl = {}
 
