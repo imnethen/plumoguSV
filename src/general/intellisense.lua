@@ -94,30 +94,35 @@ state.UnixTime                 = 0 ---@type integer READ-ONLY // The current uni
 state.IsWindowHovered          = false ---@type boolean MUST BE SET MANUALLY - Indicates to the game that the window is hovered.
 state.Scale                    = 1 ---@type number READ-ONLY // The current ImGui scale.
 
---- READ-ONLY // Stores a value that can be retrieved by `state.GetValue()`. Mainly used to persist data between hot-reloads.
+--- ### READ-ONLY
+--- Stores a value that can be retrieved by `state.GetValue()`. Mainly used to persist data between hot-reloads.
 ---@param key string The identifier for this particular value.
 ---@param value any The value to store.
 function state.SetValue(key, value) end
 
---- READ-ONLY // Gets a value previously stored by `state.SetValue()`. If the value doesn't exist, return `fallback` instead.
+--- ### READ-ONLY
+--- Gets a value previously stored by `state.SetValue()`. If the value doesn't exist, return `fallback` instead.
 ---@param key string The identifier for the value set by `state.SetValue()`.
 ---@param fallback? any An optional term to return if the result is `nil`.
 ---@return any value The stored value.
 function state.GetValue(key, fallback) end
 
---- READ-ONLY // Creates a `ScrollVelocity`, to later be placed with an `action`.
+--- ### READ-ONLY
+--- Creates a `ScrollVelocity`, to later be placed with an `action`.
 ---@param startTime number The time to create the scroll velocity, in milliseconds.
 ---@param multiplier number The factor at which to scale the player's scroll velocity.
 ---@return ScrollVelocity ScrollVelocity The requested scroll velocity.
 function utils.CreateScrollVelocity(startTime, multiplier) end
 
---- READ-ONLY // Creates a `ScrollSpeedFactor`, to later be placed with an `action`.
+--- ### READ-ONLY
+--- Creates a `ScrollSpeedFactor`, to later be placed with an `action`.
 ---@param startTime number The time to create the scroll speed factor, in milliseconds.
 ---@param multiplier number The factor at which to scale the player's scroll speed.
 ---@return ScrollSpeedFactor ScrollSpeedFactor The requested scroll speed factor.
 function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 
---- READ-ONLY // Creates a `HitObject`, to later be placed with an `action`.
+--- ### READ-ONLY
+--- Creates a `HitObject`, to later be placed with an `action`.
 --- @param startTime number The time to create the note, in milliseconds.
 --- @param lane 1|2|3|4|5|6|7 The lane to create the note in.
 --- @param endTime? number If given and non-zero, the note becomes a long note. This parameter determines when the long note will end.
@@ -126,7 +131,8 @@ function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 --- @return HitObject HitObject The requested note.
 function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer) end
 
---- READ-ONLY // Creates a `TimingPoint`, to later be placed with an `action`
+--- ### READ-ONLY
+--- Creates a `TimingPoint`, to later be placed with an `action`
 --- @param startTime number The time to create the timing point, in milliseconds.
 --- @param bpm number The beats per minute of the timing point.
 --- @param signature integer The time signature of the timing point.
@@ -134,27 +140,31 @@ function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer)
 --- @return TimingPoint TimingPoint The requested timing point.
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
---- READ-ONLY // Creates an `EditorLayer`, to later be placed with an `action`. `colorRgb`
+--- ### READ-ONLY
+--- Creates an `EditorLayer`, to later be placed with an `action`. `colorRgb`
 ---@param name string The name of this layer.
 ---@param hidden boolean Whether or not to hide this layer in the editor.
 ---@param colorRgb string The color of the editor layer. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
 ---@return EditorLayer EditorLayer The requested editor layer.
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
---- READ-ONLY // Creates a `Bookmark`, to later be placed with an `action`.
+--- ### READ-ONLY
+--- Creates a `Bookmark`, to later be placed with an `action`.
 ---@param startTime number The time to create the bookmark, in milliseconds.
 ---@param note string The contents of the bookmark.
 ---@return Bookmark Bookmark The requested bookmark.
 function utils.CreateBookmark(startTime, note) end
 
---- READ-ONLY // Creates a `ScrollGroup`, to later be placed with an `action`.
+--- ### READ-ONLY
+--- #### Creates a `ScrollGroup`, to later be placed with an `action`.
 --- @param svs ScrollVelocity[] The svs to add to the scroll group.
 --- @param initialSV number The initial scroll velocity of the scroll group.
 --- @param colorRgb string The color of the scroll group. This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
 ---@return ScrollGroup ScrollGroup The requested scroll group.
 function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 
---- READ-ONLY // Creates an  `EditorAction`, to later be executed with `actions.Perform()`.
+--- ### READ-ONLY
+--- Creates an  `EditorAction`, to later be executed with `actions.Perform()`.
 ---@param type EditorActionType The type of action to perform.
 ---@param ... any[] The parameters of the action. Depending on the prefix of the action, different parameters should be passed in:
 --- - Place/Add/Remove // ... should only be one term, the object to add.
@@ -167,37 +177,44 @@ function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 ---@return EditorAction EditorAction The requested editor action.
 function utils.CreateEditorAction(type, ...) end
 
---- READ-ONLY // Returns a formatted version of the inputted `time`.
+--- ### READ-ONLY
+--- Returns a formatted version of the inputted `time`.
 ---@param time number The elapsed time to format, in milliseconds.
 ---@return string str The formatted time.
 function utils.MillisecondsToTime(time) end
 
---- READ-ONLY // Returns `true` if the given key is pressed within the given frame.
+--- ### READ-ONLY
+--- Returns `true` if the given key is pressed within the given frame.
 ---@param key Key
 ---@return boolean
 function utils.IsKeyPressed(key) end
 
---- READ-ONLY // Returns `true` if the given key is released within the given frame.
+--- ### READ-ONLY
+--- Returns `true` if the given key is released within the given frame.
 ---@param key Key
 ---@return boolean
 function utils.IsKeyReleased(key) end
 
---- READ-ONLY // Returns `true` if the given key is held down within the given frame.
+--- ### READ-ONLY
+--- Returns `true` if the given key is held down within the given frame.
 ---@param key Key
 ---@return boolean
 function utils.IsKeyDown(key) end
 
---- READ-ONLY // Returns `true` if the given key is not held down within the given frame.
+--- ### READ-ONLY
+--- Returns `true` if the given key is not held down within the given frame.
 ---@param key Key
 ---@return boolean
 function utils.IsKeyUp(key) end
 
---- READ-ONLY // Returns a unique `timingGroupId` with the given prefix. If no prefix is given, defaults to `SG_`.
+--- ### READ-ONLY
+--- Returns a unique `timingGroupId` with the given prefix. If no prefix is given, defaults to `SG_`.
 ---@param prefix string
 ---@return string
 function utils.GenerateTimingGroupId(prefix) end
 
---- READ-ONLY // Returns `count` number of `timingGroupIds` with the given prefix. If no prefix is given, defaults to `SG_`.
+--- ### READ-ONLY
+--- Returns `count` number of `timingGroupIds` with the given prefix. If no prefix is given, defaults to `SG_`.
 ---@param count integer
 ---@param prefix string
 ---@return string
@@ -219,62 +236,74 @@ map.TrackLength           = 0     --- @type number READ-ONLY // The length of th
 map.LegacyLNRendering     = false --- @type boolean READ-ONLY // `true` if the "Legacy LN Rendering" option is enabled.
 map.InitialScrollVelocity = 1     --- @type number READ-ONLY // The initial scroll velocity multiplier of the current scroll group. Defaults to 1.
 
---- READ-ONLY // Returns the map metadata in the form of `{Artist} - {Title} [{Difficulty}]`.
+--- ### READ-ONLY
+--- Returns the map metadata in the form of `{Artist} - {Title} [{Difficulty}]`.
 --- @return string str The map metadata, as mentioned above.
 function map.ToString() end
 
---- READ-ONLY // Returns the number of possible keys within the map.
+--- ### READ-ONLY
+--- Returns the number of possible keys within the map.
 ---@param includeScratch boolean Whether or not to include the scratch lane. This should almost never be true.
 ---@return integer keyCount The number of keys in the map, usually 4 or 7.
 function map.GetKeyCount(includeScratch) end
 
---- READ-ONLY // Returns the most common BPM in the map, determined by how much time a particular BPM is used.
+--- ### READ-ONLY
+--- Returns the most common BPM in the map, determined by how much time a particular BPM is used.
 --- @return number Bpm The BPM. This number should be identical to the BPM displayed in the song select menu.
 function map.GetCommonBpm() end
 
---- READ-ONLY // Returns the nearest timing point before the given `time`.
+--- ### READ-ONLY
+--- Returns the nearest timing point before the given `time`.
 ---@param time number The time to start looking from, in milliseconds.
 ---@return TimingPoint | nil TimingPoint The requested timing point.
 function map.GetTimingPointAt(time) end
 
---- READ-ONLY // Returns the nearest scroll velocity before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected scroll group.
+--- ### READ-ONLY
+--- Returns the nearest scroll velocity before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected scroll group.
 ---@param time number The time to start looking from, in milliseconds.
 ---@param timingGroupId? string The timing group to look within. If this option is omitted, the function will search within the currently selected timing group.
 ---@return ScrollVelocity | nil ScrollVelocity The requested scroll velocity.
 function map.GetScrollVelocityAt(time, timingGroupId) end
 
---- READ-ONLY // Returns the nearest scroll speed factor before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected scroll group.
+--- ### READ-ONLY
+--- Returns the nearest scroll speed factor before the given `time`, within `timingGroupId`. If `timingGroupId` is not given, it will search within the currently selected scroll group.
 ---@param time number The time to start looking from, in milliseconds.
 ---@param timingGroupId? string The timing group to look within. If this option is omitted, the function will search within the currently selected timing group.
 ---@return ScrollSpeedFactor | nil ScrollSpeedFactor The requested scroll speed factor.
 function map.GetScrollSpeedFactorAt(time, timingGroupId) end
 
---- READ-ONLY // Returns the timing group corresponding with the given id.
+--- ### READ-ONLY
+--- Returns the timing group corresponding with the given id.
 ---@param timingGroupId string The id to search with.
 ---@return ScrollGroup | nil ScrollGroup The timing group corresponding to the id.
 function map.GetTimingGroup(timingGroupId) end
 
---- READ-ONLY // Returns a list of all timing group ids.
+--- ### READ-ONLY
+--- Returns a list of all timing group ids.
 --- @return string[] Ids The list of timing group ids.
 function map.GetTimingGroupIds() end
 
---- READ-ONLY // Returns all hit objects within the id's corresponding timing group.
+--- ### READ-ONLY
+--- Returns all hit objects within the id's corresponding timing group.
 ---@param timingGroupId string The timing group to look within.
 ---@return HitObject[] | nil HitObjects All objects within the requested timing group.
 ---@overload fun(timingGroupIds: string[]): HitObject[] | nil If a table is passed as the argument, all objects from all listed timing groups will be returned.
 function map.GetTimingGroupObjects(timingGroupId) end
 
---- READ-ONLY // Returns the nearest bookmark before the given `time`.
+--- ### READ-ONLY
+--- Returns the nearest bookmark before the given `time`.
 ---@param time number The time to start looking from, in milliseconds.
 ---@return Bookmark | nil Bookmark The requested bookmark.
 function map.GetBookmarkAt(time) end
 
---- READ-ONLY // Returns the length of the nearest timing point before `time`, in milliseconds.
+--- ### READ-ONLY
+--- Returns the length of the nearest timing point before `time`, in milliseconds.
 ---@param time number The time to start looking from, in milliseconds.
 ---@return number | nil duration The duration between the previous timing point and the next timing point.
 function map.GetTimingPointLength(time) end
 
---- READ-ONLY // Returns the nearest time where the snap lines up with the given snap.
+--- ### READ-ONLY
+--- Returns the nearest time where the snap lines up with the given snap.
 ---@param forwards boolean Whether or not the nearest snap should be searched forwards or backwards in time.
 ---@param snap integer The denominator of the desired snap.
 ---@param time number The time to start looking from, in milliseconds.
@@ -283,33 +312,40 @@ function map.GetNearestSnapTimeFromTime(forwards, snap, time) end
 
 -- actions global, vector globals
 
---- READ-ONLY // Invokes the function whenever any editor action has occurred. This includes actions invoked by this and other plugins.
+--- ### READ-ONLY
+--- Invokes the function whenever any editor action has occurred. This includes actions invoked by this and other plugins.
 ---@param fn fun(action: EditorAction, type: HistoryType, fromLua: boolean): nil The function that will be invoked during any editor action.
 function listen(fn) end
 
---- READ-ONLY // Returns the value stored in the `config.yaml` file located in the plugin's directory.
+--- ### READ-ONLY
+--- Returns the value stored in the `config.yaml` file located in the plugin's directory.
 --- @return any data The contents within `config.yaml`.
 function read() end
 
---- READ-ONLY // Stores the given value in the `config.yaml` file located in the plugin's directory. If multiple arguments are given, they are packed as an array before being stored.
+--- ### READ-ONLY
+--- Stores the given value in the `config.yaml` file located in the plugin's directory. If multiple arguments are given, they are packed as an array before being stored.
 --- @param ... any[] The contents that should be stored.
 function write(...) end
 
---- READ-ONLY // Evaluates the string as Lua code, in the current context. This function is similar to `eval`, but is unable to make function calls and is guaranteed to be pure.
+--- ### READ-ONLY
+--- Evaluates the string as Lua code, in the current context. This function is similar to `eval`, but is unable to make function calls and is guaranteed to be pure.
 --- @param str string The string to evaluate.
 --- @return any value The resultant value.
 function expr(str) end
 
---- READ-ONLY // Evaluates the string as Lua code, in the current context. This function is capable of doing anything that the script already can.
+--- ### READ-ONLY
+--- Evaluates the string as Lua code, in the current context. This function is capable of doing anything that the script already can.
 --- @param str string
 --- @return any value The resultant value.
 function eval(str) end
 
---- READ-ONLY //  Displays a notification in Quaver.
+--- ### READ-ONLY
+---  Displays a notification in Quaver.
 ---@param ... any[] The notification contents.
 function print(...) end
 
---- READ-ONLY // Displays a notification in Quaver with a specific color and icon.
+--- ### READ-ONLY
+--- Displays a notification in Quaver with a specific color and icon.
 --- @param notificationType "info"|"success"|"warning"|"error"|"info!"|"success!"|"warning!"|"error!" The type of notification sent. Appending an `!` will omit the plugin name in the notification.
 --- @param ... any[] The contents of the notification.
 function print(notificationType, ...) end
@@ -4082,7 +4118,8 @@ function imgui.SameLine(offset_from_start_x) end
 function imgui.SameLine(offset_from_start_x, spacing) end
 
 ---@deprecated
---- READ-ONLY // Use the `write()` global for persistent storage instead.
+--- ### READ-ONLY
+--- Use the `write()` global for persistent storage instead.
 ---@param ini_filename string
 function imgui.SaveIniSettingsToDisk(ini_filename) end
 
