@@ -36,7 +36,7 @@ function placeSpecialSVMenu(globalVars)
     if currentSVType == "Frames Setup" then
         animationFramesSetupMenu(globalVars, settingVars)
     end
-    if currentSVType == "Automate" and devMode then automateSVMenu(settingVars) end
+    if currentSVType == "Automate" then automateSVMenu(settingVars) end
 
 
     local labelText = table.concat({ currentSVType, "SettingsSpecial" })
