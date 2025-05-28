@@ -23,6 +23,7 @@ function awake()
     state.SetValue("global_drawCapybara312", truthy(tempGlobalVars.drawCapybara312))
     state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
+    state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
 
     -- listen(function (event, history_type) print(event, history_type) end)
 end

@@ -16,7 +16,7 @@ drawCapybara: false
 drawCapybara2: false
 drawCapybara312: false
 selectTypeIndex: 1
-placeTypeIndex: 1
+placeTypeIndex: 2
 editToolIndex: 1
 showExportImportMenu: false
 importData: ''
@@ -27,6 +27,7 @@ scrollGroupIndex: 1
 showColorPicker: false
 BETA_IGNORE_NOTES_OUTSIDE_TG: false
 advancedMode: true
+hideAutomatic: true
 pulseCoefficient: 1
 pulseColor:
 - 0

@@ -701,7 +701,7 @@ function chooseKeyboardMode(globalVars)
     end
 end
 
--- Lets you choose whether to activate or deactive "Advanced Mode"
+-- Lets you choose whether to activate or deactivate "Advanced Mode"
 function chooseAdvancedMode(globalVars)
     local oldAdvancedMode = globalVars.advancedMode
     imgui.AlignTextToFramePadding()
@@ -717,6 +717,25 @@ function chooseAdvancedMode(globalVars)
     if (oldAdvancedMode ~= globalVars.advancedMode) then
         write(globalVars)
         state.SetValue("global_advancedMode", globalVars.advancedMode)
+    end
+end
+
+-- Lets you choose whether to activate or deactivate hiding automated timing groups.
+function chooseHideAutomatic(globalVars)
+    local oldHideAutomatic = globalVars.hideAutomatic
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Hide Automatic TGs?:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("NO", not globalVars.hideAutomatic) then
+        globalVars.hideAutomatic = false
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("YES", globalVars.hideAutomatic) then
+        globalVars.hideAutomatic = true
+    end
+    if (oldHideAutomatic ~= globalVars.hideAutomatic) then
+        write(globalVars)
+        state.SetValue("globalVars.hideAutomatic", globalVars.hideAutomatic)
     end
 end
 
@@ -910,6 +929,7 @@ function chooseCurrentScrollGroup(globalVars)
     "255,255,255" }
     for k, v in pairs(map.TimingGroups) do
         if string.find(k, "%$") then goto continue end
+        if (globalVars.hideAutomatic and string.find(k, "automate_")) then goto continue end
         table.insert(groups, k)
         table.insert(cols, v.ColorRgb or "255,255,255")
         ::continue::

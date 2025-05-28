@@ -8,6 +8,9 @@ function infoTab(globalVars)
     choosePluginBehaviorSettings(globalVars)
     choosePluginAppearance(globalVars)
     chooseAdvancedMode(globalVars)
+    if (globalVars.advancedMode) then
+        chooseHideAutomatic(globalVars)
+    end
 end
 
 -- Gives basic info about how to use the plugin

@@ -52,6 +52,12 @@ For more information, please refer to <https://unlicense.org>
 --- ##### (READ-ONLY)
 --- #### Gets the nearest [scroll speed factor](lua://ScrollSpeedFactor) before the `time` parameter
 ---@field GetScrollSpeedFactorAt fun(time: number): ScrollSpeedFactor
+--- ##### (READ-ONLY)
+--- #### A string of format `r,g,b` representing the color of the [editor layer](lua://EditorLayer). `r`, `g`, and `b` are integers within [0,255].
+---@field ColorRgb string
+--- ##### (READ-ONLY)
+--- #### Determines whether or not the timing group is visible in the editor.
+---@field Hidden boolean
 
 ---@class (exact) ScrollSpeedFactor
 --- ##### (READ-ONLY)
@@ -102,7 +108,7 @@ For more information, please refer to <https://unlicense.org>
 
 ---@class (exact) TimingPoint
 --- ##### (READ-ONLY)
---- #### The time in which the [timing point](lua://TimingPoint) is located..
+--- #### The time in which the [timing point](lua://TimingPoint) is located.
 ---@field StartTime number
 --- ##### (READ-ONLY)
 --- #### The beats per minute, or bpm of the [timing point](lua://TimingPoint).
@@ -498,7 +504,7 @@ function actions.ChangeTimingPointBpm(tp, newBpm) end
 --- ##### (READ-ONLY)
 --- #### Changes if a given [timing point](lua://TimingPoint) should be `Hidden`.
 ---@param tp TimingPoint The [timing point](lua://TimingPoint) to modify, which must be obtained via [`map.TimingPoints`](lua://map.TimingPoints) or something similar.
----@param newHidden boolean The new `Hidden` property..
+---@param newHidden boolean The new `Hidden` property.
 function actions.ChangeTimingPointHidden(tp, newHidden) end
 
 --- ##### (READ-ONLY)
@@ -708,21 +714,21 @@ function state.GetValue(key, fallback) end
 utils = {}
 
 --- ##### (READ-ONLY)
---- #### Creates a [scroll velocity](lua://ScrollVelocity), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+--- #### Creates a [scroll velocity](lua://ScrollVelocity), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 ---@param startTime number The time to create the [scroll velocity](lua://ScrollVelocity), in milliseconds.
 ---@param multiplier number The factor at which to scale the player's [scroll velocity](lua://ScrollVelocity).
 ---@return ScrollVelocity scrollVelocity The requested [scroll velocity](lua://ScrollVelocity).
 function utils.CreateScrollVelocity(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
---- #### Creates a [scroll speed factor](lua://ScrollSpeedFactor), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+--- #### Creates a [scroll speed factor](lua://ScrollSpeedFactor), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 ---@param startTime number The time to create the [scroll speed factor](lua://ScrollSpeedFactor), in milliseconds.
 ---@param multiplier number The factor at which to scale the player's scroll speed.
 ---@return ScrollSpeedFactor scrollSpeedFactor The requested [scroll speed factor](lua://ScrollSpeedFactor).
 function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
---- #### Creates a [hit object](lua://HitObject), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+--- #### Creates a [hit object](lua://HitObject), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 --- @param startTime number The time to create the note, in milliseconds.
 --- @param lane 1|2|3|4|5|6|7 The lane to create the note in.
 --- @param endTime? number If given and non-zero, the note becomes a long note. This parameter determines when the long note will end.
@@ -741,7 +747,7 @@ function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer)
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
 --- ##### (READ-ONLY)
---- #### Creates an [editor layer](lua://EditorLayer), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+--- #### Creates an [editor layer](lua://EditorLayer), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 ---@param name string The name of this layer.
 ---@param hidden? boolean Whether or not to hide this layer in the editor.
 ---@param colorRgb? string The color of the [editor layer](lua://EditorLayer). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
@@ -749,14 +755,14 @@ function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 --- ##### (READ-ONLY)
---- #### Creates a [bookmark](lua://Bookmark), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+--- #### Creates a [bookmark](lua://Bookmark), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 ---@param startTime number The time to create the [bookmark](lua://Bookmark), in milliseconds.
 ---@param note string The contents of the [bookmark](lua://Bookmark).
 ---@return Bookmark bookmark The requested [bookmark](lua://Bookmark).
 function utils.CreateBookmark(startTime, note) end
 
 --- ##### (READ-ONLY)
---- #### Creates a [scroll group](lua://ScrollGroup), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed..
+--- #### Creates a [scroll group](lua://ScrollGroup), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 --- @param svs ScrollVelocity[] The [scroll velocities](lua://ScrollVelocity) to add to the [scroll group](lua://ScrollGroup).
 --- @param initialSV? number The initial [scroll velocity](lua://ScrollVelocity) of the [scroll group](lua://ScrollGroup).
 --- @param colorRgb? string The color of the [scroll group](lua://ScrollGroup). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].

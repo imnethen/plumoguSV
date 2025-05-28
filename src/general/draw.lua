@@ -34,6 +34,7 @@ function draw()
         showColorPicker = false,
         BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes", false),
         advancedMode = state.GetValue("global_advancedMode", false),
+        hideAutomatic = state.GetValue("global_hideAutomatic", false),
         pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
         pulseColor = state.GetValue("global_pulseColor", { 1, 1, 1, 1 }),
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
