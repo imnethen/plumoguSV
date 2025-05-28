@@ -938,6 +938,12 @@ function chooseCurrentScrollGroup(globalVars)
     imgui.PushItemWidth(155)
     globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols)
     imgui.PopItemWidth()
+    if (utils.IsKeyPressed(keys.N)) then
+        globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex - 1, 1, #groups)
+    end
+    if (utils.IsKeyPressed(keys.M)) then
+        globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex + 1, 1, #groups)
+    end
     addSeparator()
     if (prevIndex ~= globalVars.scrollGroupIndex) then
         state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
