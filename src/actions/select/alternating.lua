@@ -27,5 +27,5 @@ function selectAlternating(menuVars)
         end
     end
     actions.SetHitObjectSelection(notesToSelect)
-    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
 end

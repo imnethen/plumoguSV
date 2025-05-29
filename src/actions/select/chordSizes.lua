@@ -40,5 +40,5 @@ function selectByChordSizes(menuVars)
     if (menuVars.quad) then notesToSelect = table.combine(notesToSelect, sizeDict[4]) end
 
     actions.SetHitObjectSelection(notesToSelect)
-    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
 end

@@ -223,9 +223,6 @@ function importPlaceSVButton(globalVars)
 
     local menuVars
 
-    print(currentSVType)
-
-
     if standardPlaceType then menuVars = getStandardPlaceMenuVars() end
     if specialPlaceType then menuVars = getSpecialPlaceMenuVars() end
     if stillPlaceType then menuVars = getStillPlaceMenuVars() end
@@ -386,7 +383,7 @@ function importPlaceSVButton(globalVars)
         settingVars.distanceBack2 = table.remove(settingsTable, 1)
         settingVars.distanceBack3 = table.remove(settingsTable, 1)
         settingVars.splitscrollLayers = {}
-        while #settingsTable > 0 do
+        while truthy(settingsTable) do
             local splitscrollLayerString = table.remove(settingsTable)
             local layerDataStringTable = {}
             for str in string.gmatch(splitscrollLayerString, "([^:]+)") do

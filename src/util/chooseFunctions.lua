@@ -1486,7 +1486,7 @@ function chooseHotkeys(globalVars)
     if (awaitingIndex == 0) then return end
     local prefixes, key = listenForAnyKeyPressed()
     if (key == -1) then return end
-    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (#prefixes > 0 and "+" or "") .. keyNumToKey(key)
+    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (truthy(prefixes) and "+" or "") .. keyNumToKey(key)
     awaitingIndex = 0
     globalVars.hotkeyList = hotkeyList
     GLOBAL_HOTKEY_LIST = hotkeyList

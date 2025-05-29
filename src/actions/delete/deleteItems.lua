@@ -10,7 +10,7 @@ function deleteItems(menuVars)
     if (not menuVars.deleteTable[2]) then svsToRemove = {} end
     if (not menuVars.deleteTable[3]) then ssfsToRemove = {} end
     if (not menuVars.deleteTable[4]) then bmsToRemove = {} end
-    if (#linesToRemove > 0 or #svsToRemove > 0 or #ssfsToRemove > 0 or #bmsToRemove > 0) then
+    if (truthy(linesToRemove) or truthy(svsToRemove) or truthy(ssfsToRemove) or truthy(bmsToRemove)) then
         actions.PerformBatch({
             utils.CreateEditorAction(
                 action_type.RemoveTimingPointBatch, linesToRemove),
@@ -20,5 +20,19 @@ function deleteItems(menuVars)
                 action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove),
             utils.CreateEditorAction(
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
+    end
+    if (truthy(#linesToRemove)) then
+        print("error!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+    end
+    if (truthy(#svsToRemove)) then
+        print("error!",
+            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+    end
+    if (truthy(#ssfsToRemove)) then
+        print("error!",
+            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+    end
+    if (truthy(#bmsToRemove)) then
+        print("error!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
     end
 end

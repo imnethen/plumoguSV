@@ -936,7 +936,7 @@ function deleteItems(menuVars)
     if (not menuVars.deleteTable[2]) then svsToRemove = {} end
     if (not menuVars.deleteTable[3]) then ssfsToRemove = {} end
     if (not menuVars.deleteTable[4]) then bmsToRemove = {} end
-    if (#linesToRemove > 0 or #svsToRemove > 0 or #ssfsToRemove > 0 or #bmsToRemove > 0) then
+    if (truthy(linesToRemove) or truthy(svsToRemove) or truthy(ssfsToRemove) or truthy(bmsToRemove)) then
         actions.PerformBatch({
             utils.CreateEditorAction(
                 action_type.RemoveTimingPointBatch, linesToRemove),
@@ -946,6 +946,20 @@ function deleteItems(menuVars)
                 action_type.RemoveScrollSpeedFactorBatch, ssfsToRemove),
             utils.CreateEditorAction(
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
+    end
+    if (truthy(#linesToRemove)) then
+        print("error!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+    end
+    if (truthy(#svsToRemove)) then
+        print("error!",
+            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+    end
+    if (truthy(#ssfsToRemove)) then
+        print("error!",
+            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+    end
+    if (truthy(#bmsToRemove)) then
+        print("error!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
     end
 end
 -- Adds teleport SVs at selected notes
@@ -1805,9 +1819,6 @@ function importPlaceSVButton(globalVars)
 
     local menuVars
 
-    print(currentSVType)
-
-
     if standardPlaceType then menuVars = getStandardPlaceMenuVars() end
     if specialPlaceType then menuVars = getSpecialPlaceMenuVars() end
     if stillPlaceType then menuVars = getStillPlaceMenuVars() end
@@ -1968,7 +1979,7 @@ function importPlaceSVButton(globalVars)
         settingVars.distanceBack2 = table.remove(settingsTable, 1)
         settingVars.distanceBack3 = table.remove(settingsTable, 1)
         settingVars.splitscrollLayers = {}
-        while #settingsTable > 0 do
+        while truthy(settingsTable) do
             local splitscrollLayerString = table.remove(settingsTable)
             local layerDataStringTable = {}
             for str in string.gmatch(splitscrollLayerString, "([^:]+)") do
@@ -2056,7 +2067,7 @@ function selectAlternating(menuVars)
         end
     end
     actions.SetHitObjectSelection(notesToSelect)
-    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
 end
 function selectByChordSizes(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
@@ -2100,7 +2111,7 @@ function selectByChordSizes(menuVars)
     if (menuVars.quad) then notesToSelect = table.combine(notesToSelect, sizeDict[4]) end
 
     actions.SetHitObjectSelection(notesToSelect)
-    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
 end
 function selectByNoteType(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
@@ -2117,7 +2128,7 @@ function selectByNoteType(menuVars)
     end
 
     actions.SetHitObjectSelection(notesToSelect)
-    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
 end
 function selectBySnap(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
@@ -2174,7 +2185,7 @@ function selectBySnap(menuVars)
     end
 
     actions.SetHitObjectSelection(notesToSelect)
-    print(#notesToSelect > 0 and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
 end
 function awake()
     local tempGlobalVars = read()
@@ -7974,7 +7985,7 @@ function chooseHotkeys(globalVars)
     if (awaitingIndex == 0) then return end
     local prefixes, key = listenForAnyKeyPressed()
     if (key == -1) then return end
-    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (#prefixes > 0 and "+" or "") .. keyNumToKey(key)
+    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (truthy(prefixes) and "+" or "") .. keyNumToKey(key)
     awaitingIndex = 0
     globalVars.hotkeyList = hotkeyList
     GLOBAL_HOTKEY_LIST = hotkeyList
