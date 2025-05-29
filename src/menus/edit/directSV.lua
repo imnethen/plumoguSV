@@ -17,7 +17,8 @@ function directSVMenu()
     local menuVars = {
         selectableIndex = 1,
         startTime = 0,
-        multiplier = 0
+        multiplier = 0,
+        pageNumber = 1
     }
 
     getVariables("directSVMenu", menuVars)
@@ -71,6 +72,22 @@ function directSVMenu()
     state.SetValue("primeMultiplier", primeMultiplier)
     state.SetValue("savedStartTime", menuVars.startTime)
     state.SetValue("savedMultiplier", menuVars.multiplier)
+    imgui.Separator()
+
+    if (imgui.Button("<##DirectSV")) then
+        menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs / 10))
+    end
+
+    imgui.SameLine()
+    imgui.Text("Page ")
+    imgui.SameLine()
+    imgui.SetNextItemWidth(125)
+    _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs / 10)))
+    imgui.SameLine()
+    if (imgui.Button(">##DirectSV")) then
+        menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
+    end
+
 
     imgui.Separator()
     imgui.Text("Start Time")
@@ -80,7 +97,7 @@ function directSVMenu()
     imgui.Separator()
 
     imgui.BeginTable("Test", 2)
-    for idx, v in pairs(svs) do
+    for idx, v in pairs({ table.unpack(svs, 1 + 10 * (menuVars.pageNumber - 1), 10 * menuVars.pageNumber) }) do
         imgui.PushID(idx)
         imgui.TableNextRow()
         imgui.TableSetColumnIndex(0)
