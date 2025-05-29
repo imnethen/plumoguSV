@@ -2,6 +2,7 @@
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function placeTeleportStutterSVs(settingVars)
+    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local svPercent = settingVars.svPercent / 100
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
@@ -14,7 +15,7 @@ function placeTeleportStutterSVs(settingVars)
     local lastOffset = offsets[#offsets]
     local numTeleportSets = #offsets - 1
     local svsToAdd = {}
-    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset)
+    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     local svPercents = generateLinearSet(svPercent, lastSVPercent, numTeleportSets)
     local mainSVs = generateLinearSet(settingVars.mainSV, lastMainSV, numTeleportSets)
 
@@ -40,12 +41,11 @@ function placeTeleportStutterSVs(settingVars)
         if sv2 ~= sv1 then addSVToList(svsToAdd, startOffset + startDuration, sv2, true) end
         if sv3 ~= sv2 then addSVToList(svsToAdd, endOffset - endDuration, sv3, true) end
     end
-    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local finalMultiplier = settingVars.avgSV
-    if finalSVType == "Custom" then
+    if finalSVType ~= "Normal" then
         finalMultiplier = settingVars.customSV
     end
-    addFinalSV(svsToAdd, lastOffset, finalMultiplier)
+    addFinalSV(svsToAdd, lastOffset, finalMultiplier, finalSVType == "Override")
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
@@ -53,6 +53,7 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function placeTeleportStutterSSFs(settingVars)
+    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local svPercent = settingVars.svPercent / 100
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
@@ -65,7 +66,7 @@ function placeTeleportStutterSSFs(settingVars)
     local lastOffset = offsets[#offsets]
     local numTeleportSets = #offsets - 1
     local ssfsToAdd = {}
-    local ssfsToRemove = getSSFsBetweenOffsets(firstOffset, lastOffset)
+    local ssfsToRemove = getSSFsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     local ssfPercents = generateLinearSet(svPercent, lastSVPercent, numTeleportSets)
     local mainSSFs = generateLinearSet(settingVars.mainSV, lastMainSV, numTeleportSets)
 
@@ -91,11 +92,10 @@ function placeTeleportStutterSSFs(settingVars)
         if ssf2 ~= ssf1 then addSSFToList(ssfsToAdd, startOffset + startDuration, ssf2, true) end
         if ssf3 ~= ssf2 then addSSFToList(ssfsToAdd, endOffset - endDuration, ssf3, true) end
     end
-    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local finalMultiplier = settingVars.avgSV
-    if finalSVType == "Custom" then
+    if finalSVType ~= "Normal" then
         finalMultiplier = settingVars.customSV
     end
-    addFinalSSF(ssfsToAdd, lastOffset, finalMultiplier)
+    addFinalSSF(ssfsToAdd, lastOffset, finalMultiplier, finalSVType == "Override")
     removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end

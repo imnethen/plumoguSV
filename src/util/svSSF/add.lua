@@ -11,10 +11,10 @@ function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
     addSVToList(svsToAdd, endOffset, svMultiplier, true)
 end
 
-function addFinalSSF(ssfsToAdd, endOffset, ssfMultiplier)
+function addFinalSSF(ssfsToAdd, endOffset, ssfMultiplier, force)
     local ssf = map.GetScrollSpeedFactorAt(endOffset)
     local ssfExistsAtEndOffset = ssf and (ssf.StartTime == endOffset)
-    if ssfExistsAtEndOffset then return end
+    if ssfExistsAtEndOffset and not force then return end
 
     addSSFToList(ssfsToAdd, endOffset, ssfMultiplier, true)
 end

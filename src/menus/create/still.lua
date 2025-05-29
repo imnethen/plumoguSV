@@ -55,7 +55,8 @@ function getStillPlaceMenuVars()
         svGraphStats = createSVGraphStats(),
         svStats = createSVStats(),
         interlace = false,
-        interlaceRatio = -0.5
+        interlaceRatio = -0.5,
+        overrideFinal = false
     }
     getVariables("placeStillMenu", menuVars)
     return menuVars

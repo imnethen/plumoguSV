@@ -88,7 +88,8 @@ EMOTICONS = { -- emoticons to visually clutter the plugin and confuse users
 }
 FINAL_SV_TYPES = { -- options for the last SV placed at the tail end of all SVs
     "Normal",
-    "Custom"
+    "Custom",
+    "Override"
 }
 FLICKER_TYPES = { -- types of flickers
     "Normal",

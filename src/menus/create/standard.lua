@@ -40,9 +40,9 @@ function placeStandardSVMenu(globalVars)
     makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
         menuVars.svMultipliers, nil, false)
 
+    menuVars.settingVars = settingVars
     addSeparator()
     if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
-        menuVars.settingVars = settingVars
         simpleActionMenu("Place SVs between selected notes##Exponential", 2, placeExponentialSpecialSVs, globalVars,
             menuVars)
     else
@@ -64,7 +64,8 @@ function getStandardPlaceMenuVars()
         svGraphStats = createSVGraphStats(),
         svStats = createSVStats(),
         interlace = false,
-        interlaceRatio = -0.5
+        interlaceRatio = -0.5,
+        overrideFinal = false
     }
     getVariables("placeStandardMenu", menuVars)
     return menuVars

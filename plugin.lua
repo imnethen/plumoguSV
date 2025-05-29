@@ -552,6 +552,7 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function placeStutterSVs(settingVars)
+    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local lastFirstStutter = settingVars.startSV
     local lastMultiplier = settingVars.svMultipliers[3]
     if settingVars.linearlyChange then
@@ -565,7 +566,7 @@ function placeStutterSVs(settingVars)
     local firstStutterSVs = generateLinearSet(settingVars.startSV, lastFirstStutter,
         totalNumStutters)
     local svsToAdd = {}
-    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset)
+    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     local stutterIndex = 1
     for i = 1, #offsets - 1 do
         local startOffset = offsets[i]
@@ -586,7 +587,7 @@ function placeStutterSVs(settingVars)
             stutterIndex = stutterIndex + 1
         end
     end
-    addFinalSV(svsToAdd, lastOffset, lastMultiplier)
+    addFinalSV(svsToAdd, lastOffset, lastMultiplier, finalSVType == "Override")
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
@@ -632,6 +633,7 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function placeTeleportStutterSVs(settingVars)
+    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local svPercent = settingVars.svPercent / 100
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
@@ -644,7 +646,7 @@ function placeTeleportStutterSVs(settingVars)
     local lastOffset = offsets[#offsets]
     local numTeleportSets = #offsets - 1
     local svsToAdd = {}
-    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset)
+    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     local svPercents = generateLinearSet(svPercent, lastSVPercent, numTeleportSets)
     local mainSVs = generateLinearSet(settingVars.mainSV, lastMainSV, numTeleportSets)
 
@@ -670,12 +672,11 @@ function placeTeleportStutterSVs(settingVars)
         if sv2 ~= sv1 then addSVToList(svsToAdd, startOffset + startDuration, sv2, true) end
         if sv3 ~= sv2 then addSVToList(svsToAdd, endOffset - endDuration, sv3, true) end
     end
-    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local finalMultiplier = settingVars.avgSV
-    if finalSVType == "Custom" then
+    if finalSVType ~= "Normal" then
         finalMultiplier = settingVars.customSV
     end
-    addFinalSV(svsToAdd, lastOffset, finalMultiplier)
+    addFinalSV(svsToAdd, lastOffset, finalMultiplier, finalSVType == "Override")
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
@@ -683,6 +684,7 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function placeTeleportStutterSSFs(settingVars)
+    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local svPercent = settingVars.svPercent / 100
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
@@ -695,7 +697,7 @@ function placeTeleportStutterSSFs(settingVars)
     local lastOffset = offsets[#offsets]
     local numTeleportSets = #offsets - 1
     local ssfsToAdd = {}
-    local ssfsToRemove = getSSFsBetweenOffsets(firstOffset, lastOffset)
+    local ssfsToRemove = getSSFsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     local ssfPercents = generateLinearSet(svPercent, lastSVPercent, numTeleportSets)
     local mainSSFs = generateLinearSet(settingVars.mainSV, lastMainSV, numTeleportSets)
 
@@ -721,12 +723,11 @@ function placeTeleportStutterSSFs(settingVars)
         if ssf2 ~= ssf1 then addSSFToList(ssfsToAdd, startOffset + startDuration, ssf2, true) end
         if ssf3 ~= ssf2 then addSSFToList(ssfsToAdd, endOffset - endDuration, ssf3, true) end
     end
-    local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local finalMultiplier = settingVars.avgSV
-    if finalSVType == "Custom" then
+    if finalSVType ~= "Normal" then
         finalMultiplier = settingVars.customSV
     end
-    addFinalSSF(ssfsToAdd, lastOffset, finalMultiplier)
+    addFinalSSF(ssfsToAdd, lastOffset, finalMultiplier, finalSVType == "Override")
     removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end
 function placeExponentialSpecialSVs(globalVars, menuVars)
@@ -768,6 +769,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
 function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optionalDistance)
+    local finalSVType = FINAL_SV_TYPES[menuVars.settingVars.finalSVIndex]
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
@@ -781,7 +783,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     local lastOffset = offsets[#offsets]
     if placingStillSVs then offsets = { firstOffset, lastOffset } end
     local svsToAdd = {}
-    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset)
+    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     if (not placingStillSVs) and globalVars.dontReplaceSV then
         svsToRemove = {}
     end
@@ -805,7 +807,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
                 table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
-        addFinalSV(svsToAdd, lastOffset, lastMultiplier)
+        addFinalSV(svsToAdd, lastOffset, lastMultiplier, finalSVType == "Override")
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
@@ -2293,7 +2295,8 @@ EMOTICONS = { -- emoticons to visually clutter the plugin and confuse users
 }
 FINAL_SV_TYPES = { -- options for the last SV placed at the tail end of all SVs
     "Normal",
-    "Custom"
+    "Custom",
+    "Override"
 }
 FLICKER_TYPES = { -- types of flickers
     "Normal",
@@ -3297,9 +3300,9 @@ function placeStandardSVMenu(globalVars)
     makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
         menuVars.svMultipliers, nil, false)
 
+    menuVars.settingVars = settingVars
     addSeparator()
     if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
-        menuVars.settingVars = settingVars
         simpleActionMenu("Place SVs between selected notes##Exponential", 2, placeExponentialSpecialSVs, globalVars,
             menuVars)
     else
@@ -3321,7 +3324,8 @@ function getStandardPlaceMenuVars()
         svGraphStats = createSVGraphStats(),
         svStats = createSVStats(),
         interlace = false,
-        interlaceRatio = -0.5
+        interlaceRatio = -0.5,
+        overrideFinal = false
     }
     getVariables("placeStandardMenu", menuVars)
     return menuVars
@@ -3383,7 +3387,8 @@ function getStillPlaceMenuVars()
         svGraphStats = createSVGraphStats(),
         svStats = createSVStats(),
         interlace = false,
-        interlaceRatio = -0.5
+        interlaceRatio = -0.5,
+        overrideFinal = false
     }
     getVariables("placeStillMenu", menuVars)
     return menuVars
@@ -6999,7 +7004,7 @@ function chooseFinalSV(settingVars, skipFinalSV)
     local oldIndex = settingVars.finalSVIndex
     local oldCustomSV = settingVars.customSV
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
-    if finalSVType == "Custom" then
+    if finalSVType ~= "Normal" then
         imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.35)
         _, settingVars.customSV = imgui.InputFloat("SV", settingVars.customSV, 0, 0, "%.2fx")
         imgui.SameLine(0, SAMELINE_SPACING)
@@ -7010,7 +7015,7 @@ function chooseFinalSV(settingVars, skipFinalSV)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.5)
     settingVars.finalSVIndex = combo("Final SV", FINAL_SV_TYPES, settingVars.finalSVIndex)
     helpMarker("Final SV won't be placed if there's already an SV at the end time")
-    if finalSVType ~= "Custom" then
+    if finalSVType == "Normal" then
         imgui.Unindent(DEFAULT_WIDGET_WIDTH * 0.35 + 24)
     end
     imgui.PopItemWidth()
@@ -8864,11 +8869,13 @@ end
 --- Returns a list of [scroll velocities](lua://ScrollVelocity) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
+---@param includeEnd? boolean Whether or not to include any SVs on the end time.
 ---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
-function getSVsBetweenOffsets(startOffset, endOffset)
+function getSVsBetweenOffsets(startOffset, endOffset, includeEnd)
     local svsBetweenOffsets = {} ---@type ScrollVelocity[]
     for _, sv in pairs(map.ScrollVelocities) do
         local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
+        if (includeEnd and sv.StartTime == endOffset) then svIsInRange = true end
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
     return sort(svsBetweenOffsets, sortAscendingStartTime)
@@ -8903,8 +8910,9 @@ end
 --- Returns a list of [scroll speed factors](lua://ScrollSpeedFactor) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
+---@param includeEnd? boolean Whether or not to include any SVs on the end time.
 ---@return ScrollSpeedFactor[] ssfs All of the [scroll speed factors](lua://ScrollSpeedFactor) within the area.
-function getSSFsBetweenOffsets(startOffset, endOffset)
+function getSSFsBetweenOffsets(startOffset, endOffset, includeEnd)
     local ssfsBetweenOffsets = {} ---@type ScrollSpeedFactor[]
     local ssfs = map.ScrollSpeedFactors
     if (ssfs == nil) then
@@ -8912,6 +8920,7 @@ function getSSFsBetweenOffsets(startOffset, endOffset)
     else
         for _, ssf in pairs(map.ScrollSpeedFactors) do
             local ssfIsInRange = ssf.StartTime >= startOffset and ssf.StartTime < endOffset
+            if (includeEnd and ssf.StartTime == endOffset) then ssfIsInRange = true end
             if ssfIsInRange then table.insert(ssfsBetweenOffsets, ssf) end
         end
     end
@@ -9180,10 +9189,10 @@ function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
     addSVToList(svsToAdd, endOffset, svMultiplier, true)
 end
 
-function addFinalSSF(ssfsToAdd, endOffset, ssfMultiplier)
+function addFinalSSF(ssfsToAdd, endOffset, ssfMultiplier, force)
     local ssf = map.GetScrollSpeedFactorAt(endOffset)
     local ssfExistsAtEndOffset = ssf and (ssf.StartTime == endOffset)
-    if ssfExistsAtEndOffset then return end
+    if ssfExistsAtEndOffset and not force then return end
 
     addSSFToList(ssfsToAdd, endOffset, ssfMultiplier, true)
 end

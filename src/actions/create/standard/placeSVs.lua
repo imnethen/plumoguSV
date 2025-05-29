@@ -3,6 +3,7 @@
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
 function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optionalDistance)
+    local finalSVType = FINAL_SV_TYPES[menuVars.settingVars.finalSVIndex]
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
@@ -16,7 +17,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     local lastOffset = offsets[#offsets]
     if placingStillSVs then offsets = { firstOffset, lastOffset } end
     local svsToAdd = {}
-    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset)
+    local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     if (not placingStillSVs) and globalVars.dontReplaceSV then
         svsToRemove = {}
     end
@@ -40,7 +41,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
                 table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
-        addFinalSV(svsToAdd, lastOffset, lastMultiplier)
+        addFinalSV(svsToAdd, lastOffset, lastMultiplier, finalSVType == "Override")
         removeAndAddSVs(svsToRemove, svsToAdd)
         return
     end
