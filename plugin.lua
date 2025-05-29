@@ -7951,7 +7951,7 @@ end
 function chooseHotkeys(globalVars)
     local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
     local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
-    if not imgui.CollapsingHeader("Plugin Hotkey List") then return end
+    if not imgui.CollapsingHeader("Plugin Hotkey Settings") then return end
     for k, v in pairs(hotkeyList) do
         if imgui.Button(awaitingIndex == k and "Listening...##listening" or v .. "##" .. k) then
             if (awaitingIndex == k) then
