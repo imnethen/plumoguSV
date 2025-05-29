@@ -2203,6 +2203,8 @@ function awake()
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
 
+    state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
+
     -- listen(function (event, history_type) print(event, history_type) end)
 end
 DEFAULT_WIDGET_HEIGHT = 26                    -- value determining the height of GUI widgets
