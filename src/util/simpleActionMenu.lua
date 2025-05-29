@@ -5,7 +5,7 @@
 --    actionfunc   : function to execute once button is pressed [Function]
 --    globalVars   : list of variables used globally across all menus [Table]
 --    menuVars     : list of variables used for the current menu [Table]
-function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq)
+function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput)
     local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
     local infoText = table.concat({ "Select ", minimumNotes, " or more notes" })
     if (not enoughSelectedNotes) then
@@ -13,14 +13,13 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         return
     end
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
+    if (disableKeyInput) then return end
     if (hideNoteReq) then
-        toolTip("Press 'Shift+T' on your keyboard to do the same thing as this button")
-        if (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift)) then return end
-        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[2] .. "\" on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, globalVars, menuVars)
     else
-        if (utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)) then return end
-        toolTip("Press 'T' on your keyboard to do the same thing as this button")
-        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[1] .. "\" on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
     end
 end
 
@@ -30,8 +29,8 @@ end
 --    func       : function to execute once key is pressed [Function]
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function executeFunctionIfKeyPressed(key, func, globalVars, menuVars)
-    if not utils.IsKeyPressed(key) then return end
+function executeFunctionIfTrue(boolean, func, globalVars, menuVars)
+    if not boolean then return end
     if globalVars and menuVars then
         func(globalVars, menuVars)
         return

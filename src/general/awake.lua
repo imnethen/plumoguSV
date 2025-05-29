@@ -24,6 +24,7 @@ function awake()
     state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
+    state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
 
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 

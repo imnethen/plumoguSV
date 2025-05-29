@@ -2,7 +2,7 @@ stepSize: 5
 keyboardMode: false
 dontReplaceSV: false
 upscroll: false
-colorThemeIndex: 10
+colorThemeIndex: 11
 styleThemeIndex: 1
 effectFPS: 90
 cursorTrailIndex: 1
@@ -16,7 +16,7 @@ drawCapybara: false
 drawCapybara2: false
 drawCapybara312: false
 selectTypeIndex: 1
-placeTypeIndex: 2
+placeTypeIndex: 1
 editToolIndex: 1
 showExportImportMenu: false
 importData: ''
@@ -35,3 +35,11 @@ pulseColor:
 - 0
 - 1
 useCustomPulseColor: true
+hotkeyList:
+- T
+- Shift+T
+- S
+- N
+- R
+- B
+- M

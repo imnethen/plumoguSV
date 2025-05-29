@@ -153,7 +153,7 @@ function chooseConstantShift(settingVars, defaultShift)
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
     local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
-    if (resetButtonPressed or utils.IsKeyPressed("R")) then
+    if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
         settingVars.verticalShift = defaultShift
     end
     toolTip("Reset vertical shift to initial values")
@@ -361,15 +361,16 @@ function chooseVaryingDistance(settingVars)
     imgui.PopItemWidth()
     settingVars.distance1 = newValues[1]
     settingVars.distance2 = newValues[2]
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars.distance1 = oldValues[2]
         settingVars.distance2 = oldValues[1]
     end
-    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
         settingVars.distance1 = -oldValues[1]
         settingVars.distance2 = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 
@@ -938,10 +939,10 @@ function chooseCurrentScrollGroup(globalVars)
     imgui.PushItemWidth(155)
     globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols)
     imgui.PopItemWidth()
-    if (utils.IsKeyPressed(keys.N)) then
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[6])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex - 1, 1, #groups)
     end
-    if (utils.IsKeyPressed(keys.M)) then
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[7])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex + 1, 1, #groups)
     end
     addSeparator()
@@ -1209,15 +1210,16 @@ function chooseStartEndSVs(settingVars)
     imgui.PopItemWidth()
     settingVars.startSV = newValues[1]
     settingVars.endSV = newValues[2]
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars.startSV = oldValues[2]
         settingVars.endSV = oldValues[1]
     end
-    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
         settingVars.startSV = -oldValues[1]
         settingVars.endSV = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 
@@ -1327,7 +1329,7 @@ function chooseSVBehavior(settingVars)
     local oldBehaviorIndex = settingVars.behaviorIndex
     settingVars.behaviorIndex = combo("Behavior", SV_BEHAVIORS, oldBehaviorIndex)
     imgui.PopItemWidth()
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars.behaviorIndex = oldBehaviorIndex == 1 and 2 or 1
     end
     return oldBehaviorIndex ~= settingVars.behaviorIndex
@@ -1458,6 +1460,40 @@ function choosePluginAppearance(globalVars)
     end
 end
 
+function chooseHotkeys(globalVars)
+    local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
+    local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
+    if not imgui.CollapsingHeader("Plugin Hotkey List") then return end
+    for k, v in pairs(hotkeyList) do
+        if imgui.Button(awaitingIndex == k and "Listening...##listening" or v .. "##" .. k) then
+            if (awaitingIndex == k) then
+                awaitingIndex = 0
+            else
+                awaitingIndex = k
+            end
+        end
+        imgui.SameLine()
+        imgui.SetCursorPosX(85)
+        imgui.Text("// " .. HOTKEY_LABELS[k])
+    end
+    addSeparator()
+    simpleActionMenu("Reset Hotkey Settings", 0, function()
+        globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
+        write(globalVars)
+        awaitingIndex = 0
+    end, nil, nil, true, true)
+    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
+    if (awaitingIndex == 0) then return end
+    local prefixes, key = listenForAnyKeyPressed()
+    if (key == -1) then return end
+    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (#prefixes > 0 and "+" or "") .. keyNumToKey(key)
+    awaitingIndex = 0
+    globalVars.hotkeyList = hotkeyList
+    GLOBAL_HOTKEY_LIST = hotkeyList
+    write(globalVars)
+    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
+end
+
 function choosePulseCoefficient(globalVars)
     local oldCoefficient = globalVars.pulseCoefficient
     _, globalVars.pulseCoefficient = imgui.SliderFloat("Pulse Strength", oldCoefficient, 0, 1,
@@ -1522,14 +1558,15 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
     imgui.PopItemWidth()
     settingVars[lowerName] = newValues[1]
     settingVars[higherName] = newValues[2]
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars[lowerName] = oldValues[2]
         settingVars[higherName] = oldValues[1]
     end
-    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
         settingVars[lowerName] = -oldValues[1]
         settingVars[higherName] = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end

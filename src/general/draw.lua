@@ -1,3 +1,8 @@
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M" }
+GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
+HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
+    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group" }
+
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 
@@ -38,6 +43,7 @@ function draw()
         pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
         pulseColor = state.GetValue("global_pulseColor", { 1, 1, 1, 1 }),
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
+        hotkeyList = state.GetValue("global_hotkeyList", DEFAULT_HOTKEY_LIST)
     }
 
     getVariables("globalVars", globalVars)
@@ -96,7 +102,7 @@ function draw()
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
 
     imgui.PushStyleColor(imgui_col.Border,
-        { pulseColor[1] * colStatus + borderColor[1] * (1 - colStatus), pulseColor[2] * colStatus +
-        borderColor[2] * (1 - colStatus), pulseColor[3] * colStatus + borderColor[3] * (1 - colStatus),
-            1 })
+        vector.New(pulseColor[1] * colStatus + borderColor[1] * (1 - colStatus), pulseColor[2] * colStatus +
+            borderColor[2] * (1 - colStatus), pulseColor[3] * colStatus + borderColor[3] * (1 - colStatus),
+            1))
 end

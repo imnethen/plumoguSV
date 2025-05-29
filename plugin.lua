@@ -2202,6 +2202,7 @@ function awake()
     state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
+    state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
 
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 
@@ -2370,6 +2371,11 @@ DISTANCE_TYPES = {
     "Distance + Shift",
     "Start / End"
 }
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M" }
+GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
+HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
+    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group" }
+
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 
@@ -2410,6 +2416,7 @@ function draw()
         pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
         pulseColor = state.GetValue("global_pulseColor", { 1, 1, 1, 1 }),
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
+        hotkeyList = state.GetValue("global_hotkeyList", DEFAULT_HOTKEY_LIST)
     }
 
     getVariables("globalVars", globalVars)
@@ -2468,9 +2475,9 @@ function draw()
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
 
     imgui.PushStyleColor(imgui_col.Border,
-        { pulseColor[1] * colStatus + borderColor[1] * (1 - colStatus), pulseColor[2] * colStatus +
-        borderColor[2] * (1 - colStatus), pulseColor[3] * colStatus + borderColor[3] * (1 - colStatus),
-            1 })
+        vector.New(pulseColor[1] * colStatus + borderColor[1] * (1 - colStatus), pulseColor[2] * colStatus +
+            borderColor[2] * (1 - colStatus), pulseColor[3] * colStatus + borderColor[3] * (1 - colStatus),
+            1))
 end
 -- Creates the "Info" tab for "keyboard" mode
 -- Parameters
@@ -3973,6 +3980,7 @@ function infoTab(globalVars)
     listKeyboardShortcuts()
     choosePluginBehaviorSettings(globalVars)
     choosePluginAppearance(globalVars)
+    chooseHotkeys(globalVars)
     chooseAdvancedMode(globalVars)
     if (globalVars.advancedMode) then
         chooseHideAutomatic(globalVars)
@@ -6633,7 +6641,7 @@ function chooseConstantShift(settingVars, defaultShift)
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
     local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
-    if (resetButtonPressed or utils.IsKeyPressed("R")) then
+    if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
         settingVars.verticalShift = defaultShift
     end
     toolTip("Reset vertical shift to initial values")
@@ -6841,15 +6849,16 @@ function chooseVaryingDistance(settingVars)
     imgui.PopItemWidth()
     settingVars.distance1 = newValues[1]
     settingVars.distance2 = newValues[2]
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars.distance1 = oldValues[2]
         settingVars.distance2 = oldValues[1]
     end
-    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
         settingVars.distance1 = -oldValues[1]
         settingVars.distance2 = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 
@@ -7418,10 +7427,10 @@ function chooseCurrentScrollGroup(globalVars)
     imgui.PushItemWidth(155)
     globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols)
     imgui.PopItemWidth()
-    if (utils.IsKeyPressed(keys.N)) then
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[6])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex - 1, 1, #groups)
     end
-    if (utils.IsKeyPressed(keys.M)) then
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[7])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex + 1, 1, #groups)
     end
     addSeparator()
@@ -7689,15 +7698,16 @@ function chooseStartEndSVs(settingVars)
     imgui.PopItemWidth()
     settingVars.startSV = newValues[1]
     settingVars.endSV = newValues[2]
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars.startSV = oldValues[2]
         settingVars.endSV = oldValues[1]
     end
-    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
         settingVars.startSV = -oldValues[1]
         settingVars.endSV = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 
@@ -7807,7 +7817,7 @@ function chooseSVBehavior(settingVars)
     local oldBehaviorIndex = settingVars.behaviorIndex
     settingVars.behaviorIndex = combo("Behavior", SV_BEHAVIORS, oldBehaviorIndex)
     imgui.PopItemWidth()
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars.behaviorIndex = oldBehaviorIndex == 1 and 2 or 1
     end
     return oldBehaviorIndex ~= settingVars.behaviorIndex
@@ -7938,6 +7948,40 @@ function choosePluginAppearance(globalVars)
     end
 end
 
+function chooseHotkeys(globalVars)
+    local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
+    local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
+    if not imgui.CollapsingHeader("Plugin Hotkey List") then return end
+    for k, v in pairs(hotkeyList) do
+        if imgui.Button(awaitingIndex == k and "Listening...##listening" or v .. "##" .. k) then
+            if (awaitingIndex == k) then
+                awaitingIndex = 0
+            else
+                awaitingIndex = k
+            end
+        end
+        imgui.SameLine()
+        imgui.SetCursorPosX(85)
+        imgui.Text("// " .. HOTKEY_LABELS[k])
+    end
+    addSeparator()
+    simpleActionMenu("Reset Hotkey Settings", 0, function()
+        globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
+        write(globalVars)
+        awaitingIndex = 0
+    end, nil, nil, true, true)
+    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
+    if (awaitingIndex == 0) then return end
+    local prefixes, key = listenForAnyKeyPressed()
+    if (key == -1) then return end
+    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (#prefixes > 0 and "+" or "") .. keyNumToKey(key)
+    awaitingIndex = 0
+    globalVars.hotkeyList = hotkeyList
+    GLOBAL_HOTKEY_LIST = hotkeyList
+    write(globalVars)
+    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
+end
+
 function choosePulseCoefficient(globalVars)
     local oldCoefficient = globalVars.pulseCoefficient
     _, globalVars.pulseCoefficient = imgui.SliderFloat("Pulse Strength", oldCoefficient, 0, 1,
@@ -8002,15 +8046,16 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
     imgui.PopItemWidth()
     settingVars[lowerName] = newValues[1]
     settingVars[higherName] = newValues[2]
-    if (swapButtonPressed or utils.IsKeyPressed(keys.S)) then
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars[lowerName] = oldValues[2]
         settingVars[higherName] = oldValues[1]
     end
-    if (negateButtonPressed or utils.IsKeyPressed(keys.N)) then
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
         settingVars[lowerName] = -oldValues[1]
         settingVars[higherName] = -oldValues[2]
     end
-    return swapButtonPressed or negateButtonPressed or utils.IsKeyPressed(keys.S) or utils.IsKeyPressed(keys.N) or
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
 end
 function table.construct(...)
@@ -8818,6 +8863,61 @@ function createSVStats()
     }
     return svStats
 end
+function exclusiveKeyPressed(keyCombo)
+    keyCombo = keyCombo:upper()
+    local comboList = {}
+    for v in keyCombo:gmatch("%u+") do
+        table.insert(comboList, v)
+    end
+    local keyReq = comboList[#comboList]
+    if (table.contains(comboList, "CTRL") and (utils.IsKeyUp(keys.LeftControl) and utils.IsKeyUp(keys.RightControl))) then
+        return false
+    end
+    if (table.contains(comboList, "SHIFT") and (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift))) then
+        return false
+    end
+    if (table.contains(comboList, "ALT") and (utils.IsKeyUp(keys.LeftAlt) and utils.IsKeyUp(keys.RightAlt))) then
+        return false
+    end
+    if (not table.contains(comboList, "CTRL") and not (utils.IsKeyUp(keys.LeftControl) and utils.IsKeyUp(keys.RightControl))) then
+        return false
+    end
+    if (not table.contains(comboList, "SHIFT") and not (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift))) then
+        return false
+    end
+    if (not table.contains(comboList, "ALT") and not (utils.IsKeyUp(keys.LeftAlt) and utils.IsKeyUp(keys.RightAlt))) then
+        return false
+    end
+    return utils.IsKeyPressed(keys[keyReq])
+end
+function keyNumToKey(num)
+    local ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    local ALPHABET_LIST = {}
+    for k in ALPHABET:gmatch("%S") do
+        table.insert(ALPHABET_LIST, k)
+    end
+    return ALPHABET_LIST[num - 64]
+end
+function listenForAnyKeyPressed()
+    local isCtrlHeld = utils.IsKeyDown(keys.LeftControl) or utils.IsKeyDown(keys.RightControl)
+    local isShiftHeld = utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)
+    local isAltHeld = utils.IsKeyDown(keys.LeftAlt) or utils.IsKeyDown(keys.RightAlt)
+
+    local key = -1
+
+    local prefixes = {}
+    if (isCtrlHeld) then table.insert(prefixes, "Ctrl") end
+    if (isShiftHeld) then table.insert(prefixes, "Shift") end
+    if (isAltHeld) then table.insert(prefixes, "Alt") end
+
+    for i = 65, 90 do
+        if (utils.IsKeyPressed(i)) then
+            key = i
+        end
+    end
+
+    return prefixes, key
+end
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]
@@ -9143,7 +9243,7 @@ end
 --    actionfunc   : function to execute once button is pressed [Function]
 --    globalVars   : list of variables used globally across all menus [Table]
 --    menuVars     : list of variables used for the current menu [Table]
-function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq)
+function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput)
     local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
     local infoText = table.concat({ "Select ", minimumNotes, " or more notes" })
     if (not enoughSelectedNotes) then
@@ -9151,14 +9251,13 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         return
     end
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
+    if (disableKeyInput) then return end
     if (hideNoteReq) then
-        toolTip("Press 'Shift+T' on your keyboard to do the same thing as this button")
-        if (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift)) then return end
-        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[2] .. "\" on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, globalVars, menuVars)
     else
-        if (utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)) then return end
-        toolTip("Press 'T' on your keyboard to do the same thing as this button")
-        executeFunctionIfKeyPressed(keys.T, actionfunc, globalVars, menuVars)
+        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[1] .. "\" on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
     end
 end
 
@@ -9168,8 +9267,8 @@ end
 --    func       : function to execute once key is pressed [Function]
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function executeFunctionIfKeyPressed(key, func, globalVars, menuVars)
-    if not utils.IsKeyPressed(key) then return end
+function executeFunctionIfTrue(boolean, func, globalVars, menuVars)
+    if not boolean then return end
     if globalVars and menuVars then
         func(globalVars, menuVars)
         return

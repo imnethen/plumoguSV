@@ -7,6 +7,7 @@ function infoTab(globalVars)
     listKeyboardShortcuts()
     choosePluginBehaviorSettings(globalVars)
     choosePluginAppearance(globalVars)
+    chooseHotkeys(globalVars)
     chooseAdvancedMode(globalVars)
     if (globalVars.advancedMode) then
         chooseHideAutomatic(globalVars)
