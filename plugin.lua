@@ -9219,6 +9219,14 @@ function math.hermite(m1, m2, y2, t)
     local c = m1
     return a * t ^ 3 + b * t ^ 2 + c * t
 end
+---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
+---@param weight number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.lerp(weight, lowerBound, upperBound)
+    return upperBound * weight + lowerBound * (1 - weight)
+end
 -- Rounds a number to a given amount of decimal places
 -- Returns the rounded number [Int/Float]
 -- Parameters
@@ -9550,6 +9558,7 @@ function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 --    b : second object
 function sortAscendingTime(a, b) return a.time < b.time end
 
+--- Sorts a table given a sorting function.
 ---@generic T
 ---@param tbl T[]
 ---@param compFn fun(a: T, b: T): boolean
