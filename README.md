@@ -41,9 +41,7 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 
 ## TO-DO
 * Automate TG effects (v2)
-* Add SSF vibrato (v1.2)
-* ~~Improve dev exp~~ (v1.1.2)
-* ~~Lint code~~ (v1.1.2)
-* Move to vector system (v1.2)
-* ~~Improved SV/SSF window~~ (v1.1.2)
-* ~~Upgrade dev ops by adding fns to libraries~~ (v1.1.2)
+* Separate settings tab (v2)
+* Move to vector system (v2)
+* Fix all syntax errors in intellisense (v2)
+* Migrate affine vibrato (v2)
