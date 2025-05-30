@@ -881,7 +881,7 @@ function map.ToString() end
 
 --- ##### (READ-ONLY)
 --- #### Returns the number of possible keys within the map.
----@param includeScratch boolean Whether or not to include the scratch lane. This should almost never be true.
+---@param includeScratch? boolean Whether or not to include the scratch lane. This should almost never be true.
 ---@return integer keyCount The number of keys in the map, usually 4 or 7.
 function map.GetKeyCount(includeScratch) end
 

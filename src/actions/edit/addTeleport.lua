@@ -6,6 +6,7 @@ function addTeleportSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local displaceAmount = menuVars.distance

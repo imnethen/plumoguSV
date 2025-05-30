@@ -5,6 +5,7 @@
 function placeSSFs(globalVars, menuVars)
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local ssfsToAdd = {}

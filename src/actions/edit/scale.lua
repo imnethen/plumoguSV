@@ -6,6 +6,7 @@ function scaleDisplaceSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local isStartDisplace = DISPLACE_SCALE_SPOTS[menuVars.scaleSpotIndex] == "Start"
@@ -48,6 +49,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function scaleMultiplySVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local svsToAdd = {}
     local svsToRemove = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
     for i = 1, (#offsets - 1) do

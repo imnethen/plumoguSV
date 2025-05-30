@@ -7,6 +7,7 @@ function copyItems(menuVars)
     menuVars.copiedSSFs = {}
     menuVars.copiedBMs = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     if (not menuVars.copyTable[1]) then goto continue1 end
@@ -69,6 +70,7 @@ end
 --    menuVars   : list of variables used for the current menu [Table]
 function pasteItems(globalVars, menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local lastCopiedLine = menuVars.copiedLines[#menuVars.copiedLines]

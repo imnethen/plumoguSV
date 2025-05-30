@@ -560,6 +560,7 @@ function placeStutterSVs(settingVars)
         lastMultiplier = settingVars.svMultipliers2[3]
     end
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local totalNumStutters = (#offsets - 1) * settingVars.stuttersPerSection
@@ -599,6 +600,7 @@ function placeStutterSSFs(settingVars)
         lastMultiplier = settingVars.svMultipliers2[3]
     end
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local totalNumStutters = (#offsets - 1) * settingVars.stuttersPerSection
@@ -742,6 +744,7 @@ end
 function placeSSFs(globalVars, menuVars)
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local ssfsToAdd = {}
@@ -773,6 +776,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     if placingStillSVs then
         offsets = uniqueNoteOffsetsBetweenSelected()
         if (place == false) then
@@ -829,6 +833,7 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
         return
     end
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     for i = 1, (#offsets - 1) do
         if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
             tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
@@ -899,6 +904,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
 end
 function linearSSFVibrato(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startTime = offsets[1]
     local endTime = offsets[#offsets]
     local exponent = 2 ^ (menuVars.curvature / 100)
@@ -926,6 +932,7 @@ function linearSSFVibrato(menuVars)
 end
 function deleteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local linesToRemove = getLinesBetweenOffsets(startOffset, endOffset)
@@ -970,6 +977,7 @@ function addTeleportSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local displaceAmount = menuVars.distance
@@ -1035,6 +1043,7 @@ function copyItems(menuVars)
     menuVars.copiedSSFs = {}
     menuVars.copiedBMs = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     if (not menuVars.copyTable[1]) then goto continue1 end
@@ -1097,6 +1106,7 @@ end
 --    menuVars   : list of variables used for the current menu [Table]
 function pasteItems(globalVars, menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local lastCopiedLine = menuVars.copiedLines[#menuVars.copiedLines]
@@ -1160,7 +1170,7 @@ function displaceNoteSVsParent(menuVars)
         return
     end
     local offsets = uniqueSelectedNoteOffsets()
-
+    if (not offsets) then return end
     local svsToRemove = {}
     local svsToAdd = {}
 
@@ -1186,6 +1196,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     if (place == false) then offsets = { optionalOffset } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
@@ -1319,6 +1330,7 @@ function flickerSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local numTeleports = 2 * menuVars.numFlickers
@@ -1357,6 +1369,7 @@ end
 function measureSVs(menuVars)
     local roundingDecimalPlaces = 5
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
@@ -1399,6 +1412,7 @@ end
 -- Merges overlapping SVs between selected notes
 function mergeSVs()
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsToAdd = {}
@@ -1474,6 +1488,7 @@ function scaleDisplaceSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local isStartDisplace = DISPLACE_SCALE_SPOTS[menuVars.scaleSpotIndex] == "Start"
@@ -1516,6 +1531,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function scaleMultiplySVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local svsToAdd = {}
     local svsToRemove = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
     for i = 1, (#offsets - 1) do
@@ -1546,6 +1562,7 @@ function swapNoteSVs()
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
@@ -1582,6 +1599,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function verticalShiftSVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsToAdd = {}
@@ -2040,6 +2058,7 @@ function importPlaceSVButton(globalVars)
 end
 function selectAlternating(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
@@ -2071,6 +2090,7 @@ function selectAlternating(menuVars)
 end
 function selectByChordSizes(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
 
@@ -2115,6 +2135,7 @@ function selectByChordSizes(menuVars)
 end
 function selectByNoteType(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
 
@@ -2132,6 +2153,7 @@ function selectByNoteType(menuVars)
 end
 function selectBySnap(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
@@ -3092,6 +3114,7 @@ end
 function automateCopySVs(settingVars)
     settingVars.copiedSVs = {}
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svs = getSVsBetweenOffsets(startOffset, endOffset)
@@ -3553,6 +3576,7 @@ function copyNPasteMenu(globalVars)
 end
 function updateDirectEdit()
     local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
 
@@ -4904,6 +4928,7 @@ function buttonsForSVsInScroll1(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 1st scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
+        if (not offsets) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll1 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
@@ -4927,6 +4952,7 @@ function buttonsForSVsInScroll2(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 2nd scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
+        if (not offsets) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll2 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
@@ -4950,6 +4976,7 @@ function buttonsForSVsInScroll3(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 3rd scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
+        if (not offsets) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll3 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
@@ -4973,6 +5000,7 @@ function buttonsForSVsInScroll4(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 4th scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
+        if (not offsets) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll4 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
@@ -7599,6 +7627,7 @@ function chooseSplitscrollLayers(settingVars)
         local buttonText = "Assign SVs and notes between\nselected notes to scroll " .. currentLayerNum
         if imgui.Button(buttonText, ACTION_BUTTON_SIZE) then
             local offsets = uniqueSelectedNoteOffsets()
+            if (not offsets) then return end
             local startOffset = offsets[1]
             local endOffset = offsets[#offsets]
             local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
