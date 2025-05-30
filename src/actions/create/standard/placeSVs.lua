@@ -39,7 +39,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     if (place == nil or place == true) then
         if placingStillSVs then
             local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-                table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
+                sort(svsToAdd, sortAscendingStartTime), svsToAdd)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier, finalSVType == "Override")
@@ -47,7 +47,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
         return
     end
     local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-        table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
+        sort(svsToAdd, sortAscendingStartTime), svsToAdd)
     svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }

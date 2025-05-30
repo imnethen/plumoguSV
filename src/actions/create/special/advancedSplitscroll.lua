@@ -13,7 +13,7 @@ function placeAdvancedSplitScrollSVs(settingVars)
             table.insert(tempOffsets[1], offset)
         end
     end
-    tempOffsets[1] = table.sort(tempOffsets[1], sortAscending)
+    tempOffsets[1] = sort(tempOffsets[1], sortAscending)
     local firstOffset = tempOffsets[1][1]
     local lastOffset = tempOffsets[1][#tempOffsets[1]]
     local allNoteOffsets = uniqueNoteOffsetsBetween(firstOffset, lastOffset)

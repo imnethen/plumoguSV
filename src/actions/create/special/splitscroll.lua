@@ -7,7 +7,7 @@ function placeSplitScrollSVs(settingVars)
     for _, offset in pairs(settingVars.noteTimes2) do
         table.insert(offsets, offset)
     end
-    offsets = table.sort(offsets, sortAscending)
+    offsets = sort(offsets, sortAscending)
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local totalTime = lastOffset - firstOffset

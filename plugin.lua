@@ -14,7 +14,7 @@ function placeAdvancedSplitScrollSVs(settingVars)
             table.insert(tempOffsets[1], offset)
         end
     end
-    tempOffsets[1] = table.sort(tempOffsets[1], sortAscending)
+    tempOffsets[1] = sort(tempOffsets[1], sortAscending)
     local firstOffset = tempOffsets[1][1]
     local lastOffset = tempOffsets[1][#tempOffsets[1]]
     local allNoteOffsets = uniqueNoteOffsetsBetween(firstOffset, lastOffset)
@@ -324,7 +324,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(convertedSettingVars.noteTimes2, layerNotes[i].StartTime)
         end
         convertedSettingVars.noteTimes2 = table.dedupe(convertedSettingVars.noteTimes2)
-        convertedSettingVars.noteTimes2 = table.sort(convertedSettingVars.noteTimes2, sortAscending)
+        convertedSettingVars.noteTimes2 = sort(convertedSettingVars.noteTimes2, sortAscending)
     end
     if splitscrollLayers[3] ~= nil then
         local layerNotes = splitscrollLayers[3].notes
@@ -334,7 +334,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(convertedSettingVars.noteTimes3, layerNotes[i].StartTime)
         end
         convertedSettingVars.noteTimes3 = table.dedupe(convertedSettingVars.noteTimes3)
-        convertedSettingVars.noteTimes3 = table.sort(convertedSettingVars.noteTimes3, sortAscending)
+        convertedSettingVars.noteTimes3 = sort(convertedSettingVars.noteTimes3, sortAscending)
     end
     if splitscrollLayers[4] ~= nil then
         local layerNotes = splitscrollLayers[4].notes
@@ -345,9 +345,9 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
             table.insert(convertedSettingVars.noteTimes4, layerNotes[i].StartTime)
         end
         convertedSettingVars.noteTimes4 = table.dedupe(convertedSettingVars.noteTimes4)
-        convertedSettingVars.noteTimes4 = table.sort(convertedSettingVars.noteTimes4, sortAscending)
+        convertedSettingVars.noteTimes4 = sort(convertedSettingVars.noteTimes4, sortAscending)
     end
-    allLayerNotes = table.sort(allLayerNotes, sortAscendingStartTime)
+    allLayerNotes = sort(allLayerNotes, sortAscendingStartTime)
     local startOffset = allLayerNotes[1].StartTime
     local endOffset = allLayerNotes[#allLayerNotes].StartTime
     local hasAddedLaneTime = {}
@@ -367,7 +367,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
         end
     end
     allNoteTimes = table.dedupe(allNoteTimes)
-    allNoteTimes = table.sort(allNoteTimes, sortAscending)
+    allNoteTimes = sort(allNoteTimes, sortAscending)
     local editorActions = {
         actionRemoveNotesBetween(startOffset, endOffset),
         utils.CreateEditorAction(action_type.PlaceHitObjectBatch, notesToPlace)
@@ -458,7 +458,7 @@ function placeSplitScrollSVs(settingVars)
     for _, offset in pairs(settingVars.noteTimes2) do
         table.insert(offsets, offset)
     end
-    offsets = table.sort(offsets, sortAscending)
+    offsets = sort(offsets, sortAscending)
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local totalTime = lastOffset - firstOffset
@@ -808,7 +808,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     if (place == nil or place == true) then
         if placingStillSVs then
             local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-                table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
+                sort(svsToAdd, sortAscendingStartTime), svsToAdd)
             svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
         end
         addFinalSV(svsToAdd, lastOffset, lastMultiplier, finalSVType == "Override")
@@ -816,7 +816,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
         return
     end
     local tbl = getStillSVs(menuVars, firstOffset, lastOffset,
-        table.sort(svsToAdd, sortAscendingStartTime), svsToAdd)
+        sort(svsToAdd, sortAscendingStartTime), svsToAdd)
     svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
     svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
@@ -4670,7 +4670,7 @@ function addFrameTimes(settingVars)
                 local index = frameTimeToIndex[time]
                 local frameTime = settingVars.frameTimes[index]
                 table.insert(frameTime.lanes, lane)
-                frameTime.lanes = table.sort(frameTime.lanes, sortAscending)
+                frameTime.lanes = sort(frameTime.lanes, sortAscending)
             else
                 local defaultFrame = settingVars.currentFrame
                 local defaultPosition = 0
@@ -4680,7 +4680,7 @@ function addFrameTimes(settingVars)
             end
         end
     end
-    settingVars.frameTimes = table.sort(settingVars.frameTimes, sortAscendingTime)
+    settingVars.frameTimes = sort(settingVars.frameTimes, sortAscendingTime)
 end
 
 -- Displays all existing frameTimes for the frames setup menu
@@ -4768,7 +4768,7 @@ function addSelectedNoteTimesToList(menuVars)
         table.insert(menuVars.noteTimes, hitObject.StartTime)
     end
     menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
-    menuVars.noteTimes = table.sort(menuVars.noteTimes, sortAscending)
+    menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)
 end
 -- Shows the settings menu for the current SV type
 -- Returns whether or not any settings changed [Boolean]
@@ -4853,7 +4853,7 @@ function addSelectedNoteTimes(settingVars)
         table.insert(settingVars.noteTimes2, hitObject.StartTime)
     end
     settingVars.noteTimes2 = table.dedupe(settingVars.noteTimes2)
-    settingVars.noteTimes2 = table.sort(settingVars.noteTimes2, sortAscending)
+    settingVars.noteTimes2 = sort(settingVars.noteTimes2, sortAscending)
 end
 
 -- Creates a button that adds selected note times to the splitscroll 3rd scroll list
@@ -4864,7 +4864,7 @@ function addSelectedNoteTimes2(settingVars)
         table.insert(settingVars.noteTimes3, hitObject.StartTime)
     end
     settingVars.noteTimes3 = table.dedupe(settingVars.noteTimes3)
-    settingVars.noteTimes3 = table.sort(settingVars.noteTimes3, sortAscending)
+    settingVars.noteTimes3 = sort(settingVars.noteTimes3, sortAscending)
 end
 
 -- Creates a button that adds selected note times to the splitscroll 4th scroll list
@@ -4875,7 +4875,7 @@ function addSelectedNoteTimes3(settingVars)
         table.insert(settingVars.noteTimes4, hitObject.StartTime)
     end
     settingVars.noteTimes4 = table.dedupe(settingVars.noteTimes4)
-    settingVars.noteTimes4 = table.sort(settingVars.noteTimes4, sortAscending)
+    settingVars.noteTimes4 = sort(settingVars.noteTimes4, sortAscending)
 end
 -- Creates a button that lets you clear all assigned note times for the current menu
 -- Parameters
@@ -7639,7 +7639,7 @@ function chooseSplitscrollLayers(settingVars)
                     hitObject.EditorLayer)
                 table.insert(newNotes, newNote)
             end
-            newNotes = table.sort(newNotes, sortAscendingStartTime)
+            newNotes = sort(newNotes, sortAscendingStartTime)
             settingVars.splitscrollLayers[currentLayerNum] = {
                 svs = svsBetweenOffsets,
                 notes = newNotes
@@ -9103,7 +9103,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
         end
     end
     noteOffsetsBetween = table.dedupe(noteOffsetsBetween)
-    noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
+    noteOffsetsBetween = sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
 -- Finds and returns a list of all unique offsets of notes between selected notes [Table]
@@ -9127,7 +9127,7 @@ function uniqueSelectedNoteOffsets()
         offsets[i] = hitObject.StartTime
     end
     offsets = table.dedupe(offsets)
-    offsets = table.sort(offsets, sortAscending)
+    offsets = sort(offsets, sortAscending)
     return offsets
 end
 -- Updates SVs and SV info stored in the menu

@@ -14,6 +14,6 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
         end
     end
     noteOffsetsBetween = table.dedupe(noteOffsetsBetween)
-    noteOffsetsBetween = table.sort(noteOffsetsBetween, sortAscending)
+    noteOffsetsBetween = sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end

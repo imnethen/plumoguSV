@@ -51,7 +51,7 @@ function addSelectedNoteTimes(settingVars)
         table.insert(settingVars.noteTimes2, hitObject.StartTime)
     end
     settingVars.noteTimes2 = table.dedupe(settingVars.noteTimes2)
-    settingVars.noteTimes2 = table.sort(settingVars.noteTimes2, sortAscending)
+    settingVars.noteTimes2 = sort(settingVars.noteTimes2, sortAscending)
 end
 
 -- Creates a button that adds selected note times to the splitscroll 3rd scroll list
@@ -62,7 +62,7 @@ function addSelectedNoteTimes2(settingVars)
         table.insert(settingVars.noteTimes3, hitObject.StartTime)
     end
     settingVars.noteTimes3 = table.dedupe(settingVars.noteTimes3)
-    settingVars.noteTimes3 = table.sort(settingVars.noteTimes3, sortAscending)
+    settingVars.noteTimes3 = sort(settingVars.noteTimes3, sortAscending)
 end
 
 -- Creates a button that adds selected note times to the splitscroll 4th scroll list
@@ -73,5 +73,5 @@ function addSelectedNoteTimes3(settingVars)
         table.insert(settingVars.noteTimes4, hitObject.StartTime)
     end
     settingVars.noteTimes4 = table.dedupe(settingVars.noteTimes4)
-    settingVars.noteTimes4 = table.sort(settingVars.noteTimes4, sortAscending)
+    settingVars.noteTimes4 = sort(settingVars.noteTimes4, sortAscending)
 end

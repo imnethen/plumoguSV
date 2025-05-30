@@ -29,7 +29,7 @@ function addFrameTimes(settingVars)
                 local index = frameTimeToIndex[time]
                 local frameTime = settingVars.frameTimes[index]
                 table.insert(frameTime.lanes, lane)
-                frameTime.lanes = table.sort(frameTime.lanes, sortAscending)
+                frameTime.lanes = sort(frameTime.lanes, sortAscending)
             else
                 local defaultFrame = settingVars.currentFrame
                 local defaultPosition = 0
@@ -39,7 +39,7 @@ function addFrameTimes(settingVars)
             end
         end
     end
-    settingVars.frameTimes = table.sort(settingVars.frameTimes, sortAscendingTime)
+    settingVars.frameTimes = sort(settingVars.frameTimes, sortAscendingTime)
 end
 
 -- Displays all existing frameTimes for the frames setup menu
@@ -127,5 +127,5 @@ function addSelectedNoteTimesToList(menuVars)
         table.insert(menuVars.noteTimes, hitObject.StartTime)
     end
     menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
-    menuVars.noteTimes = table.sort(menuVars.noteTimes, sortAscending)
+    menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)
 end

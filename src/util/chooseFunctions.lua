@@ -1112,7 +1112,7 @@ function chooseSplitscrollLayers(settingVars)
                     hitObject.EditorLayer)
                 table.insert(newNotes, newNote)
             end
-            newNotes = table.sort(newNotes, sortAscendingStartTime)
+            newNotes = sort(newNotes, sortAscendingStartTime)
             settingVars.splitscrollLayers[currentLayerNum] = {
                 svs = svsBetweenOffsets,
                 notes = newNotes
