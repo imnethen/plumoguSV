@@ -3067,7 +3067,7 @@ function animationFramesSetupMenu(globalVars, settingVars)
         chooseCurrentFrame(settingVars)
         drawCurrentFrame(globalVars, settingVars)
         imgui.Columns(1)
-        local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.y + 1.5 * SAMELINE_SPACING), 1 }
+        local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.x + 1.5 * SAMELINE_SPACING), 1 }
         imgui.invisibleButton("sv isnt a real skill", invisibleButtonSize)
     else
         imgui.SameLine(0, SAMELINE_SPACING)
@@ -4411,7 +4411,7 @@ end
 --    menuVars    : list of setting variables for the current menu [Table]
 --    settingVars : list of setting variables for the current sv type [Table]
 function exportImportSettingsMenu(globalVars, menuVars, settingVars)
-    local multilineWidgetSize = { ACTION_BUTTON_SIZE.y, 50 }
+    local multilineWidgetSize = { ACTION_BUTTON_SIZE.x, 50 }
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     local isSpecialPlaceType = placeType == "Special"
     local svType
@@ -4644,7 +4644,7 @@ function addFrameTimes(settingVars)
     if not imgui.Button("Add selected notes to use for frames", ACTION_BUTTON_SIZE) then return end
 
     local hasAlreadyAddedLaneTime = {}
-    for i = 1, map.GetKeyCount() do
+    for _ = 1, map.GetKeyCount() do
         table.insert(hasAlreadyAddedLaneTime, {})
     end
     local frameTimeToIndex = {}
@@ -4692,7 +4692,7 @@ function displayFrameTimes(settingVars)
     end
     helpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
     addPadding()
-    local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.y, 120 }
+    local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.x, 120 }
     imgui.BeginChild("FrameTimes", frameTimeSelectionArea, 1)
     for i = 1, #settingVars.frameTimes do
         local frameTimeData = {}
@@ -6726,7 +6726,6 @@ function chooseCurrentFrame(settingVars)
     imgui.Text("Previewing frame:")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushItemWidth(35)
-    imgui.PushButtonRepeat(true)
     if imgui.ArrowButton("##leftFrame", imgui_dir.Left) then
         settingVars.currentFrame = settingVars.currentFrame - 1
     end
@@ -6736,7 +6735,6 @@ function chooseCurrentFrame(settingVars)
     if imgui.ArrowButton("##rightFrame", imgui_dir.Right) then
         settingVars.currentFrame = settingVars.currentFrame + 1
     end
-    imgui.PopButtonRepeat()
     settingVars.currentFrame = math.wrap(settingVars.currentFrame, 1, settingVars.numFrames)
     imgui.PopItemWidth()
 end
@@ -7318,7 +7316,6 @@ function chooseMenuStep(settingVars)
     imgui.Text("Step # :")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushItemWidth(24)
-    imgui.PushButtonRepeat(true)
     if imgui.ArrowButton("##leftMenuStep", imgui_dir.Left) then
         settingVars.menuStep = settingVars.menuStep - 1
     end
@@ -7328,7 +7325,6 @@ function chooseMenuStep(settingVars)
     if imgui.ArrowButton("##rightMenuStep", imgui_dir.Right) then
         settingVars.menuStep = settingVars.menuStep + 1
     end
-    imgui.PopButtonRepeat()
     imgui.PopItemWidth()
     settingVars.menuStep = math.wrap(settingVars.menuStep, 1, 3)
 end
@@ -7631,7 +7627,7 @@ function chooseSplitscrollLayers(settingVars)
             local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
             addStartSVIfMissing(svsBetweenOffsets, startOffset)
             local newNotes = {}
-            for i, hitObject in pairs(state.SelectedHitObjects) do
+            for _, hitObject in pairs(state.SelectedHitObjects) do
                 local newNote = utils.CreateHitObject(hitObject.StartTime, hitObject.Lane,
                     hitObject.EndTime, hitObject.HitSound,
                     hitObject.EditorLayer)

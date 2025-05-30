@@ -5,7 +5,7 @@ function addFrameTimes(settingVars)
     if not imgui.Button("Add selected notes to use for frames", ACTION_BUTTON_SIZE) then return end
 
     local hasAlreadyAddedLaneTime = {}
-    for i = 1, map.GetKeyCount() do
+    for _ = 1, map.GetKeyCount() do
         table.insert(hasAlreadyAddedLaneTime, {})
     end
     local frameTimeToIndex = {}
@@ -53,7 +53,7 @@ function displayFrameTimes(settingVars)
     end
     helpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
     addPadding()
-    local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.y, 120 }
+    local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.x, 120 }
     imgui.BeginChild("FrameTimes", frameTimeSelectionArea, 1)
     for i = 1, #settingVars.frameTimes do
         local frameTimeData = {}

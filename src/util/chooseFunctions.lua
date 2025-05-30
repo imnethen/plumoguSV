@@ -201,7 +201,6 @@ function chooseCurrentFrame(settingVars)
     imgui.Text("Previewing frame:")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushItemWidth(35)
-    imgui.PushButtonRepeat(true)
     if imgui.ArrowButton("##leftFrame", imgui_dir.Left) then
         settingVars.currentFrame = settingVars.currentFrame - 1
     end
@@ -211,7 +210,6 @@ function chooseCurrentFrame(settingVars)
     if imgui.ArrowButton("##rightFrame", imgui_dir.Right) then
         settingVars.currentFrame = settingVars.currentFrame + 1
     end
-    imgui.PopButtonRepeat()
     settingVars.currentFrame = math.wrap(settingVars.currentFrame, 1, settingVars.numFrames)
     imgui.PopItemWidth()
 end
@@ -793,7 +791,6 @@ function chooseMenuStep(settingVars)
     imgui.Text("Step # :")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushItemWidth(24)
-    imgui.PushButtonRepeat(true)
     if imgui.ArrowButton("##leftMenuStep", imgui_dir.Left) then
         settingVars.menuStep = settingVars.menuStep - 1
     end
@@ -803,7 +800,6 @@ function chooseMenuStep(settingVars)
     if imgui.ArrowButton("##rightMenuStep", imgui_dir.Right) then
         settingVars.menuStep = settingVars.menuStep + 1
     end
-    imgui.PopButtonRepeat()
     imgui.PopItemWidth()
     settingVars.menuStep = math.wrap(settingVars.menuStep, 1, 3)
 end
@@ -1106,7 +1102,7 @@ function chooseSplitscrollLayers(settingVars)
             local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
             addStartSVIfMissing(svsBetweenOffsets, startOffset)
             local newNotes = {}
-            for i, hitObject in pairs(state.SelectedHitObjects) do
+            for _, hitObject in pairs(state.SelectedHitObjects) do
                 local newNote = utils.CreateHitObject(hitObject.StartTime, hitObject.Lane,
                     hitObject.EndTime, hitObject.HitSound,
                     hitObject.EditorLayer)
