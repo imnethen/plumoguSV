@@ -208,7 +208,7 @@ function renderDustParticles(rgbPeriod, o, t, dustParticles, dustDuration, dustS
             local dustX = dustParticle.x + dustParticle.xRange * time
             local dy = dustParticle.yRange * math.quadraticBezier(0, time)
             local dustY = dustParticle.y + dy
-            local dustCoords = { dustX, dustY }
+            local dustCoords = vector.New(dustX, dustY)
             local alpha = math.round(255 * (1 - time), 0)
             local dustColor = rgbaToUint(currentRed, currentGreen, currentBlue, alpha)
             o.AddCircleFilled(dustCoords, dustSize, dustColor)
@@ -296,7 +296,7 @@ function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkle
             local sparkleX = sparkleParticle.x + sparkleParticle.xRange * time
             local dy = -sparkleParticle.yRange * math.quadraticBezier(0, time)
             local sparkleY = sparkleParticle.y + dy
-            local sparkleCoords = { sparkleX, sparkleY }
+            local sparkleCoords = vector.New(sparkleX, sparkleY)
             local alpha = math.round(255 * (1 - time), 0)
             local white = rgbaToUint(255, 255, 255, 255)
             local actualSize = sparkleSize * (1 - math.quadraticBezier(0, time))

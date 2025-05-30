@@ -13,7 +13,7 @@ function combo(label, list, listIndex, colorList)
         colorList[listIndex]:gsub("(%d+)", function(c)
             table.insert(rgb, c)
         end)
-        imgui.PushStyleColor(imgui_col.Text, { rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1 })
+        imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
     end
     if not imgui.BeginCombo(label, currentComboItem, comboFlag) then
         if (colorList) then imgui.PopStyleColor() end
@@ -27,7 +27,7 @@ function combo(label, list, listIndex, colorList)
             colorList[i]:gsub("(%d+)", function(c)
                 table.insert(rgb, c)
             end)
-            imgui.PushStyleColor(imgui_col.Text, { rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1 })
+            imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
         end
         local listItem = list[i]
         if imgui.Selectable(listItem) then

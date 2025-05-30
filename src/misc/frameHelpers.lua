@@ -83,7 +83,7 @@ function drawCurrentFrame(globalVars, settingVars)
     local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
     local drawlist = imgui.GetWindowDrawList()
     local childHeight = 250
-    imgui.BeginChild("Current Frame", { 255, childHeight }, true)
+    imgui.BeginChild("Current Frame", vector.New(255, childHeight), true)
     for _, frameTime in pairs(settingVars.frameTimes) do
         if frameTime.frame == settingVars.currentFrame then
             for _, lane in pairs(frameTime.lanes) do

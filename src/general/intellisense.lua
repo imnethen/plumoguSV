@@ -156,14 +156,14 @@ For more information, please refer to <https://unlicense.org>
 
 vector = {}
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns the absolute value of each element of a vector.
 ---@param v T The initial vector.
 ---@return T vctr The resultant vector.
 function vector.Abs(v) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns the sum of two vectors.
 ---@param v1 T The first vector.
@@ -171,7 +171,7 @@ function vector.Abs(v) end
 ---@return T vctr The resultant vector.
 function vector.Add(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Clamps a vector between two others.
 ---@param v T The vector to clamp.
@@ -187,7 +187,7 @@ function vector.Clamp(v, min, max) end
 ---@return Vector3 vctr The resultant vector, with a magnitude equal to the area of a parallelogram projected by `v1` and `v2`.
 function vector.Cross(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Finds the distance between two vectors.
 ---@param v1 T The first vector.
@@ -195,7 +195,7 @@ function vector.Cross(v1, v2) end
 ---@return number distance The distance between the two vectors.
 function vector.Distance(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Finds the distance between two vectors,  squared.
 ---@param v1 T The first vector.
@@ -203,7 +203,7 @@ function vector.Distance(v1, v2) end
 ---@return number distanceSq The squared distance between the two vectors.
 function vector.DistanceSquared(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Divides two vectors, termwise.
 ---@param v1 T The first vector.
@@ -211,7 +211,7 @@ function vector.DistanceSquared(v1, v2) end
 ---@return T vctr The resultant vector.
 function vector.Divide(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Takes the dot product of two vectors; that is, multiplies the two vectors termwise then returns the sum of the resulting terms.
 ---@param v1 T The first vector.
@@ -219,14 +219,14 @@ function vector.Divide(v1, v2) end
 ---@return number product The dot product of the two vectors.
 function vector.Dot(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Determines the length of a vector.
 ---@param v T The vector to measure.
 ---@return number length The magnitude of the vector.
 function vector.Length(v) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns a vector that is `(f * 100)%` of the way from travelling between `v1` and `v2`.
 ---@param v1 T The first vector.
@@ -235,7 +235,7 @@ function vector.Length(v) end
 ---@return T vctr The resultant vector.
 function vector.Lerp(v1, v2, f) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns a vector which has the maximum value of both vectors, termwise.
 ---@param v1 T The first vector.
@@ -243,7 +243,7 @@ function vector.Lerp(v1, v2, f) end
 ---@return T vctr The resultant vector.
 function vector.Max(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns a vector which has the minimum value of both vectors, termwise.
 ---@param v1 T The first vector.
@@ -251,7 +251,7 @@ function vector.Max(v1, v2) end
 ---@return T vctr The resultant vector.
 function vector.Min(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns a vector which has the remainder of the first vector divided by the second, termwise.
 ---@param v1 T The first vector.
@@ -259,7 +259,7 @@ function vector.Min(v1, v2) end
 ---@return T vctr The resultant vector.
 function vector.Modulo(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Multiplies the two vectors termwise and returns the product.
 ---@param v1 T The first vector.
@@ -267,7 +267,7 @@ function vector.Modulo(v1, v2) end
 ---@return T vctr The resultant vector.
 function vector.Multiply(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Negates the given vector termwise.
 ---@param v T The vector to negate.
@@ -298,7 +298,7 @@ function vector.New(s1, s2, s3) end
 ---@return Vector4 vctr The output vector.
 function vector.New(s1, s2, s3, s4) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Normalizes the given vector such that it has a magnitude of 1.
 ---@param v T The vector to normalize.
@@ -320,7 +320,7 @@ function vector.One(n) end
 ---@return T vctr The resultant vector.
 function vector.Reflect(v, norm) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns a vector which has the euclidean remainder of the first vector divided by the second, termwise. A euclidean remainder is like a normal remainder, but if the closest normal remainder is negative then the divisor is added to make it positive.
 ---@param v1 T The first vector.
@@ -328,14 +328,14 @@ function vector.Reflect(v, norm) end
 ---@return T vctr The resultant vector.
 function vector.RemEuclid(v1, v2) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Square roots the given vector, termwise.
 ---@param v T The vector to root.
 ---@return T vctr The resultant vector.
 function vector.SquareRoot(v) end
 
----@generic T : Vector2 | Vector3 | Vector4
+---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns the difference of two vectors.
 ---@param v1 T The first vector.

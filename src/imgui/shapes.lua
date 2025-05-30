@@ -14,9 +14,9 @@ function drawEquilateralTriangle(o, centerPoint, size, angle, color)
     local y2 = centerPoint.y + size * math.sin(angle2)
     local x3 = centerPoint.x + size * math.cos(angle3)
     local y3 = centerPoint.y + size * math.sin(angle3)
-    local p1 = { x1, y1 }
-    local p2 = { x2, y2 }
-    local p3 = { x3, y3 }
+    local p1 = vector.New(x1, y1)
+    local p2 = vector.New(x2, y2)
+    local p3 = vector.New(x3, y3)
     o.AddTriangleFilled(p1, p2, p3, color)
 end
 

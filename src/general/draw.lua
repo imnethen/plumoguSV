@@ -97,12 +97,10 @@ function draw()
         .pulseCoefficient
 
     local borderColor = state.GetValue("global_baseBorderColor", vector.New(1, 1, 1, 1))
-    local negatedBorderColor = { 1 - borderColor[1], 1 - borderColor[2], 1 - borderColor[3], 1 - borderColor[4] }
+    local negatedBorderColor = vector.Subtract(vector.New(1, 1, 1, 1), borderColor)
 
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
 
     imgui.PushStyleColor(imgui_col.Border,
-        vector.New(pulseColor[1] * colStatus + borderColor[1] * (1 - colStatus), pulseColor[2] * colStatus +
-            borderColor[2] * (1 - colStatus), pulseColor[3] * colStatus + borderColor[3] * (1 - colStatus),
-            1))
+        vector.Add(vector.Multiply(pulseColor, colStatus), vector.Multiply(borderColor, 1 - colStatus)))
 end

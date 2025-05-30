@@ -24,10 +24,10 @@ function setPluginAppearanceStyles(styleTheme)
     if borderedStyle then borderSize = 1 end
 
     imgui.PushStyleVar(imgui_style_var.FrameBorderSize, borderSize)
-    imgui.PushStyleVar(imgui_style_var.WindowPadding, { PADDING_WIDTH, 8 })
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { PADDING_WIDTH, 5 })
+    imgui.PushStyleVar(imgui_style_var.WindowPadding, vector.New(PADDING_WIDTH, 8))
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushStyleVar(imgui_style_var.ItemSpacing, { DEFAULT_WIDGET_HEIGHT / 2 - 1, 4 })
-    imgui.PushStyleVar(imgui_style_var.ItemInnerSpacing, { SAMELINE_SPACING, 6 })
+    imgui.PushStyleVar(imgui_style_var.ItemInnerSpacing, vector.New(SAMELINE_SPACING, 6))
     imgui.PushStyleVar(imgui_style_var.WindowRounding, cornerRoundnessValue)
     imgui.PushStyleVar(imgui_style_var.ChildRounding, cornerRoundnessValue)
     imgui.PushStyleVar(imgui_style_var.FrameRounding, cornerRoundnessValue)
