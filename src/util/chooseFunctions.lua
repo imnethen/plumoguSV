@@ -314,7 +314,7 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseCustomMultipliers(settingVars)
-    imgui.BeginChild("Custom Multipliers", { imgui.GetContentRegionAvailWidth(), 90 }, true)
+    imgui.BeginChild("Custom Multipliers", vector.New(imgui.GetContentRegionAvailWidth(), 90), 1)
     for i = 1, #settingVars.svMultipliers do
         local selectableText = table.concat({ i, " )   ", settingVars.svMultipliers[i] })
         if imgui.Selectable(selectableText, settingVars.selectedMultiplierIndex == i) then

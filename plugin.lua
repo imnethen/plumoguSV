@@ -1,4 +1,3 @@
-function placeAdvancedSplitScrollSVs(settingVars)
 
 -- Places advanced split scroll SVs
 -- Parameters
@@ -4694,7 +4693,7 @@ function displayFrameTimes(settingVars)
     helpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
     addPadding()
     local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.y, 120 }
-    imgui.BeginChild("FrameTimes", frameTimeSelectionArea, true)
+    imgui.BeginChild("FrameTimes", frameTimeSelectionArea, 1)
     for i = 1, #settingVars.frameTimes do
         local frameTimeData = {}
         local frameTime = settingVars.frameTimes[i]
@@ -4723,7 +4722,7 @@ function drawCurrentFrame(globalVars, settingVars)
     local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
     local drawlist = imgui.GetWindowDrawList()
     local childHeight = 250
-    imgui.BeginChild("Current Frame", vector.New(255, childHeight), true)
+    imgui.BeginChild("Current Frame", vector.New(255, childHeight), 1)
     for _, frameTime in pairs(settingVars.frameTimes) do
         if frameTime.frame == settingVars.currentFrame then
             for _, lane in pairs(frameTime.lanes) do
@@ -5517,7 +5516,7 @@ function setClassicColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.51, 0.58, 0.70, 1.00))
     imgui.PushStyleColor(imgui_col.Tab, vector.New(0.31, 0.38, 0.50, 1.00))
     imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.51, 0.58, 0.75, 1.00))
-
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.51, 0.58, 0.75, 1.00))
     imgui.PushStyleColor(imgui_col.Header, vector.New(0.81, 0.88, 1.00, 0.40))
     imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(0.81, 0.88, 1.00, 0.50))
     imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(0.81, 0.88, 1.00, 0.54))
@@ -5555,7 +5554,7 @@ function setStrawberryColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.70, 0.51, 0.58, 1.00))
     imgui.PushStyleColor(imgui_col.Tab, vector.New(0.50, 0.31, 0.38, 1.00))
     imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.75, 0.51, 0.58, 1.00))
-
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.75, 0.51, 0.58, 1.00))
     imgui.PushStyleColor(imgui_col.Header, vector.New(1.00, 0.81, 0.88, 0.40))
     imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(1.00, 0.81, 0.88, 0.50))
     imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(1.00, 0.81, 0.88, 0.54))
@@ -5594,7 +5593,7 @@ function setAmethystColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.80, 0.60, 0.80, 1.00))
     imgui.PushStyleColor(imgui_col.Tab, vector.New(0.50, 0.30, 0.50, 1.00))
     imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.70, 0.50, 0.70, 1.00))
-
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.70, 0.50, 0.70, 1.00))
     imgui.PushStyleColor(imgui_col.Header, vector.New(1.00, 0.80, 1.00, 0.40))
     imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(1.00, 0.80, 1.00, 0.50))
     imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(1.00, 0.80, 1.00, 0.54))
@@ -5633,7 +5632,7 @@ function setTreeColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.80, 0.80, 0.60, 1.00))
     imgui.PushStyleColor(imgui_col.Tab, vector.New(0.50, 0.50, 0.30, 1.00))
     imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.70, 0.70, 0.50, 1.00))
-
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.70, 0.70, 0.50, 1.00))
     imgui.PushStyleColor(imgui_col.Header, vector.New(1.00, 1.00, 0.80, 0.40))
     imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(1.00, 1.00, 0.80, 0.50))
     imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(1.00, 1.00, 0.80, 0.54))
@@ -5675,7 +5674,7 @@ function setBarbieColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, pinkTint)
     imgui.PushStyleColor(imgui_col.Tab, blue)
     imgui.PushStyleColor(imgui_col.TabHovered, pinkTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, pinkTint)
     imgui.PushStyleColor(imgui_col.Header, blue)
     imgui.PushStyleColor(imgui_col.HeaderHovered, pinkTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, pinkTint)
@@ -5764,7 +5763,7 @@ function setIncognitoRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ButtonActive, rgbColor)
     imgui.PushStyleColor(imgui_col.Tab, grey)
     imgui.PushStyleColor(imgui_col.TabHovered, whiteTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, rgbColor)
     imgui.PushStyleColor(imgui_col.Header, grey)
     imgui.PushStyleColor(imgui_col.HeaderHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, rgbColor)
@@ -5808,7 +5807,7 @@ function setTobiGlassColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, whiteTint)
     imgui.PushStyleColor(imgui_col.Tab, transparentBlack)
     imgui.PushStyleColor(imgui_col.TabHovered, whiteTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, whiteTint)
     imgui.PushStyleColor(imgui_col.Header, transparentBlack)
     imgui.PushStyleColor(imgui_col.HeaderHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, whiteTint)
@@ -5853,7 +5852,7 @@ function setTobiRGBGlassColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ButtonActive, colorTint)
     imgui.PushStyleColor(imgui_col.Tab, transparent)
     imgui.PushStyleColor(imgui_col.TabHovered, colorTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, colorTint)
     imgui.PushStyleColor(imgui_col.Header, transparent)
     imgui.PushStyleColor(imgui_col.HeaderHovered, colorTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, colorTint)
@@ -5895,7 +5894,7 @@ function setGlassColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, whiteTint)
     imgui.PushStyleColor(imgui_col.Tab, transparentBlack)
     imgui.PushStyleColor(imgui_col.TabHovered, whiteTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, whiteTint)
     imgui.PushStyleColor(imgui_col.Header, transparentBlack)
     imgui.PushStyleColor(imgui_col.HeaderHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, whiteTint)
@@ -5940,7 +5939,7 @@ function setGlassRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ButtonActive, colorTint)
     imgui.PushStyleColor(imgui_col.Tab, transparent)
     imgui.PushStyleColor(imgui_col.TabHovered, colorTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, colorTint)
     imgui.PushStyleColor(imgui_col.Header, transparent)
     imgui.PushStyleColor(imgui_col.HeaderHovered, colorTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, colorTint)
@@ -5986,7 +5985,7 @@ function setRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ButtonActive, activeColor)
     imgui.PushStyleColor(imgui_col.Tab, inactiveColor)
     imgui.PushStyleColor(imgui_col.TabHovered, activeColor)
-
+    imgui.PushStyleColor(imgui_col.TabActive, activeColor)
     imgui.PushStyleColor(imgui_col.Header, inactiveColor)
     imgui.PushStyleColor(imgui_col.HeaderHovered, inactiveColor)
     imgui.PushStyleColor(imgui_col.HeaderActive, activeColor)
@@ -6032,7 +6031,7 @@ function setInvertedRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ButtonActive, activeColor)
     imgui.PushStyleColor(imgui_col.Tab, inactiveColor)
     imgui.PushStyleColor(imgui_col.TabHovered, activeColor)
-
+    imgui.PushStyleColor(imgui_col.TabActive, activeColor)
     imgui.PushStyleColor(imgui_col.Header, inactiveColor)
     imgui.PushStyleColor(imgui_col.HeaderHovered, inactiveColor)
     imgui.PushStyleColor(imgui_col.HeaderActive, activeColor)
@@ -6078,7 +6077,7 @@ function setInvertedIncognitoRGBColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ButtonActive, rgbColor)
     imgui.PushStyleColor(imgui_col.Tab, grey)
     imgui.PushStyleColor(imgui_col.TabHovered, blackTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, rgbColor)
     imgui.PushStyleColor(imgui_col.Header, grey)
     imgui.PushStyleColor(imgui_col.HeaderHovered, blackTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, rgbColor)
@@ -6121,7 +6120,7 @@ function setInvertedIncognitoColors()
     imgui.PushStyleColor(imgui_col.ButtonActive, blackTint)
     imgui.PushStyleColor(imgui_col.Tab, grey)
     imgui.PushStyleColor(imgui_col.TabHovered, blackTint)
-
+    imgui.PushStyleColor(imgui_col.TabActive, blackTint)
     imgui.PushStyleColor(imgui_col.Header, grey)
     imgui.PushStyleColor(imgui_col.HeaderHovered, blackTint)
     imgui.PushStyleColor(imgui_col.HeaderActive, blackTint)
@@ -6840,7 +6839,7 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseCustomMultipliers(settingVars)
-    imgui.BeginChild("Custom Multipliers", { imgui.GetContentRegionAvailWidth(), 90 }, true)
+    imgui.BeginChild("Custom Multipliers", vector.New(imgui.GetContentRegionAvailWidth(), 90), 1)
     for i = 1, #settingVars.svMultipliers do
         local selectableText = table.concat({ i, " )   ", settingVars.svMultipliers[i] })
         if imgui.Selectable(selectableText, settingVars.selectedMultiplierIndex == i) then

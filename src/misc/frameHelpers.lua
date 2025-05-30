@@ -54,7 +54,7 @@ function displayFrameTimes(settingVars)
     helpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
     addPadding()
     local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.y, 120 }
-    imgui.BeginChild("FrameTimes", frameTimeSelectionArea, true)
+    imgui.BeginChild("FrameTimes", frameTimeSelectionArea, 1)
     for i = 1, #settingVars.frameTimes do
         local frameTimeData = {}
         local frameTime = settingVars.frameTimes[i]
@@ -83,7 +83,7 @@ function drawCurrentFrame(globalVars, settingVars)
     local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
     local drawlist = imgui.GetWindowDrawList()
     local childHeight = 250
-    imgui.BeginChild("Current Frame", vector.New(255, childHeight), true)
+    imgui.BeginChild("Current Frame", vector.New(255, childHeight), 1)
     for _, frameTime in pairs(settingVars.frameTimes) do
         if frameTime.frame == settingVars.currentFrame then
             for _, lane in pairs(frameTime.lanes) do
