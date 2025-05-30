@@ -29,7 +29,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseAverageSV(menuVars)
     local oldAvg = menuVars.avgSV
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -151,7 +151,7 @@ end
 function chooseConstantShift(settingVars, defaultShift)
     local oldShift = settingVars.verticalShift
 
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
     if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
         settingVars.verticalShift = defaultShift
@@ -159,7 +159,7 @@ function chooseConstantShift(settingVars, defaultShift)
     toolTip("Reset vertical shift to initial values")
     imgui.SameLine(0, SAMELINE_SPACING)
 
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
 
     if negateButtonPressed and settingVars.verticalShift ~= 0 then
@@ -346,12 +346,12 @@ function chooseVaryingDistance(settingVars)
         settingVars.distance = computableInputFloat("Distance", settingVars.distance, 3, " msx")
         return
     end
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
     local oldValues = { settingVars.distance1, settingVars.distance2 }
     imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -1196,12 +1196,12 @@ function chooseStartEndSVs(settingVars)
         settingVars.startSV = newValue
         return oldValue ~= newValue
     end
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
     local oldValues = { settingVars.startSV, settingVars.endSV }
     imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -1544,12 +1544,12 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, tag)
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 7, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
     local oldValues = { settingVars[lowerName], settingVars[higherName] }
     imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PushStyleVar(imgui_style_var.FramePadding, { 6.5, 4 })
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)

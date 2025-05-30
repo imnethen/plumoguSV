@@ -4,7 +4,7 @@
 --    settingVars         : list of variables used for the current menu [Table]
 --    interlaceMultiplier : interlace multiplier [Int/Float]
 function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
-    local multipliers = { 727, 69 }
+    local multipliers = vector.New(727, 69)
     if svType == "Linear" then
         multipliers = generateLinearSet(settingVars.startSV, settingVars.endSV,
             settingVars.svPoints + 1)

@@ -33,7 +33,7 @@ function createQuickTabs(globalVars)
         local tabItemFlag = imgui_tab_item_flags.None
         if keysPressedForMenuTab(tabName) then tabItemFlag = imgui_tab_item_flags.SetSelected end
         if imgui.BeginTabItem(tabName, true, tabItemFlag) then
-            imgui.InvisibleButton("SV stands for sv veleocity", { 255, 1 })
+            imgui.InvisibleButton("SV stands for sv veleocity", vector.New(255, 1))
             if tabName == "##info" then
                 imgui.Text("This is keyboard mode (for pro users)")
                 imgui.Text("Tab navigation: Alt + (Z, X, C, A, S, D)")

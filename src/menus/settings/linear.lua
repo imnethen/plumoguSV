@@ -21,7 +21,7 @@ function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
             height = sum
             state.SetValue("JumpHeight", sum)
         end
-        imgui.TextColored({ 1, 0, 0, 1 }, "Jump detected. The maximum \nheight of the jump is " .. height .. "x.")
+        imgui.TextColored(vector.New(1, 0, 0, 1), "Jump detected. The maximum \nheight of the jump is " .. height .. "x.")
     end
     return settingsChanged
 end

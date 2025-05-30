@@ -69,7 +69,7 @@ function selectBookmarkMenu()
             imgui.NextColumn()
 
 
-            if (imgui.Button("Go to #" .. idx - skippedIndices, { 65, 24 })) then
+            if (imgui.Button("Go to #" .. idx - skippedIndices, vector.New(65, 24))) then
                 actions.GoToObjects(v.StartTime)
             end
             imgui.NextColumn()

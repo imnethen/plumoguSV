@@ -3,7 +3,7 @@
 --    colorTheme : currently selected color theme [String]
 --    rgbPeriod  : length in seconds of one RGB color cycle [Int/Float]
 function setPluginAppearanceColors(colorTheme, rgbPeriod)
-    local borderColor = { 1, 1, 1, 1 }
+    local borderColor = vector.New(1, 1, 1, 1)
 
     if colorTheme == "Classic" then borderColor = setClassicColors() end
     if colorTheme == "Strawberry" then borderColor = setStrawberryColors() end
@@ -26,167 +26,167 @@ end
 
 -- Sets plugin colors to the "Classic" theme
 function setClassicColors()
-    local borderColor = { 0.81, 0.88, 1.00, 0.30 }
-    imgui.PushStyleColor(imgui_col.WindowBg, { 0.00, 0.00, 0.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    local borderColor = vector.New(0.81, 0.88, 1.00, 0.30)
+    imgui.PushStyleColor(imgui_col.WindowBg, vector.New(0.00, 0.00, 0.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     --  -- imgui.PushStyleColor(imgui_col.Border, borderColor)
-    imgui.PushStyleColor(imgui_col.FrameBg, { 0.14, 0.24, 0.28, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.24, 0.34, 0.38, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.29, 0.39, 0.43, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBg, { 0.41, 0.48, 0.65, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgActive, { 0.51, 0.58, 0.75, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, { 0.51, 0.58, 0.75, 0.50 })
-    imgui.PushStyleColor(imgui_col.CheckMark, { 0.81, 0.88, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrab, { 0.56, 0.63, 0.75, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrabActive, { 0.61, 0.68, 0.80, 1.00 })
-    imgui.PushStyleColor(imgui_col.Button, { 0.31, 0.38, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonHovered, { 0.41, 0.48, 0.60, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonActive, { 0.51, 0.58, 0.70, 1.00 })
-    imgui.PushStyleColor(imgui_col.Tab, { 0.31, 0.38, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabHovered, { 0.51, 0.58, 0.75, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabActive, { 0.51, 0.58, 0.75, 1.00 })
-    imgui.PushStyleColor(imgui_col.Header, { 0.81, 0.88, 1.00, 0.40 })
-    imgui.PushStyleColor(imgui_col.HeaderHovered, { 0.81, 0.88, 1.00, 0.50 })
-    imgui.PushStyleColor(imgui_col.HeaderActive, { 0.81, 0.88, 1.00, 0.54 })
-    imgui.PushStyleColor(imgui_col.Separator, { 0.81, 0.88, 1.00, 0.30 })
-    imgui.PushStyleColor(imgui_col.Text, { 1.00, 1.00, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.TextSelectedBg, { 0.81, 0.88, 1.00, 0.40 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrab, { 0.31, 0.38, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, { 0.41, 0.48, 0.60, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, { 0.51, 0.58, 0.70, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLines, { 0.61, 0.61, 0.61, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+    imgui.PushStyleColor(imgui_col.FrameBg, vector.New(0.14, 0.24, 0.28, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgHovered, vector.New(0.24, 0.34, 0.38, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgActive, vector.New(0.29, 0.39, 0.43, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBg, vector.New(0.41, 0.48, 0.65, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgActive, vector.New(0.51, 0.58, 0.75, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, vector.New(0.51, 0.58, 0.75, 0.50))
+    imgui.PushStyleColor(imgui_col.CheckMark, vector.New(0.81, 0.88, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrab, vector.New(0.56, 0.63, 0.75, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrabActive, vector.New(0.61, 0.68, 0.80, 1.00))
+    imgui.PushStyleColor(imgui_col.Button, vector.New(0.31, 0.38, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonHovered, vector.New(0.41, 0.48, 0.60, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.51, 0.58, 0.70, 1.00))
+    imgui.PushStyleColor(imgui_col.Tab, vector.New(0.31, 0.38, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.51, 0.58, 0.75, 1.00))
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.51, 0.58, 0.75, 1.00))
+    imgui.PushStyleColor(imgui_col.Header, vector.New(0.81, 0.88, 1.00, 0.40))
+    imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(0.81, 0.88, 1.00, 0.50))
+    imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(0.81, 0.88, 1.00, 0.54))
+    imgui.PushStyleColor(imgui_col.Separator, vector.New(0.81, 0.88, 1.00, 0.30))
+    imgui.PushStyleColor(imgui_col.Text, vector.New(1.00, 1.00, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.TextSelectedBg, vector.New(0.81, 0.88, 1.00, 0.40))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrab, vector.New(0.31, 0.38, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, vector.New(0.41, 0.48, 0.60, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, vector.New(0.51, 0.58, 0.70, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLines, vector.New(0.61, 0.61, 0.61, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLinesHovered, vector.New(1.00, 0.43, 0.35, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogram, vector.New(0.90, 0.70, 0.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, vector.New(1.00, 0.60, 0.00, 1.00))
 
     return borderColor
 end
 
 -- Sets plugin colors to the "Strawberry" theme
 function setStrawberryColors()
-    local borderColor = { 1.00, 0.81, 0.88, 0.30 }
-    imgui.PushStyleColor(imgui_col.WindowBg, { 0.00, 0.00, 0.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    local borderColor = vector.New(1.00, 0.81, 0.88, 0.30)
+    imgui.PushStyleColor(imgui_col.WindowBg, vector.New(0.00, 0.00, 0.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, borderColor)
-    imgui.PushStyleColor(imgui_col.FrameBg, { 0.28, 0.14, 0.24, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.38, 0.24, 0.34, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.43, 0.29, 0.39, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBg, { 0.65, 0.41, 0.48, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgActive, { 0.75, 0.51, 0.58, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, { 0.75, 0.51, 0.58, 0.50 })
-    imgui.PushStyleColor(imgui_col.CheckMark, { 1.00, 0.81, 0.88, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrab, { 0.75, 0.56, 0.63, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrabActive, { 0.80, 0.61, 0.68, 1.00 })
-    imgui.PushStyleColor(imgui_col.Button, { 0.50, 0.31, 0.38, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonHovered, { 0.60, 0.41, 0.48, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonActive, { 0.70, 0.51, 0.58, 1.00 })
-    imgui.PushStyleColor(imgui_col.Tab, { 0.50, 0.31, 0.38, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabHovered, { 0.75, 0.51, 0.58, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabActive, { 0.75, 0.51, 0.58, 1.00 })
-    imgui.PushStyleColor(imgui_col.Header, { 1.00, 0.81, 0.88, 0.40 })
-    imgui.PushStyleColor(imgui_col.HeaderHovered, { 1.00, 0.81, 0.88, 0.50 })
-    imgui.PushStyleColor(imgui_col.HeaderActive, { 1.00, 0.81, 0.88, 0.54 })
-    imgui.PushStyleColor(imgui_col.Separator, { 1.00, 0.81, 0.88, 0.30 })
-    imgui.PushStyleColor(imgui_col.Text, { 1.00, 1.00, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.TextSelectedBg, { 1.00, 0.81, 0.88, 0.40 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrab, { 0.50, 0.31, 0.38, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, { 0.60, 0.41, 0.48, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, { 0.70, 0.51, 0.58, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLines, { 0.61, 0.61, 0.61, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+    imgui.PushStyleColor(imgui_col.FrameBg, vector.New(0.28, 0.14, 0.24, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgHovered, vector.New(0.38, 0.24, 0.34, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgActive, vector.New(0.43, 0.29, 0.39, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBg, vector.New(0.65, 0.41, 0.48, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgActive, vector.New(0.75, 0.51, 0.58, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, vector.New(0.75, 0.51, 0.58, 0.50))
+    imgui.PushStyleColor(imgui_col.CheckMark, vector.New(1.00, 0.81, 0.88, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrab, vector.New(0.75, 0.56, 0.63, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrabActive, vector.New(0.80, 0.61, 0.68, 1.00))
+    imgui.PushStyleColor(imgui_col.Button, vector.New(0.50, 0.31, 0.38, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonHovered, vector.New(0.60, 0.41, 0.48, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.70, 0.51, 0.58, 1.00))
+    imgui.PushStyleColor(imgui_col.Tab, vector.New(0.50, 0.31, 0.38, 1.00))
+    imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.75, 0.51, 0.58, 1.00))
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.75, 0.51, 0.58, 1.00))
+    imgui.PushStyleColor(imgui_col.Header, vector.New(1.00, 0.81, 0.88, 0.40))
+    imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(1.00, 0.81, 0.88, 0.50))
+    imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(1.00, 0.81, 0.88, 0.54))
+    imgui.PushStyleColor(imgui_col.Separator, vector.New(1.00, 0.81, 0.88, 0.30))
+    imgui.PushStyleColor(imgui_col.Text, vector.New(1.00, 1.00, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.TextSelectedBg, vector.New(1.00, 0.81, 0.88, 0.40))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrab, vector.New(0.50, 0.31, 0.38, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, vector.New(0.60, 0.41, 0.48, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, vector.New(0.70, 0.51, 0.58, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLines, vector.New(0.61, 0.61, 0.61, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLinesHovered, vector.New(1.00, 0.43, 0.35, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogram, vector.New(0.90, 0.70, 0.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, vector.New(1.00, 0.60, 0.00, 1.00))
 
     return borderColor
 end
 
 -- Sets plugin colors to the "Amethyst" theme
 function setAmethystColors()
-    local borderColor = { 0.90, 0.00, 0.81, 0.30 }
+    local borderColor = vector.New(0.90, 0.00, 0.81, 0.30)
 
-    imgui.PushStyleColor(imgui_col.WindowBg, { 0.16, 0.00, 0.20, 1.00 })
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.WindowBg, vector.New(0.16, 0.00, 0.20, 1.00))
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, borderColor)
-    imgui.PushStyleColor(imgui_col.FrameBg, { 0.40, 0.20, 0.40, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.50, 0.30, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.55, 0.35, 0.55, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBg, { 0.31, 0.11, 0.35, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgActive, { 0.41, 0.21, 0.45, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, { 0.41, 0.21, 0.45, 0.50 })
-    imgui.PushStyleColor(imgui_col.CheckMark, { 1.00, 0.80, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrab, { 0.95, 0.75, 0.95, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrabActive, { 1.00, 0.80, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.Button, { 0.60, 0.40, 0.60, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonHovered, { 0.70, 0.50, 0.70, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonActive, { 0.80, 0.60, 0.80, 1.00 })
-    imgui.PushStyleColor(imgui_col.Tab, { 0.50, 0.30, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabHovered, { 0.70, 0.50, 0.70, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabActive, { 0.70, 0.50, 0.70, 1.00 })
-    imgui.PushStyleColor(imgui_col.Header, { 1.00, 0.80, 1.00, 0.40 })
-    imgui.PushStyleColor(imgui_col.HeaderHovered, { 1.00, 0.80, 1.00, 0.50 })
-    imgui.PushStyleColor(imgui_col.HeaderActive, { 1.00, 0.80, 1.00, 0.54 })
-    imgui.PushStyleColor(imgui_col.Separator, { 1.00, 0.80, 1.00, 0.30 })
-    imgui.PushStyleColor(imgui_col.Text, { 1.00, 1.00, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.TextSelectedBg, { 1.00, 0.80, 1.00, 0.40 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrab, { 0.60, 0.40, 0.60, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, { 0.70, 0.50, 0.70, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, { 0.80, 0.60, 0.80, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLines, { 1.00, 0.80, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.70, 0.30, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogram, { 1.00, 0.80, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.70, 0.30, 1.00 })
+    imgui.PushStyleColor(imgui_col.FrameBg, vector.New(0.40, 0.20, 0.40, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgHovered, vector.New(0.50, 0.30, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgActive, vector.New(0.55, 0.35, 0.55, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBg, vector.New(0.31, 0.11, 0.35, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgActive, vector.New(0.41, 0.21, 0.45, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, vector.New(0.41, 0.21, 0.45, 0.50))
+    imgui.PushStyleColor(imgui_col.CheckMark, vector.New(1.00, 0.80, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrab, vector.New(0.95, 0.75, 0.95, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrabActive, vector.New(1.00, 0.80, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.Button, vector.New(0.60, 0.40, 0.60, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonHovered, vector.New(0.70, 0.50, 0.70, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.80, 0.60, 0.80, 1.00))
+    imgui.PushStyleColor(imgui_col.Tab, vector.New(0.50, 0.30, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.70, 0.50, 0.70, 1.00))
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.70, 0.50, 0.70, 1.00))
+    imgui.PushStyleColor(imgui_col.Header, vector.New(1.00, 0.80, 1.00, 0.40))
+    imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(1.00, 0.80, 1.00, 0.50))
+    imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(1.00, 0.80, 1.00, 0.54))
+    imgui.PushStyleColor(imgui_col.Separator, vector.New(1.00, 0.80, 1.00, 0.30))
+    imgui.PushStyleColor(imgui_col.Text, vector.New(1.00, 1.00, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.TextSelectedBg, vector.New(1.00, 0.80, 1.00, 0.40))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrab, vector.New(0.60, 0.40, 0.60, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, vector.New(0.70, 0.50, 0.70, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, vector.New(0.80, 0.60, 0.80, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLines, vector.New(1.00, 0.80, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLinesHovered, vector.New(1.00, 0.70, 0.30, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogram, vector.New(1.00, 0.80, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, vector.New(1.00, 0.70, 0.30, 1.00))
 
     return borderColor
 end
 
 -- Sets plugin colors to the "Tree" theme
 function setTreeColors()
-    local borderColor = { 0.81, 0.90, 0.00, 0.30 }
+    local borderColor = vector.New(0.81, 0.90, 0.00, 0.30)
 
-    imgui.PushStyleColor(imgui_col.WindowBg, { 0.20, 0.16, 0.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.WindowBg, vector.New(0.20, 0.16, 0.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, borderColor)
-    imgui.PushStyleColor(imgui_col.FrameBg, { 0.40, 0.40, 0.20, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgHovered, { 0.50, 0.50, 0.30, 1.00 })
-    imgui.PushStyleColor(imgui_col.FrameBgActive, { 0.55, 0.55, 0.35, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBg, { 0.35, 0.31, 0.11, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgActive, { 0.45, 0.41, 0.21, 1.00 })
-    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, { 0.45, 0.41, 0.21, 0.50 })
-    imgui.PushStyleColor(imgui_col.CheckMark, { 1.00, 1.00, 0.80, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrab, { 0.95, 0.95, 0.75, 1.00 })
-    imgui.PushStyleColor(imgui_col.SliderGrabActive, { 1.00, 1.00, 0.80, 1.00 })
-    imgui.PushStyleColor(imgui_col.Button, { 0.60, 0.60, 0.40, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonHovered, { 0.70, 0.70, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.ButtonActive, { 0.80, 0.80, 0.60, 1.00 })
-    imgui.PushStyleColor(imgui_col.Tab, { 0.50, 0.50, 0.30, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabHovered, { 0.70, 0.70, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.TabActive, { 0.70, 0.70, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.Header, { 1.00, 1.00, 0.80, 0.40 })
-    imgui.PushStyleColor(imgui_col.HeaderHovered, { 1.00, 1.00, 0.80, 0.50 })
-    imgui.PushStyleColor(imgui_col.HeaderActive, { 1.00, 1.00, 0.80, 0.54 })
-    imgui.PushStyleColor(imgui_col.Separator, { 1.00, 1.00, 0.80, 0.30 })
-    imgui.PushStyleColor(imgui_col.Text, { 1.00, 1.00, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.TextSelectedBg, { 1.00, 1.00, 0.80, 0.40 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrab, { 0.60, 0.60, 0.40, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, { 0.70, 0.70, 0.50, 1.00 })
-    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, { 0.80, 0.80, 0.60, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLines, { 1.00, 1.00, 0.80, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 0.30, 1.00, 0.70, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogram, { 1.00, 1.00, 0.80, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 0.30, 1.00, 0.70, 1.00 })
+    imgui.PushStyleColor(imgui_col.FrameBg, vector.New(0.40, 0.40, 0.20, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgHovered, vector.New(0.50, 0.50, 0.30, 1.00))
+    imgui.PushStyleColor(imgui_col.FrameBgActive, vector.New(0.55, 0.55, 0.35, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBg, vector.New(0.35, 0.31, 0.11, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgActive, vector.New(0.45, 0.41, 0.21, 1.00))
+    imgui.PushStyleColor(imgui_col.TitleBgCollapsed, vector.New(0.45, 0.41, 0.21, 0.50))
+    imgui.PushStyleColor(imgui_col.CheckMark, vector.New(1.00, 1.00, 0.80, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrab, vector.New(0.95, 0.95, 0.75, 1.00))
+    imgui.PushStyleColor(imgui_col.SliderGrabActive, vector.New(1.00, 1.00, 0.80, 1.00))
+    imgui.PushStyleColor(imgui_col.Button, vector.New(0.60, 0.60, 0.40, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonHovered, vector.New(0.70, 0.70, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.ButtonActive, vector.New(0.80, 0.80, 0.60, 1.00))
+    imgui.PushStyleColor(imgui_col.Tab, vector.New(0.50, 0.50, 0.30, 1.00))
+    imgui.PushStyleColor(imgui_col.TabHovered, vector.New(0.70, 0.70, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.TabActive, vector.New(0.70, 0.70, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.Header, vector.New(1.00, 1.00, 0.80, 0.40))
+    imgui.PushStyleColor(imgui_col.HeaderHovered, vector.New(1.00, 1.00, 0.80, 0.50))
+    imgui.PushStyleColor(imgui_col.HeaderActive, vector.New(1.00, 1.00, 0.80, 0.54))
+    imgui.PushStyleColor(imgui_col.Separator, vector.New(1.00, 1.00, 0.80, 0.30))
+    imgui.PushStyleColor(imgui_col.Text, vector.New(1.00, 1.00, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.TextSelectedBg, vector.New(1.00, 1.00, 0.80, 0.40))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrab, vector.New(0.60, 0.60, 0.40, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, vector.New(0.70, 0.70, 0.50, 1.00))
+    imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, vector.New(0.80, 0.80, 0.60, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLines, vector.New(1.00, 1.00, 0.80, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLinesHovered, vector.New(0.30, 1.00, 0.70, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogram, vector.New(1.00, 1.00, 0.80, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, vector.New(0.30, 1.00, 0.70, 1.00))
 
     return borderColor
 end
 
 -- Sets plugin colors to the "Barbie" theme
 function setBarbieColors()
-    local pink = { 0.79, 0.31, 0.55, 1.00 }
-    local white = { 0.95, 0.85, 0.87, 1.00 }
-    local blue = { 0.37, 0.64, 0.84, 1.00 }
-    local pinkTint = { 1.00, 0.86, 0.86, 0.40 }
+    local pink = vector.New(0.79, 0.31, 0.55, 1.00)
+    local white = vector.New(0.95, 0.85, 0.87, 1.00)
+    local blue = vector.New(0.37, 0.64, 0.84, 1.00)
+    local pinkTint = vector.New(1.00, 0.86, 0.86, 0.40)
 
     imgui.PushStyleColor(imgui_col.WindowBg, pink)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, pinkTint)
     imgui.PushStyleColor(imgui_col.FrameBg, blue)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, pinkTint)
@@ -222,14 +222,14 @@ end
 
 -- Sets plugin colors to the "Incognito" theme
 function setIncognitoColors()
-    local black = { 0.00, 0.00, 0.00, 1.00 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
-    local grey = { 0.20, 0.20, 0.20, 1.00 }
-    local whiteTint = { 1.00, 1.00, 1.00, 0.40 }
-    local red = { 1.00, 0.00, 0.00, 1.00 }
+    local black = vector.New(0.00, 0.00, 0.00, 1.00)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
+    local grey = vector.New(0.20, 0.20, 0.20, 1.00)
+    local whiteTint = vector.New(1.00, 1.00, 1.00, 0.40)
+    local red = vector.New(1.00, 0.00, 0.00, 1.00)
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
@@ -267,15 +267,15 @@ end
 -- Parameters
 --    rgbPeriod : length in seconds of one RGB color cycle [Int/Float]
 function setIncognitoRGBColors(rgbPeriod)
-    local black = { 0.00, 0.00, 0.00, 1.00 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
-    local grey = { 0.20, 0.20, 0.20, 1.00 }
-    local whiteTint = { 1.00, 1.00, 1.00, 0.40 }
+    local black = vector.New(0.00, 0.00, 0.00, 1.00)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
+    local grey = vector.New(0.20, 0.20, 0.20, 1.00)
+    local whiteTint = vector.New(1.00, 1.00, 1.00, 0.40)
     local currentRGB = getCurrentRGBColors(rgbPeriod)
     local rgbColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.8 }
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, rgbColor)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
@@ -311,15 +311,15 @@ end
 
 -- Sets plugin colors to the "Tobi's Glass" theme
 function setTobiGlassColors()
-    local transparentBlack = { 0.00, 0.00, 0.00, 0.70 }
-    local transparentWhite = { 0.30, 0.30, 0.30, 0.50 }
-    local whiteTint = { 1.00, 1.00, 1.00, 0.30 }
-    local buttonColor = { 0.14, 0.24, 0.28, 0.80 }
-    local frameColor = { 0.24, 0.34, 0.38, 1.00 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
+    local transparentBlack = vector.New(0.00, 0.00, 0.00, 0.70)
+    local transparentWhite = vector.New(0.30, 0.30, 0.30, 0.50)
+    local whiteTint = vector.New(1.00, 1.00, 1.00, 0.30)
+    local buttonColor = vector.New(0.14, 0.24, 0.28, 0.80)
+    local frameColor = vector.New(0.24, 0.34, 0.38, 1.00)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparentBlack)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, frameColor)
     imgui.PushStyleColor(imgui_col.FrameBg, buttonColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
@@ -357,14 +357,14 @@ end
 -- Parameters
 --    rgbPeriod : length in seconds of one RGB color cycle [Int/Float]
 function setTobiRGBGlassColors(rgbPeriod)
-    local transparent = { 0.00, 0.00, 0.00, 0.85 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
+    local transparent = vector.New(0.00, 0.00, 0.00, 0.85)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
     local currentRGB = getCurrentRGBColors(rgbPeriod)
     local activeColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.8 }
     local colorTint = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.3 }
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparent)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBg, transparent)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, colorTint)
@@ -400,13 +400,13 @@ end
 
 -- Sets plugin colors to the "Glass" theme
 function setGlassColors()
-    local transparentBlack = { 0.00, 0.00, 0.00, 0.25 }
-    local transparentWhite = { 1.00, 1.00, 1.00, 0.70 }
-    local whiteTint = { 1.00, 1.00, 1.00, 0.30 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
+    local transparentBlack = vector.New(0.00, 0.00, 0.00, 0.25)
+    local transparentWhite = vector.New(1.00, 1.00, 1.00, 0.70)
+    local whiteTint = vector.New(1.00, 1.00, 1.00, 0.30)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparentBlack)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, transparentWhite)
     imgui.PushStyleColor(imgui_col.FrameBg, transparentBlack)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
@@ -447,11 +447,11 @@ function setGlassRGBColors(rgbPeriod)
     local currentRGB = getCurrentRGBColors(rgbPeriod)
     local activeColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.8 }
     local colorTint = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.3 }
-    local transparent = { 0.00, 0.00, 0.00, 0.25 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
+    local transparent = vector.New(0.00, 0.00, 0.00, 0.25)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
 
     imgui.PushStyleColor(imgui_col.WindowBg, transparent)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, activeColor)
     imgui.PushStyleColor(imgui_col.FrameBg, transparent)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, colorTint)
@@ -492,12 +492,12 @@ function setRGBGamerColors(rgbPeriod)
     local currentRGB = getCurrentRGBColors(rgbPeriod)
     local activeColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.8 }
     local inactiveColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.5 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
-    local clearWhite = { 1.00, 1.00, 1.00, 0.40 }
-    local black = { 0.00, 0.00, 0.00, 1.00 }
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
+    local clearWhite = vector.New(1.00, 1.00, 1.00, 0.40)
+    local black = vector.New(0.00, 0.00, 0.00, 1.00)
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.08, 0.08, 0.08, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBg, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, activeColor)
@@ -523,10 +523,10 @@ function setRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ScrollbarGrab, inactiveColor)
     imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, activeColor)
     imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, activeColor)
-    imgui.PushStyleColor(imgui_col.PlotLines, { 0.61, 0.61, 0.61, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 1.00, 0.43, 0.35, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.90, 0.70, 0.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 1.00, 0.60, 0.00, 1.00 })
+    imgui.PushStyleColor(imgui_col.PlotLines, vector.New(0.61, 0.61, 0.61, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLinesHovered, vector.New(1.00, 0.43, 0.35, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogram, vector.New(0.90, 0.70, 0.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, vector.New(1.00, 0.60, 0.00, 1.00))
 
     return inactiveColor
 end
@@ -538,12 +538,12 @@ function setInvertedRGBGamerColors(rgbPeriod)
     local currentRGB = getCurrentRGBColors(rgbPeriod)
     local activeColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.8 }
     local inactiveColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.5 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
-    local clearBlack = { 0.00, 0.00, 0.00, 0.40 }
-    local black = { 0.00, 0.00, 0.00, 1.00 }
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
+    local clearBlack = vector.New(0.00, 0.00, 0.00, 0.40)
+    local black = vector.New(0.00, 0.00, 0.00, 1.00)
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.92, 0.92, 0.92, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBg, inactiveColor)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, activeColor)
@@ -569,10 +569,10 @@ function setInvertedRGBGamerColors(rgbPeriod)
     imgui.PushStyleColor(imgui_col.ScrollbarGrab, inactiveColor)
     imgui.PushStyleColor(imgui_col.ScrollbarGrabHovered, activeColor)
     imgui.PushStyleColor(imgui_col.ScrollbarGrabActive, activeColor)
-    imgui.PushStyleColor(imgui_col.PlotLines, { 0.39, 0.39, 0.39, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotLinesHovered, { 0.00, 0.57, 0.65, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogram, { 0.10, 0.30, 1.00, 1.00 })
-    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, { 0.00, 0.40, 1.00, 1.00 })
+    imgui.PushStyleColor(imgui_col.PlotLines, vector.New(0.39, 0.39, 0.39, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotLinesHovered, vector.New(0.00, 0.57, 0.65, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogram, vector.New(0.10, 0.30, 1.00, 1.00))
+    imgui.PushStyleColor(imgui_col.PlotHistogramHovered, vector.New(0.00, 0.40, 1.00, 1.00))
 
     return inactiveColor
 end
@@ -581,15 +581,15 @@ end
 -- Parameters
 --    rgbPeriod : length in seconds of one RGB color cycle [Int/Float]
 function setInvertedIncognitoRGBColors(rgbPeriod)
-    local black = { 0.00, 0.00, 0.00, 1.00 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
-    local grey = { 0.80, 0.80, 0.80, 1.00 }
-    local blackTint = { 0.00, 0.00, 0.00, 0.40 }
+    local black = vector.New(0.00, 0.00, 0.00, 1.00)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
+    local grey = vector.New(0.80, 0.80, 0.80, 1.00)
+    local blackTint = vector.New(0.00, 0.00, 0.00, 0.40)
     local currentRGB = getCurrentRGBColors(rgbPeriod)
     local rgbColor = { currentRGB.red, currentRGB.green, currentRGB.blue, 0.8 }
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.92, 0.92, 0.92, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, rgbColor)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, blackTint)
@@ -625,14 +625,14 @@ end
 
 -- Sets plugin colors to the "otingocnI" theme
 function setInvertedIncognitoColors()
-    local black = { 0.00, 0.00, 0.00, 1.00 }
-    local white = { 1.00, 1.00, 1.00, 1.00 }
-    local grey = { 0.80, 0.80, 0.80, 1.00 }
-    local blackTint = { 0.00, 0.00, 0.00, 0.40 }
-    local notRed = { 0.00, 1.00, 1.00, 1.00 }
+    local black = vector.New(0.00, 0.00, 0.00, 1.00)
+    local white = vector.New(1.00, 1.00, 1.00, 1.00)
+    local grey = vector.New(0.80, 0.80, 0.80, 1.00)
+    local blackTint = vector.New(0.00, 0.00, 0.00, 0.40)
+    local notRed = vector.New(0.00, 1.00, 1.00, 1.00)
 
     imgui.PushStyleColor(imgui_col.WindowBg, white)
-    imgui.PushStyleColor(imgui_col.PopupBg, { 0.92, 0.92, 0.92, 0.94 })
+    imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.92, 0.92, 0.92, 0.94))
     -- imgui.PushStyleColor(imgui_col.Border, blackTint)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, blackTint)

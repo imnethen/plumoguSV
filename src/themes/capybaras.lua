@@ -228,54 +228,54 @@ function drawCapybara312(globalVars)
     local blueRounded = math.round(255 * rgbColors.blue, 0)
     local outlineColor = rgbaToUint(redRounded, greenRounded, blueRounded, 255)
 
-    local p1 = { 42, 32 }
-    local p2 = { 100, 78 }
-    local p3 = { 141, 32 }
-    local p4 = { 83, 63 }
-    local p5 = { 83, 78 }
-    local p6 = { 70, 82 }
-    local p7 = { 85, 88 }
+    local p1 = vector.New(42, 32)
+    local p2 = vector.New(100, 78)
+    local p3 = vector.New(141, 32)
+    local p4 = vector.New(83, 63)
+    local p5 = vector.New(83, 78)
+    local p6 = vector.New(70, 82)
+    local p7 = vector.New(85, 88)
     local hairlineThickness = 1
     o.AddTriangleFilled(p1, p2, p3, outlineColor)
     o.AddTriangleFilled(p1, p4, p5, outlineColor)
     o.AddLine(p5, p6, outlineColor, hairlineThickness)
     o.AddLine(p6, p7, outlineColor, hairlineThickness)
 
-    local p8 = { 21, 109 }
-    local p9 = { 0, 99 }
-    local p10 = { 16, 121 }
-    local p11 = { 5, 132 }
-    local p12 = { 162, 109 }
-    local p13 = { 183, 99 }
-    local p14 = { 167, 121 }
-    local p15 = { 178, 132 }
+    local p8 = vector.New(21, 109)
+    local p9 = vector.New(0, 99)
+    local p10 = vector.New(16, 121)
+    local p11 = vector.New(5, 132)
+    local p12 = vector.New(162, 109)
+    local p13 = vector.New(183, 99)
+    local p14 = vector.New(167, 121)
+    local p15 = vector.New(178, 132)
     o.AddTriangleFilled(p1, p8, p9, outlineColor)
     o.AddTriangleFilled(p9, p10, p11, outlineColor)
     o.AddTriangleFilled(p3, p12, p13, outlineColor)
     o.AddTriangleFilled(p13, p14, p15, outlineColor)
 
-    local p16 = { 25, 139 }
-    local p17 = { 32, 175 }
-    local p18 = { 158, 139 }
-    local p19 = { 151, 175 }
-    local p20 = { 150, 215 }
+    local p16 = vector.New(25, 139)
+    local p17 = vector.New(32, 175)
+    local p18 = vector.New(158, 139)
+    local p19 = vector.New(151, 175)
+    local p20 = vector.New(150, 215)
     o.AddTriangleFilled(p11, p16, p17, outlineColor)
     o.AddTriangleFilled(p15, p18, p19, outlineColor)
     o.AddTriangleFilled(p17, p19, p20, outlineColor)
 
-    local p21 = { 84, 148 }
-    local p22 = { 88, 156 }
-    local p23 = { 92, 153 }
-    local p24 = { 96, 156 }
-    local p25 = { 100, 148 }
+    local p21 = vector.New(84, 148)
+    local p22 = vector.New(88, 156)
+    local p23 = vector.New(92, 153)
+    local p24 = vector.New(96, 156)
+    local p25 = vector.New(100, 148)
     local mouthLineThickness = 2
     o.AddLine(p21, p22, outlineColor, mouthLineThickness)
     o.AddLine(p22, p23, outlineColor, mouthLineThickness)
     o.AddLine(p23, p24, outlineColor, mouthLineThickness)
     o.AddLine(p24, p25, outlineColor, mouthLineThickness)
 
-    local p26 = { 61, 126 }
-    local p27 = { 122, 126 }
+    local p26 = vector.New(61, 126)
+    local p27 = vector.New(122, 126)
     local eyeRadius = 9
     local numSements = 16
     o.AddCircleFilled(p26, eyeRadius, outlineColor, numSements)
