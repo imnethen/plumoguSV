@@ -18,8 +18,8 @@ export default async function transpiler(devMode = false) {
 
     if (!devMode) ignoredFiles.push("src\\dev")
 
-    files.forEach((file) => {
-        if (ignoredFiles.some((f) => file.includes(f))) return;
+    files.forEach((file: string) => {
+        if (ignoredFiles.some((f) => file.includes(f)) || !file.endsWith(".lua")) return;
         const fileData = readFileSync(file, "utf-8").split("\n");
         output = `${output}\n${fileData.filter((str) => str).join("\n")}`;
         fileCount++;

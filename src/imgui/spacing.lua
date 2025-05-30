@@ -1,6 +1,6 @@
 -- Adds vertical blank space/padding on the GUI
 function addPadding()
-    imgui.Dummy({ 0, 0 })
+    imgui.Dummy(vector.New(0, 0))
 end
 
 -- Creates a horizontal line separator on the GUI
