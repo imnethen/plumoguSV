@@ -36,6 +36,15 @@ function getSVMultiplierAt(offset)
     return map.InitialScrollVelocity or 1
 end
 
+-- Returns the SSF multiplier at a specified offset in the map [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
+function getSSFMultiplierAt(offset)
+    local ssf = map.GetScrollSpeedFactorAt(offset)
+    if ssf then return ssf.Multiplier end
+    return 1
+end
+
 function getTimingPointAt(offset)
     local line = map.GetTimingPointAt(offset)
     if line then return line end

@@ -911,7 +911,7 @@ function linearSSFVibrato(menuVars)
     local delta = 500 / menuVars.resolution
     local time = startTime
     local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
-        map.GetScrollSpeedFactorAt(time).Multiplier or 1) }
+        getSSFMultiplierAt(time)) }
     while time < endTime do
         local x = ((time - startTime) / (endTime - startTime)) ^ exponent
         local y = ((time + delta - startTime) / (endTime - startTime)) ^ exponent
@@ -8994,6 +8994,15 @@ function getSVMultiplierAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.Multiplier end
     return map.InitialScrollVelocity or 1
+end
+
+-- Returns the SSF multiplier at a specified offset in the map [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
+function getSSFMultiplierAt(offset)
+    local ssf = map.GetScrollSpeedFactorAt(offset)
+    if ssf then return ssf.Multiplier end
+    return 1
 end
 
 function getTimingPointAt(offset)
