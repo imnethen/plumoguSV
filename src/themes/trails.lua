@@ -23,7 +23,7 @@ end
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
 --    sz         : dimensions of the window for Quaver [Table]
-function drawSnakeTrail(globalVars, o, m, t, sz)
+function drawSnakeTrail(globalVars, o, m, t, _)
     local trailPoints = globalVars.cursorTrailPoints
     local snakeTrailPoints = {}
     initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
@@ -151,7 +151,7 @@ end
 --    dustParticles    : list of dust particles [Table]
 --    numDustParticles : total number of dust particles [Int]
 --    dustDuration     : lifespan of a dust particle [Int/Float]
-function initializeDustParticles(sz, t, dustParticles, numDustParticles, dustDuration)
+function initializeDustParticles(_, t, dustParticles, numDustParticles, dustDuration)
     if state.GetValue("initializeDustParticles") then
         for i = 1, numDustParticles do
             dustParticles[i] = {}
@@ -223,7 +223,7 @@ end
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
 --    sz         : dimensions of the window for Quaver [Table]
-function drawSparkleTrail(globalVars, o, m, t, sz)
+function drawSparkleTrail(_, o, m, t, sz)
     local sparkleSize = 10
     local sparkleDuration = 0.3
     local numSparkleParticles = 10
@@ -242,7 +242,7 @@ end
 --    sparkleParticles    : list of sparkle particles [Table]
 --    numSparkleParticles : total number of sparkle particles [Int]
 --    sparkleDuration     : lifespan of a sparkle particle [Int/Float]
-function initializeSparkleParticles(sz, t, sparkleParticles, numSparkleParticles, sparkleDuration)
+function initializeSparkleParticles(_, t, sparkleParticles, numSparkleParticles, sparkleDuration)
     if state.GetValue("initializeSparkleParticles") then
         for i = 1, numSparkleParticles do
             sparkleParticles[i] = {}
@@ -297,7 +297,7 @@ function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkle
             local dy = -sparkleParticle.yRange * math.quadraticBezier(0, time)
             local sparkleY = sparkleParticle.y + dy
             local sparkleCoords = vector.New(sparkleX, sparkleY)
-            local alpha = math.round(255 * (1 - time), 0)
+            -- local alpha = math.round(255 * (1 - time), 0)
             local white = rgbaToUint(255, 255, 255, 255)
             local actualSize = sparkleSize * (1 - math.quadraticBezier(0, time))
             local sparkleColor = rgbaToUint(255, 255, 100, 30)

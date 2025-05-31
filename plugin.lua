@@ -351,7 +351,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
     local startOffset = allLayerNotes[1].StartTime
     local endOffset = allLayerNotes[#allLayerNotes].StartTime
     local hasAddedLaneTime = {}
-    for i = 1, map.GetKeyCount() do
+    for _ = 1, map.GetKeyCount() do
         table.insert(hasAddedLaneTime, {})
     end
     local notesToPlace = {}
@@ -487,7 +487,7 @@ function placeSplitScrollSVs(settingVars)
         if isLastFrame then timePassed = totalTime end
         local frameTpDistance = tpDistance + timePassed * scrollDifference
         if scrollIndex == 1 then frameTpDistance = -frameTpDistance end
-        local currentHeight = noteHeights[scrollIndex]
+        -- local currentHeight = noteHeights[scrollIndex]
         local currentScrollSpeed = scrollSpeeds[scrollIndex]
         local nextScrollSpeed = scrollSpeeds[scrollIndex + 1] or scrollSpeeds[1]
         if isLastFrame then nextScrollSpeed = getSVMultiplierAt(lastOffset + lastDuration) end
@@ -842,7 +842,6 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
         end
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
-        ::continue::
     end
     addFinalSV(svsToAdd, offsets[#offsets], menuVars.svMultipliers[#menuVars.svMultipliers], true)
     removeAndAddSVs(svsToRemove, svsToAdd)
@@ -1196,7 +1195,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not offsets) then return { svsToRemove = {}, svsToAdd = {} } end
     if (place == false) then offsets = { optionalOffset } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
@@ -1212,7 +1211,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     if (place ~= false) then
         removeAndAddSVs(svsToRemove, svsToAdd)
-        return
+        return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
     end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
@@ -1752,7 +1751,7 @@ function exportPlaceSVButton(globalVars, menuVars, settingVars)
         table.insert(exportList, settingVars.distanceBack)
         table.insert(exportList, settingVars.distanceBack2)
         table.insert(exportList, settingVars.distanceBack3)
-        local splitscrollLayers = settingVars.splitscrollLayers
+        -- local splitscrollLayers = settingVars.splitscrollLayers
         local totalLayersSupported = 4
         for i = 1, totalLayersSupported do
             local currentLayer = settingVars.splitscrollLayers[i]
@@ -2026,10 +2025,12 @@ function importPlaceSVButton(globalVars)
                 local noteLane = noteDataTable[2]
                 table.insert(layerNotes, utils.CreateHitObject(noteStartTime, noteLane))
             end
+            if (not layerNumber) then goto continue end
             settingVars.splitscrollLayers[layerNumber] = {
                 svs = layerSVs,
                 notes = layerNotes
             }
+            ::continue::
         end
     end
     if standardPlaceType then
@@ -3479,7 +3480,7 @@ end
 -- Creates the "Delete SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function deleteTab(globalVars)
+function deleteTab(_)
     local menuVars = {
         deleteTable = { true, true, true, true }
     }
@@ -3678,14 +3679,14 @@ function directSVMenu()
         imgui.PushID(idx)
         imgui.TableNextRow()
         imgui.TableSetColumnIndex(0)
-        imgui.Selectable(math.round(v.StartTime, 2), menuVars.selectableIndex == idx,
+        imgui.Selectable(tostring(math.round(v.StartTime, 2)), menuVars.selectableIndex == idx,
             imgui_selectable_flags.SpanAllColumns)
         if (imgui.IsItemClicked()) then
             menuVars.selectableIndex = idx
         end
         imgui.TableSetColumnIndex(1)
         imgui.SetCursorPosX(150)
-        imgui.Text(math.round(v.Multiplier, 2));
+        imgui.Text(tostring(math.round(v.Multiplier, 2)));
         imgui.PopID()
     end
 
@@ -4534,7 +4535,7 @@ end
 --    settingVars   : list of setting variables for this sinusoidal menu [Table]
 --    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
 --    svPointsForce : number of SV points to force [Int or nil]
-function sinusoidalSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+function sinusoidalSettingsMenu(settingVars, skipFinalSV, _)
     local settingsChanged = false
     imgui.Text("Amplitude:")
     settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
@@ -4623,7 +4624,7 @@ end
 function adjustNumberOfMultipliers(settingVars)
     if settingVars.svPoints > #settingVars.svMultipliers then
         local difference = settingVars.svPoints - #settingVars.svMultipliers
-        for i = 1, difference do
+        for _ = 1, difference do
             table.insert(settingVars.svMultipliers, 1)
         end
     end
@@ -4633,7 +4634,7 @@ function adjustNumberOfMultipliers(settingVars)
         settingVars.selectedMultiplierIndex = settingVars.svPoints
     end
     local difference = #settingVars.svMultipliers - settingVars.svPoints
-    for i = 1, difference do
+    for _ = 1, difference do
         table.remove(settingVars.svMultipliers)
     end
 end
@@ -6200,7 +6201,7 @@ function setPluginAppearanceStyles(styleTheme)
     imgui.PushStyleVar(imgui_style_var.FrameBorderSize, borderSize)
     imgui.PushStyleVar(imgui_style_var.WindowPadding, vector.New(PADDING_WIDTH, 8))
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushStyleVar(imgui_style_var.ItemSpacing, { DEFAULT_WIDGET_HEIGHT / 2 - 1, 4 })
+    imgui.PushStyleVar(imgui_style_var.ItemSpacing, vector.New(DEFAULT_WIDGET_HEIGHT / 2 - 1, 4))
     imgui.PushStyleVar(imgui_style_var.ItemInnerSpacing, vector.New(SAMELINE_SPACING, 6))
     imgui.PushStyleVar(imgui_style_var.WindowRounding, cornerRoundnessValue)
     imgui.PushStyleVar(imgui_style_var.ChildRounding, cornerRoundnessValue)
@@ -6241,7 +6242,7 @@ end
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
 --    sz         : dimensions of the window for Quaver [Table]
-function drawSnakeTrail(globalVars, o, m, t, sz)
+function drawSnakeTrail(globalVars, o, m, t, _)
     local trailPoints = globalVars.cursorTrailPoints
     local snakeTrailPoints = {}
     initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
@@ -6369,7 +6370,7 @@ end
 --    dustParticles    : list of dust particles [Table]
 --    numDustParticles : total number of dust particles [Int]
 --    dustDuration     : lifespan of a dust particle [Int/Float]
-function initializeDustParticles(sz, t, dustParticles, numDustParticles, dustDuration)
+function initializeDustParticles(_, t, dustParticles, numDustParticles, dustDuration)
     if state.GetValue("initializeDustParticles") then
         for i = 1, numDustParticles do
             dustParticles[i] = {}
@@ -6441,7 +6442,7 @@ end
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
 --    sz         : dimensions of the window for Quaver [Table]
-function drawSparkleTrail(globalVars, o, m, t, sz)
+function drawSparkleTrail(_, o, m, t, sz)
     local sparkleSize = 10
     local sparkleDuration = 0.3
     local numSparkleParticles = 10
@@ -6460,7 +6461,7 @@ end
 --    sparkleParticles    : list of sparkle particles [Table]
 --    numSparkleParticles : total number of sparkle particles [Int]
 --    sparkleDuration     : lifespan of a sparkle particle [Int/Float]
-function initializeSparkleParticles(sz, t, sparkleParticles, numSparkleParticles, sparkleDuration)
+function initializeSparkleParticles(_, t, sparkleParticles, numSparkleParticles, sparkleDuration)
     if state.GetValue("initializeSparkleParticles") then
         for i = 1, numSparkleParticles do
             sparkleParticles[i] = {}
@@ -6515,7 +6516,7 @@ function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkle
             local dy = -sparkleParticle.yRange * math.quadraticBezier(0, time)
             local sparkleY = sparkleParticle.y + dy
             local sparkleCoords = vector.New(sparkleX, sparkleY)
-            local alpha = math.round(255 * (1 - time), 0)
+            -- local alpha = math.round(255 * (1 - time), 0)
             local white = rgbaToUint(255, 255, 255, 255)
             local actualSize = sparkleSize * (1 - math.quadraticBezier(0, time))
             local sparkleColor = rgbaToUint(255, 255, 100, 30)
@@ -8629,7 +8630,7 @@ end
 --    randomScale : how much to scale random values [Int/Float]
 function generateRandomSet(numValues, randomType, randomScale)
     local randomSet = {}
-    for i = 1, numValues do
+    for _ = 1, numValues do
         if randomType == "Uniform" then
             local randomValue = randomScale * 2 * (0.5 - math.random())
             table.insert(randomSet, randomValue)
@@ -8979,6 +8980,15 @@ function getHypotheticalSVTimeAt(svs, offset)
         end
     end
     return 1
+end
+
+-- Returns the most recent SV's starttime [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
+function getSVStartTimeAt(offset)
+    local sv = map.GetScrollVelocityAt(offset)
+    if sv then return sv.StartTime end
+    return -1
 end
 
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
@@ -9450,8 +9460,8 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
     local tolerance = 0.035
     if #svsToAdd == 0 then return end
     for idx, sv in pairs(svsToRemove) do
-        local baseSV = map.GetScrollVelocityAt(sv.StartTime)
-        if (math.abs(baseSV.StartTime - sv.StartTime) > tolerance) then
+        local baseSV = getSVStartTimeAt(sv.StartTime)
+        if (math.abs(baseSV - sv.StartTime) > tolerance) then
             table.remove(svsToRemove, idx)
         end
     end

@@ -138,7 +138,7 @@ function exportPlaceSVButton(globalVars, menuVars, settingVars)
         table.insert(exportList, settingVars.distanceBack)
         table.insert(exportList, settingVars.distanceBack2)
         table.insert(exportList, settingVars.distanceBack3)
-        local splitscrollLayers = settingVars.splitscrollLayers
+        -- local splitscrollLayers = settingVars.splitscrollLayers
         local totalLayersSupported = 4
         for i = 1, totalLayersSupported do
             local currentLayer = settingVars.splitscrollLayers[i]
@@ -412,10 +412,12 @@ function importPlaceSVButton(globalVars)
                 local noteLane = noteDataTable[2]
                 table.insert(layerNotes, utils.CreateHitObject(noteStartTime, noteLane))
             end
+            if (not layerNumber) then goto continue end
             settingVars.splitscrollLayers[layerNumber] = {
                 svs = layerSVs,
                 notes = layerNotes
             }
+            ::continue::
         end
     end
     if standardPlaceType then

@@ -27,7 +27,7 @@ end
 --    randomScale : how much to scale random values [Int/Float]
 function generateRandomSet(numValues, randomType, randomScale)
     local randomSet = {}
-    for i = 1, numValues do
+    for _ = 1, numValues do
         if randomType == "Uniform" then
             local randomValue = randomScale * 2 * (0.5 - math.random())
             table.insert(randomSet, randomValue)

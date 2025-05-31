@@ -30,7 +30,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not offsets) then return { svsToRemove = {}, svsToAdd = {} } end
     if (place == false) then offsets = { optionalOffset } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
@@ -46,7 +46,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     if (place ~= false) then
         removeAndAddSVs(svsToRemove, svsToAdd)
-        return
+        return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
     end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end

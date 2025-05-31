@@ -36,7 +36,7 @@ function placeSplitScrollSVs(settingVars)
         if isLastFrame then timePassed = totalTime end
         local frameTpDistance = tpDistance + timePassed * scrollDifference
         if scrollIndex == 1 then frameTpDistance = -frameTpDistance end
-        local currentHeight = noteHeights[scrollIndex]
+        -- local currentHeight = noteHeights[scrollIndex]
         local currentScrollSpeed = scrollSpeeds[scrollIndex]
         local nextScrollSpeed = scrollSpeeds[scrollIndex + 1] or scrollSpeeds[1]
         if isLastFrame then nextScrollSpeed = getSVMultiplierAt(lastOffset + lastDuration) end

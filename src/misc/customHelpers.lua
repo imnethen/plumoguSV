@@ -33,7 +33,7 @@ end
 function adjustNumberOfMultipliers(settingVars)
     if settingVars.svPoints > #settingVars.svMultipliers then
         local difference = settingVars.svPoints - #settingVars.svMultipliers
-        for i = 1, difference do
+        for _ = 1, difference do
             table.insert(settingVars.svMultipliers, 1)
         end
     end
@@ -43,7 +43,7 @@ function adjustNumberOfMultipliers(settingVars)
         settingVars.selectedMultiplierIndex = settingVars.svPoints
     end
     local difference = #settingVars.svMultipliers - settingVars.svPoints
-    for i = 1, difference do
+    for _ = 1, difference do
         table.remove(settingVars.svMultipliers)
     end
 end

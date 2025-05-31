@@ -61,7 +61,7 @@ function placeAdvancedSplitScrollSVsV2(settingVars)
     local startOffset = allLayerNotes[1].StartTime
     local endOffset = allLayerNotes[#allLayerNotes].StartTime
     local hasAddedLaneTime = {}
-    for i = 1, map.GetKeyCount() do
+    for _ = 1, map.GetKeyCount() do
         table.insert(hasAddedLaneTime, {})
     end
     local notesToPlace = {}

@@ -27,6 +27,15 @@ function getHypotheticalSVTimeAt(svs, offset)
     return 1
 end
 
+-- Returns the most recent SV's starttime [Int/Float]
+-- Parameters
+--    offset : millisecond time [Int/Float]
+function getSVStartTimeAt(offset)
+    local sv = map.GetScrollVelocityAt(offset)
+    if sv then return sv.StartTime end
+    return -1
+end
+
 -- Returns the SV multiplier at a specified offset in the map [Int/Float]
 -- Parameters
 --    offset : millisecond time [Int/Float]

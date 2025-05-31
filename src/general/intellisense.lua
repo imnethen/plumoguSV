@@ -3636,21 +3636,6 @@ function imgui.InputScalarN(label, data_type, p_data, components, p_step, p_step
 
 --- ##### (READ-ONLY)
 ---@param label string
----@param buf integer[]
----@param buf_size integer
----@return boolean
-function imgui.InputText(label, buf, buf_size) end
-
---- ##### (READ-ONLY)
----@param label string
----@param buf integer[]
----@param buf_size integer
----@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
----@return boolean
-function imgui.InputText(label, buf, buf_size, flags) end
-
---- ##### (READ-ONLY)
----@param label string
 ---@param input string
 ---@param maxLength integer
 ---@return boolean, string
@@ -3663,21 +3648,6 @@ function imgui.InputText(label, input, maxLength) end
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
 ---@return boolean, string
 function imgui.InputText(label, input, maxLength, flags) end
-
---- ##### (READ-ONLY)
----@param label string
----@param buf lightuserdata
----@param buf_size integer
----@return boolean
-function imgui.InputText(label, buf, buf_size) end
-
---- ##### (READ-ONLY)
----@param label string
----@param buf lightuserdata
----@param buf_size integer
----@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
----@return boolean
-function imgui.InputText(label, buf, buf_size, flags) end
 
 --- ##### (READ-ONLY)
 ---@param label string

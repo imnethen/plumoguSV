@@ -1,7 +1,7 @@
 -- Creates the "Delete SVs" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function deleteTab(globalVars)
+function deleteTab(_)
     local menuVars = {
         deleteTable = { true, true, true, true }
     }
