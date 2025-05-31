@@ -20,7 +20,7 @@ export default async function transpiler(devMode = false) {
 
     files.forEach((file: string) => {
         if (ignoredFiles.some((f) => file.includes(f)) || !file.endsWith(".lua")) return;
-        const fileData = readFileSync(file, "utf-8").replaceAll(/( *)\<const\> */g, "$1").replaceAll(/\-\-\[\[.*\-\-\]\][ \r\n]*/gs, "").split("\n").map((l) => l.replaceAll(/^([^\-\r\n]*)[\-]{2}([\-]{2,})?[^\-\r\n].+[ \r\n]*/g, "$1"))
+        const fileData = readFileSync(file, "utf-8").replaceAll(/( *)\<const\> */g, "$1").replaceAll(/\-\-\[\[.*\-\-\]\][ \r\n]*/gs, "").split("\n").map((l) => l.replaceAll(/^([^\-\r\n]*)[\-]{2}([\-]{2,})?[^\-\r\n].+[ \r\n]*/g, "$1")) // Removes <const> tag, removes --[[ --]] comments, removes double dash comments (not triple dash) from lines with code
         output = `${output}\n${fileData.map(str => str.replace(/\s+$/, "")).filter((str) => str).join("\n")}`;
         fileCount++;
     });
