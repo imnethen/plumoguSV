@@ -42,7 +42,7 @@ function drawCapybara2(globalVars)
     local o = imgui.GetOverlayDrawList()
     local sz = state.WindowSize
 
-    local topLeftCapyPoint = { 0, sz[2] - 165 } -- originally -200
+    local topLeftCapyPoint = { 0, sz[2] - 165 }
     local p1 = relativePoint(topLeftCapyPoint, 0, 95)
     local p2 = relativePoint(topLeftCapyPoint, 0, 165)
     local p3 = relativePoint(topLeftCapyPoint, 58, 82)
