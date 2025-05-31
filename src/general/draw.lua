@@ -3,6 +3,8 @@ GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group" }
 
+imgui_disable_vector_packing = true
+
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 

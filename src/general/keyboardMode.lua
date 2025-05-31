@@ -62,10 +62,10 @@ function centerWindowIfHotkeysPressed()
     local tabPressed = utils.IsKeyPressed(keys.Tab)
     if not (ctrlPressedDown and shiftPressedDown and tabPressed) then return end
 
-    local windowWidth, windowHeight = table.unpack(state.WindowSize)
-    local pluginWidth, pluginHeight = table.unpack(imgui.GetWindowSize())
-    local centeringX = (windowWidth - pluginWidth) / 2
-    local centeringY = (windowHeight - pluginHeight) / 2
+    local windowDim = state.WindowSize
+    local pluginDim = imgui.GetWindowSize()
+    local centeringX = (windowDim.x - pluginDim.x) / 2
+    local centeringY = (windowDim.y - pluginDim.y) / 2
     local coordinatesToCenter = { centeringX, centeringY }
     imgui.SetWindowPos("plumoguSV", coordinatesToCenter)
 end

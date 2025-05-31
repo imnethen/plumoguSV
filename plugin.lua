@@ -2409,6 +2409,8 @@ GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group" }
 
+imgui_disable_vector_packing = true
+
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
 
@@ -2574,10 +2576,10 @@ function centerWindowIfHotkeysPressed()
     local tabPressed = utils.IsKeyPressed(keys.Tab)
     if not (ctrlPressedDown and shiftPressedDown and tabPressed) then return end
 
-    local windowWidth, windowHeight = table.unpack(state.WindowSize)
-    local pluginWidth, pluginHeight = table.unpack(imgui.GetWindowSize())
-    local centeringX = (windowWidth - pluginWidth) / 2
-    local centeringY = (windowHeight - pluginHeight) / 2
+    local windowDim = state.WindowSize
+    local pluginDim = imgui.GetWindowSize()
+    local centeringX = (windowDim.x - pluginDim.x) / 2
+    local centeringY = (windowDim.y - pluginDim.y) / 2
     local coordinatesToCenter = { centeringX, centeringY }
     imgui.SetWindowPos("plumoguSV", coordinatesToCenter)
 end
@@ -2837,8 +2839,7 @@ end
 
 -- Returns the current (x, y) coordinates of the mouse [Table]
 function getCurrentMousePosition()
-    local mousePosition = imgui.GetMousePos()
-    return { x = mousePosition[1], y = mousePosition[2] }
+    return imgui.GetMousePos()
 end
 -- Draws an equilateral triangle
 -- Parameters
@@ -4563,7 +4564,10 @@ function provideBezierWebsiteLink(settingVars)
             table.insert(values, tonumber(value))
         end
         if #values >= 4 then
-            settingVars.x1, settingVars.y1, settingVars.x2, settingVars.y2 = table.unpack(values)
+            settingVars.x1 = values.x
+            settingVars.y1 = values.y
+            settingVars.x2 = values.z
+            settingVars.y2 = values.w
             coordinateParsed = true
         end
         bezierText = "https://cubic-bezier.com/"
@@ -6526,12 +6530,12 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseAddComboMultipliers(settingVars)
-    local oldValues = { settingVars.comboMultiplier1, settingVars.comboMultiplier2 }
+    local oldValues = vector.New(settingVars.comboMultiplier1, settingVars.comboMultiplier2)
     local _, newValues = imgui.InputFloat2("ax + by", oldValues, "%.2f")
     helpMarker("a = multiplier for SV Type 1, b = multiplier for SV Type 2")
-    settingVars.comboMultiplier1 = newValues[1]
-    settingVars.comboMultiplier2 = newValues[2]
-    return oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+    settingVars.comboMultiplier1 = newValues.x
+    settingVars.comboMultiplier2 = newValues.y
+    return oldValues ~= newValues
 end
 
 -- Lets you choose the arc percent
@@ -6571,22 +6575,24 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseBezierPoints(settingVars)
-    local oldFirstPoint = { settingVars.x1, settingVars.y1 }
-    local oldSecondPoint = { settingVars.x2, settingVars.y2 }
+    local oldFirstPoint = vector.New(settingVars.x1, settingVars.y1)
+    local oldSecondPoint = vector.New(settingVars.x2, settingVars.y2)
     local _, newFirstPoint = imgui.DragFloat2("(x1, y1)", oldFirstPoint, 0.01, -1, 2, "%.2f")
     helpMarker("Coordinates of the first point of the cubic bezier")
     local _, newSecondPoint = imgui.DragFloat2("(x2, y2)", oldSecondPoint, 0.01, -1, 2, "%.2f")
     helpMarker("Coordinates of the second point of the cubic bezier")
-    settingVars.x1, settingVars.y1 = table.unpack(newFirstPoint)
-    settingVars.x2, settingVars.y2 = table.unpack(newSecondPoint)
+    settingVars.x1 = newFirstPoint.x
+    settingVars.y1 = newFirstPoint.y
+    settingVars.x2 = newSecondPoint.x
+    settingVars.y2 = newSecondPoint.y
     settingVars.x1 = math.clamp(settingVars.x1, 0, 1)
     settingVars.y1 = math.clamp(settingVars.y1, -1, 2)
     settingVars.x2 = math.clamp(settingVars.x2, 0, 1)
     settingVars.y2 = math.clamp(settingVars.y2, -1, 2)
-    local x1Changed = (oldFirstPoint[1] ~= settingVars.x1)
-    local y1Changed = (oldFirstPoint[2] ~= settingVars.y1)
-    local x2Changed = (oldSecondPoint[1] ~= settingVars.x2)
-    local y2Changed = (oldSecondPoint[2] ~= settingVars.y2)
+    local x1Changed = (oldFirstPoint.x ~= settingVars.x1)
+    local y1Changed = (oldFirstPoint.y ~= settingVars.y1)
+    local x2Changed = (oldSecondPoint.x ~= settingVars.x2)
+    local y2Changed = (oldSecondPoint.y ~= settingVars.y2)
     return x1Changed or y1Changed or x2Changed or y2Changed
 end
 
@@ -6870,7 +6876,7 @@ function chooseVaryingDistance(settingVars)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
-    local oldValues = { settingVars.distance1, settingVars.distance2 }
+    local oldValues = vector.New(settingVars.distance1, settingVars.distance2)
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
@@ -6880,15 +6886,15 @@ function chooseVaryingDistance(settingVars)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.98 - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2("Dist.", oldValues, "%.2f msx")
     imgui.PopItemWidth()
-    settingVars.distance1 = newValues[1]
-    settingVars.distance2 = newValues[2]
+    settingVars.distance1 = newValues.x
+    settingVars.distance2 = newValues.y
     if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars.distance1 = oldValues[2]
-        settingVars.distance2 = oldValues[1]
+        settingVars.distance1 = oldValues.y
+        settingVars.distance2 = oldValues.x
     end
     if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars.distance1 = -oldValues[1]
-        settingVars.distance2 = -oldValues[2]
+        settingVars.distance1 = -oldValues.x
+        settingVars.distance2 = -oldValues.y
     end
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
@@ -7718,7 +7724,7 @@ function chooseStartEndSVs(settingVars)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
-    local oldValues = { settingVars.startSV, settingVars.endSV }
+    local oldValues = vector.New(settingVars.startSV, settingVars.endSV)
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
@@ -7728,19 +7734,19 @@ function chooseStartEndSVs(settingVars)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2("Start/End SV", oldValues, "%.2fx")
     imgui.PopItemWidth()
-    settingVars.startSV = newValues[1]
-    settingVars.endSV = newValues[2]
+    settingVars.startSV = newValues.x
+    settingVars.endSV = newValues.y
     if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars.startSV = oldValues[2]
-        settingVars.endSV = oldValues[1]
+        settingVars.startSV = oldValues.y
+        settingVars.endSV = oldValues.x
     end
     if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars.startSV = -oldValues[1]
-        settingVars.endSV = -oldValues[2]
+        settingVars.startSV = -oldValues.x
+        settingVars.endSV = -oldValues.y
     end
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+        oldValues ~= newValues
 end
 
 -- Lets you choose a start SV percent
@@ -8089,14 +8095,6 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
-end
-function table.construct(...)
-    local tbl = {}
-    for _, v in ipairs({ ... }) do
-        table.insert(tbl, v)
-    end
-    setmetatable(tbl, { __index = table })
-    return tbl
 end
 -- Calculates the total msx displacements over time at offsets
 -- Returns a table of total displacements [Table]
@@ -9506,6 +9504,14 @@ function table.combine(t1, t2)
     end
     return t1
 end
+function table.construct(...)
+    local tbl = {}
+    for _, v in ipairs({ ... }) do
+        table.insert(tbl, v)
+    end
+    setmetatable(tbl, { __index = table })
+    return tbl
+end
 ---Returns a boolean value corresponding to whether or not an element exists within a table.
 ---@param tbl table
 ---@param item any
@@ -9849,7 +9855,7 @@ function truthy(param)
         if t == "number" then
             return param > 0 and true or false
         else
-            if t == "table" then
+            if t == "table" or t == "userdata" then
                 return #param > 0 and true or false
             else
                 if t == "boolean" then

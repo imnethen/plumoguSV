@@ -15,7 +15,10 @@ function provideBezierWebsiteLink(settingVars)
             table.insert(values, tonumber(value))
         end
         if #values >= 4 then
-            settingVars.x1, settingVars.y1, settingVars.x2, settingVars.y2 = table.unpack(values)
+            settingVars.x1 = values.x
+            settingVars.y1 = values.y
+            settingVars.x2 = values.z
+            settingVars.y2 = values.w
             coordinateParsed = true
         end
         bezierText = "https://cubic-bezier.com/"

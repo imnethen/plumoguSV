@@ -27,6 +27,5 @@ end
 
 -- Returns the current (x, y) coordinates of the mouse [Table]
 function getCurrentMousePosition()
-    local mousePosition = imgui.GetMousePos()
-    return { x = mousePosition[1], y = mousePosition[2] }
+    return imgui.GetMousePos()
 end

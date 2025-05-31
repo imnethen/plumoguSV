@@ -6,7 +6,7 @@ function truthy(param)
         if t == "number" then
             return param > 0 and true or false
         else
-            if t == "table" then
+            if t == "table" or t == "userdata" then
                 return #param > 0 and true or false
             else
                 if t == "boolean" then

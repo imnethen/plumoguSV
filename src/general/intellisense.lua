@@ -695,7 +695,7 @@ state.IsWindowHovered          = false ---@type boolean MUST BE SET MANUALLY - I
 state.Scale                    = 1 ---@type number
 --- ##### (READ-ONLY)
 --- #### The size of the Quaver window.
-state.WindowSize               = vector.New(69, 69) ---@type [number, number]
+state.WindowSize               = vector.New(69, 69) ---@type Vector2
 
 --- ##### (READ-ONLY)
 --- #### Stores a value that can be retrieved by [`state.GetValue`](lua://state.GetValue). Mainly used to persist data between hot-reloads.
@@ -3464,14 +3464,14 @@ function imgui.InputInt(label, v, step, step_fast, flags) end
 --- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
----@return boolean, integer[]
+---@return boolean, Vector2
 function imgui.InputInt2(label, v) end
 
 --- ##### (READ-ONLY)
 ---@param label string
 ---@param v integer[]
 ---@param flags ImGuiInputTextFlags|integer|"None"|"CharsDecimal"|"CharsHexadecimal"|"CharsScientific"|"CharsUppercase"|"CharsNoBlank"|"AllowTabInput"|"EnterReturnsTrue"|"EscapeClearsAll"|"CtrlEnterForNewLine"|"ReadOnly"|"Password"|"AlwaysOverwrite"|"AutoSelectAll"|"ParseEmptyRefVal"|"DisplayEmptyRefVal"|"NoHorizontalScroll"|"NoUndoRedo"|"CallbackCompletion"|"CallbackHistory"|"CallbackAlways"|"CallbackCharFilter"|"CallbackResize"|"CallbackEdit"
----@return boolean, integer[]
+---@return boolean, Vector2
 function imgui.InputInt2(label, v, flags) end
 
 --- ##### (READ-ONLY)
