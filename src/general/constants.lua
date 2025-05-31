@@ -98,7 +98,6 @@ FLICKER_TYPES = { -- types of flickers
 NOTE_SKIN_TYPES = { -- types of note skins
     "Bar",
     "Circle"
-    --,    "Arrow"
 }
 
 RANDOM_TYPES = { -- distribution types of random values

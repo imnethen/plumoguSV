@@ -110,8 +110,6 @@ function drawCurrentFrame(globalVars, settingVars)
                     end
                     local p1 = coordsRelativeToWindow(x1, y1)
                     drawlist.AddCircleFilled(p1, circleRadius, noteColor, 20)
-                elseif noteSkinType == "Arrow" then
-                    local fuckArrows
                 end
             end
         end
