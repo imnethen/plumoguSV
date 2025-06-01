@@ -4468,7 +4468,8 @@ function imgui.SameLine(offset_from_start_x) end
 function imgui.SameLine(offset_from_start_x, spacing) end
 
 ---@deprecated
---- ##### (READ-ONLY) // Use the `write()` global for persistent storage instead.
+--- ##### (READ-ONLY)
+--- #### Use the `write()` global for persistent storage instead.
 ---@param ini_filename string
 function imgui.SaveIniSettingsToDisk(ini_filename) end
 
