@@ -7575,7 +7575,7 @@ function table.combine(t1, t2)
     return newTbl
 end
 ---Creates a new numerical table with a custom metatable, allowing for `:` syntactic sugar.
----@param ... any Any entries to put into the table.
+---@vararg any Any entries to put into the table.
 ---@return table tbl A table with the given entries.
 function table.construct(...)
     local tbl = {}
