@@ -2,7 +2,7 @@ function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
     state.SetValue("global_useCustomPulseColor", truthy(tempGlobalVars.useCustomPulseColor))
-    state.SetValue("global_pulseColor", tempGlobalVars.pulseColor)
+    state.SetValue("global_pulseColor", table.vectorize4(tempGlobalVars.pulseColor))
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_keyboardMode", truthy(tempGlobalVars.keyboardMode))

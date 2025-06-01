@@ -2013,7 +2013,7 @@ function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
     state.SetValue("global_useCustomPulseColor", truthy(tempGlobalVars.useCustomPulseColor))
-    state.SetValue("global_pulseColor", tempGlobalVars.pulseColor)
+    state.SetValue("global_pulseColor", table.vectorize4(tempGlobalVars.pulseColor))
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
     state.SetValue("global_keyboardMode", truthy(tempGlobalVars.keyboardMode))
@@ -2276,10 +2276,9 @@ function draw()
     colStatus = colStatus * globalVars
         .pulseCoefficient
     local borderColor = state.GetValue("global_baseBorderColor", vector.New(1, 1, 1, 1))
-    local negatedBorderColor = vector.Subtract(vector.New(1, 1, 1, 1), borderColor)
+    local negatedBorderColor = vector.New(1, 1, 1, 1) - borderColor
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
-    imgui.PushStyleColor(imgui_col.Border,
-        vector.Add(vector.Multiply(pulseColor, colStatus), vector.Multiply(borderColor, 1 - colStatus)))
+    imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
 end
 function infoTabKeyboard(globalVars)
     provideMorePluginInfo()
@@ -6510,12 +6509,12 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
 end
 function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, tag)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
-    local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
+    local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
     local oldValues = { settingVars[lowerName], settingVars[higherName] }
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
+    local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
@@ -7671,6 +7670,24 @@ function sort(tbl, compFn)
     newTbl = table.duplicate(tbl)
     table.sort(newTbl, compFn)
     return newTbl
+end
+--- Converts a table of length 4 into a [`Vector4`](lua://Vector4).
+---@param tbl number[]
+---@return Vector4
+function table.vectorize4(tbl)
+    return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
+end
+--- Converts a table of length 3 into a [`Vector3`](lua://Vector3).
+---@param tbl number[]
+---@return Vector3
+function table.vectorize3(tbl)
+    return vector.New(tbl[1], tbl[2], tbl[3])
+end
+--- Converts a table of length 2 into a [`Vector2`](lua://Vector2).
+---@param tbl number[]
+---@return Vector2
+function table.vectorize2(tbl)
+    return vector.New(tbl[1], tbl[2])
 end
 ---Gets the current menu's setting variables.
 ---@param svType string The SV type - that is, the shape of the SV once plotted.

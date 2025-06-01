@@ -305,11 +305,17 @@ function vector.New(s1, s2, s3, s4) end
 ---@return T vctr The resultant vector.
 function vector.Normalize(v) end
 
----@generic T : integer | Vector2 | Vector3 | Vector4
+---@generic T : Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns a vector of a requested dimension, with all elements being `1`.
----@param n T The dimension of the vector. If a vector is given as the argument, the dimension of that vector is used.
+---@param n T The dimension of the vector. Assuming a vector is given as the argument, the dimension of the given vector is used.
 ---@return T vctr A vector of dimension `n` with all elements being `1`.
+function vector.One(n) end
+
+--- ##### (READ-ONLY)
+--- #### Returns a [`Vector2`](lua://Vector2), with all elements being `1`.
+---@param n number Any number.
+---@return Vector2 vctr A [`Vector2`](lua://Vector2) with all elements being `1`.
 function vector.One(n) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -361,35 +367,45 @@ function vector.Table(v) end
 --- @return [number, number, number, number] table The resultant table.
 function vector.Table(v) end
 
+---@generic T : Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Creates a unit vector in the `W` direction with the given dimension.
---- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
---- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+--- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
+--- @return T vctr The resultant vector.
 function vector.UnitW(dim) end
 
+---@generic T : Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Creates a unit vector in the `X` direction with the given dimension.
---- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
---- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+--- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
+--- @return T vctr The resultant vector.
 function vector.UnitX(dim) end
 
+---@generic T : Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Creates a unit vector in the `Y` direction with the given dimension.
---- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
---- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+--- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
+--- @return T vctr The resultant vector.
 function vector.UnitY(dim) end
 
+---@generic T : Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Creates a unit vector in the `Z` direction with the given dimension.
---- @param dim integer | Vector2 | Vector3 | Vector4 The dimension of the vector to produce. If a vector is given as the argument, the dimension of that vector is used instead.
---- @return Vector2 | Vector3 | Vector4 vctr The resultant vector.
+--- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
+--- @return T vctr The resultant vector.
 function vector.UnitZ(dim) end
 
----@generic T : integer | Vector2 | Vector3 | Vector4
+---@generic T : Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
 --- #### Returns a vector of a requested dimension, with all elements being `0`.
----@param n T The dimension of the vector. If a vector is given as the argument, the dimension of that vector is used instead.
+---@param n T The dimension of the vector. Assuming a vector is given as the argument, the dimension of the given vector is used.
 ---@return T vctr A vector of dimension `n` with all elements being `0`.
+function vector.Zero(n) end
+
+--- ##### (READ-ONLY)
+--- #### Returns a [`Vector2`](lua://Vector2), with all elements being `0`.
+---@param n number Any number.
+---@return Vector2 vctr A [`Vector2`](lua://Vector2) with all elements being `0`.
 function vector.Zero(n) end
 
 actions = {}

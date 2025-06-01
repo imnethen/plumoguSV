@@ -73,6 +73,7 @@ function draw()
         imgui.EndTabBar()
     end
     state.IsWindowHovered = imgui.IsWindowHovered()
+
     imgui.End()
 
     saveVariables("globalVars", globalVars)
@@ -99,10 +100,9 @@ function draw()
         .pulseCoefficient
 
     local borderColor = state.GetValue("global_baseBorderColor", vector.New(1, 1, 1, 1))
-    local negatedBorderColor = vector.Subtract(vector.New(1, 1, 1, 1), borderColor)
+    local negatedBorderColor = vector.New(1, 1, 1, 1) - borderColor
 
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
 
-    imgui.PushStyleColor(imgui_col.Border,
-        vector.Add(vector.Multiply(pulseColor, colStatus), vector.Multiply(borderColor, 1 - colStatus)))
+    imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
 end
