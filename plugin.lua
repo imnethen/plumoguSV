@@ -7418,51 +7418,6 @@ function math.wrap(number, lowerBound, upperBound)
     if number > upperBound then return lowerBound end
     return number
 end
-function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput)
-    local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
-    local infoText = table.concat({ "Select ", minimumNotes, " or more notes" })
-    if (not enoughSelectedNotes) then
-        if (not hideNoteReq) then imgui.Text(infoText) end
-        return
-    end
-    button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
-    if (disableKeyInput) then return end
-    if (hideNoteReq) then
-        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[2] .. "\" on your keyboard to do the same thing as this button")
-        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, globalVars, menuVars)
-    else
-        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[1] .. "\" on your keyboard to do the same thing as this button")
-        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
-    end
-end
-function executeFunctionIfTrue(boolean, func, globalVars, menuVars)
-    if not boolean then return end
-    if globalVars and menuVars then
-        func(globalVars, menuVars)
-        return
-    end
-    if globalVars then
-        func(globalVars)
-        return
-    end
-    if menuVars then
-        func(menuVars)
-        return
-    end
-    func()
-end
-function getVariables(listName, variables)
-    for key, _ in pairs(variables) do
-        if (state.GetValue(listName .. key) ~= nil) then
-            variables[key] = state.GetValue(listName .. key)
-        end
-    end
-end
-function saveVariables(listName, variables)
-    for key, value in pairs(variables) do
-        state.SetValue(listName .. key, value)
-    end
-end
 function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
     local sv = map.GetScrollVelocityAt(endOffset)
     local svExistsAtEndOffset = sv and (sv.StartTime == endOffset)
@@ -7545,6 +7500,51 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
 end
 function ssf(startTime, multiplier)
     return utils.CreateScrollSpeedFactor(startTime, multiplier)
+end
+function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput)
+    local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
+    local infoText = table.concat({ "Select ", minimumNotes, " or more notes" })
+    if (not enoughSelectedNotes) then
+        if (not hideNoteReq) then imgui.Text(infoText) end
+        return
+    end
+    button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
+    if (disableKeyInput) then return end
+    if (hideNoteReq) then
+        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[2] .. "\" on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, globalVars, menuVars)
+    else
+        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[1] .. "\" on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
+    end
+end
+function executeFunctionIfTrue(boolean, func, globalVars, menuVars)
+    if not boolean then return end
+    if globalVars and menuVars then
+        func(globalVars, menuVars)
+        return
+    end
+    if globalVars then
+        func(globalVars)
+        return
+    end
+    if menuVars then
+        func(menuVars)
+        return
+    end
+    func()
+end
+function getVariables(listName, variables)
+    for key, _ in pairs(variables) do
+        if (state.GetValue(listName .. key) ~= nil) then
+            variables[key] = state.GetValue(listName .. key)
+        end
+    end
+end
+function saveVariables(listName, variables)
+    for key, value in pairs(variables) do
+        state.SetValue(listName .. key, value)
+    end
 end
 ---Returns the average value of a numeric table.
 ---@param values number[]
