@@ -23,7 +23,7 @@ const pluginLines = fs.readFileSync("plugin.lua", "utf-8").split("\n");
 
 pluginLines.forEach((line, idx) => {
     if (line.includes("plumoguSV") && line.includes("AlwaysAutoResize")) {
-        pluginLines[idx] = pluginLines[idx].replaceAll(/".+"/g, `"plumoguSV-${versionNumber}"`)
+        pluginLines[idx] = pluginLines[idx].replaceAll(/"[A-z]+"/g, `"plumoguSV-${versionNumber}"`)
     }
 })
 

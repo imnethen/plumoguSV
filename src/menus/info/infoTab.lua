@@ -20,7 +20,7 @@ function provideBasicPluginInfo()
     imgui.BulletText("Choose an SV tool")
     imgui.BulletText("Adjust the SV tool's settings")
     imgui.BulletText("Select notes to use the tool at/between")
-    imgui.BulletText("Press 'T' on your keyboard")
+    imgui.BulletText("Press '" .. GLOBAL_HOTKEY_LIST[1] .. "' on your keyboard")
     addPadding()
 end
 

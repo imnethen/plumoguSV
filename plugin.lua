@@ -3471,7 +3471,7 @@ function provideBasicPluginInfo()
     imgui.BulletText("Choose an SV tool")
     imgui.BulletText("Adjust the SV tool's settings")
     imgui.BulletText("Select notes to use the tool at/between")
-    imgui.BulletText("Press 'T' on your keyboard")
+    imgui.BulletText("Press '" .. GLOBAL_HOTKEY_LIST[1] .. "' on your keyboard")
     addPadding()
 end
 function provideMorePluginInfo()
@@ -7512,10 +7512,10 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
     button(buttonText, ACTION_BUTTON_SIZE, actionfunc, globalVars, menuVars)
     if (disableKeyInput) then return end
     if (hideNoteReq) then
-        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[2] .. "\" on your keyboard to do the same thing as this button")
+        toolTip("Press \'" .. GLOBAL_HOTKEY_LIST[2] .. "\' on your keyboard to do the same thing as this button")
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, globalVars, menuVars)
     else
-        toolTip("Press \"" .. GLOBAL_HOTKEY_LIST[1] .. "\" on your keyboard to do the same thing as this button")
+        toolTip("Press \'" .. GLOBAL_HOTKEY_LIST[1] .. "\' on your keyboard to do the same thing as this button")
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
     end
 end
@@ -7548,11 +7548,11 @@ function saveVariables(listName, variables)
     end
 end
 ---Returns the average value of a numeric table.
----@param values number[]
----@param includeLastValue boolean
----@return number | nil
+---@param values number[] The list of numbers.
+---@param includeLastValue boolean Whether or not to include the last value in the table.
+---@return number avg The arithmetic mean of the table.
 function table.average(values, includeLastValue)
-    if #values == 0 then return nil end
+    if #values == 0 then return 0 end
     local sum = 0
     for _, value in pairs(values) do
         sum = sum + value
@@ -7563,16 +7563,20 @@ function table.average(values, includeLastValue)
     end
     return sum / #values
 end
----Combines two tables with no nesting.
----@param t1 table
----@param t2 table
----@return table
+---Concatenates two numeric tables together.
+---@param t1 { [number]: any } The first table.
+---@param t2 { [number]: any } The second table.
+---@return { [number]: any } tbl The resultant table.
 function table.combine(t1, t2)
+    local newTbl = table.duplicate(t1)
     for i = 1, #t2 do
-        t1[#t1 + 1] = t2[i]
+        table.insert(newTbl, t2[i])
     end
-    return t1
+    return newTbl
 end
+---Creates a new numerical table with a custom metatable, allowing for `:` syntactic sugar.
+---@param ... any Any entries to put into the table.
+---@return table tbl A table with the given entries.
 function table.construct(...)
     local tbl = {}
     for _, v in ipairs({ ... }) do
@@ -7581,10 +7585,21 @@ function table.construct(...)
     setmetatable(tbl, { __index = table })
     return tbl
 end
+---Creates a new numerical table with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
+---@param item any The entry to use.
+---@param num integer The number of entries to put into the table.
+---@return table tbl A table with the given entries.
+function table.constructRepeating(item, num)
+    local tbl = table.construct()
+    for _ = 1, num do
+        tbl:insert(item)
+    end
+    return tbl
+end
 ---Returns a boolean value corresponding to whether or not an element exists within a table.
----@param tbl table
----@param item any
----@return boolean
+---@param tbl table The table to search in.
+---@param item any The item to search for.
+---@return boolean contains Whether or not the item given is within the table.
 function table.contains(tbl, item)
     for _, v in pairs(tbl) do
         if (v == item) then return true end
@@ -7592,8 +7607,8 @@ function table.contains(tbl, item)
     return false
 end
 ---Removes duplicate values from a table.
----@param tbl table
----@return table
+---@param tbl table The original table.
+---@return table tbl A new table with no duplicates.
 function table.dedupe(tbl)
     local hash = {}
     local newTbl = {}
@@ -7606,8 +7621,8 @@ function table.dedupe(tbl)
     return newTbl
 end
 ---Returns a deep copy of a table.
----@param tbl table
----@return table
+---@param tbl table The original table.
+---@return table tbl The new table.
 function table.duplicate(tbl)
     local dupeTbl = {}
     for _, value in ipairs(tbl) do
@@ -7616,8 +7631,8 @@ function table.duplicate(tbl)
     return dupeTbl
 end
 ---Returns a table of keys from a table.
----@param tbl { [string]: any }
----@return string[]
+---@param tbl { [string]: any } The table to search in.
+---@return string[] keys A list of keys.
 function table.keys(tbl)
     local resultsTbl = {}
     for k, _ in pairs(tbl) do
@@ -7627,10 +7642,10 @@ function table.keys(tbl)
     end
     return resultsTbl
 end
----Normalizes a table of numbers to achieve a target average
----@param values number[]
----@param targetAverage number
----@param includeLastValueInAverage boolean
+---Normalizes a table of numbers to achieve a target average (NOT PURE)
+---@param values number[] The table to normalize.
+---@param targetAverage number The desired average value.
+---@param includeLastValueInAverage boolean Whether or not to include the last value in the average.
 function table.normalize(values, targetAverage, includeLastValueInAverage)
     local avgValue = table.average(values, includeLastValueInAverage)
     if avgValue == 0 then return end
@@ -7639,9 +7654,9 @@ function table.normalize(values, targetAverage, includeLastValueInAverage)
     end
 end
 ---In a nested table `tbl`, returns a table of property values with key `property`.
----@param tbl table
----@param property string
----@return table
+---@param tbl { [string]: any } The table to search in.
+---@param property string The property name.
+---@return table properties The resultant table.
 function table.property(tbl, property)
     local resultsTbl = {}
     for _, v in pairs(tbl) do
@@ -7650,8 +7665,8 @@ function table.property(tbl, property)
     return resultsTbl
 end
 ---Reverses the order of a numerically-indexed table.
----@param tbl table
----@return table
+---@param tbl table The original table.
+---@return table tbl The original table, reversed.
 function table.reverse(tbl)
     local reverseTbl = {}
     for i = 1, #tbl do
@@ -7664,38 +7679,47 @@ function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 function sortAscendingTime(a, b) return a.time < b.time end
 --- Sorts a table given a sorting function.
 ---@generic T
----@param tbl T[]
----@param compFn fun(a: T, b: T): boolean
----@return T[]
+---@param tbl T[] The table to sort.
+---@param compFn fun(a: T, b: T): boolean A comparison function. Given two elements `a` and `b`, how should they be sorted?
+---@return T[] sortedTbl A sorted table.
 function sort(tbl, compFn)
     newTbl = table.duplicate(tbl)
     table.sort(newTbl, compFn)
     return newTbl
 end
 --- Converts a table of length 4 into a [`Vector4`](lua://Vector4).
----@param tbl number[]
----@return Vector4
+---@param tbl number[] The table to convert.
+---@return Vector4 vctr The output vector.
 function table.vectorize4(tbl)
     return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
 end
 --- Converts a table of length 3 into a [`Vector3`](lua://Vector3).
----@param tbl number[]
----@return Vector3
+---@param tbl number[] The table to convert.
+---@return Vector3 vctr The output vector.
 function table.vectorize3(tbl)
     return vector.New(tbl[1], tbl[2], tbl[3])
 end
 --- Converts a table of length 2 into a [`Vector2`](lua://Vector2).
----@param tbl number[]
----@return Vector2
+---@param tbl number[] The table to convert.
+---@return Vector2 vctr The output vector.
 function table.vectorize2(tbl)
     return vector.New(tbl[1], tbl[2])
 end
+---Creates a new [`Vector4`](lua://Vector4) with all elements being the given number.
+---@param n number The number to use as the entries.
+---@return Vector4 vctr The resultant vector of style `<n, n, n, n>`.
 function vector4(n)
     return vector.New(n, n, n, n)
 end
+---Creates a new [`Vector3`](lua://Vector4) with all elements being the given number.
+---@param n number The number to use as the entries.
+---@return Vector3 vctr The resultant vector of style `<n, n, n>`.
 function vector3(n)
     return vector.New(n, n, n)
 end
+---Creates a new [`Vector2`](lua://Vector2) with all elements being the given number.
+---@param n number The number to use as the entries.
+---@return Vector2 vctr The resultant vector of style `<n, n>`.
 function vector2(n)
     return vector.New(n, n)
 end

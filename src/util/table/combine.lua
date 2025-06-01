@@ -1,10 +1,11 @@
----Combines two tables with no nesting.
----@param t1 table
----@param t2 table
----@return table
+---Concatenates two numeric tables together.
+---@param t1 { [number]: any } The first table.
+---@param t2 { [number]: any } The second table.
+---@return { [number]: any } tbl The resultant table.
 function table.combine(t1, t2)
+    local newTbl = table.duplicate(t1)
     for i = 1, #t2 do
-        t1[#t1 + 1] = t2[i]
+        table.insert(newTbl, t2[i])
     end
-    return t1
+    return newTbl
 end

@@ -1,6 +1,6 @@
 ---Reverses the order of a numerically-indexed table.
----@param tbl table
----@return table
+---@param tbl table The original table.
+---@return table tbl The original table, reversed.
 function table.reverse(tbl)
     local reverseTbl = {}
     for i = 1, #tbl do
