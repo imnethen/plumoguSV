@@ -173,6 +173,7 @@ vector = {}
 --- #### Returns the absolute value of each element of a vector.
 ---@param v T The initial vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Abs(v) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -181,6 +182,7 @@ function vector.Abs(v) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Add(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -190,6 +192,7 @@ function vector.Add(v1, v2) end
 ---@param min T  The floor of the resultant vector.
 ---@param max T The ceiling of the resultant vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Clamp(v, min, max) end
 
 --- ##### (READ-ONLY)
@@ -197,6 +200,7 @@ function vector.Clamp(v, min, max) end
 ---@param v1 Vector3 The first vector.
 ---@param v2 Vector3 The second vector.
 ---@return Vector3 vctr The resultant vector, with a magnitude equal to the area of a parallelogram projected by `v1` and `v2`.
+---@nodiscard
 function vector.Cross(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -205,6 +209,7 @@ function vector.Cross(v1, v2) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return number distance The distance between the two vectors.
+---@nodiscard
 function vector.Distance(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -213,6 +218,7 @@ function vector.Distance(v1, v2) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return number distanceSq The squared distance between the two vectors.
+---@nodiscard
 function vector.DistanceSquared(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -221,6 +227,7 @@ function vector.DistanceSquared(v1, v2) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Divide(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -229,6 +236,7 @@ function vector.Divide(v1, v2) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return number product The dot product of the two vectors.
+---@nodiscard
 function vector.Dot(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -236,6 +244,7 @@ function vector.Dot(v1, v2) end
 --- #### Determines the length of a vector.
 ---@param v T The vector to measure.
 ---@return number length The magnitude of the vector.
+---@nodiscard
 function vector.Length(v) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -245,6 +254,7 @@ function vector.Length(v) end
 ---@param v2 T The second vector.
 ---@param f number A number within [0-1] which determines the weight of `v2`.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Lerp(v1, v2, f) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -253,6 +263,7 @@ function vector.Lerp(v1, v2, f) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Max(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -261,6 +272,7 @@ function vector.Max(v1, v2) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Min(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -269,6 +281,7 @@ function vector.Min(v1, v2) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Modulo(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -277,6 +290,7 @@ function vector.Modulo(v1, v2) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Multiply(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -284,6 +298,7 @@ function vector.Multiply(v1, v2) end
 --- #### Negates the given vector termwise.
 ---@param v T The vector to negate.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Negate(v) end
 
 --- ##### (READ-ONLY)
@@ -291,6 +306,7 @@ function vector.Negate(v) end
 ---@param s1 number The first element.
 ---@param s2 number The second element.
 ---@return Vector2 vctr The output vector.
+---@nodiscard
 function vector.New(s1, s2) end
 
 --- ##### (READ-ONLY)
@@ -299,6 +315,7 @@ function vector.New(s1, s2) end
 ---@param s2 number The second element.
 ---@param s3 number The third element.
 ---@return Vector3 vctr The output vector.
+---@nodiscard
 function vector.New(s1, s2, s3) end
 
 --- ##### (READ-ONLY)
@@ -308,6 +325,7 @@ function vector.New(s1, s2, s3) end
 ---@param s3 number The third element.
 ---@param s4 number The fourth element.
 ---@return Vector4 vctr The output vector.
+---@nodiscard
 function vector.New(s1, s2, s3, s4) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -315,6 +333,7 @@ function vector.New(s1, s2, s3, s4) end
 --- #### Normalizes the given vector such that it has a magnitude of 1.
 ---@param v T The vector to normalize.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Normalize(v) end
 
 ---@generic T : Vector2 | Vector3 | Vector4
@@ -322,12 +341,14 @@ function vector.Normalize(v) end
 --- #### Returns a vector of a requested dimension, with all elements being `1`.
 ---@param n T The dimension of the vector. Assuming a vector is given as the argument, the dimension of the given vector is used.
 ---@return T vctr A vector of dimension `n` with all elements being `1`.
+---@nodiscard
 function vector.One(n) end
 
 --- ##### (READ-ONLY)
 --- #### Returns a [`Vector2`](lua://Vector2), with all elements being `1`.
 ---@param n number Any number.
 ---@return Vector2 vctr A [`Vector2`](lua://Vector2) with all elements being `1`.
+---@nodiscard
 function vector.One(n) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -336,6 +357,7 @@ function vector.One(n) end
 ---@param v T The vector to reflect.
 ---@param norm T The normal vector of the surface in which to reflect `v`.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Reflect(v, norm) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -344,6 +366,7 @@ function vector.Reflect(v, norm) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.RemEuclid(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -351,6 +374,7 @@ function vector.RemEuclid(v1, v2) end
 --- #### Square roots the given vector, termwise.
 ---@param v T The vector to root.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.SquareRoot(v) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
@@ -359,24 +383,28 @@ function vector.SquareRoot(v) end
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return T vctr The resultant vector.
+---@nodiscard
 function vector.Subtract(v1, v2) end
 
 --- ##### (READ-ONLY)
 --- #### Coerces a [`Vector2`](lua://Vector2) to become a numerically-indexed table.
 --- @param v Vector2 The vector to pack.
 --- @return [number, number] table The resultant table.
+---@nodiscard
 function vector.Table(v) end
 
 --- ##### (READ-ONLY)
 --- #### Coerces a [`Vector3`](lua://Vector3) to become a numerically-indexed table.
 --- @param v Vector3 The vector to pack.
 --- @return [number, number, number] table The resultant table.
+---@nodiscard
 function vector.Table(v) end
 
 --- ##### (READ-ONLY)
 --- #### Coerces a [`Vector4`](lua://Vector4) to become a numerically-indexed table.
 --- @param v Vector4 The vector to pack.
 --- @return [number, number, number, number] table The resultant table.
+---@nodiscard
 function vector.Table(v) end
 
 ---@generic T : Vector2 | Vector3 | Vector4
@@ -384,6 +412,7 @@ function vector.Table(v) end
 --- #### Creates a unit vector in the `W` direction with the given dimension.
 --- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
 --- @return T vctr The resultant vector.
+---@nodiscard
 function vector.UnitW(dim) end
 
 ---@generic T : Vector2 | Vector3 | Vector4
@@ -391,6 +420,7 @@ function vector.UnitW(dim) end
 --- #### Creates a unit vector in the `X` direction with the given dimension.
 --- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
 --- @return T vctr The resultant vector.
+---@nodiscard
 function vector.UnitX(dim) end
 
 ---@generic T : Vector2 | Vector3 | Vector4
@@ -398,6 +428,7 @@ function vector.UnitX(dim) end
 --- #### Creates a unit vector in the `Y` direction with the given dimension.
 --- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
 --- @return T vctr The resultant vector.
+---@nodiscard
 function vector.UnitY(dim) end
 
 ---@generic T : Vector2 | Vector3 | Vector4
@@ -405,6 +436,7 @@ function vector.UnitY(dim) end
 --- #### Creates a unit vector in the `Z` direction with the given dimension.
 --- @param dim T The dimension of the vector to produce. Assuming a vector is given as the argument, the dimension of that vector is used instead.
 --- @return T vctr The resultant vector.
+---@nodiscard
 function vector.UnitZ(dim) end
 
 ---@generic T : Vector2 | Vector3 | Vector4
@@ -412,12 +444,14 @@ function vector.UnitZ(dim) end
 --- #### Returns a vector of a requested dimension, with all elements being `0`.
 ---@param n T The dimension of the vector. Assuming a vector is given as the argument, the dimension of the given vector is used.
 ---@return T vctr A vector of dimension `n` with all elements being `0`.
+---@nodiscard
 function vector.Zero(n) end
 
 --- ##### (READ-ONLY)
 --- #### Returns a [`Vector2`](lua://Vector2), with all elements being `0`.
 ---@param n number Any number.
 ---@return Vector2 vctr A [`Vector2`](lua://Vector2) with all elements being `0`.
+---@nodiscard
 function vector.Zero(n) end
 
 actions = {}
@@ -737,6 +771,7 @@ function state.SetValue(key, value) end
 ---@param key string The identifier for the value set by `state.SetValue`.
 ---@param fallback? T An optional term to return, if the result is `nil`.
 ---@return T value The stored value.
+---@nodiscard
 function state.GetValue(key, fallback) end
 
 utils = {}
@@ -746,6 +781,7 @@ utils = {}
 ---@param startTime number The time to create the [scroll velocity](lua://ScrollVelocity), in milliseconds.
 ---@param multiplier number The factor at which to scale the player's [scroll velocity](lua://ScrollVelocity).
 ---@return ScrollVelocity sv The requested [scroll velocity](lua://ScrollVelocity).
+---@nodiscard
 function utils.CreateScrollVelocity(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
@@ -753,6 +789,7 @@ function utils.CreateScrollVelocity(startTime, multiplier) end
 ---@param startTime number The time to create the [scroll speed factor](lua://ScrollSpeedFactor), in milliseconds.
 ---@param multiplier number The factor at which to scale the player's scroll speed.
 ---@return ScrollSpeedFactor ssf The requested [scroll speed factor](lua://ScrollSpeedFactor).
+---@nodiscard
 function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 
 --- ##### (READ-ONLY)
@@ -763,6 +800,7 @@ function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 --- @param hitsounds? HitSounds The hitsounds that should be applied to the note.
 --- @param editorLayer? integer The index of the [editor layer](lua://EditorLayer) that this note should be added to.
 --- @return HitObject ho The requested note.
+---@nodiscard
 function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer) end
 
 --- ##### (READ-ONLY)
@@ -772,6 +810,7 @@ function utils.CreateHitObject(startTime, lane, endTime, hitsounds, editorLayer)
 --- @param signature? integer The time signature of the [timing point](lua://TimingPoint).
 --- @param hidden? boolean Whether or not to hide the timing lines in gameplay.
 --- @return TimingPoint tp The requested [timing point](lua://TimingPoint).
+---@nodiscard
 function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 
 --- ##### (READ-ONLY)
@@ -780,6 +819,7 @@ function utils.CreateTimingPoint(startTime, bpm, signature, hidden) end
 ---@param hidden? boolean Whether or not to hide this layer in the editor.
 ---@param colorRgb? string The color of the [editor layer](lua://EditorLayer). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
 ---@return EditorLayer editorLayer The requested [editor layer](lua://EditorLayer).
+---@nodiscard
 function utils.CreateEditorLayer(name, hidden, colorRgb) end
 
 --- ##### (READ-ONLY)
@@ -787,6 +827,7 @@ function utils.CreateEditorLayer(name, hidden, colorRgb) end
 ---@param startTime number The time to create the [bookmark](lua://Bookmark), in milliseconds.
 ---@param note string The contents of the [bookmark](lua://Bookmark).
 ---@return Bookmark bm The requested [bookmark](lua://Bookmark).
+---@nodiscard
 function utils.CreateBookmark(startTime, note) end
 
 --- ##### (READ-ONLY)
@@ -795,6 +836,7 @@ function utils.CreateBookmark(startTime, note) end
 --- @param initialSV? number The initial [scroll velocity](lua://ScrollVelocity) of the [scroll group](lua://ScrollGroup).
 --- @param colorRgb? string The color of the [scroll group](lua://ScrollGroup). This parameter should be a string of the form `r,g,b`, where `r`, `g`, and `b` are integers within [0,255].
 ---@return ScrollGroup tg The requested [scroll group](lua://ScrollGroup).
+---@nodiscard
 function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 
 --- ##### (READ-ONLY)
@@ -809,42 +851,49 @@ function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 ---     2. The [timing group](lua://ScrollGroup) previously created by `utils.CreateScrollGroup`.
 ---     3. The [hit objects](lua://HitObject) to add to the [scroll group](lua://ScrollGroup).
 ---@return EditorAction editorAction The requested [editor action](lua://EditorAction).
+---@nodiscard
 function utils.CreateEditorAction(type, ...) end
 
 --- ##### (READ-ONLY)
 --- #### Returns a formatted version of the inputted `time`.
 ---@param time number The elapsed time to format, in milliseconds.
 ---@return string str The formatted time.
+---@nodiscard
 function utils.MillisecondsToTime(time) end
 
 --- ##### (READ-ONLY)
 --- #### Returns `true` if the given key is pressed within the given frame.
 ---@param key Key
 ---@return boolean
+---@nodiscard
 function utils.IsKeyPressed(key) end
 
 --- ##### (READ-ONLY)
 --- #### Returns `true` if the given key is released within the given frame.
 ---@param key Key
 ---@return boolean
+---@nodiscard
 function utils.IsKeyReleased(key) end
 
 --- ##### (READ-ONLY)
 --- #### Returns `true` if the given key is held down within the given frame.
 ---@param key Key
 ---@return boolean
+---@nodiscard
 function utils.IsKeyDown(key) end
 
 --- ##### (READ-ONLY)
 --- #### Returns `true` if the given key is not held down within the given frame.
 ---@param key Key
 ---@return boolean
+---@nodiscard
 function utils.IsKeyUp(key) end
 
 --- ##### (READ-ONLY)
 --- #### Returns a unique `tgId` with the given prefix. If no prefix is given, defaults to `SG_`.
 ---@param prefix? string
 ---@return string
+---@nodiscard
 function utils.GenerateTimingGroupId(prefix) end
 
 --- ##### (READ-ONLY)
@@ -852,6 +901,7 @@ function utils.GenerateTimingGroupId(prefix) end
 ---@param count integer
 ---@param prefix? string
 ---@return string
+---@nodiscard
 function utils.GenerateTimingGroupIds(count, prefix) end
 
 map                       = {}
@@ -905,23 +955,27 @@ map.InitialScrollVelocity = 1 --- @type number
 --- ##### (READ-ONLY)
 --- #### Returns the map metadata in the form of `{Artist} - {Title} [{Difficulty}]`.
 --- @return string str The map metadata, as mentioned above.
+---@nodiscard
 function map.ToString() end
 
 --- ##### (READ-ONLY)
 --- #### Returns the number of possible keys within the map.
 ---@param includeScratch? boolean Whether or not to include the scratch lane. This should almost never be true.
 ---@return integer keyCount The number of keys in the map, usually 4 or 7.
+---@nodiscard
 function map.GetKeyCount(includeScratch) end
 
 --- ##### (READ-ONLY)
 --- #### Returns the most common BPM in the map, determined by how much time a particular BPM is used.
 --- @return number | nil Bpm The BPM. This number should be identical to the BPM displayed in the song select menu.
+---@nodiscard
 function map.GetCommonBpm() end
 
 --- ##### (READ-ONLY)
 --- #### Returns the nearest [timing point](lua://TimingPoint) before the given `time`.
 ---@param time number The time to start looking from, in milliseconds.
 ---@return TimingPoint | nil tp The requested [timing point](lua://TimingPoint).
+---@nodiscard
 function map.GetTimingPointAt(time) end
 
 --- ##### (READ-ONLY)
@@ -929,6 +983,7 @@ function map.GetTimingPointAt(time) end
 ---@param time number The time to start looking from, in milliseconds.
 ---@param tgId? string The [timing group](lua://ScrollGroup) to look within. If this option is omitted, the function will search within the currently selected [timing group](lua://ScrollGroup).
 ---@return ScrollVelocity | nil sv The requested [scroll velocity](lua://ScrollVelocity).
+---@nodiscard
 function map.GetScrollVelocityAt(time, tgId) end
 
 --- ##### (READ-ONLY)
@@ -936,35 +991,41 @@ function map.GetScrollVelocityAt(time, tgId) end
 ---@param time number The time to start looking from, in milliseconds.
 ---@param tgId? string The [timing group](lua://ScrollGroup) to look within. If this option is omitted, the function will search within the currently selected [timing group](lua://ScrollGroup).
 ---@return ScrollSpeedFactor | nil ssf The requested [scroll speed factor](lua://ScrollSpeedFactor).
+---@nodiscard
 function map.GetScrollSpeedFactorAt(time, tgId) end
 
 --- ##### (READ-ONLY)
 --- #### Returns the [timing group](lua://ScrollGroup) corresponding with the given id.
 ---@param tgId string The id to search with.
 ---@return ScrollGroup | nil tg The [timing group](lua://ScrollGroup) corresponding to the id.
+---@nodiscard
 function map.GetTimingGroup(tgId) end
 
 --- ##### (READ-ONLY)
 --- #### Returns a list of all [timing group](lua://ScrollGroup) ids.
 --- @return string[] ids The list of [timing group](lua://ScrollGroup) ids.
+---@nodiscard
 function map.GetTimingGroupIds() end
 
 --- ##### (READ-ONLY)
 --- #### Returns all [hit objects](lua://HitObject) within the id's corresponding [timing group](lua://ScrollGroup).
 ---@param tgId string The [timing group](lua://ScrollGroup) to look within.
 ---@return HitObject[] | nil hos All [hit objects](lua://HitObject) within the requested [timing group](lua://ScrollGroup).
+---@nodiscard
 function map.GetTimingGroupObjects(tgId) end
 
 --- ##### (READ-ONLY)
 --- #### Returns the nearest [bookmark](lua://Bookmark) before the given `time`.
 ---@param time number The time to start looking from, in milliseconds.
 ---@return Bookmark | nil bm The requested [bookmark](lua://Bookmark).
+---@nodiscard
 function map.GetBookmarkAt(time) end
 
 --- ##### (READ-ONLY)
 --- #### Returns the length of the given [timing point](lua://TimingPoint), in milliseconds.
 ---@param tp TimingPoint The timing point to use.
 ---@return number | nil duration The duration between the given [timing point](lua://TimingPoint) and the next [timing point](lua://TimingPoint).
+---@nodiscard
 function map.GetTimingPointLength(tp) end
 
 --- ##### (READ-ONLY)
@@ -973,6 +1034,7 @@ function map.GetTimingPointLength(tp) end
 ---@param snap integer The denominator of the desired snap.
 ---@param time number The time to start looking from, in milliseconds.
 ---@return number | nil snapTime The nearest time which follows the given snap.
+---@nodiscard
 function map.GetNearestSnapTimeFromTime(forwards, snap, time) end
 
 --- ##### (READ-ONLY)
@@ -983,6 +1045,7 @@ function listen(fn) end
 --- ##### (READ-ONLY)
 --- #### Returns the value stored in the `config.yaml` file located in the plugin's directory.
 --- @return any data The contents within `config.yaml`.
+---@nodiscard
 function read() end
 
 --- ##### (READ-ONLY)
@@ -994,12 +1057,14 @@ function write(...) end
 --- #### Evaluates the string as Lua code, in the current context. This function is similar to `eval`, but is unable to make function calls and is guaranteed to be pure.
 --- @param str string The string to evaluate.
 --- @return any value The resultant value.
+---@nodiscard
 function expr(str) end
 
 --- ##### (READ-ONLY)
 --- #### Evaluates the string as Lua code, in the current context. This function is capable of doing anything that the script already can.
 --- @param str string
 --- @return any value The resultant value.
+---@nodiscard
 function eval(str) end
 
 --- ##### (READ-ONLY)
