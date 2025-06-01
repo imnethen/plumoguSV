@@ -142,17 +142,29 @@ For more information, please refer to <https://unlicense.org>
 ---@class (exact) Vector2
 ---@field x number The first component of the vector.
 ---@field y number The second component of the vector.
+---@operator add(Vector2): Vector2
+---@operator sub(Vector2): Vector2
+---@operator mul(Vector2 | number): Vector2
+---@operator div(Vector2 | number): Vector2
 
 ---@class (exact) Vector3
 ---@field x number The first component of the vector.
 ---@field y number The second component of the vector.
 ---@field z number The third component of the vector.
+---@operator add(Vector3): Vector3
+---@operator sub(Vector3): Vector3
+---@operator mul(Vector3 | number): Vector3
+---@operator div(Vector3 | number): Vector3
 
 ---@class (exact) Vector4
 ---@field x number The first component of the vector.
 ---@field y number The second component of the vector.
 ---@field z number The third component of the vector.
 ---@field w number The fourth component of the vector.
+---@operator add(Vector4): Vector4
+---@operator sub(Vector4): Vector4
+---@operator mul(Vector4 | number): Vector4
+---@operator div(Vector4 | number): Vector4
 
 vector = {}
 
