@@ -2260,19 +2260,20 @@ function draw()
     state.IsWindowHovered = imgui.IsWindowHovered()
     imgui.End()
     saveVariables("globalVars", globalVars)
-    local modTime = ((state.SongTime + 60) - getTimingPointAt(state.SongTime).StartTime) %
+    local timeOffset = 50
+    local timeSinceLastPulse = ((state.SongTime + timeOffset) - getTimingPointAt(state.SongTime).StartTime) %
         ((60000 / getTimingPointAt(state.SongTime).Bpm))
-    local frameTime = modTime - prevVal
-    if ((modTime < prevVal)) then
+    if ((timeSinceLastPulse < prevVal)) then
         colStatus = 1
     else
-        colStatus = (colStatus - frameTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
+        colStatus = (colStatus - state.DeltaTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
     end
-    if ((state.SongTime - getTimingPointAt(state.SongTime).StartTime) < 0) then
+    local futureTime = state.SongTime + state.DeltaTime * 2 + timeOffset
+    if ((futureTime - getTimingPointAt(futureTime).StartTime) < 0) then
         colStatus = 0
     end
     state.SetValue("colStatus", math.max(colStatus, 0))
-    state.SetValue("prevVal", modTime)
+    state.SetValue("prevVal", timeSinceLastPulse)
     colStatus = colStatus * globalVars
         .pulseCoefficient
     local borderColor = state.GetValue("global_baseBorderColor", vector4(1))
