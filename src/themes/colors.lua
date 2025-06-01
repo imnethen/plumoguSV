@@ -3,7 +3,7 @@
 --    colorTheme : currently selected color theme [String]
 --    rgbPeriod  : length in seconds of one RGB color cycle [Int/Float]
 function setPluginAppearanceColors(colorTheme, rgbPeriod)
-    local borderColor = vector.New(1, 1, 1, 1)
+    local borderColor = vector4(1)
 
     if colorTheme == "Classic" then borderColor = setClassicColors() end
     if colorTheme == "Strawberry" then borderColor = setStrawberryColors() end

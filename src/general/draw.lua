@@ -43,7 +43,7 @@ function draw()
         advancedMode = state.GetValue("global_advancedMode", false),
         hideAutomatic = state.GetValue("global_hideAutomatic", false),
         pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
-        pulseColor = state.GetValue("global_pulseColor", vector.New(1, 1, 1, 1)),
+        pulseColor = state.GetValue("global_pulseColor", vector4(1)),
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
         hotkeyList = state.GetValue("global_hotkeyList", DEFAULT_HOTKEY_LIST)
     }
@@ -99,8 +99,8 @@ function draw()
     colStatus = colStatus * globalVars
         .pulseCoefficient
 
-    local borderColor = state.GetValue("global_baseBorderColor", vector.New(1, 1, 1, 1))
-    local negatedBorderColor = vector.New(1, 1, 1, 1) - borderColor
+    local borderColor = state.GetValue("global_baseBorderColor", vector4(1))
+    local negatedBorderColor = vector4(1) - borderColor
 
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
 

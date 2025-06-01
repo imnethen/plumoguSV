@@ -2231,7 +2231,7 @@ function draw()
         advancedMode = state.GetValue("global_advancedMode", false),
         hideAutomatic = state.GetValue("global_hideAutomatic", false),
         pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
-        pulseColor = state.GetValue("global_pulseColor", vector.New(1, 1, 1, 1)),
+        pulseColor = state.GetValue("global_pulseColor", vector4(1)),
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
         hotkeyList = state.GetValue("global_hotkeyList", DEFAULT_HOTKEY_LIST)
     }
@@ -2275,8 +2275,8 @@ function draw()
     state.SetValue("prevVal", modTime)
     colStatus = colStatus * globalVars
         .pulseCoefficient
-    local borderColor = state.GetValue("global_baseBorderColor", vector.New(1, 1, 1, 1))
-    local negatedBorderColor = vector.New(1, 1, 1, 1) - borderColor
+    local borderColor = state.GetValue("global_baseBorderColor", vector4(1))
+    local negatedBorderColor = vector4(1) - borderColor
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
     imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
 end
@@ -4576,7 +4576,7 @@ function drawCapybara312(globalVars)
     o.AddCircleFilled(p27, eyeRadius, outlineColor, numSements)
 end
 function setPluginAppearanceColors(colorTheme, rgbPeriod)
-    local borderColor = vector.New(1, 1, 1, 1)
+    local borderColor = vector4(1)
     if colorTheme == "Classic" then borderColor = setClassicColors() end
     if colorTheme == "Strawberry" then borderColor = setStrawberryColors() end
     if colorTheme == "Amethyst" then borderColor = setAmethystColors() end
@@ -7688,6 +7688,15 @@ end
 ---@return Vector2
 function table.vectorize2(tbl)
     return vector.New(tbl[1], tbl[2])
+end
+function vector4(n)
+    return vector.New(n, n, n, n)
+end
+function vector3(n)
+    return vector.New(n, n, n)
+end
+function vector2(n)
+    return vector.New(n, n)
 end
 ---Gets the current menu's setting variables.
 ---@param svType string The SV type - that is, the shape of the SV once plotted.
