@@ -11,3 +11,8 @@ function saveVariables(listName, variables)
         state.SetValue(listName .. key, value)
     end
 end
+
+function saveAndSyncGlobals(globalVars)
+    write(globalVars)
+    syncGlobalVarsState(globalVars)
+end

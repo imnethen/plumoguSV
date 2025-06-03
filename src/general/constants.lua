@@ -148,7 +148,7 @@ TRAIL_SHAPES = { -- shapes for cursor trails
     "Triangles"
 }
 
-BETA_IGNORE_NOTES_OUTSIDE_TG = false
+ignoreNotesOutsideTg = false
 
 STILL_BEHAVIOR_TYPES = {
     "Entire Region",

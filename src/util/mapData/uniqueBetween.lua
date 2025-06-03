@@ -5,7 +5,7 @@
 function uniqueNoteOffsetsBetween(startOffset, endOffset)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not BETA_IGNORE_NOTES_OUTSIDE_TG) then
+        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not ignoreNotesOutsideTg) then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
             if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
                 table.insert(noteOffsetsBetween,

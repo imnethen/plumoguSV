@@ -24,8 +24,9 @@ exportCustomSVData: ''
 exportData: ''
 debugText: debug
 scrollGroupIndex: 1
-showColorPicker: true
-BETA_IGNORE_NOTES_OUTSIDE_TG: false
+showColorPicker: false
+hideSVInfo: false
+ignoreNotesOutsideTg: false
 advancedMode: true
 hideAutomatic: true
 pulseCoefficient: 1

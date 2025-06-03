@@ -2012,6 +2012,10 @@ end
 function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
+    syncGlobalVarsState(tempGlobalVars)
+    state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
+end
+function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_useCustomPulseColor", truthy(tempGlobalVars.useCustomPulseColor))
     state.SetValue("global_pulseColor", table.vectorize4(tempGlobalVars.pulseColor))
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
@@ -2032,11 +2036,11 @@ function awake()
     state.SetValue("global_drawCapybara", truthy(tempGlobalVars.drawCapybara))
     state.SetValue("global_drawCapybara2", truthy(tempGlobalVars.drawCapybara2))
     state.SetValue("global_drawCapybara312", truthy(tempGlobalVars.drawCapybara312))
-    state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG))
+    state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.ignoreNotesOutsideTg))
+    state.SetValue("global_hideSVInfo", truthy(tempGlobalVars.hideSVInfo))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
-    state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 end
 DEFAULT_WIDGET_HEIGHT = 26
 DEFAULT_WIDGET_WIDTH = 160
@@ -2180,7 +2184,7 @@ TRAIL_SHAPES = {
     "Circles",
     "Triangles"
 }
-BETA_IGNORE_NOTES_OUTSIDE_TG = false
+ignoreNotesOutsideTg = false
 STILL_BEHAVIOR_TYPES = {
     "Entire Region",
     "Per Note Group",
@@ -2227,7 +2231,8 @@ function draw()
         debugText = "debug",
         scrollGroupIndex = 1,
         showColorPicker = false,
-        BETA_IGNORE_NOTES_OUTSIDE_TG = state.GetValue("global_ignoreNotes", false),
+        hideSVInfo = state.GetValue("global_hideSVInfo", false),
+        ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes", false),
         advancedMode = state.GetValue("global_advancedMode", false),
         hideAutomatic = state.GetValue("global_hideAutomatic", false),
         pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
@@ -4261,6 +4266,7 @@ function updateGraphStats(graphStats, svMultipliers, svDistances)
 end
 function makeSVInfoWindow(windowText, svGraphStats, svStats, svDistances, svMultipliers,
                           stutterDuration, skipDistGraph)
+    if (state.GetValue("global_hideSVInfo") == true) then return end
     imgui.Begin(windowText, imgui_window_flags.AlwaysAutoResize)
     if not skipDistGraph then
         imgui.Text("Projected Note Motion:")
@@ -5472,7 +5478,7 @@ function chooseColorTheme(globalVars)
     local oldColorThemeIndex = globalVars.colorThemeIndex
     globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex)
     if (oldColorThemeIndex ~= globalVars.colorThemeIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
     local currentTheme = COLOR_THEMES[globalVars.colorThemeIndex]
     local isRGBColorTheme = currentTheme == "Tobi's RGB Glass" or
@@ -5557,7 +5563,7 @@ function chooseCursorTrail(globalVars)
     local oldCursorTrailIndex = globalVars.cursorTrailIndex
     globalVars.cursorTrailIndex = combo("Cursor Trail", CURSOR_TRAILS, oldCursorTrailIndex)
     if (oldCursorTrailIndex ~= globalVars.cursorTrailIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseCursorTrailGhost(globalVars)
@@ -5566,7 +5572,7 @@ function chooseCursorTrailGhost(globalVars)
     local oldCursorTrailGhost = globalVars.cursorTrailGhost
     _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", oldCursorTrailGhost)
     if (oldCursorTrailGhost ~= globalVars.cursorTrailGhost) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseCursorTrailPoints(globalVars)
@@ -5576,7 +5582,7 @@ function chooseCursorTrailPoints(globalVars)
     local oldCursorTrailPoints = globalVars.cursorTrailPoints
     _, globalVars.cursorTrailPoints = imgui.InputInt(label, oldCursorTrailPoints, 1, 1)
     if (oldCursorTrailPoints ~= globalVars.cursorTrailPoints) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseCursorTrailShape(globalVars)
@@ -5586,7 +5592,7 @@ function chooseCursorTrailShape(globalVars)
     local oldTrailShapeIndex = globalVars.cursorTrailShapeIndex
     globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, oldTrailShapeIndex)
     if (oldTrailShapeIndex ~= globalVars.cursorTrailShapeIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseCursorShapeSize(globalVars)
@@ -5596,7 +5602,7 @@ function chooseCursorShapeSize(globalVars)
     local oldCursorTrailSize = globalVars.cursorTrailSize
     _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
     if (oldCursorTrailSize ~= globalVars.cursorTrailSize) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseCurveSharpness(settingVars)
@@ -5697,15 +5703,23 @@ function chooseDontReplaceSV(globalVars)
     local oldDontReplaceSV = globalVars.dontReplaceSV
     _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
     if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
-function chooseBetaIgnore(globalVars)
-    local oldIgnore = globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG
-    _, globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG = imgui.Checkbox("Ignore notes outside current timing group",
+function chooseIgnoreNotes(globalVars)
+    local oldIgnore = globalVars.ignoreNotesOutsideTg
+    _, globalVars.ignoreNotesOutsideTg = imgui.Checkbox("Ignore notes outside current timing group",
         oldIgnore)
-    if (oldIgnore ~= globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG) then
-        write(globalVars)
+    if (oldIgnore ~= globalVars.ignoreNotesOutsideTg) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+function chooseHideSVInfo(globalVars)
+    local oldHideInfo = globalVars.hideSVInfo
+    _, globalVars.hideSVInfo = imgui.Checkbox("Hide SV Info Window",
+        oldHideInfo)
+    if (oldHideInfo ~= globalVars.hideSVInfo) then
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseDrawCapybara(globalVars)
@@ -5713,7 +5727,7 @@ function chooseDrawCapybara(globalVars)
     _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
     helpMarker("Draws a capybara at the bottom right of the screen")
     if (oldDrawCapybara ~= globalVars.drawCapybara) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseDrawCapybara2(globalVars)
@@ -5721,14 +5735,14 @@ function chooseDrawCapybara2(globalVars)
     _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
     helpMarker("Draws a capybara at the bottom left of the screen")
     if (oldDrawCapybara2 ~= globalVars.drawCapybara2) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseDrawCapybara312(globalVars)
     local oldDrawCapybara312 = globalVars.drawCapybara312
     _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", oldDrawCapybara312)
     if (oldDrawCapybara312 ~= globalVars.drawCapybara312) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
     helpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
@@ -5772,7 +5786,7 @@ function chooseEffectFPS(globalVars)
     local oldEffectFPS = globalVars.effectFPS
     _, globalVars.effectFPS = imgui.InputInt("Effect FPS", oldEffectFPS, 1, 1)
     if (oldEffectFPS ~= globalVars.effectFPS) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
     helpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
     globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
@@ -5880,51 +5894,33 @@ function chooseKeyboardMode(globalVars)
         globalVars.keyboardMode = true
     end
     if (oldKeyboardMode ~= globalVars.keyboardMode) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseAdvancedMode(globalVars)
     local oldAdvancedMode = globalVars.advancedMode
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Advanced Mode:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("OFF", not globalVars.advancedMode) then
-        globalVars.advancedMode = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("ON", globalVars.advancedMode) then
-        globalVars.advancedMode = true
-    end
+    _, globalVars.advancedMode = imgui.Checkbox("Enable Advanced Mode", oldAdvancedMode)
     if (oldAdvancedMode ~= globalVars.advancedMode) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         state.SetValue("global_advancedMode", globalVars.advancedMode)
     end
 end
 function chooseHideAutomatic(globalVars)
     local oldHideAutomatic = globalVars.hideAutomatic
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Hide Automatic TGs?:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("NO", not globalVars.hideAutomatic) then
-        globalVars.hideAutomatic = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("YES", globalVars.hideAutomatic) then
-        globalVars.hideAutomatic = true
-    end
+    _, globalVars.hideAutomatic = imgui.Checkbox("Hide Automatically Placed TGs?", oldHideAutomatic)
     if (oldHideAutomatic ~= globalVars.hideAutomatic) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         state.SetValue("globalVars.hideAutomatic", globalVars.hideAutomatic)
     end
 end
 function chooseStepSize(globalVars)
     imgui.PushItemWidth(40)
     local oldStepSize = globalVars.stepSize
-    local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
+    local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f%%")
     globalVars.stepSize = math.clamp(tempStepSize, 1, 100)
     imgui.PopItemWidth()
     if (oldStepSize ~= globalVars.stepSize) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         state.SetValue("global_stepSize", globalVars.stepSize)
     end
 end
@@ -6087,7 +6083,7 @@ function chooseRGBPeriod(globalVars)
     globalVars.rgbPeriod = math.clamp(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
         MAX_RGB_CYCLE_TIME)
     if (oldRGBPeriod ~= globalVars.rgbPeriod) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseSecondHeight(settingVars)
@@ -6136,7 +6132,7 @@ function chooseSnakeSpringConstant(globalVars)
     helpMarker("Pick any number from 0.01 to 1")
     globalVars.snakeSpringConstant = math.clamp(globalVars.snakeSpringConstant, 0.01, 1)
     if (globalVars.snakeSpringConstant ~= oldValue) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseSpecialSVType(menuVars)
@@ -6327,7 +6323,7 @@ function chooseStyleTheme(globalVars)
     local oldStyleTheme = globalVars.styleThemeIndex
     globalVars.styleThemeIndex = combo("Style Theme", STYLE_THEMES, oldStyleTheme)
     if (oldStyleTheme ~= globalVars.styleThemeIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseSVBehavior(settingVars)
@@ -6377,7 +6373,7 @@ function chooseUpscroll(globalVars)
         globalVars.upscroll = true
     end
     if (oldUpscroll ~= globalVars.upscroll) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function chooseUseDistance(settingVars)
@@ -6401,7 +6397,8 @@ function choosePluginBehaviorSettings(globalVars)
     chooseUpscroll(globalVars)
     addSeparator()
     chooseDontReplaceSV(globalVars)
-    chooseBetaIgnore(globalVars)
+    chooseIgnoreNotes(globalVars)
+    chooseHideSVInfo(globalVars)
     chooseStepSize(globalVars)
     addPadding()
 end
@@ -6455,7 +6452,7 @@ function chooseHotkeys(globalVars)
     addSeparator()
     simpleActionMenu("Reset Hotkey Settings", 0, function()
         globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         awaitingIndex = 0
     end, nil, nil, true, true)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
@@ -6466,7 +6463,7 @@ function chooseHotkeys(globalVars)
     awaitingIndex = 0
     globalVars.hotkeyList = hotkeyList
     GLOBAL_HOTKEY_LIST = hotkeyList
-    write(globalVars)
+    saveAndSyncGlobals(globalVars)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
 end
 function choosePulseCoefficient(globalVars)
@@ -6475,7 +6472,7 @@ function choosePulseCoefficient(globalVars)
         math.round(globalVars.pulseCoefficient * 100) .. "%%")
     globalVars.pulseCoefficient = math.clamp(globalVars.pulseCoefficient, 0, 1)
     if (oldCoefficient ~= globalVars.pulseCoefficient) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 function choosePulseColor(globalVars)
@@ -6485,11 +6482,11 @@ function choosePulseColor(globalVars)
         local oldColor = globalVars.pulseColor
         _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
         if (oldColor ~= globalVars.pulseColor) then
-            write(globalVars)
+            saveAndSyncGlobals(globalVars)
         end
         if (not opened) then
             globalVars.showColorPicker = false
-            write(globalVars)
+            saveAndSyncGlobals(globalVars)
         end
         imgui.End()
     end
@@ -7291,7 +7288,7 @@ end
 function uniqueNoteOffsetsBetween(startOffset, endOffset)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not BETA_IGNORE_NOTES_OUTSIDE_TG) then
+        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not ignoreNotesOutsideTg) then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
             if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
                 table.insert(noteOffsetsBetween,
@@ -7547,6 +7544,10 @@ function saveVariables(listName, variables)
         state.SetValue(listName .. key, value)
     end
 end
+function saveAndSyncGlobals(globalVars)
+    write(globalVars)
+    syncGlobalVarsState(globalVars)
+end
 ---Returns the average value of a numeric table.
 ---@param values number[] The list of numbers.
 ---@param includeLastValue boolean Whether or not to include the last value in the table.
@@ -7687,22 +7688,27 @@ function sort(tbl, compFn)
     table.sort(newTbl, compFn)
     return newTbl
 end
+---@diagnostic disable: return-type-mismatch
+---Because we want the functions to be identity functions when passing in vectors instead of tables.
 --- Converts a table of length 4 into a [`Vector4`](lua://Vector4).
 ---@param tbl number[] The table to convert.
 ---@return Vector4 vctr The output vector.
 function table.vectorize4(tbl)
+    if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
 end
 --- Converts a table of length 3 into a [`Vector3`](lua://Vector3).
 ---@param tbl number[] The table to convert.
 ---@return Vector3 vctr The output vector.
 function table.vectorize3(tbl)
+    if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3])
 end
 --- Converts a table of length 2 into a [`Vector2`](lua://Vector2).
 ---@param tbl number[] The table to convert.
 ---@return Vector2 vctr The output vector.
 function table.vectorize2(tbl)
+    if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2])
 end
 ---Creates a new [`Vector4`](lua://Vector4) with all elements being the given number.

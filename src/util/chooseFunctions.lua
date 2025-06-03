@@ -99,7 +99,7 @@ function chooseColorTheme(globalVars)
     globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex)
 
     if (oldColorThemeIndex ~= globalVars.colorThemeIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 
     local currentTheme = COLOR_THEMES[globalVars.colorThemeIndex]
@@ -223,7 +223,7 @@ function chooseCursorTrail(globalVars)
     local oldCursorTrailIndex = globalVars.cursorTrailIndex
     globalVars.cursorTrailIndex = combo("Cursor Trail", CURSOR_TRAILS, oldCursorTrailIndex)
     if (oldCursorTrailIndex ~= globalVars.cursorTrailIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -239,7 +239,7 @@ function chooseCursorTrailGhost(globalVars)
     _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", oldCursorTrailGhost)
 
     if (oldCursorTrailGhost ~= globalVars.cursorTrailGhost) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -254,7 +254,7 @@ function chooseCursorTrailPoints(globalVars)
     local oldCursorTrailPoints = globalVars.cursorTrailPoints
     _, globalVars.cursorTrailPoints = imgui.InputInt(label, oldCursorTrailPoints, 1, 1)
     if (oldCursorTrailPoints ~= globalVars.cursorTrailPoints) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -269,7 +269,7 @@ function chooseCursorTrailShape(globalVars)
     local oldTrailShapeIndex = globalVars.cursorTrailShapeIndex
     globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, oldTrailShapeIndex)
     if (oldTrailShapeIndex ~= globalVars.cursorTrailShapeIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -286,7 +286,7 @@ function chooseCursorShapeSize(globalVars)
     local oldCursorTrailSize = globalVars.cursorTrailSize
     _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
     if (oldCursorTrailSize ~= globalVars.cursorTrailSize) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -424,19 +424,31 @@ function chooseDontReplaceSV(globalVars)
     local oldDontReplaceSV = globalVars.dontReplaceSV
     _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
     if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
 -- Lets you choose whether or not to replace SVs when placing SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function chooseBetaIgnore(globalVars)
-    local oldIgnore = globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG
-    _, globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG = imgui.Checkbox("Ignore notes outside current timing group",
+function chooseIgnoreNotes(globalVars)
+    local oldIgnore = globalVars.ignoreNotesOutsideTg
+    _, globalVars.ignoreNotesOutsideTg = imgui.Checkbox("Ignore notes outside current timing group",
         oldIgnore)
-    if (oldIgnore ~= globalVars.BETA_IGNORE_NOTES_OUTSIDE_TG) then
-        write(globalVars)
+    if (oldIgnore ~= globalVars.ignoreNotesOutsideTg) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+
+-- Lets you choose whether or not to replace SVs when placing SVs
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function chooseHideSVInfo(globalVars)
+    local oldHideInfo = globalVars.hideSVInfo
+    _, globalVars.hideSVInfo = imgui.Checkbox("Hide SV Info Window",
+        oldHideInfo)
+    if (oldHideInfo ~= globalVars.hideSVInfo) then
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -448,7 +460,7 @@ function chooseDrawCapybara(globalVars)
     _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
     helpMarker("Draws a capybara at the bottom right of the screen")
     if (oldDrawCapybara ~= globalVars.drawCapybara) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -460,7 +472,7 @@ function chooseDrawCapybara2(globalVars)
     _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
     helpMarker("Draws a capybara at the bottom left of the screen")
     if (oldDrawCapybara2 ~= globalVars.drawCapybara2) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -471,7 +483,7 @@ function chooseDrawCapybara312(globalVars)
     local oldDrawCapybara312 = globalVars.drawCapybara312
     _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", oldDrawCapybara312)
     if (oldDrawCapybara312 ~= globalVars.drawCapybara312) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
     helpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
@@ -529,7 +541,7 @@ function chooseEffectFPS(globalVars)
     local oldEffectFPS = globalVars.effectFPS
     _, globalVars.effectFPS = imgui.InputInt("Effect FPS", oldEffectFPS, 1, 1)
     if (oldEffectFPS ~= globalVars.effectFPS) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
     helpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
     globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
@@ -698,25 +710,16 @@ function chooseKeyboardMode(globalVars)
         globalVars.keyboardMode = true
     end
     if (oldKeyboardMode ~= globalVars.keyboardMode) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
 -- Lets you choose whether to activate or deactivate "Advanced Mode"
 function chooseAdvancedMode(globalVars)
     local oldAdvancedMode = globalVars.advancedMode
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Advanced Mode:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("OFF", not globalVars.advancedMode) then
-        globalVars.advancedMode = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("ON", globalVars.advancedMode) then
-        globalVars.advancedMode = true
-    end
+    _, globalVars.advancedMode = imgui.Checkbox("Enable Advanced Mode", oldAdvancedMode)
     if (oldAdvancedMode ~= globalVars.advancedMode) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         state.SetValue("global_advancedMode", globalVars.advancedMode)
     end
 end
@@ -724,18 +727,9 @@ end
 -- Lets you choose whether to activate or deactivate hiding automated timing groups.
 function chooseHideAutomatic(globalVars)
     local oldHideAutomatic = globalVars.hideAutomatic
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Hide Automatic TGs?:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("NO", not globalVars.hideAutomatic) then
-        globalVars.hideAutomatic = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("YES", globalVars.hideAutomatic) then
-        globalVars.hideAutomatic = true
-    end
+    _, globalVars.hideAutomatic = imgui.Checkbox("Hide Automatically Placed TGs?", oldHideAutomatic)
     if (oldHideAutomatic ~= globalVars.hideAutomatic) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         state.SetValue("globalVars.hideAutomatic", globalVars.hideAutomatic)
     end
 end
@@ -744,11 +738,11 @@ end
 function chooseStepSize(globalVars)
     imgui.PushItemWidth(40)
     local oldStepSize = globalVars.stepSize
-    local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f %%")
+    local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f%%")
     globalVars.stepSize = math.clamp(tempStepSize, 1, 100)
     imgui.PopItemWidth()
     if (oldStepSize ~= globalVars.stepSize) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         state.SetValue("global_stepSize", globalVars.stepSize)
     end
 end
@@ -990,7 +984,7 @@ function chooseRGBPeriod(globalVars)
     globalVars.rgbPeriod = math.clamp(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
         MAX_RGB_CYCLE_TIME)
     if (oldRGBPeriod ~= globalVars.rgbPeriod) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -1065,7 +1059,7 @@ function chooseSnakeSpringConstant(globalVars)
     helpMarker("Pick any number from 0.01 to 1")
     globalVars.snakeSpringConstant = math.clamp(globalVars.snakeSpringConstant, 0.01, 1)
     if (globalVars.snakeSpringConstant ~= oldValue) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -1311,7 +1305,7 @@ function chooseStyleTheme(globalVars)
     local oldStyleTheme = globalVars.styleThemeIndex
     globalVars.styleThemeIndex = combo("Style Theme", STYLE_THEMES, oldStyleTheme)
     if (oldStyleTheme ~= globalVars.styleThemeIndex) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -1382,7 +1376,7 @@ function chooseUpscroll(globalVars)
         globalVars.upscroll = true
     end
     if (oldUpscroll ~= globalVars.upscroll) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -1419,7 +1413,8 @@ function choosePluginBehaviorSettings(globalVars)
     chooseUpscroll(globalVars)
     addSeparator()
     chooseDontReplaceSV(globalVars)
-    chooseBetaIgnore(globalVars)
+    chooseIgnoreNotes(globalVars)
+    chooseHideSVInfo(globalVars)
     chooseStepSize(globalVars)
     addPadding()
 end
@@ -1478,7 +1473,7 @@ function chooseHotkeys(globalVars)
     addSeparator()
     simpleActionMenu("Reset Hotkey Settings", 0, function()
         globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
         awaitingIndex = 0
     end, nil, nil, true, true)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
@@ -1489,7 +1484,7 @@ function chooseHotkeys(globalVars)
     awaitingIndex = 0
     globalVars.hotkeyList = hotkeyList
     GLOBAL_HOTKEY_LIST = hotkeyList
-    write(globalVars)
+    saveAndSyncGlobals(globalVars)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
 end
 
@@ -1499,7 +1494,7 @@ function choosePulseCoefficient(globalVars)
         math.round(globalVars.pulseCoefficient * 100) .. "%%")
     globalVars.pulseCoefficient = math.clamp(globalVars.pulseCoefficient, 0, 1)
     if (oldCoefficient ~= globalVars.pulseCoefficient) then
-        write(globalVars)
+        saveAndSyncGlobals(globalVars)
     end
 end
 
@@ -1510,11 +1505,11 @@ function choosePulseColor(globalVars)
         local oldColor = globalVars.pulseColor
         _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
         if (oldColor ~= globalVars.pulseColor) then
-            write(globalVars)
+            saveAndSyncGlobals(globalVars)
         end
         if (not opened) then
             globalVars.showColorPicker = false
-            write(globalVars)
+            saveAndSyncGlobals(globalVars)
         end
         imgui.End()
     end

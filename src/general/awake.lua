@@ -1,6 +1,13 @@
 function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = {} end
+
+    syncGlobalVarsState(tempGlobalVars)
+
+    state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
+end
+
+function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_useCustomPulseColor", truthy(tempGlobalVars.useCustomPulseColor))
     state.SetValue("global_pulseColor", table.vectorize4(tempGlobalVars.pulseColor))
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
@@ -21,12 +28,9 @@ function awake()
     state.SetValue("global_drawCapybara", truthy(tempGlobalVars.drawCapybara))
     state.SetValue("global_drawCapybara2", truthy(tempGlobalVars.drawCapybara2))
     state.SetValue("global_drawCapybara312", truthy(tempGlobalVars.drawCapybara312))
-    state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.BETA_IGNORE_NOTES_OUTSIDE_TG))
+    state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.ignoreNotesOutsideTg))
+    state.SetValue("global_hideSVInfo", truthy(tempGlobalVars.hideSVInfo))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
-
-    state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
-
-    -- listen(function (event, history_type) print(event, history_type) end)
 end
