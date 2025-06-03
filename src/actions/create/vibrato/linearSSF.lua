@@ -1,9 +1,10 @@
-function linearSSFVibrato(menuVars)
+function linearSSFVibrato(menuVars, settingVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
     local startTime = offsets[1]
     local endTime = offsets[#offsets]
-    local delta = 500 / menuVars.resolution
+    local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
+    local delta = 1000 / fps
     local time = startTime
     local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
         getSSFMultiplierAt(time)) }
@@ -12,16 +13,18 @@ function linearSSFVibrato(menuVars)
         local y = ((time + delta - startTime) / (endTime - startTime))
         table.insert(ssfs,
             ssf(time - 1 / getUsableDisplacementMultiplier(time),
-                menuVars.higherStart + x * (menuVars.higherEnd - menuVars.higherStart)))
-        table.insert(ssfs, ssf(time, menuVars.lowerStart + x * (menuVars.lowerEnd - menuVars.lowerStart)))
+                settingVars.higherStart + x * (settingVars.higherEnd - settingVars.higherStart)))
+        table.insert(ssfs, ssf(time, settingVars.lowerStart + x * (settingVars.lowerEnd - settingVars.lowerStart)))
         table.insert(ssfs,
             ssf(time + delta - 1 / getUsableDisplacementMultiplier(time),
-                menuVars.lowerStart + y * (menuVars.lowerEnd - menuVars.lowerStart)))
-        table.insert(ssfs, ssf(time + delta, menuVars.higherStart + y * (menuVars.higherEnd - menuVars.higherStart)))
+                settingVars.lowerStart + y * (settingVars.lowerEnd - settingVars.lowerStart)))
+        table.insert(ssfs,
+            ssf(time + delta, settingVars.higherStart + y * (settingVars.higherEnd - settingVars.higherStart)))
         time = time + 2 * delta
     end
 
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
+    print("s!", "Created " .. #ssfs .. (#ssfs == 1 and "SSF." or "SSFs."))
 end

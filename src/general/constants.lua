@@ -170,10 +170,11 @@ VIBRATO_QUALITIES = {
     "Low",
     "Medium",
     "High",
-    "Ultra"
+    "Ultra",
+    "Omega"
 }
 
-VIBRATO_FRAME_RATES = { 45, 90, 150, 210 }
+VIBRATO_FRAME_RATES = { 45, 90, 150, 210, 450 }
 
 VIBRATO_DETAILED_QUALITIES = {}
 

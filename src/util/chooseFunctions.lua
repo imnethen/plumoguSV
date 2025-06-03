@@ -1093,6 +1093,7 @@ end
 --    menuVars : list of variables used for the current menu [Table]
 function chooseVibratoQuality(menuVars)
     menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
+    toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 
 function chooseCurvatureCoefficient(settingVars)

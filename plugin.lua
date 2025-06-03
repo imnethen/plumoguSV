@@ -833,12 +833,13 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
     end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
-function linearSSFVibrato(menuVars)
+function linearSSFVibrato(menuVars, settingVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
     local startTime = offsets[1]
     local endTime = offsets[#offsets]
-    local delta = 500 / menuVars.resolution
+    local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
+    local delta = 1000 / fps
     local time = startTime
     local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
         getSSFMultiplierAt(time)) }
@@ -847,17 +848,19 @@ function linearSSFVibrato(menuVars)
         local y = ((time + delta - startTime) / (endTime - startTime))
         table.insert(ssfs,
             ssf(time - 1 / getUsableDisplacementMultiplier(time),
-                menuVars.higherStart + x * (menuVars.higherEnd - menuVars.higherStart)))
-        table.insert(ssfs, ssf(time, menuVars.lowerStart + x * (menuVars.lowerEnd - menuVars.lowerStart)))
+                settingVars.higherStart + x * (settingVars.higherEnd - settingVars.higherStart)))
+        table.insert(ssfs, ssf(time, settingVars.lowerStart + x * (settingVars.lowerEnd - settingVars.lowerStart)))
         table.insert(ssfs,
             ssf(time + delta - 1 / getUsableDisplacementMultiplier(time),
-                menuVars.lowerStart + y * (menuVars.lowerEnd - menuVars.lowerStart)))
-        table.insert(ssfs, ssf(time + delta, menuVars.higherStart + y * (menuVars.higherEnd - menuVars.higherStart)))
+                settingVars.lowerStart + y * (settingVars.lowerEnd - settingVars.lowerStart)))
+        table.insert(ssfs,
+            ssf(time + delta, settingVars.higherStart + y * (settingVars.higherEnd - settingVars.higherStart)))
         time = time + 2 * delta
     end
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
+    print("s!", "Created " .. #ssfs .. (#ssfs == 1 and "SSF." or "SSFs."))
 end
 function svVibrato(menuVars, heightFunc)
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -1018,6 +1021,7 @@ function alignTimingLines()
         utils.CreateEditorAction(action_type.AddTimingPointBatch, timingpoints),
         utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
     })
+    print("s!", "Created " .. #timingpoints .. (#timingpoints == 1 and " timing point." or " timing points."))
 end
 function convertSVSSF(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
@@ -1053,6 +1057,7 @@ function convertSVSSF(menuVars)
         editorActions:insert(utils.CreateEditorAction(action_type.AddScrollVelocityBatch, createTable))
     end
     actions.PerformBatch(editorActions)
+    print("w!", "Successfully converted.")
 end
 function copyItems(menuVars)
     menuVars.copiedLines = {}
@@ -1169,6 +1174,34 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd),
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
+    if (truthy(#linesToRemove)) then
+        print("error!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+    end
+    if (truthy(#svsToRemove)) then
+        print("error!",
+            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+    end
+    if (truthy(#ssfsToRemove)) then
+        print("error!",
+            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+    end
+    if (truthy(#bmsToRemove)) then
+        print("error!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+    end
+    if (truthy(#linesToAdd)) then
+        print("s!", "Created " .. #linesToAdd .. (#linesToAdd == 1 and " timing point." or " timing points."))
+    end
+    if (truthy(#svsToAdd)) then
+        print("s!",
+            "Created " .. #svsToAdd .. (#svsToAdd == 1 and " scroll velocity." or " scroll velocities."))
+    end
+    if (truthy(#ssfsToAdd)) then
+        print("s!",
+            "Created " .. #ssfsToAdd .. (#ssfsToAdd == 1 and " scroll speed factor." or " scroll speed factors."))
+    end
+    if (truthy(#bmsToAdd)) then
+        print("s!", "Created " .. #bmsToAdd .. (#bmsToAdd == 1 and " bookmark." or " bookmarks."))
+    end
 end
 function displaceNoteSVsParent(menuVars)
     if (not menuVars.linearlyChange) then
@@ -2300,9 +2333,10 @@ VIBRATO_QUALITIES = {
     "Low",
     "Medium",
     "High",
-    "Ultra"
+    "Ultra",
+    "Omega"
 }
-VIBRATO_FRAME_RATES = { 45, 90, 150, 210 }
+VIBRATO_FRAME_RATES = { 45, 90, 150, 210, 450 }
 VIBRATO_DETAILED_QUALITIES = {}
 for i, v in pairs(VIBRATO_QUALITIES) do
     table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
@@ -2890,6 +2924,7 @@ function automateSVs(settingVars)
         index = index + 1
     end
     actions.PerformBatch(actionList)
+    print("w!", "Automated.")
 end
 function penisMenu(settingVars)
     _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
@@ -3132,7 +3167,7 @@ function linearVibratoMenu(menuVars, settingVars)
     else
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
-        simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
+        simpleActionMenu("Vibrate", 2, linearSSFVibrato, menuVars, settingVars)
     end
 end
 VIBRATO_SVS = {
@@ -6328,6 +6363,7 @@ function chooseVibratoMode(menuVars)
 end
 function chooseVibratoQuality(menuVars)
     menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
+    toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 function chooseCurvatureCoefficient(settingVars)
     imgui.PushItemWidth(28)
@@ -7701,6 +7737,7 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
         utils.CreateEditorAction(action_type.AddScrollVelocityBatch, svsToAdd)
     }
     actions.PerformBatch(editorActions)
+    print("s!", "Created " .. #svsToAdd .. (#svsToAdd == 1 and " SV." or " SVs."))
 end
 function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
     if #ssfsToAdd == 0 then return end
@@ -7709,6 +7746,7 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd)
     }
     actions.PerformBatch(editorActions)
+    print("s!", "Created " .. #ssfsToAdd .. (#ssfsToAdd == 1 and " SSF." or " SSFs."))
 end
 function ssf(startTime, multiplier)
     return utils.CreateScrollSpeedFactor(startTime, multiplier)
@@ -7974,7 +8012,6 @@ function getSettingVars(svType, label)
             lowerEnd = 0.5,
             higherStart = 1,
             higherEnd = 1,
-            resolution = 90,
         }
     elseif svType == "Exponential##Vibrato" and label == "Vibrato2" then
         settingVars = {
@@ -7982,7 +8019,6 @@ function getSettingVars(svType, label)
             lowerEnd = 0.5,
             higherStart = 1,
             higherEnd = 1,
-            resolution = 90,
             curvatureIndex = 10
         }
     elseif svType == "Exponential" then

@@ -35,4 +35,6 @@ function alignTimingLines()
         utils.CreateEditorAction(action_type.AddTimingPointBatch, timingpoints),
         utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
     })
+
+    print("s!", "Created " .. #timingpoints .. (#timingpoints == 1 and " timing point." or " timing points."))
 end

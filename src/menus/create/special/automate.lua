@@ -84,4 +84,5 @@ function automateSVs(settingVars)
         index = index + 1
     end
     actions.PerformBatch(actionList)
+    print("w!", "Automated.")
 end

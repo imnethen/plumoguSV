@@ -127,4 +127,33 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd),
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
+    if (truthy(#linesToRemove)) then
+        print("error!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+    end
+    if (truthy(#svsToRemove)) then
+        print("error!",
+            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+    end
+    if (truthy(#ssfsToRemove)) then
+        print("error!",
+            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+    end
+    if (truthy(#bmsToRemove)) then
+        print("error!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+    end
+
+    if (truthy(#linesToAdd)) then
+        print("s!", "Created " .. #linesToAdd .. (#linesToAdd == 1 and " timing point." or " timing points."))
+    end
+    if (truthy(#svsToAdd)) then
+        print("s!",
+            "Created " .. #svsToAdd .. (#svsToAdd == 1 and " scroll velocity." or " scroll velocities."))
+    end
+    if (truthy(#ssfsToAdd)) then
+        print("s!",
+            "Created " .. #ssfsToAdd .. (#ssfsToAdd == 1 and " scroll speed factor." or " scroll speed factors."))
+    end
+    if (truthy(#bmsToAdd)) then
+        print("s!", "Created " .. #bmsToAdd .. (#bmsToAdd == 1 and " bookmark." or " bookmarks."))
+    end
 end
