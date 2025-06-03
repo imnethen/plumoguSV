@@ -956,6 +956,41 @@ function alignTimingLines()
         utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
     })
 end
+function convertSVSSF(menuVars)
+    local offsets = uniqueSelectedNoteOffsets()
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+    local objects = table.construct()
+    local editorActions = table.construct()
+    if (menuVars.conversionDirection) then
+        local svs = getSVsBetweenOffsets(startOffset, endOffset, false)
+        for _, sv in pairs(svs) do
+            objects:insert({ StartTime = sv.StartTime, Multiplier = sv.Multiplier })
+        end
+        editorActions:insert(utils.CreateEditorAction(action_type.RemoveScrollVelocityBatch, svs))
+    else
+        local ssfs = getSSFsBetweenOffsets(startOffset, endOffset, false)
+        for _, ssf in pairs(ssfs) do
+            objects:insert({ StartTime = ssf.StartTime, Multiplier = ssf.Multiplier })
+        end
+        editorActions:insert(utils.CreateEditorAction(action_type.RemoveScrollSpeedFactorBatch, ssfs))
+    end
+    local createTable = table.construct()
+    for _, obj in pairs(objects) do
+        if (menuVars.conversionDirection) then
+            createTable:insert(utils.CreateScrollSpeedFactor(obj.StartTime,
+                obj.Multiplier))
+        else
+            createTable:insert(utils.CreateScrollVelocity(obj.StartTime, obj.Multiplier))
+        end
+    end
+    if (menuVars.conversionDirection) then
+        editorActions:insert(utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, createTable))
+    else
+        editorActions:insert(utils.CreateEditorAction(action_type.AddScrollVelocityBatch, createTable))
+    end
+    actions.PerformBatch(editorActions)
+end
 function copyItems(menuVars)
     menuVars.copiedLines = {}
     menuVars.copiedSVs = {}
@@ -3063,6 +3098,25 @@ function tempBugFixMenu()
     imgui.PopTextWrapPos()
     simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
 end
+function convertSVSSFMenu()
+    local menuVars = {
+        conversionDirection = true
+    }
+    getVariables("convertSVSSFMenu", menuVars)
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Direction:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("SSF -> SV", not menuVars.conversionDirection) then
+        menuVars.conversionDirection = false
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("SV -> SSF", menuVars.conversionDirection) then
+        menuVars.conversionDirection = true
+    end
+    saveVariables("convertSVSSFMenu", menuVars)
+    simpleActionMenu(menuVars.conversionDirection and "Convert SVs -> SSFs" or "Convert SSFs -> SVs", 2, convertSVSSF,
+        nil, menuVars, false, false)
+end
 function copyNPasteMenu(globalVars)
     local menuVars = {
         copyTable = { true, true, true, true },
@@ -3270,6 +3324,7 @@ EDIT_SV_TOOLS = {
     "Add Teleport",
     "Align Timing Lines",
     "bug fixing from <1.1.2",
+    "Convert SV <-> SSF",
     "Copy & Paste",
     "Direct SV",
     "Displace Note",
@@ -3294,6 +3349,7 @@ function editSVTab(globalVars)
     if toolName == "Add Teleport" then addTeleportMenu() end
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
     if toolName == "bug fixing from <1.1.2" then tempBugFixMenu() end
+    if toolName == "Convert SV <-> SSF" then convertSVSSFMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
     if toolName == "Direct SV" then directSVMenu() end
     if toolName == "Displace Note" then displaceNoteMenu() end
