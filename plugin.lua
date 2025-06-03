@@ -860,6 +860,63 @@ function linearSSFVibrato(menuVars)
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
 end
+function svVibrato(menuVars, heightFunc)
+    local offsets = uniqueNoteOffsetsBetweenSelected()
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+    local svsToAdd = {} ---@type ScrollVelocity[]
+    local svsToRemove = {} ---@type ScrollVelocity[]
+    local svTimeIsAdded = {}
+    for i = 1, #offsets - 1 do
+        local start = offsets[i]
+        local next = offsets[i + 1]
+        local startPos = (start - startOffset) / (endOffset - startOffset)
+        local endPos = (next - startOffset) / (endOffset - startOffset)
+        local posDifference = endPos - startPos
+        local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
+        local trueFPS = fps
+        local lowestDecimal = 1e10
+        for t = fps - 3, fps + 3 do
+            local decimal = ((next - start) / 1000 * fps / 2) % 1
+            if (decimal < lowestDecimal) then
+                trueFPS = t
+                lowestDecimal = decimal
+            end
+        end
+        local teleportCount = math.floor((next - start) / 1000 * trueFPS / 2) * 2
+        if (menuVars.oneSided) then
+            for tp = 1, teleportCount do
+                local x = (tp - 1) / teleportCount
+                local offset = next * x + start * (1 - x)
+                local height = heightFunc(((math.floor((tp - 1) / 2) * 2) / teleportCount) * posDifference + startPos)
+                if (tp % 2 == 1) then
+                    height = -height
+                end
+                prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, nil,
+                    height, 0)
+            end
+        else
+            prepareDisplacingSVs(start, svsToAdd, svTimeIsAdded, nil,
+                -heightFunc(startPos), 0)
+            for tp = 2, teleportCount - 1 do
+                local x = (tp - 1) / teleportCount
+                local offset = next * x + start * (1 - x)
+                local initHeight = heightFunc(((math.floor((tp - 2) / 2) * 2) / teleportCount) * posDifference + startPos)
+                local newHeight = heightFunc(((math.floor((tp - 1) / 2) * 2) / teleportCount) * posDifference + startPos)
+                local height = initHeight + newHeight
+                if (tp % 2 == 1) then
+                    height = -height
+                end
+                prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, nil,
+                    height, 0)
+            end
+            prepareDisplacingSVs(next, svsToAdd, svTimeIsAdded,
+                heightFunc(((math.floor((teleportCount - 2) / 2) * 2) / teleportCount) * posDifference + startPos),
+                nil, 0)
+        end
+    end
+    removeAndAddSVs(svsToRemove, svsToAdd)
+end
 function deleteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
@@ -2229,6 +2286,21 @@ DISTANCE_TYPES = {
     "Distance + Shift",
     "Start / End"
 }
+VIBRATO_TYPES = {
+    "SV (msx)",
+    "SSF (x)",
+}
+VIBRATO_QUALITIES = {
+    "Low",
+    "Medium",
+    "High",
+    "Ultra"
+}
+VIBRATO_FRAME_RATES = { 45, 90, 150, 210 }
+VIBRATO_DETAILED_QUALITIES = {}
+for i, v in pairs(VIBRATO_QUALITIES) do
+    table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
+end
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M" }
 GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
@@ -3020,13 +3092,23 @@ function getStillPlaceMenuVars()
     getVariables("placeStillMenu", menuVars)
     return menuVars
 end
-function linearVibratoMenu(settingVars)
-    customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs")
-    customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs")
-    simpleActionMenu("Place SSFs", 2, linearSSFVibrato, nil, settingVars)
+function linearVibratoMenu(menuVars, settingVars)
+    if (menuVars.vibratoMode == 1) then
+        customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        local func = function(t)
+            return settingVars.endMsx * t + settingVars.startMsx * (1 - t)
+        end
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, nil, menuVars)
+    else
+        customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
+    end
 end
 VIBRATO_SVS = {
-    "Linear SSF"
+    "Linear##Vibrato"
 }
 function placeVibratoSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
@@ -3034,19 +3116,29 @@ function placeVibratoSVMenu(globalVars)
     changeSVTypeIfKeysPressed(menuVars)
     chooseVibratoSVType(menuVars)
     addSeparator()
+    imgui.Text("Vibrato Settings:")
+    chooseVibratoMode(menuVars)
+    chooseVibratoQuality(menuVars)
+    if (menuVars.vibratoMode ~= 2) then
+        _, menuVars.oneSided = imgui.Checkbox("One-Sided Vibrato?", menuVars.oneSided)
+    end
     local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Vibrato")
+    local settingVars = getSettingVars(currentSVType, "Vibrato" .. menuVars.vibratoMode)
     if globalVars.showExportImportMenu then
         return
     end
-    if currentSVType == "Linear SSF" then linearVibratoMenu(settingVars) end
-    local labelText = table.concat({ currentSVType, "SettingsVibrato" })
+    addSeparator()
+    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
+    local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)
     saveVariables("placeVibratoMenu", menuVars)
 end
 function getVibratoPlaceMenuVars()
     local menuVars = {
-        svTypeIndex = 1
+        svTypeIndex = 1,
+        vibratoMode = 1,
+        vibratoQuality = 1,
+        oneSided = false
     }
     getVariables("placeVibratoMenu", menuVars)
     return menuVars
@@ -5725,7 +5817,7 @@ function chooseVaryingDistance(settingVars)
     end
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+        oldValues ~= newValues
 end
 function chooseEvery(menuVars)
     _, menuVars.every = imgui.InputInt("Every __ notes", menuVars.every)
@@ -6201,6 +6293,12 @@ function chooseVibratoSVType(menuVars)
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
 end
+function chooseVibratoMode(menuVars)
+    menuVars.vibratoMode = combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
+end
+function chooseVibratoQuality(menuVars)
+    menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
+end
 function chooseSplitscrollLayers(settingVars)
     local currentLayerNum = settingVars.scrollIndex
     local currentLayer = settingVars.splitscrollLayers[currentLayerNum]
@@ -6561,33 +6659,36 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
     state.SetValue("computableInputFloatIndex", computableStateIndex + 1)
     return tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+"))
 end
-function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, tag)
+function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, tag, suffix, digits, widthFactor)
+    digits = digits or 2
+    suffix = suffix or "x"
+    widthFactor = widthFactor or 0.7
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
-    local oldValues = { settingVars[lowerName], settingVars[higherName] }
+    local oldValues = vector.New(settingVars[lowerName], settingVars[higherName])
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2(tag, oldValues, "%.2fx")
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
+    local _, newValues = imgui.InputFloat2(tag, oldValues, "%." .. digits .. "f" .. suffix)
     imgui.PopItemWidth()
-    settingVars[lowerName] = newValues[1]
-    settingVars[higherName] = newValues[2]
+    settingVars[lowerName] = newValues.x
+    settingVars[higherName] = newValues.y
     if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars[lowerName] = oldValues[2]
-        settingVars[higherName] = oldValues[1]
+        settingVars[lowerName] = oldValues.y
+        settingVars[higherName] = oldValues.x
     end
     if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars[lowerName] = -oldValues[1]
-        settingVars[higherName] = -oldValues[2]
+        settingVars[lowerName] = -oldValues.x
+        settingVars[higherName] = -oldValues.y
     end
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+        oldValues ~= newValues
 end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
@@ -7248,6 +7349,7 @@ end
 function getSVMultiplierAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.Multiplier end
+    if (map.InitialScrollVelocity == 0) then return 1 end
     return map.InitialScrollVelocity or 1
 end
 function getSSFMultiplierAt(offset)
@@ -7799,7 +7901,7 @@ function getSettingVars(svType, label)
             finalSVIndex = 2,
             customSV = 1
         }
-    elseif svType == "Linear SSF" then
+    elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
@@ -7807,6 +7909,11 @@ function getSettingVars(svType, label)
             higherEnd = 1,
             resolution = 90,
             curvature = 0,
+        }
+    elseif svType == "Linear##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0
         }
     elseif svType == "Exponential" then
         settingVars = {

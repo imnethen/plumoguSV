@@ -160,3 +160,23 @@ DISTANCE_TYPES = {
     "Distance + Shift",
     "Start / End"
 }
+
+VIBRATO_TYPES = { -- types of vibrato
+    "SV (msx)",
+    "SSF (x)",
+}
+
+VIBRATO_QUALITIES = {
+    "Low",
+    "Medium",
+    "High",
+    "Ultra"
+}
+
+VIBRATO_FRAME_RATES = { 45, 90, 150, 210 }
+
+VIBRATO_DETAILED_QUALITIES = {}
+
+for i, v in pairs(VIBRATO_QUALITIES) do
+    table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
+end

@@ -1,5 +1,5 @@
 VIBRATO_SVS = { -- types of vibrato SVs
-    "Linear SSF"
+    "Linear##Vibrato"
 }
 
 -- Creates the menu for placing special SVs
@@ -12,16 +12,27 @@ function placeVibratoSVMenu(globalVars)
     chooseVibratoSVType(menuVars)
 
     addSeparator()
+    imgui.Text("Vibrato Settings:")
+    chooseVibratoMode(menuVars)
+    chooseVibratoQuality(menuVars)
+    if (menuVars.vibratoMode ~= 2) then
+        _, menuVars.oneSided = imgui.Checkbox("One-Sided Vibrato?", menuVars.oneSided)
+    end
+
     local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Vibrato")
+    local settingVars = getSettingVars(currentSVType, "Vibrato" .. menuVars.vibratoMode)
     if globalVars.showExportImportMenu then
         -- exportImportSettingsMenu(globalVars, menuVars, settingVars)
         return
     end
 
-    if currentSVType == "Linear SSF" then linearVibratoMenu(settingVars) end
 
-    local labelText = table.concat({ currentSVType, "SettingsVibrato" })
+
+    addSeparator()
+
+    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
+
+    local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)
     saveVariables("placeVibratoMenu", menuVars)
 end
@@ -29,7 +40,10 @@ end
 -- Returns menuVars for the menu at Place SVs > Special
 function getVibratoPlaceMenuVars()
     local menuVars = {
-        svTypeIndex = 1
+        svTypeIndex = 1,
+        vibratoMode = 1,
+        vibratoQuality = 1,
+        oneSided = false
     }
     getVariables("placeVibratoMenu", menuVars)
     return menuVars

@@ -371,7 +371,7 @@ function chooseVaryingDistance(settingVars)
     end
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+        oldValues ~= newValues
 end
 
 function chooseEvery(menuVars)
@@ -1072,13 +1072,27 @@ function chooseSpecialSVType(menuVars)
     menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
 end
 
--- Lets you choose the special SV type
+-- Lets you choose the vibrato SV type
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
 function chooseVibratoSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #VIBRATO_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
+end
+
+-- Lets you choose the vibrato SV type
+-- Parameters
+--    menuVars : list of variables used for the current menu [Table]
+function chooseVibratoMode(menuVars)
+    menuVars.vibratoMode = combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
+end
+
+-- Lets you choose the vibrato SV quality
+-- Parameters
+--    menuVars : list of variables used for the current menu [Table]
+function chooseVibratoQuality(menuVars)
+    menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
 end
 
 -- Lets you choose the current splitscroll layer
@@ -1536,31 +1550,34 @@ end
 -- Returns whether or not the start or end SVs changed [Boolean]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
-function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, tag)
+function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, tag, suffix, digits, widthFactor)
+    digits = digits or 2
+    suffix = suffix or "x"
+    widthFactor = widthFactor or 0.7
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
-    local oldValues = { settingVars[lowerName], settingVars[higherName] }
+    local oldValues = vector.New(settingVars[lowerName], settingVars[higherName])
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2(tag, oldValues, "%.2fx")
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
+    local _, newValues = imgui.InputFloat2(tag, oldValues, "%." .. digits .. "f" .. suffix)
     imgui.PopItemWidth()
-    settingVars[lowerName] = newValues[1]
-    settingVars[higherName] = newValues[2]
+    settingVars[lowerName] = newValues.x
+    settingVars[higherName] = newValues.y
     if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars[lowerName] = oldValues[2]
-        settingVars[higherName] = oldValues[1]
+        settingVars[lowerName] = oldValues.y
+        settingVars[higherName] = oldValues.x
     end
     if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars[lowerName] = -oldValues[1]
-        settingVars[higherName] = -oldValues[2]
+        settingVars[lowerName] = -oldValues.x
+        settingVars[higherName] = -oldValues.y
     end
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues[1] ~= newValues[1] or oldValues[2] ~= newValues[2]
+        oldValues ~= newValues
 end

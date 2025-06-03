@@ -12,7 +12,7 @@ function getSettingVars(svType, label)
             finalSVIndex = 2,
             customSV = 1
         }
-    elseif svType == "Linear SSF" then
+    elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
@@ -20,6 +20,11 @@ function getSettingVars(svType, label)
             higherEnd = 1,
             resolution = 90,
             curvature = 0,
+        }
+    elseif svType == "Linear##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0
         }
     elseif svType == "Exponential" then
         settingVars = {
