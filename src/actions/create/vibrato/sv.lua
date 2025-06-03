@@ -6,13 +6,15 @@ function svVibrato(menuVars, heightFunc)
     local svsToRemove = {} ---@type ScrollVelocity[]
     local svTimeIsAdded = {}
 
+    local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
+    local fpsList = {}
+
     for i = 1, #offsets - 1 do
         local start = offsets[i]
         local next = offsets[i + 1]
         local startPos = (start - startOffset) / (endOffset - startOffset)
         local endPos = (next - startOffset) / (endOffset - startOffset)
         local posDifference = endPos - startPos
-        local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
         local trueFPS = fps
         local lowestDecimal = 1e10
         for t = fps - 3, fps + 3 do
@@ -22,6 +24,8 @@ function svVibrato(menuVars, heightFunc)
                 lowestDecimal = decimal
             end
         end
+
+        table.insert(fpsList, trueFPS)
 
         local teleportCount = math.floor((next - start) / 1000 * trueFPS / 2) * 2
 
@@ -57,5 +61,8 @@ function svVibrato(menuVars, heightFunc)
         end
     end
 
+    print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
+
+    getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end

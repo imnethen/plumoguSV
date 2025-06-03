@@ -42,7 +42,7 @@ function getVibratoPlaceMenuVars()
     local menuVars = {
         svTypeIndex = 1,
         vibratoMode = 1,
-        vibratoQuality = 1,
+        vibratoQuality = 3,
         oneSided = false
     }
     getVariables("placeVibratoMenu", menuVars)

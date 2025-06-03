@@ -867,13 +867,14 @@ function svVibrato(menuVars, heightFunc)
     local svsToAdd = {} ---@type ScrollVelocity[]
     local svsToRemove = {} ---@type ScrollVelocity[]
     local svTimeIsAdded = {}
+    local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
+    local fpsList = {}
     for i = 1, #offsets - 1 do
         local start = offsets[i]
         local next = offsets[i + 1]
         local startPos = (start - startOffset) / (endOffset - startOffset)
         local endPos = (next - startOffset) / (endOffset - startOffset)
         local posDifference = endPos - startPos
-        local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
         local trueFPS = fps
         local lowestDecimal = 1e10
         for t = fps - 3, fps + 3 do
@@ -883,6 +884,7 @@ function svVibrato(menuVars, heightFunc)
                 lowestDecimal = decimal
             end
         end
+        table.insert(fpsList, trueFPS)
         local teleportCount = math.floor((next - start) / 1000 * trueFPS / 2) * 2
         if (menuVars.oneSided) then
             for tp = 1, teleportCount do
@@ -915,6 +917,8 @@ function svVibrato(menuVars, heightFunc)
                 nil, 0)
         end
     end
+    print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
+    getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 function deleteItems(menuVars)
@@ -3137,7 +3141,7 @@ function getVibratoPlaceMenuVars()
     local menuVars = {
         svTypeIndex = 1,
         vibratoMode = 1,
-        vibratoQuality = 1,
+        vibratoQuality = 3,
         oneSided = false
     }
     getVariables("placeVibratoMenu", menuVars)
