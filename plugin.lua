@@ -3173,11 +3173,12 @@ end
 function sinusoidalVibratoMenu(menuVars, settingVars)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseMsxVerticalShift(settingVars, 0)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
         local func = function(t)
             return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
-            (settingVars.startMsx + t * (settingVars.endMsx - settingVars.startMsx))
+                (settingVars.startMsx + t * (settingVars.endMsx - settingVars.startMsx) + settingVars.verticalShift)
         end
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
@@ -5763,6 +5764,29 @@ function chooseConstantShift(settingVars, defaultShift)
     imgui.PopItemWidth()
     return oldShift ~= settingVars.verticalShift
 end
+function chooseMsxVerticalShift(settingVars, defaultShift)
+    local oldShift = settingVars.verticalShift
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
+    local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
+    if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
+        settingVars.verticalShift = defaultShift or 0
+    end
+    toolTip("Reset vertical shift to initial values")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
+    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
+    if negateButtonPressed and settingVars.verticalShift ~= 0 then
+        settingVars.verticalShift = -settingVars.verticalShift
+    end
+    toolTip("Negate start/end SV values")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
+    local inputText = "Vertical Shift"
+    _, settingVars.verticalShift = imgui.InputFloat(inputText, settingVars.verticalShift, 0, 0, "%.0f msx")
+    imgui.PopItemWidth()
+    return oldShift ~= settingVars.verticalShift
+end
 function chooseControlSecondSV(settingVars)
     local oldChoice = settingVars.controlLastSV
     local stutterControlsIndex = 1
@@ -8028,6 +8052,7 @@ function getSettingVars(svType, label)
         settingVars = {
             startMsx = 100,
             endMsx = 0,
+            verticalShift = 0,
             periods = 1,
             periodsShift = 0.25
         }
@@ -8046,12 +8071,13 @@ function getSettingVars(svType, label)
             higherEnd = 1,
             curvatureIndex = 10
         }
-    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
             higherStart = 1,
             higherEnd = 1,
+            verticalShift = 0,
             periods = 1,
             periodsShift = 0.25
         }

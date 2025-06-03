@@ -1,11 +1,12 @@
 function sinusoidalVibratoMenu(menuVars, settingVars)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseMsxVerticalShift(settingVars, 0)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
         local func = function(t)
             return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
-            (settingVars.startMsx + t * (settingVars.endMsx - settingVars.startMsx))
+                (settingVars.startMsx + t * (settingVars.endMsx - settingVars.startMsx) + settingVars.verticalShift)
         end
 
         simpleActionMenu("Vibrate", 2, function(v)

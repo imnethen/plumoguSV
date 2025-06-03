@@ -180,6 +180,36 @@ function chooseConstantShift(settingVars, defaultShift)
     return oldShift ~= settingVars.verticalShift
 end
 
+function chooseMsxVerticalShift(settingVars, defaultShift)
+    local oldShift = settingVars.verticalShift
+
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
+    local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
+    if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
+        settingVars.verticalShift = defaultShift or 0
+    end
+    toolTip("Reset vertical shift to initial values")
+    imgui.SameLine(0, SAMELINE_SPACING)
+
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
+    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
+
+    if negateButtonPressed and settingVars.verticalShift ~= 0 then
+        settingVars.verticalShift = -settingVars.verticalShift
+    end
+    toolTip("Negate start/end SV values")
+
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
+
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
+    local inputText = "Vertical Shift"
+    _, settingVars.verticalShift = imgui.InputFloat(inputText, settingVars.verticalShift, 0, 0, "%.0f msx")
+    imgui.PopItemWidth()
+
+    return oldShift ~= settingVars.verticalShift
+end
+
 -- Lets you choose whether or not to control the second SV for stutter SV
 -- Returns whether or not the choice changed [Boolean]
 -- Parameters
