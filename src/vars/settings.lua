@@ -12,6 +12,17 @@ function getSettingVars(svType, label)
             finalSVIndex = 2,
             customSV = 1
         }
+    elseif svType == "Linear##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0
+        }
+    elseif svType == "Exponential##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0,
+            curvatureIndex = 10
+        }
     elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,
@@ -19,12 +30,6 @@ function getSettingVars(svType, label)
             higherStart = 1,
             higherEnd = 1,
             resolution = 90,
-            curvature = 0,
-        }
-    elseif svType == "Linear##Vibrato" and label == "Vibrato1" then
-        settingVars = {
-            startMsx = 100,
-            endMsx = 0
         }
     elseif svType == "Exponential" then
         settingVars = {

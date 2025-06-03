@@ -838,14 +838,13 @@ function linearSSFVibrato(menuVars)
     if (not offsets) then return end
     local startTime = offsets[1]
     local endTime = offsets[#offsets]
-    local exponent = 2 ^ (menuVars.curvature / 100)
     local delta = 500 / menuVars.resolution
     local time = startTime
     local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
         getSSFMultiplierAt(time)) }
     while time < endTime do
-        local x = ((time - startTime) / (endTime - startTime)) ^ exponent
-        local y = ((time + delta - startTime) / (endTime - startTime)) ^ exponent
+        local x = ((time - startTime) / (endTime - startTime))
+        local y = ((time + delta - startTime) / (endTime - startTime))
         table.insert(ssfs,
             ssf(time - 1 / getUsableDisplacementMultiplier(time),
                 menuVars.higherStart + x * (menuVars.higherEnd - menuVars.higherStart)))
@@ -888,9 +887,10 @@ function svVibrato(menuVars, heightFunc)
         local teleportCount = math.floor((next - start) / 1000 * trueFPS / 2) * 2
         if (menuVars.oneSided) then
             for tp = 1, teleportCount do
-                local x = (tp - 1) / teleportCount
+                local x = (tp - 1) / (teleportCount - 2)
                 local offset = next * x + start * (1 - x)
-                local height = heightFunc(((math.floor((tp - 1) / 2) * 2) / teleportCount) * posDifference + startPos)
+                local height = heightFunc(((math.floor((tp - 1) / 2) * 2) / (teleportCount - 2)) * posDifference +
+                    startPos)
                 if (tp % 2 == 1) then
                     height = -height
                 end
@@ -901,10 +901,12 @@ function svVibrato(menuVars, heightFunc)
             prepareDisplacingSVs(start, svsToAdd, svTimeIsAdded, nil,
                 -heightFunc(startPos), 0)
             for tp = 2, teleportCount - 1 do
-                local x = (tp - 1) / teleportCount
+                local x = (tp - 1) / (teleportCount - 2)
                 local offset = next * x + start * (1 - x)
-                local initHeight = heightFunc(((math.floor((tp - 2) / 2) * 2) / teleportCount) * posDifference + startPos)
-                local newHeight = heightFunc(((math.floor((tp - 1) / 2) * 2) / teleportCount) * posDifference + startPos)
+                local initHeight = heightFunc(((math.floor((tp - 2) / 2) * 2) / (teleportCount - 2)) * posDifference +
+                startPos)
+                local newHeight = heightFunc(((math.floor((tp - 1) / 2) * 2) / (teleportCount - 2)) * posDifference +
+                startPos)
                 local height = initHeight + newHeight
                 if (tp % 2 == 1) then
                     height = -height
@@ -2305,6 +2307,7 @@ VIBRATO_DETAILED_QUALITIES = {}
 for i, v in pairs(VIBRATO_QUALITIES) do
     table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
 end
+VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M" }
 GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
@@ -2823,7 +2826,7 @@ function automateSVMenu(settingVars)
     addSeparator()
     _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", true)
     if (settingVars.maintainMs) then
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         imgui.PushItemWidth(90)
         settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
         imgui.PopItemWidth()
@@ -3096,6 +3099,29 @@ function getStillPlaceMenuVars()
     getVariables("placeStillMenu", menuVars)
     return menuVars
 end
+function exponentialVibratoMenu(menuVars, settingVars)
+    if (menuVars.vibratoMode == 1) then
+        customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseCurvatureCoefficient(settingVars)
+        local func = function(t)
+            local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.endMsx * t +
+                settingVars.startMsx * (1 - t)
+        end
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, nil, menuVars)
+    else
+        customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
+    end
+end
 function linearVibratoMenu(menuVars, settingVars)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
@@ -3112,7 +3138,8 @@ function linearVibratoMenu(menuVars, settingVars)
     end
 end
 VIBRATO_SVS = {
-    "Linear##Vibrato"
+    "Linear##Vibrato",
+    "Exponential##Vibrato"
 }
 function placeVibratoSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
@@ -3133,6 +3160,7 @@ function placeVibratoSVMenu(globalVars)
     end
     addSeparator()
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
+    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars) end
     local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)
     saveVariables("placeVibratoMenu", menuVars)
@@ -3306,20 +3334,20 @@ function directSVMenu()
     if (imgui.Button("<##DirectSV")) then
         menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs / 10))
     end
-    imgui.SameLine()
+    imgui.SameLine(0, SAMELINE_SPACING)
     imgui.Text("Page ")
-    imgui.SameLine()
+    imgui.SameLine(0, SAMELINE_SPACING)
     imgui.SetNextItemWidth(100)
     _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs / 10)), 0)
-    imgui.SameLine()
+    imgui.SameLine(0, SAMELINE_SPACING)
     imgui.Text(" of " .. math.ceil(#svs / 10))
-    imgui.SameLine()
+    imgui.SameLine(0, SAMELINE_SPACING)
     if (imgui.Button(">##DirectSV")) then
         menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
     end
     imgui.Separator()
     imgui.Text("Start Time")
-    imgui.SameLine()
+    imgui.SameLine(0, SAMELINE_SPACING)
     imgui.SetCursorPosX(150)
     imgui.Text("Multiplier")
     imgui.Separator()
@@ -3705,7 +3733,7 @@ function selectBookmarkMenu()
     else
         imgui.PushItemWidth(70)
         _, searchTerm = imgui.InputText("Search", searchTerm, 4096)
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         _, filterTerm = imgui.InputText("Ignore", filterTerm, 4096)
         imgui.Columns(3)
         imgui.Text("Time")
@@ -6303,6 +6331,32 @@ end
 function chooseVibratoQuality(menuVars)
     menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
 end
+function chooseCurvatureCoefficient(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 16
+    local values = table.construct()
+    for i = 0, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION
+        local value = t
+        if (curvature >= 1) then
+            value = t ^ curvature
+        else
+            value = (1 - (1 - t) ^ (1 / curvature))
+        end
+        if (settingVars.startMsx > settingVars.endMsx) then
+            value = 1 - value
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+    imgui.SameLine(0, 0)
+    _, settingVars.curvatureIndex = imgui.SliderInt("Curvature", settingVars.curvatureIndex, 1, #VIBRATO_CURVATURES,
+        tostring(VIBRATO_CURVATURES[settingVars.curvatureIndex]))
+end
 function chooseSplitscrollLayers(settingVars)
     local currentLayerNum = settingVars.scrollIndex
     local currentLayer = settingVars.splitscrollLayers[currentLayerNum]
@@ -6582,7 +6636,7 @@ function choosePluginAppearance(globalVars)
     choosePulseCoefficient(globalVars)
     _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
     if (globalVars.useCustomPulseColor) then
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         if (imgui.Button("Edit Color")) then
             globalVars.showColorPicker = true
         end
@@ -6603,7 +6657,7 @@ function chooseHotkeys(globalVars)
                 awaitingIndex = k
             end
         end
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         imgui.SetCursorPosX(85)
         imgui.Text("// " .. HOTKEY_LABELS[k])
     end
@@ -7905,6 +7959,17 @@ function getSettingVars(svType, label)
             finalSVIndex = 2,
             customSV = 1
         }
+    elseif svType == "Linear##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0
+        }
+    elseif svType == "Exponential##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0,
+            curvatureIndex = 10
+        }
     elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,
@@ -7912,12 +7977,6 @@ function getSettingVars(svType, label)
             higherStart = 1,
             higherEnd = 1,
             resolution = 90,
-            curvature = 0,
-        }
-    elseif svType == "Linear##Vibrato" and label == "Vibrato1" then
-        settingVars = {
-            startMsx = 100,
-            endMsx = 0
         }
     elseif svType == "Exponential" then
         settingVars = {

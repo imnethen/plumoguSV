@@ -3,14 +3,13 @@ function linearSSFVibrato(menuVars)
     if (not offsets) then return end
     local startTime = offsets[1]
     local endTime = offsets[#offsets]
-    local exponent = 2 ^ (menuVars.curvature / 100)
     local delta = 500 / menuVars.resolution
     local time = startTime
     local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
         getSSFMultiplierAt(time)) }
     while time < endTime do
-        local x = ((time - startTime) / (endTime - startTime)) ^ exponent
-        local y = ((time + delta - startTime) / (endTime - startTime)) ^ exponent
+        local x = ((time - startTime) / (endTime - startTime))
+        local y = ((time + delta - startTime) / (endTime - startTime))
         table.insert(ssfs,
             ssf(time - 1 / getUsableDisplacementMultiplier(time),
                 menuVars.higherStart + x * (menuVars.higherEnd - menuVars.higherStart)))

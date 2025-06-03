@@ -11,7 +11,7 @@ function automateSVMenu(settingVars)
     addSeparator()
     _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", true)
     if (settingVars.maintainMs) then
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         imgui.PushItemWidth(90)
         settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
         imgui.PopItemWidth()

@@ -1095,6 +1095,33 @@ function chooseVibratoQuality(menuVars)
     menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
 end
 
+function chooseCurvatureCoefficient(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 16
+    local values = table.construct()
+    for i = 0, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION
+        local value = t
+        if (curvature >= 1) then
+            value = t ^ curvature
+        else
+            value = (1 - (1 - t) ^ (1 / curvature))
+        end
+        if (settingVars.startMsx > settingVars.endMsx) then
+            value = 1 - value
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+    imgui.SameLine(0, 0)
+    _, settingVars.curvatureIndex = imgui.SliderInt("Curvature", settingVars.curvatureIndex, 1, #VIBRATO_CURVATURES,
+        tostring(VIBRATO_CURVATURES[settingVars.curvatureIndex]))
+end
+
 -- Lets you choose the current splitscroll layer
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
@@ -1458,7 +1485,7 @@ function choosePluginAppearance(globalVars)
     choosePulseCoefficient(globalVars)
     _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
     if (globalVars.useCustomPulseColor) then
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         if (imgui.Button("Edit Color")) then
             globalVars.showColorPicker = true
         end
@@ -1480,7 +1507,7 @@ function chooseHotkeys(globalVars)
                 awaitingIndex = k
             end
         end
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         imgui.SetCursorPosX(85)
         imgui.Text("// " .. HOTKEY_LABELS[k])
     end

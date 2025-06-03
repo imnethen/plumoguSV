@@ -13,7 +13,7 @@ function selectBookmarkMenu()
         imgui.PushItemWidth(70)
 
         _, searchTerm = imgui.InputText("Search", searchTerm, 4096)
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         _, filterTerm = imgui.InputText("Ignore", filterTerm, 4096)
 
         imgui.Columns(3)
