@@ -17,9 +17,10 @@ function exponentialVibratoMenu(menuVars, settingVars)
             svVibrato(v, func)
         end, nil, menuVars)
     else
-        customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
+        -- customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        -- customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
 
-        simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
+        -- simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
     end
 end

@@ -31,6 +31,15 @@ function getSettingVars(svType, label)
             higherEnd = 1,
             resolution = 90,
         }
+    elseif svType == "Exponential##Vibrato" and label == "Vibrato2" then
+        settingVars = {
+            lowerStart = 0.5,
+            lowerEnd = 0.5,
+            higherStart = 1,
+            higherEnd = 1,
+            resolution = 90,
+            curvatureIndex = 10
+        }
     elseif svType == "Exponential" then
         settingVars = {
             behaviorIndex = 1,
