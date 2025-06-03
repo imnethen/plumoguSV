@@ -564,13 +564,13 @@ function chooseFinalSV(settingVars, skipFinalSV)
         imgui.SameLine(0, SAMELINE_SPACING)
         imgui.PopItemWidth()
     else
-        imgui.Indent(DEFAULT_WIDGET_WIDTH * 0.35 + 24)
+        imgui.Indent(DEFAULT_WIDGET_WIDTH * 0.35 + 25)
     end
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.5)
     settingVars.finalSVIndex = combo("Final SV", FINAL_SV_TYPES, settingVars.finalSVIndex)
     helpMarker("Final SV won't be placed if there's already an SV at the end time")
     if finalSVType == "Normal" then
-        imgui.Unindent(DEFAULT_WIDGET_WIDTH * 0.35 + 24)
+        imgui.Unindent(DEFAULT_WIDGET_WIDTH * 0.35 + 25)
     end
     imgui.PopItemWidth()
     return (oldIndex ~= settingVars.finalSVIndex) or (oldCustomSV ~= settingVars.customSV)
