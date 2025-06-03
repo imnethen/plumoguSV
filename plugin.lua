@@ -3170,9 +3170,26 @@ function linearVibratoMenu(menuVars, settingVars)
         simpleActionMenu("Vibrate", 2, linearSSFVibrato, menuVars, settingVars)
     end
 end
+function sinusoidalVibratoMenu(menuVars, settingVars)
+    if (menuVars.vibratoMode == 1) then
+        customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        local func = function(t)
+            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
+            (settingVars.startMsx + t * (settingVars.endMsx - settingVars.startMsx))
+        end
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, nil, menuVars)
+    else
+        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
+    end
+end
 VIBRATO_SVS = {
     "Linear##Vibrato",
-    "Exponential##Vibrato"
+    "Exponential##Vibrato",
+    "Sinusoidal##Vibrato"
 }
 function placeVibratoSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
@@ -3194,6 +3211,7 @@ function placeVibratoSVMenu(globalVars)
     addSeparator()
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
     if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars) end
+    if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars) end
     local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)
     saveVariables("placeVibratoMenu", menuVars)
@@ -8006,6 +8024,13 @@ function getSettingVars(svType, label)
             endMsx = 0,
             curvatureIndex = 10
         }
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0,
+            periods = 1,
+            periodsShift = 0.25
+        }
     elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,
@@ -8020,6 +8045,15 @@ function getSettingVars(svType, label)
             higherStart = 1,
             higherEnd = 1,
             curvatureIndex = 10
+        }
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            lowerStart = 0.5,
+            lowerEnd = 0.5,
+            higherStart = 1,
+            higherEnd = 1,
+            periods = 1,
+            periodsShift = 0.25
         }
     elseif svType == "Exponential" then
         settingVars = {

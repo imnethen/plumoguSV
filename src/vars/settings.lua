@@ -23,6 +23,14 @@ function getSettingVars(svType, label)
             endMsx = 0,
             curvatureIndex = 10
         }
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            startMsx = 100,
+            endMsx = 0,
+            -- verticalShift = 0,
+            periods = 1,
+            periodsShift = 0.25
+        }
     elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,
@@ -37,6 +45,16 @@ function getSettingVars(svType, label)
             higherStart = 1,
             higherEnd = 1,
             curvatureIndex = 10
+        }
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            lowerStart = 0.5,
+            lowerEnd = 0.5,
+            higherStart = 1,
+            higherEnd = 1,
+            -- verticalShift = 0,
+            periods = 1,
+            periodsShift = 0.25
         }
     elseif svType == "Exponential" then
         settingVars = {
