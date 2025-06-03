@@ -40,8 +40,8 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * [mulch](https://github.com/Emik03/mulch) by Emik03
 
 ## TO-DO
-* Automate TG effects (v2)
+* ~~Automate TG effects (v2)~~
 * Separate settings tab (v2)
-* Move to vector system (v2)
-* Fix all syntax errors in intellisense (v2)
-* Migrate affine vibrato (v2)
+* ~~Move to vector system (v2)~~
+* ~~Fix all syntax errors in intellisense (v2)~~
+* ~~Migrate affine vibrato (v2)~~
