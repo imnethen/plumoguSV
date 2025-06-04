@@ -1571,17 +1571,6 @@ function swapNoteSVs()
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
-function tempBugFix()
-    local ptr = 0
-    local svsToRemove = {}
-    for _, sv in pairs(map.ScrollVelocities) do
-        if (math.abs(ptr - sv.StartTime) < 0.035) then
-            table.insert(svsToRemove, sv)
-        end
-        ptr = sv.StartTime
-    end
-    actions.RemoveScrollVelocityBatch(svsToRemove)
-end
 function verticalShiftSVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
@@ -3260,19 +3249,6 @@ end
 function alignTimingLinesMenu()
     simpleActionMenu("Align timing lines in this region", 0, alignTimingLines, nil, nil)
 end
-function tempBugFixMenu()
-    imgui.PushTextWrapPos(200)
-    imgui.TextWrapped(
-        "note: this will not fix already broken regions, but will hopefully turn non-broken regions into things you can properly copy paste with no issues. ")
-    imgui.NewLine()
-    imgui.TextWrapped(
-        "Copy paste bug is caused when two svs are on top of each other, because of the way Quaver handles dupe svs; the order in the .qua file determines rendering order. When duplicating stacked svs, the order has a chance to reverse, therefore making a different sv prioritized and messing up proper movement. Possible solutions include getting better at coding or merging SV before C+P.")
-    imgui.NewLine()
-    imgui.TextWrapped(
-        " If you copy paste and the original SV gets broken, this likely means that the game changed the rendering order of duplicated svs on the original SV. Either try this tool, or use Edit SVs > Merge.")
-    imgui.PopTextWrapPos()
-    simpleActionMenu("Try to fix regions to become copy pastable", 0, tempBugFix, nil, nil)
-end
 function convertSVSSFMenu()
     local menuVars = {
         conversionDirection = true
@@ -3498,7 +3474,6 @@ end
 EDIT_SV_TOOLS = {
     "Add Teleport",
     "Align Timing Lines",
-    "bug fixing from <1.1.2",
     "Convert SV <-> SSF",
     "Copy & Paste",
     "Direct SV",
@@ -3523,7 +3498,6 @@ function editSVTab(globalVars)
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
-    if toolName == "bug fixing from <1.1.2" then tempBugFixMenu() end
     if toolName == "Convert SV <-> SSF" then convertSVSSFMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
     if toolName == "Direct SV" then directSVMenu() end
