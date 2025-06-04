@@ -919,10 +919,9 @@ function svVibrato(menuVars, heightFunc)
             end
             prepareDisplacingSVs(next, svsToAdd, svTimeIsAdded,
                 heightFunc(((math.floor((teleportCount - 2) / 2) * 2) / teleportCount) * posDifference + startPos),
-                nil, 0)
+                0, nil)
         end
     end
-    print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
@@ -6423,10 +6422,12 @@ function chooseCurvatureCoefficient(settingVars)
         end
         if (settingVars.startMsx > settingVars.endMsx) then
             value = 1 - value
+        elseif (settingVars.startMsx == settingVars.endMsx) then
+            value = 0.5
         end
         values:insert(value)
     end
-    imgui.PlotLines("##CurvaturePlot", values)
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
     imgui.PopStyleColor()
     imgui.PopItemWidth()
     imgui.SameLine(0, 0)
@@ -8046,7 +8047,7 @@ function getSettingVars(svType, label)
         settingVars = {
             startMsx = 100,
             endMsx = 0,
-            curvatureIndex = 10
+            curvatureIndex = 5
         }
     elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
         settingVars = {

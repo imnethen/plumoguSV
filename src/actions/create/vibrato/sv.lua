@@ -60,11 +60,11 @@ function svVibrato(menuVars, heightFunc)
             end
             prepareDisplacingSVs(next, svsToAdd, svTimeIsAdded,
                 heightFunc(((math.floor((teleportCount - 2) / 2) * 2) / teleportCount) * posDifference + startPos),
-                nil, 0)
+                0, nil)
         end
     end
 
-    print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
+    -- print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
 
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)

@@ -21,7 +21,7 @@ function getSettingVars(svType, label)
         settingVars = {
             startMsx = 100,
             endMsx = 0,
-            curvatureIndex = 10
+            curvatureIndex = 5
         }
     elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
         settingVars = {

@@ -1142,10 +1142,12 @@ function chooseCurvatureCoefficient(settingVars)
         end
         if (settingVars.startMsx > settingVars.endMsx) then
             value = 1 - value
+        elseif (settingVars.startMsx == settingVars.endMsx) then
+            value = 0.5
         end
         values:insert(value)
     end
-    imgui.PlotLines("##CurvaturePlot", values)
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
     imgui.PopStyleColor()
     imgui.PopItemWidth()
     imgui.SameLine(0, 0)
