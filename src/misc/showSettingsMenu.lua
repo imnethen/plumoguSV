@@ -26,5 +26,7 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
         return chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Combo" then
         return comboSettingsMenu(settingVars)
+    elseif currentSVType == "Code" then
+        return codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     end
 end

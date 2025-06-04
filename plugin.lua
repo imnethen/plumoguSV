@@ -3023,7 +3023,8 @@ STANDARD_SVS = {
     "Random",
     "Custom",
     "Chinchilla",
-    "Combo"
+    "Combo",
+    "Code"
 }
 function placeStandardSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
@@ -3930,6 +3931,17 @@ function circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     settingsChanged = chooseNoNormalize(settingVars) or settingsChanged
     return settingsChanged
 end
+function codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    local settingsChanged = false
+    chooseCode(settingVars)
+    if (imgui.Button("Refresh Plot", vector.New(ACTION_BUTTON_SIZE.x, 30))) then
+        settingsChanged = true
+    end
+    imgui.Separator()
+    settingsChanged = chooseSVPoints(settingVars, svPointsForce) or settingsChanged
+    settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
+    return settingsChanged
+end
 function comboSettingsMenu(settingVars)
     local settingsChanged = false
     startNextWindowNotCollapsed("svType1AutoOpen")
@@ -4307,6 +4319,8 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
         return chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Combo" then
         return comboSettingsMenu(settingVars)
+    elseif currentSVType == "Code" then
+        return codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     end
 end
 function addOrClearNoteTimes(settingVars, noNoteTimesInitially)
@@ -6401,7 +6415,9 @@ function chooseVibratoQuality(menuVars)
     toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 function chooseCode(settingVars)
+    local oldCode = settingVars.code
     _, settingVars.code = imgui.InputTextMultiline("##fn", settingVars.code, 16384, vector.New(240, 120))
+    return oldCode ~= settingVars.code
 end
 function chooseCurvatureCoefficient(settingVars)
     imgui.PushItemWidth(28)
@@ -7304,6 +7320,12 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
             comboType, settingVars.comboMultiplier1,
             settingVars.comboMultiplier2, settingVars.dontNormalize,
             settingVars.avgSV, settingVars.verticalShift)
+    elseif svType == "Code" then
+        multipliers = table.construct()
+        local func = eval(settingVars.code)
+        for i = 0, settingVars.svPoints do
+            multipliers:insert(func(i / settingVars.svPoints))
+        end
     elseif svType == "Stutter1" then
         multipliers = generateStutterSet(settingVars.startSV, settingVars.stutterDuration,
             settingVars.avgSV, settingVars.controlLastSV)
@@ -8193,6 +8215,18 @@ end]]
             dontNormalize = false,
             avgSV = 1,
             verticalShift = 0
+        }
+    elseif svType == "Code" then
+        settingVars = {
+            code = [[return function (x)
+    local startPeriod = 4
+    local endPeriod = -1
+    local height = 1.5
+    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) / 2 * x^2))
+end]],
+            svPoints = 64,
+            finalSVIndex = 2,
+            customSV = 1
         }
     elseif svType == "Stutter" then
         settingVars = {

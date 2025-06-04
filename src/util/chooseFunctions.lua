@@ -1127,7 +1127,9 @@ function chooseVibratoQuality(menuVars)
 end
 
 function chooseCode(settingVars)
+    local oldCode = settingVars.code
     _, settingVars.code = imgui.InputTextMultiline("##fn", settingVars.code, 16384, vector.New(240, 120))
+    return oldCode ~= settingVars.code
 end
 
 function chooseCurvatureCoefficient(settingVars)

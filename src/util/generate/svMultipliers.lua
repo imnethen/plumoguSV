@@ -62,6 +62,12 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
             comboType, settingVars.comboMultiplier1,
             settingVars.comboMultiplier2, settingVars.dontNormalize,
             settingVars.avgSV, settingVars.verticalShift)
+    elseif svType == "Code" then
+        multipliers = table.construct()
+        local func = eval(settingVars.code)
+        for i = 0, settingVars.svPoints do
+            multipliers:insert(func(i / settingVars.svPoints))
+        end
     elseif svType == "Stutter1" then
         multipliers = generateStutterSet(settingVars.startSV, settingVars.stutterDuration,
             settingVars.avgSV, settingVars.controlLastSV)

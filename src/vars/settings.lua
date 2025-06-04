@@ -172,6 +172,19 @@ end]]
             avgSV = 1,
             verticalShift = 0
         }
+    elseif svType == "Code" then
+        settingVars = {
+            code = [[return function (x)
+    local startPeriod = 4
+    local endPeriod = -1
+    local height = 1.5
+
+    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) / 2 * x^2))
+end]],
+            svPoints = 64,
+            finalSVIndex = 2,
+            customSV = 1
+        }
     elseif svType == "Stutter" then
         settingVars = {
             startSV = 1.5,

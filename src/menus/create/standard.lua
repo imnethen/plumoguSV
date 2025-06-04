@@ -8,7 +8,8 @@ STANDARD_SVS = { -- types of standard SVs
     "Random",
     "Custom",
     "Chinchilla",
-    "Combo"
+    "Combo",
+    "Code"
 }
 
 -- Creates the menu for placing standard SVs
