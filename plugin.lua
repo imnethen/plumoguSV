@@ -3122,6 +3122,23 @@ function getStillPlaceMenuVars()
     getVariables("placeStillMenu", menuVars)
     return menuVars
 end
+function customVibratoMenu(menuVars, settingVars)
+    local typingCode = false
+    if (menuVars.vibratoMode == 1) then
+        chooseCode(settingVars)
+        if imgui.IsItemActive() then
+            typingCode = true
+        else
+            typingCode = false
+        end
+        local func = eval(settingVars.code)
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, nil, menuVars, false, typingCode)
+    else
+        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
+    end
+end
 function exponentialVibratoMenu(menuVars, settingVars)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
@@ -3178,7 +3195,8 @@ end
 VIBRATO_SVS = {
     "Linear##Vibrato",
     "Exponential##Vibrato",
-    "Sinusoidal##Vibrato"
+    "Sinusoidal##Vibrato",
+    "Custom##Vibrato"
 }
 function placeVibratoSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
@@ -3201,6 +3219,7 @@ function placeVibratoSVMenu(globalVars)
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
     if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars) end
     if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars) end
+    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars) end
     local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)
     saveVariables("placeVibratoMenu", menuVars)
@@ -6380,6 +6399,9 @@ function chooseVibratoQuality(menuVars)
     menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
     toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
+function chooseCode(settingVars)
+    _, settingVars.code = imgui.InputTextMultiline("##fn", settingVars.code, 16384, vector.New(240, 120))
+end
 function chooseCurvatureCoefficient(settingVars)
     imgui.PushItemWidth(28)
     imgui.PushStyleColor(imgui_col.FrameBg, 0)
@@ -8030,6 +8052,16 @@ function getSettingVars(svType, label)
             verticalShift = 0,
             periods = 1,
             periodsShift = 0.25
+        }
+    elseif svType == "Custom##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            code = [[return function (x)
+    local maxHeight = 150
+    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) / 2) / (31 - 7 * math.sqrt(17)) * 16
+    primaryCoefficient = (x^2 - x^3) * math.exp(2 * x)
+    sinusoidalCoefficient = math.sin(8 * math.pi * x)
+    return heightFactor * primaryCoefficient * sinusoidalCoefficient
+end]]
         }
     elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {

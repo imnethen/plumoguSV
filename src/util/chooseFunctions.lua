@@ -1126,6 +1126,10 @@ function chooseVibratoQuality(menuVars)
     toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 
+function chooseCode(settingVars)
+    _, settingVars.code = imgui.InputTextMultiline("##fn", settingVars.code, 16384, vector.New(240, 120))
+end
+
 function chooseCurvatureCoefficient(settingVars)
     imgui.PushItemWidth(28)
     imgui.PushStyleColor(imgui_col.FrameBg, 0)

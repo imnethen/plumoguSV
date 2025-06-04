@@ -31,6 +31,17 @@ function getSettingVars(svType, label)
             periods = 1,
             periodsShift = 0.25
         }
+    elseif svType == "Custom##Vibrato" and label == "Vibrato1" then
+        settingVars = {
+            code = [[return function (x)
+    local maxHeight = 150
+
+    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) / 2) / (31 - 7 * math.sqrt(17)) * 16
+    primaryCoefficient = (x^2 - x^3) * math.exp(2 * x)
+    sinusoidalCoefficient = math.sin(8 * math.pi * x)
+    return heightFactor * primaryCoefficient * sinusoidalCoefficient
+end]]
+        }
     elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
         settingVars = {
             lowerStart = 0.5,

@@ -1,7 +1,8 @@
 VIBRATO_SVS = { -- types of vibrato SVs
     "Linear##Vibrato",
     "Exponential##Vibrato",
-    "Sinusoidal##Vibrato"
+    "Sinusoidal##Vibrato",
+    "Custom##Vibrato"
 }
 
 -- Creates the menu for placing special SVs
@@ -28,13 +29,12 @@ function placeVibratoSVMenu(globalVars)
         return
     end
 
-
-
     addSeparator()
 
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
     if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars) end
     if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars) end
+    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars) end
 
     local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)
