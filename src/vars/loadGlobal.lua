@@ -1,7 +1,6 @@
 function loadGlobalVars()
     return {
         stepSize = state.GetValue("global_stepSize") or 5,
-        keyboardMode = state.GetValue("global_keyboardMode") or false,
         dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
         upscroll = state.GetValue("global_upscroll") or false,
         colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,

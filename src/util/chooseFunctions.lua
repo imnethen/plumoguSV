@@ -724,26 +724,6 @@ function chooseLinearlyChangeDist(settingVars)
     return oldChoice ~= newChoice
 end
 
--- Lets you choose whether or not the plugin will be in keyboard mode
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function chooseKeyboardMode(globalVars)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Plugin Mode:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    local oldKeyboardMode = globalVars.keyboardMode
-    if imgui.RadioButton("Default", not globalVars.keyboardMode) then
-        globalVars.keyboardMode = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Keyboard", globalVars.keyboardMode) then
-        globalVars.keyboardMode = true
-    end
-    if (oldKeyboardMode ~= globalVars.keyboardMode) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
 -- Lets you choose whether to activate or deactivate "Advanced Mode"
 function chooseAdvancedMode(globalVars)
     local oldAdvancedMode = globalVars.advancedMode

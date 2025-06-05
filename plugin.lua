@@ -2140,7 +2140,6 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_pulseColor", table.vectorize4(tempGlobalVars.pulseColor))
     state.SetValue("global_pulseCoefficient", tonumber(tempGlobalVars.pulseCoefficient))
     state.SetValue("global_stepSize", tonumber(tempGlobalVars.stepSize))
-    state.SetValue("global_keyboardMode", truthy(tempGlobalVars.keyboardMode))
     state.SetValue("global_dontReplaceSV", truthy(tempGlobalVars.dontReplaceSV))
     state.SetValue("global_upscroll", truthy(tempGlobalVars.upscroll))
     state.SetValue("global_colorThemeIndex", tonumber(tempGlobalVars.colorThemeIndex))
@@ -2179,21 +2178,13 @@ function draw()
     drawCursorTrail(globalVars)
     setPluginAppearance(globalVars)
     startNextWindowNotCollapsed("plumoguSVAutoOpen")
-    focusWindowIfHotkeysPressed()
-    centerWindowIfHotkeysPressed()
     imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-    if globalVars.keyboardMode then
-        imgui.BeginTabBar("Quick tabs")
-        createQuickTabs(globalVars)
-        imgui.EndTabBar()
-    else
-        imgui.BeginTabBar("SV tabs")
-        for i = 1, #TAB_MENUS do
-            createMenuTab(globalVars, TAB_MENUS[i])
-        end
-        imgui.EndTabBar()
+    imgui.BeginTabBar("SV tabs")
+    for i = 1, #TAB_MENUS do
+        createMenuTab(globalVars, TAB_MENUS[i])
     end
+    imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
     imgui.End()
     saveVariables("globalVars", globalVars)
@@ -2386,121 +2377,6 @@ for i, v in pairs(VIBRATO_QUALITIES) do
     table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
 end
 VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
-function infoTabKeyboard(globalVars)
-    provideMorePluginInfo()
-    listKeyboardShortcuts()
-    choosePluginBehaviorSettings(globalVars)
-    choosePluginAppearance(globalVars)
-end
-function createQuickTabs(globalVars)
-    local tabMenus = {
-        "##info",
-        "##placeStandard",
-        "##placeSpecial",
-        "##placeStill",
-        "##edit",
-        "##delete"
-    }
-    local tabMenuFunctions = {
-        infoTabKeyboard,
-        placeStandardSVMenu,
-        placeSpecialSVMenu,
-        placeStillSVMenu,
-        editSVTab,
-        deleteTab
-    }
-    for i = 1, #tabMenus do
-        local tabName = tabMenus[i]
-        local tabItemFlag = imgui_tab_item_flags.None
-        if keysPressedForMenuTab(tabName) then tabItemFlag = imgui_tab_item_flags.SetSelected end
-        if imgui.BeginTabItem(tabName, true, tabItemFlag) then
-            imgui.InvisibleButton("SV stands for sv veleocity", vector.New(255, 1))
-            if tabName == "##info" then
-                imgui.Text("This is keyboard mode (for pro users)")
-                imgui.Text("Tab navigation: Alt + (Z, X, C, A, S, D)")
-                imgui.Text("Tool naviation: Alt + Shift + (Z, X)")
-            end
-            tabMenuFunctions[i](globalVars)
-            imgui.EndTabItem()
-        end
-    end
-end
-function focusWindowIfHotkeysPressed()
-    local shiftKeyPressedDown = utils.IsKeyDown(keys.LeftShift) or
-        utils.IsKeyDown(keys.RightShift)
-    local tabKeyPressed = utils.IsKeyPressed(keys.Tab)
-    if shiftKeyPressedDown and tabKeyPressed then imgui.SetNextWindowFocus() end
-end
-function centerWindowIfHotkeysPressed()
-    local ctrlPressedDown = utils.IsKeyDown(keys.LeftControl) or
-        utils.IsKeyDown(keys.RightControl)
-    local shiftPressedDown = utils.IsKeyDown(keys.LeftShift) or
-        utils.IsKeyDown(keys.RightShift)
-    local tabPressed = utils.IsKeyPressed(keys.Tab)
-    if not (ctrlPressedDown and shiftPressedDown and tabPressed) then return end
-    local windowDim = state.WindowSize
-    local pluginDim = imgui.GetWindowSize()
-    local centeringX = (windowDim.x - pluginDim.x) / 2
-    local centeringY = (windowDim.y - pluginDim.y) / 2
-    local coordinatesToCenter = { centeringX, centeringY }
-    imgui.SetWindowPos("plumoguSV", coordinatesToCenter)
-end
-function keysPressedForMenuTab(tabName)
-    local shiftPressedDown = utils.IsKeyDown(keys.LeftShift) or
-        utils.IsKeyDown(keys.RightShift)
-    if shiftPressedDown then return false end
-    local altPressedDown = utils.IsKeyDown(keys.LeftAlt) or
-        utils.IsKeyDown(keys.RightAlt)
-    local otherKey
-    if tabName == "##info" then otherKey = keys.A end
-    if tabName == "##placeStandard" then otherKey = keys.Z end
-    if tabName == "##placeSpecial" then otherKey = keys.X end
-    if tabName == "##placeStill" then otherKey = keys.C end
-    if tabName == "##edit" then otherKey = keys.S end
-    if tabName == "##delete" then otherKey = keys.D end
-    local otherKeyPressed = utils.IsKeyPressed(otherKey)
-    return altPressedDown and otherKeyPressed
-end
-function changeSVTypeIfKeysPressed(menuVars)
-    local altPressedDown = utils.IsKeyDown(keys.LeftAlt) or
-        utils.IsKeyDown(keys.RightAlt)
-    local shiftPressedDown = utils.IsKeyDown(keys.LeftShift) or
-        utils.IsKeyDown(keys.RightShift)
-    local xPressed = utils.IsKeyPressed(keys.X)
-    local zPressed = utils.IsKeyPressed(keys.Z)
-    if not (altPressedDown and shiftPressedDown and (xPressed or zPressed)) then return false end
-    local maxSVTypes = #STANDARD_SVS
-    local isSpecialType = menuVars.interlace == nil
-    if isSpecialType then maxSVTypes = #SPECIAL_SVS end
-    if xPressed then menuVars.svTypeIndex = menuVars.svTypeIndex + 1 end
-    if zPressed then menuVars.svTypeIndex = menuVars.svTypeIndex - 1 end
-    menuVars.svTypeIndex = math.wrap(menuVars.svTypeIndex, 1, maxSVTypes)
-    return true
-end
-function changeSelectToolIfKeysPressed(globalVars)
-    local altPressedDown = utils.IsKeyDown(keys.LeftAlt) or
-        utils.IsKeyDown(keys.RightAlt)
-    local shiftPressedDown = utils.IsKeyDown(keys.LeftShift) or
-        utils.IsKeyDown(keys.RightShift)
-    local xPressed = utils.IsKeyPressed(keys.X)
-    local zPressed = utils.IsKeyPressed(keys.Z)
-    if not (altPressedDown and shiftPressedDown and (xPressed or zPressed)) then return end
-    if xPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex + 1 end
-    if zPressed then globalVars.selectTypeIndex = globalVars.selectTypeIndex - 1 end
-    globalVars.selectTypeIndex = math.wrap(globalVars.selectTypeIndex, 1, #SELECT_TOOLS)
-end
-function changeEditToolIfKeysPressed(globalVars)
-    local altPressedDown = utils.IsKeyDown(keys.LeftAlt) or
-        utils.IsKeyDown(keys.RightAlt)
-    local shiftPressedDown = utils.IsKeyDown(keys.LeftShift) or
-        utils.IsKeyDown(keys.RightShift)
-    local xPressed = utils.IsKeyPressed(keys.X)
-    local zPressed = utils.IsKeyPressed(keys.Z)
-    if not (altPressedDown and shiftPressedDown and (xPressed or zPressed)) then return end
-    if xPressed then globalVars.editToolIndex = globalVars.editToolIndex + 1 end
-    if zPressed then globalVars.editToolIndex = globalVars.editToolIndex - 1 end
-    globalVars.editToolIndex = math.wrap(globalVars.editToolIndex, 1, #EDIT_SV_TOOLS)
-end
 function copiableBox(text, label, content)
     imgui.TextWrapped(text)
     imgui.PushItemWidth(imgui.GetContentRegionAvailWidth())
@@ -4130,8 +4006,6 @@ function showPluginSettingsWindow(globalVars)
         if (not globalVars.advancedMode) then imgui.BeginDisabled() end
         chooseHideAutomatic(globalVars)
         if (not globalVars.advancedMode) then imgui.EndDisabled() end
-        addSeparator()
-        chooseKeyboardMode(globalVars)
         addSeparator()
         chooseUpscroll(globalVars)
         addSeparator()
@@ -6253,22 +6127,6 @@ function chooseLinearlyChangeDist(settingVars)
     settingVars.linearlyChange = newChoice
     return oldChoice ~= newChoice
 end
-function chooseKeyboardMode(globalVars)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Plugin Mode:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    local oldKeyboardMode = globalVars.keyboardMode
-    if imgui.RadioButton("Default", not globalVars.keyboardMode) then
-        globalVars.keyboardMode = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Keyboard", globalVars.keyboardMode) then
-        globalVars.keyboardMode = true
-    end
-    if (oldKeyboardMode ~= globalVars.keyboardMode) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
 function chooseAdvancedMode(globalVars)
     local oldAdvancedMode = globalVars.advancedMode
     _, globalVars.advancedMode = imgui.Checkbox("Enable Advanced Mode", oldAdvancedMode)
@@ -8079,7 +7937,6 @@ end
 function loadGlobalVars()
     return {
         stepSize = state.GetValue("global_stepSize") or 5,
-        keyboardMode = state.GetValue("global_keyboardMode") or false,
         dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
         upscroll = state.GetValue("global_upscroll") or false,
         colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,

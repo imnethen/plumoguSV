@@ -45,8 +45,6 @@ function showPluginSettingsWindow(globalVars)
         chooseHideAutomatic(globalVars)
         if (not globalVars.advancedMode) then imgui.EndDisabled() end
         addSeparator()
-        chooseKeyboardMode(globalVars)
-        addSeparator()
         chooseUpscroll(globalVars)
         addSeparator()
         chooseDontReplaceSV(globalVars)

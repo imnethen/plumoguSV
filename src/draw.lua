@@ -21,23 +21,15 @@ function draw()
     drawCursorTrail(globalVars)
     setPluginAppearance(globalVars)
     startNextWindowNotCollapsed("plumoguSVAutoOpen")
-    focusWindowIfHotkeysPressed()
-    centerWindowIfHotkeysPressed()
 
     imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
 
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-    if globalVars.keyboardMode then
-        imgui.BeginTabBar("Quick tabs")
-        createQuickTabs(globalVars)
-        imgui.EndTabBar()
-    else
-        imgui.BeginTabBar("SV tabs")
-        for i = 1, #TAB_MENUS do
-            createMenuTab(globalVars, TAB_MENUS[i])
-        end
-        imgui.EndTabBar()
+    imgui.BeginTabBar("SV tabs")
+    for i = 1, #TAB_MENUS do
+        createMenuTab(globalVars, TAB_MENUS[i])
     end
+    imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
 
     -- if (imgui.Button("hi")) then
