@@ -6,7 +6,7 @@ local SETTING_TYPES = {
 
 
 function showPluginSettingsWindow(globalVars)
-    local bgColor = vector.New(0.2, 0.2, 0.2, 0.7)
+    local bgColor = vector.New(0.2, 0.2, 0.2, 1)
 
     imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBg, bgColor)

@@ -450,7 +450,7 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseDontReplaceSV(globalVars)
-    local label = "Dont replace SVs when placing regular SVs"
+    local label = "Don't replace SVs when placing regular SVs"
     local oldDontReplaceSV = globalVars.dontReplaceSV
     _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
     if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then

@@ -4076,7 +4076,7 @@ local SETTING_TYPES = {
     "Hotkeys/Keybinds"
 }
 function showPluginSettingsWindow(globalVars)
-    local bgColor = vector.New(0.2, 0.2, 0.2, 0.7)
+    local bgColor = vector.New(0.2, 0.2, 0.2, 1)
     imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
@@ -6049,7 +6049,7 @@ function chooseDistanceBack3(settingVars)
     helpMarker("Splitscroll distance separating scroll3 and scroll4 planes")
 end
 function chooseDontReplaceSV(globalVars)
-    local label = "Dont replace SVs when placing regular SVs"
+    local label = "Don't replace SVs when placing regular SVs"
     local oldDontReplaceSV = globalVars.dontReplaceSV
     _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
     if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then
