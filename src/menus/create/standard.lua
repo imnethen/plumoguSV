@@ -18,8 +18,7 @@ STANDARD_SVS = { -- types of standard SVs
 function placeStandardSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getStandardPlaceMenuVars()
-    local needSVUpdate = changeSVTypeIfKeysPressed(menuVars)
-    needSVUpdate = needSVUpdate or #menuVars.svMultipliers == 0
+    local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
 
     addSeparator()

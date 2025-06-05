@@ -15,7 +15,6 @@ SPECIAL_SVS = { -- types of special SVs
 function placeSpecialSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getSpecialPlaceMenuVars()
-    changeSVTypeIfKeysPressed(menuVars)
     chooseSpecialSVType(menuVars)
 
     addSeparator()

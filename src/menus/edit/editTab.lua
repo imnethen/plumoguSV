@@ -24,7 +24,6 @@ EDIT_SV_TOOLS = { -- tools for editing SVs
 function editSVTab(globalVars)
     if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
     chooseEditTool(globalVars)
-    changeEditToolIfKeysPressed(globalVars)
     addSeparator()
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end

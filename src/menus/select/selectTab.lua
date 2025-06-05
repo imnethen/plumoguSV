@@ -8,7 +8,6 @@ SELECT_TOOLS = {
 
 function selectTab(globalVars)
     chooseSelectTool(globalVars)
-    changeSelectToolIfKeysPressed(globalVars)
     addSeparator()
     local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
     if toolName == "Alternating" then selectAlternatingMenu() end

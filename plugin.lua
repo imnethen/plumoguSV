@@ -2776,7 +2776,6 @@ SPECIAL_SVS = {
 function placeSpecialSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getSpecialPlaceMenuVars()
-    changeSVTypeIfKeysPressed(menuVars)
     chooseSpecialSVType(menuVars)
     addSeparator()
     local currentSVType = SPECIAL_SVS[menuVars.svTypeIndex]
@@ -2868,8 +2867,7 @@ STANDARD_SVS = {
 function placeStandardSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getStandardPlaceMenuVars()
-    local needSVUpdate = changeSVTypeIfKeysPressed(menuVars)
-    needSVUpdate = needSVUpdate or #menuVars.svMultipliers == 0
+    local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
     addSeparator()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
@@ -2915,8 +2913,7 @@ end
 function placeStillSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getStillPlaceMenuVars()
-    local needSVUpdate = changeSVTypeIfKeysPressed(menuVars)
-    needSVUpdate = needSVUpdate or #menuVars.svMultipliers == 0
+    local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
     addSeparator()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
@@ -3042,7 +3039,6 @@ VIBRATO_SVS = {
 function placeVibratoSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getVibratoPlaceMenuVars()
-    changeSVTypeIfKeysPressed(menuVars)
     chooseVibratoSVType(menuVars)
     addSeparator()
     imgui.Text("Vibrato Settings:")
@@ -3353,7 +3349,6 @@ EDIT_SV_TOOLS = {
 function editSVTab(globalVars)
     if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
     chooseEditTool(globalVars)
-    changeEditToolIfKeysPressed(globalVars)
     addSeparator()
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
@@ -3734,7 +3729,6 @@ SELECT_TOOLS = {
 }
 function selectTab(globalVars)
     chooseSelectTool(globalVars)
-    changeSelectToolIfKeysPressed(globalVars)
     addSeparator()
     local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
     if toolName == "Alternating" then selectAlternatingMenu() end

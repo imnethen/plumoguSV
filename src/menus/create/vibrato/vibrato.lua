@@ -11,7 +11,6 @@ VIBRATO_SVS = { -- types of vibrato SVs
 function placeVibratoSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
     local menuVars = getVibratoPlaceMenuVars()
-    changeSVTypeIfKeysPressed(menuVars)
     chooseVibratoSVType(menuVars)
 
     addSeparator()
