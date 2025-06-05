@@ -23,7 +23,7 @@ importData: ''
 exportCustomSVData: ''
 exportData: ''
 scrollGroupIndex: 1
-hideSVInfo: false
+hideSVInfo: true
 ignoreNotesOutsideTg: false
 advancedMode: true
 hideAutomatic: true

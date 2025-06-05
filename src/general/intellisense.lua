@@ -913,10 +913,10 @@ map.Mode                  = 1 --- @type number
 --- #### `true` if BPM does not affect [scroll velocity](lua://ScrollVelocity).
 map.Normalized            = true --- @type boolean
 --- ##### (READ-ONLY)
---- #### A table of all [scroll velocities](lua://ScrollVelocity) in the map.
+--- #### A table of all [scroll velocities](lua://ScrollVelocity) in the current timing group.
 map.ScrollVelocities      = {} --- @type ScrollVelocity[]
 --- ##### (READ-ONLY)
---- #### A table of all [scroll speed factors](lua://ScrollSpeedFactor) in the map.
+--- #### A table of all [scroll speed factors](lua://ScrollSpeedFactor) in the current timing group.
 map.ScrollSpeedFactors    = {} --- @type ScrollSpeedFactor[]
 --- ##### (READ-ONLY)
 --- #### A table of all [timing groups](lua://ScrollGroup) in the map.
