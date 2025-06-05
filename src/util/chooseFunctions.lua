@@ -494,6 +494,15 @@ function chooseShowVibratoWidget(globalVars)
     end
 end
 
+function chooseShowNoteDataWidget(globalVars)
+    local oldNoteDataWidget = globalVars.showNoteDataWidget
+    _, globalVars.showNoteDataWidget = imgui.Checkbox("Show Note Data Of Selection",
+        oldNoteDataWidget)
+    if (oldNoteDataWidget ~= globalVars.showNoteDataWidget) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+
 -- Lets you choose whether or not to draw a capybara on screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

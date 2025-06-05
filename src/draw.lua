@@ -32,11 +32,39 @@ function draw()
     imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
 
+    state.SetValue("uiTooltipActive", false)
+
     if (globalVars.showVibratoWidget) then
         imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
         placeVibratoSVMenu(globalVars)
         imgui.End()
     end
+    if (globalVars.showNoteDataWidget) then
+        local oneNoteSelected = #state.SelectedHitObjects == 1
+        if not oneNoteSelected then goto noteDataContinue end
+
+        local uiTooltipAlreadyActive = state.GetValue("uiTooltipActive", false)
+        if uiTooltipAlreadyActive then goto noteDataContinue end
+
+        state.SetValue("uiTooltipActive", true)
+        imgui.BeginTooltip()
+        imgui.Text("Note Info:")
+        local selectedNote = state.SelectedHitObjects[1]
+        imgui.Text(table.concat({ "StartTime = ", selectedNote.StartTime, " ms" }))
+        local noteIsNotLN = selectedNote.EndTime == 0
+        if noteIsNotLN then
+            imgui.EndTooltip()
+            goto noteDataContinue
+        end
+
+        local lnLength = selectedNote.EndTime - selectedNote.StartTime
+        imgui.Text(table.concat({ "EndTime = ", selectedNote.EndTime, " ms" }))
+        imgui.Text(table.concat({ "LN Length = ", lnLength, " ms" }))
+        imgui.EndTooltip()
+    end
+
+    ::noteDataContinue::
+
 
     imgui.End()
 

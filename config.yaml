@@ -24,6 +24,7 @@ exportData: ''
 scrollGroupIndex: 1
 hideSVInfo: true
 showVibratoWidget: true
+showNoteDataWidget: true
 ignoreNotesOutsideTg: false
 advancedMode: true
 hideAutomatic: true

@@ -26,6 +26,7 @@ function loadGlobalVars()
         scrollGroupIndex = 1,
         hideSVInfo = state.GetValue("global_hideSVInfo") or false,
         showVibratoWidget = state.GetValue("global_showVibratoWidget") or false,
+        showNoteDataWidget = state.GetValue("global_showNoteDataWidget") or false,
         ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes") or false,
         advancedMode = state.GetValue("global_advancedMode") or false,
         hideAutomatic = state.GetValue("global_hideAutomatic") or false,

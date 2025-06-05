@@ -2158,6 +2158,7 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.ignoreNotesOutsideTg))
     state.SetValue("global_hideSVInfo", truthy(tempGlobalVars.hideSVInfo))
     state.SetValue("global_showVibratoWidget", truthy(tempGlobalVars.showVibratoWidget))
+    state.SetValue("global_showNoteDataWidget", truthy(tempGlobalVars.showNoteDataWidget))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
@@ -2187,11 +2188,33 @@ function draw()
     end
     imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
+    state.SetValue("uiTooltipActive", false)
     if (globalVars.showVibratoWidget) then
         imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
         placeVibratoSVMenu(globalVars)
         imgui.End()
     end
+    if (globalVars.showNoteDataWidget) then
+        local oneNoteSelected = #state.SelectedHitObjects == 1
+        if not oneNoteSelected then goto noteDataContinue end
+        local uiTooltipAlreadyActive = state.GetValue("uiTooltipActive", false)
+        if uiTooltipAlreadyActive then goto noteDataContinue end
+        state.SetValue("uiTooltipActive", true)
+        imgui.BeginTooltip()
+        imgui.Text("Note Info:")
+        local selectedNote = state.SelectedHitObjects[1]
+        imgui.Text(table.concat({ "StartTime = ", selectedNote.StartTime, " ms" }))
+        local noteIsNotLN = selectedNote.EndTime == 0
+        if noteIsNotLN then
+            imgui.EndTooltip()
+            goto noteDataContinue
+        end
+        local lnLength = selectedNote.EndTime - selectedNote.StartTime
+        imgui.Text(table.concat({ "EndTime = ", selectedNote.EndTime, " ms" }))
+        imgui.Text(table.concat({ "LN Length = ", lnLength, " ms" }))
+        imgui.EndTooltip()
+    end
+    ::noteDataContinue::
     imgui.End()
     saveVariables("globalVars", globalVars)
     local timeOffset = 50
@@ -4024,6 +4047,7 @@ function showPluginSettingsWindow(globalVars)
         chooseHideSVInfo(globalVars)
         chooseShowVibratoWidget(globalVars)
         addSeparator()
+        chooseShowNoteDataWidget(globalVars)
     end
     if (typeIndex == 3) then
         imgui.PushItemWidth(150)
@@ -5984,6 +6008,14 @@ function chooseShowVibratoWidget(globalVars)
     _, globalVars.showVibratoWidget = imgui.Checkbox("Separate Vibrato Into New Window",
         oldVibratoWidget)
     if (oldVibratoWidget ~= globalVars.showVibratoWidget) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+function chooseShowNoteDataWidget(globalVars)
+    local oldNoteDataWidget = globalVars.showNoteDataWidget
+    _, globalVars.showNoteDataWidget = imgui.Checkbox("Show Note Data Of Selection",
+        oldNoteDataWidget)
+    if (oldNoteDataWidget ~= globalVars.showNoteDataWidget) then
         saveAndSyncGlobals(globalVars)
     end
 end
@@ -7981,6 +8013,7 @@ function loadGlobalVars()
         scrollGroupIndex = 1,
         hideSVInfo = state.GetValue("global_hideSVInfo") or false,
         showVibratoWidget = state.GetValue("global_showVibratoWidget") or false,
+        showNoteDataWidget = state.GetValue("global_showNoteDataWidget") or false,
         ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes") or false,
         advancedMode = state.GetValue("global_advancedMode") or false,
         hideAutomatic = state.GetValue("global_hideAutomatic") or false,
