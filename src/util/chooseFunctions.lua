@@ -1526,11 +1526,13 @@ function choosePluginAppearance(globalVars)
     if (globalVars.useCustomPulseColor) then
         imgui.SameLine(0, SAMELINE_SPACING)
         if (imgui.Button("Edit Color")) then
-            globalVars.showColorPicker = true
+            state.SetValue("showColorPicker", true)
         end
-        choosePulseColor(globalVars)
+        if (state.GetValue("showColorPicker", false)) then
+            choosePulseColor(globalVars)
+        end
     else
-        globalVars.showColorPicker = false
+        state.SetValue("showColorPicker", false)
     end
 end
 
@@ -1579,20 +1581,18 @@ function choosePulseCoefficient(globalVars)
 end
 
 function choosePulseColor(globalVars)
-    if (globalVars.showColorPicker) then
-        _, opened = imgui.Begin("plumoguSV Pulse Color Picker", globalVars.showColorPicker,
-            imgui_window_flags.AlwaysAutoResize)
-        local oldColor = globalVars.pulseColor
-        _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
-        if (oldColor ~= globalVars.pulseColor) then
-            saveAndSyncGlobals(globalVars)
-        end
-        if (not opened) then
-            globalVars.showColorPicker = false
-            saveAndSyncGlobals(globalVars)
-        end
-        imgui.End()
+    _, opened = imgui.Begin("plumoguSV Pulse Color Picker", true,
+        imgui_window_flags.AlwaysAutoResize)
+    local oldColor = globalVars.pulseColor
+    _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
+    if (oldColor ~= globalVars.pulseColor) then
+        saveAndSyncGlobals(globalVars)
     end
+    if (not opened) then
+        state.SetValue("showColorPicker", false)
+        saveAndSyncGlobals(globalVars)
+    end
+    imgui.End()
 end
 
 function computableInputFloat(label, var, decimalPlaces, suffix)

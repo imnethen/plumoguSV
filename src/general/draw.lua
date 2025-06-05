@@ -38,7 +38,6 @@ function draw()
         exportData = "",
         debugText = "debug",
         scrollGroupIndex = 1,
-        showColorPicker = false,
         hideSVInfo = state.GetValue("global_hideSVInfo", false),
         ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes", false),
         advancedMode = state.GetValue("global_advancedMode", false),
