@@ -19,7 +19,7 @@ function infoTab(globalVars)
     imgui.BulletText("ESV members for constant support.")
     addPadding()
     addPadding()
-    if (imgui.Button("Click Here to Edit Settings", ACTION_BUTTON_SIZE)) then
+    if (imgui.Button("Click Here To Edit Settings", ACTION_BUTTON_SIZE)) then
         state.SetValue("showSettingsWindow", true)
         local windowDim = state.WindowSize
         local pluginDim = imgui.GetWindowSize()

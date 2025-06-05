@@ -1482,94 +1482,6 @@ function chooseDistanceMode(menuVars)
     return oldMode ~= menuVars.distanceMode
 end
 
--- Lets you choose plugin behavior settings
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function choosePluginBehaviorSettings(globalVars)
-    if not imgui.CollapsingHeader("Plugin Behavior Settings") then return end
-    addPadding()
-    chooseKeyboardMode(globalVars)
-    addSeparator()
-    chooseUpscroll(globalVars)
-    addSeparator()
-    chooseDontReplaceSV(globalVars)
-    chooseIgnoreNotes(globalVars)
-    chooseHideSVInfo(globalVars)
-    chooseStepSize(globalVars)
-    addPadding()
-end
-
--- Lets you choose global plugin appearance settings
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function choosePluginAppearance(globalVars)
-    if not imgui.CollapsingHeader("Plugin Appearance Settings") then return end
-    addPadding()
-    chooseStyleTheme(globalVars)
-    chooseColorTheme(globalVars)
-    addSeparator()
-    chooseCursorTrail(globalVars)
-    chooseCursorTrailShape(globalVars)
-    chooseEffectFPS(globalVars)
-    chooseCursorTrailPoints(globalVars)
-    chooseCursorShapeSize(globalVars)
-    chooseSnakeSpringConstant(globalVars)
-    chooseCursorTrailGhost(globalVars)
-    addSeparator()
-    chooseDrawCapybara(globalVars)
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    chooseDrawCapybara2(globalVars)
-    chooseDrawCapybara312(globalVars)
-    addSeparator()
-    choosePulseCoefficient(globalVars)
-    _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
-    if (globalVars.useCustomPulseColor) then
-        imgui.SameLine(0, SAMELINE_SPACING)
-        if (imgui.Button("Edit Color")) then
-            state.SetValue("showColorPicker", true)
-        end
-        if (state.GetValue("showColorPicker", false)) then
-            choosePulseColor(globalVars)
-        end
-    else
-        state.SetValue("showColorPicker", false)
-    end
-end
-
-function chooseHotkeys(globalVars)
-    local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
-    local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
-    if not imgui.CollapsingHeader("Plugin Hotkey Settings") then return end
-    for k, v in pairs(hotkeyList) do
-        if imgui.Button(awaitingIndex == k and "Listening...##listening" or v .. "##" .. k) then
-            if (awaitingIndex == k) then
-                awaitingIndex = 0
-            else
-                awaitingIndex = k
-            end
-        end
-        imgui.SameLine(0, SAMELINE_SPACING)
-        imgui.SetCursorPosX(85)
-        imgui.Text("// " .. HOTKEY_LABELS[k])
-    end
-    addSeparator()
-    simpleActionMenu("Reset Hotkey Settings", 0, function()
-        globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
-        saveAndSyncGlobals(globalVars)
-        awaitingIndex = 0
-    end, nil, nil, true, true)
-    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
-    if (awaitingIndex == 0) then return end
-    local prefixes, key = listenForAnyKeyPressed()
-    if (key == -1) then return end
-    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (truthy(prefixes) and "+" or "") .. keyNumToKey(key)
-    awaitingIndex = 0
-    globalVars.hotkeyList = hotkeyList
-    GLOBAL_HOTKEY_LIST = hotkeyList
-    saveAndSyncGlobals(globalVars)
-    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
-end
-
 function choosePulseCoefficient(globalVars)
     local oldCoefficient = globalVars.pulseCoefficient
     _, globalVars.pulseCoefficient = imgui.SliderFloat("Pulse Strength", oldCoefficient, 0, 1,
@@ -1581,14 +1493,14 @@ function choosePulseCoefficient(globalVars)
 end
 
 function choosePulseColor(globalVars)
-    _, opened = imgui.Begin("plumoguSV Pulse Color Picker", true,
+    _, colorPickerOpened = imgui.Begin("plumoguSV Pulse Color Picker", true,
         imgui_window_flags.AlwaysAutoResize)
     local oldColor = globalVars.pulseColor
     _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
     if (oldColor ~= globalVars.pulseColor) then
         saveAndSyncGlobals(globalVars)
     end
-    if (not opened) then
+    if (not colorPickerOpened) then
         state.SetValue("showColorPicker", false)
     end
     imgui.End()

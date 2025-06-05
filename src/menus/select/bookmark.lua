@@ -57,9 +57,9 @@ function selectBookmarkMenu()
 
             imgui.SetCursorPosY(vPos)
 
-            if (imgui.CalcTextSize(v.Note)[1] > 110) then
+            if (imgui.CalcTextSize(v.Note).x > 110) then
                 local note = v.Note
-                while (imgui.CalcTextSize(note)[1] > 85) do
+                while (imgui.CalcTextSize(note).x > 85) do
                     note = note:sub(1, #note - 1)
                 end
                 imgui.Text(note .. "...")
