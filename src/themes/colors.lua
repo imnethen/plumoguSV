@@ -230,7 +230,7 @@ function setIncognitoColors()
 
     imgui.PushStyleColor(imgui_col.WindowBg, black)
     imgui.PushStyleColor(imgui_col.PopupBg, vector.New(0.08, 0.08, 0.08, 0.94))
-    -- imgui.PushStyleColor(imgui_col.Border, whiteTint)
+    imgui.PushStyleColor(imgui_col.Border, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBg, grey)
     imgui.PushStyleColor(imgui_col.FrameBgHovered, whiteTint)
     imgui.PushStyleColor(imgui_col.FrameBgActive, whiteTint)

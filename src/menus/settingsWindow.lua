@@ -8,6 +8,7 @@ local SETTING_TYPES = {
 function showPluginSettingsWindow(globalVars)
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
 
+    setIncognitoColors()
     imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
@@ -128,6 +129,6 @@ function showPluginSettingsWindow(globalVars)
         state.SetValue("showSettingsWindow", false)
         state.SetValue("settings_typeIndex", 1)
     end
-    imgui.PopStyleColor(3)
+    setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex], globalVars.rgbPeriod)
     imgui.End()
 end
