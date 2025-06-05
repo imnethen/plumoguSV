@@ -32,21 +32,14 @@ function draw()
     imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
 
-    state.SetValue("uiTooltipActive", false)
-
     if (globalVars.showVibratoWidget) then
         imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
         placeVibratoSVMenu(globalVars)
         imgui.End()
     end
     if (globalVars.showNoteDataWidget) then
-        local oneNoteSelected = #state.SelectedHitObjects == 1
-        if not oneNoteSelected then goto noteDataContinue end
+        if #state.SelectedHitObjects ~= 1 then goto noteDataContinue end
 
-        local uiTooltipAlreadyActive = state.GetValue("uiTooltipActive", false)
-        if uiTooltipAlreadyActive then goto noteDataContinue end
-
-        state.SetValue("uiTooltipActive", true)
         imgui.BeginTooltip()
         imgui.Text("Note Info:")
         local selectedNote = state.SelectedHitObjects[1]
@@ -62,8 +55,37 @@ function draw()
         imgui.Text(table.concat({ "LN Length = ", lnLength, " ms" }))
         imgui.EndTooltip()
     end
-
     ::noteDataContinue::
+    if (globalVars.showMeasureDataWidget) then
+        if #state.SelectedHitObjects < 2 then goto measureDataContinue end
+        local offsets = uniqueSelectedNoteOffsets()
+        local startOffset = offsets[1]
+        local endOffset = offsets[#offsets]
+        if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69) or #offsets ~= state.GetValue("oldOffsetCount", -1)) then
+            svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
+            addStartSVIfMissing(svsBetweenOffsets, startOffset)
+            totalDistance = calculateDisplacementFromSVs(svsBetweenOffsets, startOffset, endOffset)
+            roundedSVDistance = math.round(totalDistance, 3)
+            avgSV = totalDistance / (endOffset - startOffset)
+            roundedAvgSV = math.round(avgSV, 3)
+            state.SetValue("tooltip_roundedSVDistance", roundedSVDistance)
+            state.SetValue("tooltip_roundedAvgSV", roundedAvgSV)
+        else
+            roundedSVDistance = state.GetValue("tooltip_roundedSVDistance", 0)
+            roundedAvgSV = state.GetValue("tooltip_roundedAvgSV", 0)
+        end
+
+        imgui.BeginTooltip()
+        imgui.Text("Measure Info:")
+        imgui.Text(table.concat({ "Distance = ", roundedSVDistance, " msx" }))
+        imgui.Text(table.concat({ "Avg SV = ", roundedAvgSV, "x" }))
+        imgui.EndTooltip()
+        state.SetValue("oldStartOffset", startOffset)
+        state.SetValue("oldEndOffset", endOffset)
+        state.SetValue("oldOffsetCount", #offsets)
+    end
+    ::measureDataContinue::
+
 
 
     imgui.End()

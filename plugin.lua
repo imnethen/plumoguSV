@@ -2159,6 +2159,7 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_hideSVInfo", truthy(tempGlobalVars.hideSVInfo))
     state.SetValue("global_showVibratoWidget", truthy(tempGlobalVars.showVibratoWidget))
     state.SetValue("global_showNoteDataWidget", truthy(tempGlobalVars.showNoteDataWidget))
+    state.SetValue("global_showMeasureDataWidget", truthy(tempGlobalVars.showMeasureDataWidget))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
@@ -2188,18 +2189,13 @@ function draw()
     end
     imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
-    state.SetValue("uiTooltipActive", false)
     if (globalVars.showVibratoWidget) then
         imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
         placeVibratoSVMenu(globalVars)
         imgui.End()
     end
     if (globalVars.showNoteDataWidget) then
-        local oneNoteSelected = #state.SelectedHitObjects == 1
-        if not oneNoteSelected then goto noteDataContinue end
-        local uiTooltipAlreadyActive = state.GetValue("uiTooltipActive", false)
-        if uiTooltipAlreadyActive then goto noteDataContinue end
-        state.SetValue("uiTooltipActive", true)
+        if #state.SelectedHitObjects ~= 1 then goto noteDataContinue end
         imgui.BeginTooltip()
         imgui.Text("Note Info:")
         local selectedNote = state.SelectedHitObjects[1]
@@ -2215,6 +2211,34 @@ function draw()
         imgui.EndTooltip()
     end
     ::noteDataContinue::
+    if (globalVars.showMeasureDataWidget) then
+        if #state.SelectedHitObjects < 2 then goto measureDataContinue end
+        local offsets = uniqueSelectedNoteOffsets()
+        local startOffset = offsets[1]
+        local endOffset = offsets[#offsets]
+        if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69) or #offsets ~= state.GetValue("oldOffsetCount", -1)) then
+            svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
+            addStartSVIfMissing(svsBetweenOffsets, startOffset)
+            totalDistance = calculateDisplacementFromSVs(svsBetweenOffsets, startOffset, endOffset)
+            roundedSVDistance = math.round(totalDistance, 3)
+            avgSV = totalDistance / (endOffset - startOffset)
+            roundedAvgSV = math.round(avgSV, 3)
+            state.SetValue("tooltip_roundedSVDistance", roundedSVDistance)
+            state.SetValue("tooltip_roundedAvgSV", roundedAvgSV)
+        else
+            roundedSVDistance = state.GetValue("tooltip_roundedSVDistance", 0)
+            roundedAvgSV = state.GetValue("tooltip_roundedAvgSV", 0)
+        end
+        imgui.BeginTooltip()
+        imgui.Text("Measure Info:")
+        imgui.Text(table.concat({ "Distance = ", roundedSVDistance, " msx" }))
+        imgui.Text(table.concat({ "Avg SV = ", roundedAvgSV, "x" }))
+        imgui.EndTooltip()
+        state.SetValue("oldStartOffset", startOffset)
+        state.SetValue("oldEndOffset", endOffset)
+        state.SetValue("oldOffsetCount", #offsets)
+    end
+    ::measureDataContinue::
     imgui.End()
     saveVariables("globalVars", globalVars)
     local timeOffset = 50
@@ -4048,6 +4072,7 @@ function showPluginSettingsWindow(globalVars)
         chooseShowVibratoWidget(globalVars)
         addSeparator()
         chooseShowNoteDataWidget(globalVars)
+        chooseShowMeasureDataWidget(globalVars)
     end
     if (typeIndex == 3) then
         imgui.PushItemWidth(150)
@@ -6016,6 +6041,14 @@ function chooseShowNoteDataWidget(globalVars)
     _, globalVars.showNoteDataWidget = imgui.Checkbox("Show Note Data Of Selection",
         oldNoteDataWidget)
     if (oldNoteDataWidget ~= globalVars.showNoteDataWidget) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+function chooseShowMeasureDataWidget(globalVars)
+    local oldMeasureDataWidget = globalVars.showMeasureDataWidget
+    _, globalVars.showMeasureDataWidget = imgui.Checkbox("Show Measure Data Of Selection",
+        oldMeasureDataWidget)
+    if (oldMeasureDataWidget ~= globalVars.showMeasureDataWidget) then
         saveAndSyncGlobals(globalVars)
     end
 end
@@ -8014,6 +8047,7 @@ function loadGlobalVars()
         hideSVInfo = state.GetValue("global_hideSVInfo") or false,
         showVibratoWidget = state.GetValue("global_showVibratoWidget") or false,
         showNoteDataWidget = state.GetValue("global_showNoteDataWidget") or false,
+        showMeasureDataWidget = state.GetValue("global_showMeasureDataWidget") or false,
         ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes") or false,
         advancedMode = state.GetValue("global_advancedMode") or false,
         hideAutomatic = state.GetValue("global_hideAutomatic") or false,

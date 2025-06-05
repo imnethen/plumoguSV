@@ -59,6 +59,7 @@ function showPluginSettingsWindow(globalVars)
         chooseShowVibratoWidget(globalVars)
         addSeparator()
         chooseShowNoteDataWidget(globalVars)
+        chooseShowMeasureDataWidget(globalVars)
     end
     if (typeIndex == 3) then
         imgui.PushItemWidth(150)

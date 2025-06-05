@@ -503,6 +503,15 @@ function chooseShowNoteDataWidget(globalVars)
     end
 end
 
+function chooseShowMeasureDataWidget(globalVars)
+    local oldMeasureDataWidget = globalVars.showMeasureDataWidget
+    _, globalVars.showMeasureDataWidget = imgui.Checkbox("Show Measure Data Of Selection",
+        oldMeasureDataWidget)
+    if (oldMeasureDataWidget ~= globalVars.showMeasureDataWidget) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+
 -- Lets you choose whether or not to draw a capybara on screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

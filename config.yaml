@@ -25,6 +25,7 @@ scrollGroupIndex: 1
 hideSVInfo: true
 showVibratoWidget: true
 showNoteDataWidget: true
+showMeasureDataWidget: true
 ignoreNotesOutsideTg: false
 advancedMode: true
 hideAutomatic: true
