@@ -757,7 +757,7 @@ state.IsWindowHovered          = false ---@type boolean MUST BE SET MANUALLY - I
 state.Scale                    = 1 ---@type number
 --- ##### (READ-ONLY)
 --- #### The size of the Quaver window.
-state.WindowSize               = vector.New(69, 69) ---@type Vector2
+state.WindowSize               = { 69, 69 } ---@type [number, number]
 
 --- ##### (READ-ONLY)
 --- #### Stores a value that can be retrieved by [`state.GetValue`](lua://state.GetValue). Mainly used to persist data between hot-reloads.

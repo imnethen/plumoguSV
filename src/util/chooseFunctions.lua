@@ -1590,7 +1590,6 @@ function choosePulseColor(globalVars)
     end
     if (not opened) then
         state.SetValue("showColorPicker", false)
-        saveAndSyncGlobals(globalVars)
     end
     imgui.End()
 end

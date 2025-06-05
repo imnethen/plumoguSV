@@ -1,7 +1,7 @@
 -- Creates the "Info" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function infoTab(_)
+function infoTab(globalVars)
     imgui.SeparatorText("Welcome to plumoguSV!")
     imgui.TextWrapped("This plugin is your one-stop shop for all of \nyour SV needs. Using it is quick and easy:")
     addPadding()
@@ -17,16 +17,19 @@ function infoTab(_)
     imgui.BulletText("7xbi + nethen for some useful PRs.")
     imgui.BulletText("Emik + William for plugin help.")
     imgui.BulletText("ESV members for constant support.")
-    -- choosePluginBehaviorSettings(globalVars)
-    -- choosePluginAppearance(globalVars)
-    -- chooseHotkeys(globalVars)
-    -- chooseAdvancedMode(globalVars)
-    -- if (globalVars.advancedMode) then
-    --     chooseHideAutomatic(globalVars)
-    -- end
+    addPadding()
     addPadding()
     if (imgui.Button("Click Here to Edit Settings", ACTION_BUTTON_SIZE)) then
-
+        state.SetValue("showSettingsWindow", true)
+        local windowDim = state.WindowSize
+        local pluginDim = imgui.GetWindowSize()
+        local centeringX = (windowDim[1] - pluginDim.x) / 2
+        local centeringY = (windowDim[2] - pluginDim.y) / 2
+        local coordinatesToCenter = vector.New(centeringX, centeringY)
+        imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
+    end
+    if (state.GetValue("showSettingsWindow", false)) then
+        showPluginSettingsWindow(globalVars)
     end
 end
 

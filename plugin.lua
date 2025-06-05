@@ -2162,6 +2162,61 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
 end
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M" }
+GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
+HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
+    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group" }
+imgui_disable_vector_packing = true
+function draw()
+    state.SetValue("computableInputFloatIndex", 1)
+    local prevVal = state.GetValue("prevVal", 0)
+    local colStatus = state.GetValue("colStatus", 0)
+    local globalVars = loadGlobalVars()
+    getVariables("globalVars", globalVars)
+    drawCapybara(globalVars)
+    drawCapybara2(globalVars)
+    drawCapybara312(globalVars)
+    drawCursorTrail(globalVars)
+    setPluginAppearance(globalVars)
+    startNextWindowNotCollapsed("plumoguSVAutoOpen")
+    focusWindowIfHotkeysPressed()
+    centerWindowIfHotkeysPressed()
+    imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
+    if globalVars.keyboardMode then
+        imgui.BeginTabBar("Quick tabs")
+        createQuickTabs(globalVars)
+        imgui.EndTabBar()
+    else
+        imgui.BeginTabBar("SV tabs")
+        for i = 1, #TAB_MENUS do
+            createMenuTab(globalVars, TAB_MENUS[i])
+        end
+        imgui.EndTabBar()
+    end
+    state.IsWindowHovered = imgui.IsWindowHovered()
+    imgui.End()
+    saveVariables("globalVars", globalVars)
+    local timeOffset = 50
+    local timeSinceLastPulse = ((state.SongTime + timeOffset) - getTimingPointAt(state.SongTime).StartTime) %
+        ((60000 / getTimingPointAt(state.SongTime).Bpm))
+    if ((timeSinceLastPulse < prevVal)) then
+        colStatus = 1
+    else
+        colStatus = (colStatus - state.DeltaTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
+    end
+    local futureTime = state.SongTime + state.DeltaTime * 2 + timeOffset
+    if ((futureTime - getTimingPointAt(futureTime).StartTime) < 0) then
+        colStatus = 0
+    end
+    state.SetValue("colStatus", math.max(colStatus, 0))
+    state.SetValue("prevVal", timeSinceLastPulse)
+    colStatus = colStatus * (globalVars.pulseCoefficient or 0)
+    local borderColor = state.GetValue("global_baseBorderColor") or vector4(1)
+    local negatedBorderColor = vector4(1) - borderColor
+    local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
+    imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
+end
 DEFAULT_WIDGET_HEIGHT = 26
 DEFAULT_WIDGET_WIDTH = 160
 PADDING_WIDTH = 8
@@ -2331,61 +2386,6 @@ for i, v in pairs(VIBRATO_QUALITIES) do
     table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
 end
 VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M" }
-GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
-HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
-    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group" }
-imgui_disable_vector_packing = true
-function draw()
-    state.SetValue("computableInputFloatIndex", 1)
-    local prevVal = state.GetValue("prevVal", 0)
-    local colStatus = state.GetValue("colStatus", 0)
-    local globalVars = loadGlobalVars()
-    getVariables("globalVars", globalVars)
-    drawCapybara(globalVars)
-    drawCapybara2(globalVars)
-    drawCapybara312(globalVars)
-    drawCursorTrail(globalVars)
-    setPluginAppearance(globalVars)
-    startNextWindowNotCollapsed("plumoguSVAutoOpen")
-    focusWindowIfHotkeysPressed()
-    centerWindowIfHotkeysPressed()
-    imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-    if globalVars.keyboardMode then
-        imgui.BeginTabBar("Quick tabs")
-        createQuickTabs(globalVars)
-        imgui.EndTabBar()
-    else
-        imgui.BeginTabBar("SV tabs")
-        for i = 1, #TAB_MENUS do
-            createMenuTab(globalVars, TAB_MENUS[i])
-        end
-        imgui.EndTabBar()
-    end
-    state.IsWindowHovered = imgui.IsWindowHovered()
-    imgui.End()
-    saveVariables("globalVars", globalVars)
-    local timeOffset = 50
-    local timeSinceLastPulse = ((state.SongTime + timeOffset) - getTimingPointAt(state.SongTime).StartTime) %
-        ((60000 / getTimingPointAt(state.SongTime).Bpm))
-    if ((timeSinceLastPulse < prevVal)) then
-        colStatus = 1
-    else
-        colStatus = (colStatus - state.DeltaTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
-    end
-    local futureTime = state.SongTime + state.DeltaTime * 2 + timeOffset
-    if ((futureTime - getTimingPointAt(futureTime).StartTime) < 0) then
-        colStatus = 0
-    end
-    state.SetValue("colStatus", math.max(colStatus, 0))
-    state.SetValue("prevVal", timeSinceLastPulse)
-    colStatus = colStatus * (globalVars.pulseCoefficient or 0)
-    local borderColor = state.GetValue("global_baseBorderColor") or vector4(1)
-    local negatedBorderColor = vector4(1) - borderColor
-    local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
-    imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
-end
 function infoTabKeyboard(globalVars)
     provideMorePluginInfo()
     listKeyboardShortcuts()
@@ -3648,7 +3648,7 @@ function verticalShiftMenu()
     local buttonText = "Vertically shift SVs between selected notes"
     simpleActionMenu(buttonText, 2, verticalShiftSVs, nil, menuVars)
 end
-function infoTab(_)
+function infoTab(globalVars)
     imgui.SeparatorText("Welcome to plumoguSV!")
     imgui.TextWrapped("This plugin is your one-stop shop for all of \nyour SV needs. Using it is quick and easy:")
     addPadding()
@@ -3665,7 +3665,18 @@ function infoTab(_)
     imgui.BulletText("Emik + William for plugin help.")
     imgui.BulletText("ESV members for constant support.")
     addPadding()
+    addPadding()
     if (imgui.Button("Click Here to Edit Settings", ACTION_BUTTON_SIZE)) then
+        state.SetValue("showSettingsWindow", true)
+        local windowDim = state.WindowSize
+        local pluginDim = imgui.GetWindowSize()
+        local centeringX = (windowDim[1] - pluginDim.x) / 2
+        local centeringY = (windowDim[2] - pluginDim.y) / 2
+        local coordinatesToCenter = vector.New(centeringX, centeringY)
+        imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
+    end
+    if (state.GetValue("showSettingsWindow", false)) then
+        showPluginSettingsWindow(globalVars)
     end
 end
 function provideBasicPluginInfo()
@@ -4058,6 +4069,20 @@ function sinusoidalSettingsMenu(settingVars, skipFinalSV, _)
     settingsChanged = chooseSVPerQuarterPeriod(settingVars) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, skipFinalSV) or settingsChanged
     return settingsChanged
+end
+function showPluginSettingsWindow(globalVars)
+    _, opened = imgui.Begin("plumoguSV Settings", true, imgui_window_flags.AlwaysAutoResize)
+    choosePluginBehaviorSettings(globalVars)
+    choosePluginAppearance(globalVars)
+    chooseHotkeys(globalVars)
+    chooseAdvancedMode(globalVars)
+    if (globalVars.advancedMode) then
+        chooseHideAutomatic(globalVars)
+    end
+    if (not opened) then
+        state.SetValue("showSettingsWindow", false)
+    end
+    imgui.End()
 end
 function provideBezierWebsiteLink(settingVars)
     local coordinateParsed = false
@@ -6739,7 +6764,6 @@ function choosePulseColor(globalVars)
     end
     if (not opened) then
         state.SetValue("showColorPicker", false)
-        saveAndSyncGlobals(globalVars)
     end
     imgui.End()
 end
