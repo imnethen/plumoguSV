@@ -34,6 +34,7 @@ function draw()
 
     if (globalVars.showVibratoWidget) then
         imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
+        imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
         placeVibratoSVMenu(globalVars)
         imgui.End()
     end
