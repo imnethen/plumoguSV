@@ -36,7 +36,6 @@ function draw()
         importData = "",
         exportCustomSVData = "",
         exportData = "",
-        debugText = "debug",
         scrollGroupIndex = 1,
         hideSVInfo = state.GetValue("global_hideSVInfo", false),
         ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes", false),
