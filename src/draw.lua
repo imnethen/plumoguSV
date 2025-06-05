@@ -32,10 +32,11 @@ function draw()
     imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
 
-    -- if (imgui.Button("hi")) then
-    --     saveAndSyncGlobals({})
-    --     globalVars = loadGlobalVars()
-    -- end
+    if (globalVars.showVibratoWidget) then
+        imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
+        placeVibratoSVMenu(globalVars)
+        imgui.End()
+    end
 
     imgui.End()
 

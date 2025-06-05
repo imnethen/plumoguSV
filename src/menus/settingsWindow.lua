@@ -1,13 +1,15 @@
 local SETTING_TYPES = {
     "General",
+    "Windows + Widgets",
     "Themes/Appearance",
-    "Hotkeys/Keybinds"
+    "Hotkeys + Keybinds"
 }
 
 
 function showPluginSettingsWindow(globalVars)
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
 
+    imgui.PopStyleColor(20)
     setIncognitoColors()
     imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
@@ -49,11 +51,15 @@ function showPluginSettingsWindow(globalVars)
         addSeparator()
         chooseDontReplaceSV(globalVars)
         chooseIgnoreNotes(globalVars)
-        chooseHideSVInfo(globalVars)
         chooseStepSize(globalVars)
         addPadding()
     end
     if (typeIndex == 2) then
+        chooseHideSVInfo(globalVars)
+        chooseShowVibratoWidget(globalVars)
+        addSeparator()
+    end
+    if (typeIndex == 3) then
         imgui.PushItemWidth(150)
         chooseStyleTheme(globalVars)
         chooseColorTheme(globalVars)
@@ -87,7 +93,7 @@ function showPluginSettingsWindow(globalVars)
             state.SetValue("showColorPicker", false)
         end
     end
-    if (typeIndex == 3) then
+    if (typeIndex == 4) then
         local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
         local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
         for k, v in pairs(hotkeyList) do
@@ -127,6 +133,7 @@ function showPluginSettingsWindow(globalVars)
         state.SetValue("showSettingsWindow", false)
         state.SetValue("settings_typeIndex", 1)
     end
+    imgui.PopStyleColor(40)
     setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex], globalVars.rgbPeriod)
     imgui.End()
 end

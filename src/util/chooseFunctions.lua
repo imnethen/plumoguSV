@@ -482,6 +482,18 @@ function chooseHideSVInfo(globalVars)
     end
 end
 
+-- Lets you choose whether or not to replace SVs when placing SVs
+-- Parameters
+--    globalVars : list of variables used globally across all menus [Table]
+function chooseShowVibratoWidget(globalVars)
+    local oldVibratoWidget = globalVars.showVibratoWidget
+    _, globalVars.showVibratoWidget = imgui.Checkbox("Separate Vibrato Into New Window",
+        oldVibratoWidget)
+    if (oldVibratoWidget ~= globalVars.showVibratoWidget) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+
 -- Lets you choose whether or not to draw a capybara on screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]

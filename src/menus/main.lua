@@ -13,7 +13,11 @@ TAB_MENUS = { -- names of the tab menus
 function createMenuTab(globalVars, tabName)
     if not imgui.BeginTabItem(tabName) then return end
     addPadding()
-    if tabName == "Info" then infoTab(globalVars) end
+    if tabName == "Info" then
+        infoTab(globalVars)
+    else
+        state.SetValue("showSettingsWindow", false)
+    end
     if tabName == "Select" then selectTab(globalVars) end
     if tabName == "Create" then createSVTab(globalVars) end
     if tabName == "Edit" then editSVTab(globalVars) end

@@ -2157,6 +2157,7 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_drawCapybara312", truthy(tempGlobalVars.drawCapybara312))
     state.SetValue("global_ignoreNotes", truthy(tempGlobalVars.ignoreNotesOutsideTg))
     state.SetValue("global_hideSVInfo", truthy(tempGlobalVars.hideSVInfo))
+    state.SetValue("global_showVibratoWidget", truthy(tempGlobalVars.showVibratoWidget))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
@@ -2186,6 +2187,11 @@ function draw()
     end
     imgui.EndTabBar()
     state.IsWindowHovered = imgui.IsWindowHovered()
+    if (globalVars.showVibratoWidget) then
+        imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
+        placeVibratoSVMenu(globalVars)
+        imgui.End()
+    end
     imgui.End()
     saveVariables("globalVars", globalVars)
     local timeOffset = 50
@@ -3596,7 +3602,11 @@ TAB_MENUS = {
 function createMenuTab(globalVars, tabName)
     if not imgui.BeginTabItem(tabName) then return end
     addPadding()
-    if tabName == "Info" then infoTab(globalVars) end
+    if tabName == "Info" then
+        infoTab(globalVars)
+    else
+        state.SetValue("showSettingsWindow", false)
+    end
     if tabName == "Select" then selectTab(globalVars) end
     if tabName == "Create" then createSVTab(globalVars) end
     if tabName == "Edit" then editSVTab(globalVars) end
@@ -3962,11 +3972,13 @@ function sinusoidalSettingsMenu(settingVars, skipFinalSV, _)
 end
 local SETTING_TYPES = {
     "General",
+    "Windows + Widgets",
     "Themes/Appearance",
-    "Hotkeys/Keybinds"
+    "Hotkeys + Keybinds"
 }
 function showPluginSettingsWindow(globalVars)
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
+    imgui.PopStyleColor(20)
     setIncognitoColors()
     imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
@@ -4005,11 +4017,15 @@ function showPluginSettingsWindow(globalVars)
         addSeparator()
         chooseDontReplaceSV(globalVars)
         chooseIgnoreNotes(globalVars)
-        chooseHideSVInfo(globalVars)
         chooseStepSize(globalVars)
         addPadding()
     end
     if (typeIndex == 2) then
+        chooseHideSVInfo(globalVars)
+        chooseShowVibratoWidget(globalVars)
+        addSeparator()
+    end
+    if (typeIndex == 3) then
         imgui.PushItemWidth(150)
         chooseStyleTheme(globalVars)
         chooseColorTheme(globalVars)
@@ -4043,7 +4059,7 @@ function showPluginSettingsWindow(globalVars)
             state.SetValue("showColorPicker", false)
         end
     end
-    if (typeIndex == 3) then
+    if (typeIndex == 4) then
         local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
         local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
         for k, v in pairs(hotkeyList) do
@@ -4083,6 +4099,7 @@ function showPluginSettingsWindow(globalVars)
         state.SetValue("showSettingsWindow", false)
         state.SetValue("settings_typeIndex", 1)
     end
+    imgui.PopStyleColor(40)
     setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex], globalVars.rgbPeriod)
     imgui.End()
 end
@@ -5959,6 +5976,14 @@ function chooseHideSVInfo(globalVars)
     _, globalVars.hideSVInfo = imgui.Checkbox("Hide SV Info Window",
         oldHideInfo)
     if (oldHideInfo ~= globalVars.hideSVInfo) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
+function chooseShowVibratoWidget(globalVars)
+    local oldVibratoWidget = globalVars.showVibratoWidget
+    _, globalVars.showVibratoWidget = imgui.Checkbox("Separate Vibrato Into New Window",
+        oldVibratoWidget)
+    if (oldVibratoWidget ~= globalVars.showVibratoWidget) then
         saveAndSyncGlobals(globalVars)
     end
 end
@@ -7955,6 +7980,7 @@ function loadGlobalVars()
         exportData = "",
         scrollGroupIndex = 1,
         hideSVInfo = state.GetValue("global_hideSVInfo") or false,
+        showVibratoWidget = state.GetValue("global_showVibratoWidget") or false,
         ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes") or false,
         advancedMode = state.GetValue("global_advancedMode") or false,
         hideAutomatic = state.GetValue("global_hideAutomatic") or false,

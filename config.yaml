@@ -1,5 +1,4 @@
 stepSize: 5
-keyboardMode: false
 dontReplaceSV: false
 upscroll: false
 colorThemeIndex: 11
@@ -24,6 +23,7 @@ exportCustomSVData: ''
 exportData: ''
 scrollGroupIndex: 1
 hideSVInfo: true
+showVibratoWidget: true
 ignoreNotesOutsideTg: false
 advancedMode: true
 hideAutomatic: true
