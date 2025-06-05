@@ -766,7 +766,7 @@ state.WindowSize               = vector.New(69, 69) ---@type Vector2
 function state.SetValue(key, value) end
 
 --- ##### (READ-ONLY)
---- #### Gets a value previously stored by [`state.SetValue`](lua://state.SetValue). If the value doesn't exist, return `fallback` instead.
+--- #### Gets a value previously stored by [`state.SetValue`](lua://state.SetValue). If the value doesn't exist, return `fallback` instead. Note that `nil` is considered a value, meaning if you store `nil` using [`state.SetValue`](lua://state.SetValue), then the `fallback` will not be used.
 --- @generic T
 ---@param key string The identifier for the value set by `state.SetValue`.
 ---@param fallback? T An optional term to return, if the result is `nil`.

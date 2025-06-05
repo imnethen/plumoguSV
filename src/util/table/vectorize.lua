@@ -5,6 +5,7 @@
 ---@param tbl number[] The table to convert.
 ---@return Vector4 vctr The output vector.
 function table.vectorize4(tbl)
+    if (not tbl) then return vector4(0) end
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
 end
@@ -13,6 +14,7 @@ end
 ---@param tbl number[] The table to convert.
 ---@return Vector3 vctr The output vector.
 function table.vectorize3(tbl)
+    if (not tbl) then return vector3(0) end
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3])
 end
@@ -21,6 +23,7 @@ end
 ---@param tbl number[] The table to convert.
 ---@return Vector2 vctr The output vector.
 function table.vectorize2(tbl)
+    if (not tbl) then return vector2(0) end
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2])
 end

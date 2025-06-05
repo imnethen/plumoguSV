@@ -2340,41 +2340,7 @@ function draw()
     state.SetValue("computableInputFloatIndex", 1)
     local prevVal = state.GetValue("prevVal", 0)
     local colStatus = state.GetValue("colStatus", 0)
-    local globalVars = {
-        stepSize = state.GetValue("global_stepSize", 5),
-        keyboardMode = state.GetValue("global_keyboardMode", false),
-        dontReplaceSV = state.GetValue("global_dontReplaceSV", false),
-        upscroll = state.GetValue("global_upscroll", false),
-        colorThemeIndex = state.GetValue("global_colorThemeIndex", 9),
-        styleThemeIndex = state.GetValue("global_styleThemeIndex", 1),
-        effectFPS = state.GetValue("global_effectFPS", 90),
-        cursorTrailIndex = state.GetValue("global_cursorTrailIndex", 1),
-        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex", 1),
-        cursorTrailPoints = state.GetValue("global_cursorTrailPoints", 10),
-        cursorTrailSize = state.GetValue("global_cursorTrailSize", 5),
-        snakeSpringConstant = state.GetValue("global_snakeSpringConstant", 1),
-        cursorTrailGhost = state.GetValue("global_cursorTrailGhost", false),
-        rgbPeriod = state.GetValue("global_rgbPeriod", 2),
-        drawCapybara = state.GetValue("global_drawCapybara", false),
-        drawCapybara2 = state.GetValue("global_drawCapybara2", false),
-        drawCapybara312 = state.GetValue("global_drawCapybara312", false),
-        selectTypeIndex = 1,
-        placeTypeIndex = 1,
-        editToolIndex = 1,
-        showExportImportMenu = false,
-        importData = "",
-        exportCustomSVData = "",
-        exportData = "",
-        scrollGroupIndex = 1,
-        hideSVInfo = state.GetValue("global_hideSVInfo", false),
-        ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes", false),
-        advancedMode = state.GetValue("global_advancedMode", false),
-        hideAutomatic = state.GetValue("global_hideAutomatic", false),
-        pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
-        pulseColor = state.GetValue("global_pulseColor", vector4(1)),
-        useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
-        hotkeyList = state.GetValue("global_hotkeyList", DEFAULT_HOTKEY_LIST)
-    }
+    local globalVars = loadGlobalVars()
     getVariables("globalVars", globalVars)
     drawCapybara(globalVars)
     drawCapybara2(globalVars)
@@ -2414,9 +2380,8 @@ function draw()
     end
     state.SetValue("colStatus", math.max(colStatus, 0))
     state.SetValue("prevVal", timeSinceLastPulse)
-    colStatus = colStatus * globalVars
-        .pulseCoefficient
-    local borderColor = state.GetValue("global_baseBorderColor", vector4(1))
+    colStatus = colStatus * (globalVars.pulseCoefficient or 0)
+    local borderColor = state.GetValue("global_baseBorderColor") or vector4(1)
     local negatedBorderColor = vector4(1) - borderColor
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
     imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
@@ -8006,6 +7971,7 @@ end
 ---@param tbl number[] The table to convert.
 ---@return Vector4 vctr The output vector.
 function table.vectorize4(tbl)
+    if (not tbl) then return vector4(0) end
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
 end
@@ -8013,6 +7979,7 @@ end
 ---@param tbl number[] The table to convert.
 ---@return Vector3 vctr The output vector.
 function table.vectorize3(tbl)
+    if (not tbl) then return vector3(0) end
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3])
 end
@@ -8020,6 +7987,7 @@ end
 ---@param tbl number[] The table to convert.
 ---@return Vector2 vctr The output vector.
 function table.vectorize2(tbl)
+    if (not tbl) then return vector2(0) end
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2])
 end
@@ -8040,6 +8008,43 @@ end
 ---@return Vector2 vctr The resultant vector of style `<n, n>`.
 function vector2(n)
     return vector.New(n, n)
+end
+function loadGlobalVars()
+    return {
+        stepSize = state.GetValue("global_stepSize") or 5,
+        keyboardMode = state.GetValue("global_keyboardMode") or false,
+        dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
+        upscroll = state.GetValue("global_upscroll") or false,
+        colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
+        styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
+        effectFPS = state.GetValue("global_effectFPS") or 90,
+        cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
+        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex") or 1,
+        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
+        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
+        snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
+        cursorTrailGhost = state.GetValue("global_cursorTrailGhost") or false,
+        rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
+        drawCapybara = state.GetValue("global_drawCapybara") or false,
+        drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
+        drawCapybara312 = state.GetValue("global_drawCapybara312") or false,
+        selectTypeIndex = 1,
+        placeTypeIndex = 1,
+        editToolIndex = 1,
+        showExportImportMenu = false,
+        importData = "",
+        exportCustomSVData = "",
+        exportData = "",
+        scrollGroupIndex = 1,
+        hideSVInfo = state.GetValue("global_hideSVInfo") or false,
+        ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes") or false,
+        advancedMode = state.GetValue("global_advancedMode") or false,
+        hideAutomatic = state.GetValue("global_hideAutomatic") or false,
+        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0,
+        pulseColor = state.GetValue("global_pulseColor") or vector4(1),
+        useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
+        hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST
+    }
 end
 ---Gets the current menu's setting variables.
 ---@param svType string The SV type - that is, the shape of the SV once plotted.

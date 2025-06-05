@@ -11,41 +11,7 @@ function draw()
     local prevVal = state.GetValue("prevVal", 0)
     local colStatus = state.GetValue("colStatus", 0)
 
-    local globalVars = {
-        stepSize = state.GetValue("global_stepSize", 5),
-        keyboardMode = state.GetValue("global_keyboardMode", false),
-        dontReplaceSV = state.GetValue("global_dontReplaceSV", false),
-        upscroll = state.GetValue("global_upscroll", false),
-        colorThemeIndex = state.GetValue("global_colorThemeIndex", 9),
-        styleThemeIndex = state.GetValue("global_styleThemeIndex", 1),
-        effectFPS = state.GetValue("global_effectFPS", 90),
-        cursorTrailIndex = state.GetValue("global_cursorTrailIndex", 1),
-        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex", 1),
-        cursorTrailPoints = state.GetValue("global_cursorTrailPoints", 10),
-        cursorTrailSize = state.GetValue("global_cursorTrailSize", 5),
-        snakeSpringConstant = state.GetValue("global_snakeSpringConstant", 1),
-        cursorTrailGhost = state.GetValue("global_cursorTrailGhost", false),
-        rgbPeriod = state.GetValue("global_rgbPeriod", 2),
-        drawCapybara = state.GetValue("global_drawCapybara", false),
-        drawCapybara2 = state.GetValue("global_drawCapybara2", false),
-        drawCapybara312 = state.GetValue("global_drawCapybara312", false),
-        selectTypeIndex = 1,
-        placeTypeIndex = 1,
-        editToolIndex = 1,
-        showExportImportMenu = false,
-        importData = "",
-        exportCustomSVData = "",
-        exportData = "",
-        scrollGroupIndex = 1,
-        hideSVInfo = state.GetValue("global_hideSVInfo", false),
-        ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes", false),
-        advancedMode = state.GetValue("global_advancedMode", false),
-        hideAutomatic = state.GetValue("global_hideAutomatic", false),
-        pulseCoefficient = state.GetValue("global_pulseCoefficient", 0),
-        pulseColor = state.GetValue("global_pulseColor", vector4(1)),
-        useCustomPulseColor = state.GetValue("global_useCustomPulseColor", false),
-        hotkeyList = state.GetValue("global_hotkeyList", DEFAULT_HOTKEY_LIST)
-    }
+    local globalVars = loadGlobalVars()
 
     getVariables("globalVars", globalVars)
 
@@ -74,6 +40,11 @@ function draw()
     end
     state.IsWindowHovered = imgui.IsWindowHovered()
 
+    -- if (imgui.Button("hi")) then
+    --     saveAndSyncGlobals({})
+    --     globalVars = loadGlobalVars()
+    -- end
+
     imgui.End()
 
     saveVariables("globalVars", globalVars)
@@ -98,10 +69,9 @@ function draw()
     state.SetValue("colStatus", math.max(colStatus, 0))
     state.SetValue("prevVal", timeSinceLastPulse)
 
-    colStatus = colStatus * globalVars
-        .pulseCoefficient
+    colStatus = colStatus * (globalVars.pulseCoefficient or 0)
 
-    local borderColor = state.GetValue("global_baseBorderColor", vector4(1))
+    local borderColor = state.GetValue("global_baseBorderColor") or vector4(1)
     local negatedBorderColor = vector4(1) - borderColor
 
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
