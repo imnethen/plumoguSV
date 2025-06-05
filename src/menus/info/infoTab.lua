@@ -1,26 +1,43 @@
 -- Creates the "Info" tab
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function infoTab(globalVars)
-    provideBasicPluginInfo()
-    provideMorePluginInfo()
-    listKeyboardShortcuts()
-    choosePluginBehaviorSettings(globalVars)
-    choosePluginAppearance(globalVars)
-    chooseHotkeys(globalVars)
-    chooseAdvancedMode(globalVars)
-    if (globalVars.advancedMode) then
-        chooseHideAutomatic(globalVars)
+function infoTab(_)
+    imgui.SeparatorText("Welcome to plumoguSV!")
+    imgui.TextWrapped("This plugin is your one-stop shop for all of \nyour SV needs. Using it is quick and easy:")
+    addPadding()
+    imgui.BulletText("Choose an SV tool in the Create tab.")
+    imgui.BulletText("Adjust the tool's settings to your liking.")
+    imgui.BulletText("Select notes to use the tool at.")
+    imgui.BulletText("Press the '" .. GLOBAL_HOTKEY_LIST[1] .. "' hotkey.")
+    addPadding()
+    imgui.SeparatorText("Special thanks to:")
+    addPadding()
+    imgui.BulletText("kloi34, for being the original dev.")
+    imgui.BulletText("kusa, for some handy widgets.")
+    imgui.BulletText("7xbi + nethen for some useful PRs.")
+    imgui.BulletText("Emik + William for plugin help.")
+    imgui.BulletText("ESV members for constant support.")
+    -- choosePluginBehaviorSettings(globalVars)
+    -- choosePluginAppearance(globalVars)
+    -- chooseHotkeys(globalVars)
+    -- chooseAdvancedMode(globalVars)
+    -- if (globalVars.advancedMode) then
+    --     chooseHideAutomatic(globalVars)
+    -- end
+    addPadding()
+    if (imgui.Button("Click Here to Edit Settings", ACTION_BUTTON_SIZE)) then
+
     end
 end
 
 -- Gives basic info about how to use the plugin
 function provideBasicPluginInfo()
-    imgui.Text("Steps to use plumoguSV:")
-    imgui.BulletText("Choose an SV tool")
-    imgui.BulletText("Adjust the SV tool's settings")
-    imgui.BulletText("Select notes to use the tool at/between")
-    imgui.BulletText("Press '" .. GLOBAL_HOTKEY_LIST[1] .. "' on your keyboard")
+    imgui.SeparatorText("Welcome to plumoguSV!")
+    imgui.TextWrapped("This plugin is your one-stop shop for all of your SV needs. Using it is quick and easy:")
+    imgui.BulletText("Choose an SV tool in the Create tab.")
+    imgui.BulletText("Adjust the tool's settings to your liking.")
+    imgui.BulletText("Select notes to use the tool at.")
+    imgui.BulletText("Press the '" .. GLOBAL_HOTKEY_LIST[1] .. "' hotkey.")
     addPadding()
 end
 
@@ -31,28 +48,4 @@ function provideMorePluginInfo()
     linkBox("Goofy SV mapping guide",
         "https://docs.google.com/document/d/1ug_WV_BI720617ybj4zuHhjaQMwa0PPekZyJoa17f-I")
     linkBox("GitHub repository", "https://github.com/ESV-Sweetplum/plumoguSV")
-end
-
--- Lists keyboard shortcuts for the plugin
-function listKeyboardShortcuts()
-    if not imgui.CollapsingHeader("Keyboard Shortcuts") then return end
-    local indentAmount = -6
-    imgui.Indent(indentAmount)
-    addPadding()
-    imgui.BulletText("Ctrl + Shift + Tab = center plugin window")
-    toolTip("Useful if the plugin begins or ends up offscreen")
-    addSeparator()
-    imgui.BulletText("Shift + Tab = focus plugin + navigate inputs")
-    toolTip("Useful if you click off the plugin but want to quickly change an input value")
-    addSeparator()
-    imgui.BulletText("T = activate the big button doing SV stuff")
-    toolTip("Use this to do SV stuff for a quick workflow")
-    addSeparator()
-    imgui.BulletText("Shift+T = activate the big button doing SSF stuff")
-    toolTip("Use this to do SSF stuff for a quick workflow")
-    addSeparator()
-    imgui.BulletText("Alt + Shift + (Z or X) = switch tool type")
-    toolTip("Use this to do SV stuff for a quick workflow")
-    addPadding()
-    imgui.Unindent(indentAmount)
 end
