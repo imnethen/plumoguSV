@@ -16,14 +16,16 @@ function flickerSVs(menuVars)
         local flickerEndOffset = offsets[i + 1]
         local teleportOffsets = generateLinearSet(flickerStartOffset, flickerEndOffset,
             numTeleports + 1)
-        local offsetDiff = flickerEndOffset - flickerStartOffset
-        local factor = 0.5
-        for i, _ in pairs(teleportOffsets) do
-            if (i % 2 == 1) then goto continueTeleport end
-            pushFactor = (2 * factor - 1) * 1 / numTeleports * offsetDiff
-            teleportOffsets[i] = teleportOffsets[i] + pushFactor
+        local offsetDiff = teleportOffsets[2] - teleportOffsets[1]
+        print(teleportOffsets)
+        for t, _ in pairs(teleportOffsets) do
+            if (t % 2 == 1) then goto continueTeleport end
+            pushFactor = (2 * menuVars.flickerPosition - 1) / numTeleports * offsetDiff * 2
+            print(pushFactor)
+            teleportOffsets[t] = teleportOffsets[t] + pushFactor
             ::continueTeleport::
         end
+        print(teleportOffsets)
         for j = 1, numTeleports do
             local offsetIndex = j
             if isDelayedFlicker then offsetIndex = offsetIndex + 1 end

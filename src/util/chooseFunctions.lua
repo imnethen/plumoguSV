@@ -887,6 +887,15 @@ function chooseNumFlickers(menuVars)
     menuVars.numFlickers = math.clamp(menuVars.numFlickers, 1, 9999)
 end
 
+-- Lets you choose the number of flickers
+-- Parameters
+--    menuVars : list of variables used for the current menu [Table]
+function chooseFlickerPosition(menuVars)
+    _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
+        math.round(menuVars.flickerPosition * 100) .. "%%")
+    menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
+end
+
 -- Lets you choose the number of frames
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]

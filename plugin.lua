@@ -1353,14 +1353,16 @@ function flickerSVs(menuVars)
         local flickerEndOffset = offsets[i + 1]
         local teleportOffsets = generateLinearSet(flickerStartOffset, flickerEndOffset,
             numTeleports + 1)
-        local offsetDiff = flickerEndOffset - flickerStartOffset
-        local factor = 0.5
-        for i, _ in pairs(teleportOffsets) do
-            if (i % 2 == 1) then goto continueTeleport end
-            pushFactor = (2 * factor - 1) * 1 / numTeleports * offsetDiff
-            teleportOffsets[i] = teleportOffsets[i] + pushFactor
+        local offsetDiff = teleportOffsets[2] - teleportOffsets[1]
+        print(teleportOffsets)
+        for t, _ in pairs(teleportOffsets) do
+            if (t % 2 == 1) then goto continueTeleport end
+            pushFactor = (2 * menuVars.flickerPosition - 1) / numTeleports * offsetDiff * 2
+            print(pushFactor)
+            teleportOffsets[t] = teleportOffsets[t] + pushFactor
             ::continueTeleport::
         end
+        print(teleportOffsets)
         for j = 1, numTeleports do
             local offsetIndex = j
             if isDelayedFlicker then offsetIndex = offsetIndex + 1 end
@@ -3497,13 +3499,15 @@ function flickerMenu()
         distance1 = 0,
         distance2 = -69420.727,
         numFlickers = 1,
-        linearlyChange = false
+        linearlyChange = false,
+        flickerPosition = 0.5
     }
     getVariables("flickerMenu", menuVars)
     chooseFlickerType(menuVars)
     chooseVaryingDistance(menuVars)
     chooseLinearlyChangeDist(menuVars)
     chooseNumFlickers(menuVars)
+    chooseFlickerPosition(menuVars)
     saveVariables("flickerMenu", menuVars)
     addSeparator()
     simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, nil, menuVars)
@@ -6360,6 +6364,11 @@ end
 function chooseNumFlickers(menuVars)
     _, menuVars.numFlickers = imgui.InputInt("Flickers", menuVars.numFlickers, 1, 1)
     menuVars.numFlickers = math.clamp(menuVars.numFlickers, 1, 9999)
+end
+function chooseFlickerPosition(menuVars)
+    _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
+        math.round(menuVars.flickerPosition * 100) .. "%%")
+    menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
 end
 function chooseNumFrames(settingVars)
     _, settingVars.numFrames = imgui.InputInt("Total # Frames", settingVars.numFrames)
