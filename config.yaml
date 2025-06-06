@@ -31,9 +31,9 @@ advancedMode: true
 hideAutomatic: true
 pulseCoefficient: 1
 pulseColor:
-- 0
-- 0
-- 0
+- 1
+- 1
+- 1
 - 1
 useCustomPulseColor: true
 hotkeyList:
