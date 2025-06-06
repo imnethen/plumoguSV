@@ -14,7 +14,7 @@ function flickerMenu()
     chooseVaryingDistance(menuVars)
     chooseLinearlyChangeDist(menuVars)
     chooseNumFlickers(menuVars)
-    chooseFlickerPosition(menuVars)
+    if (state.GetValue("global_advancedMode")) then chooseFlickerPosition(menuVars) end
     saveVariables("flickerMenu", menuVars)
 
     addSeparator()
