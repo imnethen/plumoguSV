@@ -833,7 +833,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
     end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
-function linearSSFVibrato(menuVars, settingVars)
+function ssfVibrato(menuVars, heightFunc1, heightFunc2)
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
     local startTime = offsets[1]
@@ -847,20 +847,20 @@ function linearSSFVibrato(menuVars, settingVars)
         local x = ((time - startTime) / (endTime - startTime))
         local y = ((time + delta - startTime) / (endTime - startTime))
         table.insert(ssfs,
-            ssf(time - 1 / getUsableDisplacementMultiplier(time),
-                settingVars.higherStart + x * (settingVars.higherEnd - settingVars.higherStart)))
-        table.insert(ssfs, ssf(time, settingVars.lowerStart + x * (settingVars.lowerEnd - settingVars.lowerStart)))
+            ssf(time - 1 / getUsableDisplacementMultiplier(time), heightFunc2(x)
+            ))
+        table.insert(ssfs, ssf(time, heightFunc1(x)))
         table.insert(ssfs,
             ssf(time + delta - 1 / getUsableDisplacementMultiplier(time),
-                settingVars.lowerStart + y * (settingVars.lowerEnd - settingVars.lowerStart)))
+                heightFunc1(y)))
         table.insert(ssfs,
-            ssf(time + delta, settingVars.higherStart + y * (settingVars.higherEnd - settingVars.higherStart)))
+            ssf(time + delta, heightFunc2(y)))
         time = time + 2 * delta
     end
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
-    print("s!", "Created " .. #ssfs .. (#ssfs == 1 and "SSF." or "SSFs."))
+    print("s!", "Created " .. #ssfs .. (#ssfs == 1 and " SSF." or " SSFs."))
 end
 function svVibrato(menuVars, heightFunc)
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -3072,7 +3072,13 @@ function linearVibratoMenu(menuVars, settingVars)
     else
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
-        simpleActionMenu("Vibrate", 2, linearSSFVibrato, menuVars, settingVars)
+        local heightFunc1 = function(x)
+            return settingVars.lowerStart + x * (settingVars.lowerEnd - settingVars.lowerStart)
+        end
+        local heightFunc2 = function(x)
+            return settingVars.higherStart + x * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, heightFunc1, heightFunc2) end, nil, menuVars)
     end
 end
 function sinusoidalVibratoMenu(menuVars, settingVars)
