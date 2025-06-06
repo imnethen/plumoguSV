@@ -2224,6 +2224,7 @@ function draw()
         local offsets = uniqueSelectedNoteOffsets()
         local startOffset = offsets[1]
         local endOffset = offsets[#offsets]
+        if (endOffset == startOffset) then goto measureDataContinue end
         if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69) or #offsets ~= state.GetValue("oldOffsetCount", -1)) then
             svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
             addStartSVIfMissing(svsBetweenOffsets, startOffset)
@@ -6360,11 +6361,11 @@ function chooseCurrentScrollGroup(globalVars)
     local cols = { map.TimingGroups["$Default"].ColorRgb or "255,255,255", map.TimingGroups["$Global"].ColorRgb or
     "255,255,255" }
     for k, v in pairs(map.TimingGroups) do
-        if string.find(k, "%$") then goto continue end
-        if (globalVars.hideAutomatic and string.find(k, "automate_")) then goto continue end
+        if string.find(k, "%$") then goto cont end
+        if (globalVars.hideAutomatic and string.find(k, "automate_")) then goto cont end
         table.insert(groups, k)
         table.insert(cols, v.ColorRgb or "255,255,255")
-        ::continue::
+        ::cont::
     end
     local prevIndex = globalVars.scrollGroupIndex
     imgui.PushItemWidth(155)

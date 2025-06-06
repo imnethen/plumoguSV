@@ -62,6 +62,7 @@ function draw()
         local offsets = uniqueSelectedNoteOffsets()
         local startOffset = offsets[1]
         local endOffset = offsets[#offsets]
+        if (endOffset == startOffset) then goto measureDataContinue end
         if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69) or #offsets ~= state.GetValue("oldOffsetCount", -1)) then
             svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
             addStartSVIfMissing(svsBetweenOffsets, startOffset)
@@ -86,8 +87,6 @@ function draw()
         state.SetValue("oldOffsetCount", #offsets)
     end
     ::measureDataContinue::
-
-
 
     imgui.End()
 
