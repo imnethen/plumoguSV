@@ -1353,11 +1353,11 @@ function flickerSVs(menuVars)
         local flickerEndOffset = offsets[i + 1]
         local teleportOffsets = generateLinearSet(flickerStartOffset, flickerEndOffset,
             numTeleports + 1)
-        local offsetDiff = teleportOffsets[2] - teleportOffsets[1]
+        local flickerDuration = teleportOffsets[2] - teleportOffsets[1]
         print(teleportOffsets)
         for t, _ in pairs(teleportOffsets) do
             if (t % 2 == 1) then goto continueTeleport end
-            pushFactor = (2 * menuVars.flickerPosition - 1) / numTeleports * offsetDiff * 2
+            pushFactor = (2 * menuVars.flickerPosition - 1) / menuVars.numFlickers * flickerDuration
             print(pushFactor)
             teleportOffsets[t] = teleportOffsets[t] + pushFactor
             ::continueTeleport::
