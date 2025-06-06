@@ -15,5 +15,5 @@ function createSVTab(globalVars)
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
-    if placeType == "Vibrato" then placeVibratoSVMenu(globalVars) end
+    if placeType == "Vibrato" then placeVibratoSVMenu(globalVars, false) end
 end

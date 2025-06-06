@@ -2172,10 +2172,11 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
 end
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M" }
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V" }
 GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
-    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group" }
+    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
+    "Execute Vibrato Separately" }
 imgui_disable_vector_packing = true
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
@@ -2200,7 +2201,7 @@ function draw()
     if (globalVars.showVibratoWidget) then
         imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
         imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-        placeVibratoSVMenu(globalVars)
+        placeVibratoSVMenu(globalVars, true)
         imgui.End()
     end
     if (globalVars.showNoteDataWidget) then
@@ -2625,7 +2626,7 @@ function createSVTab(globalVars)
     if placeType == "Standard" then placeStandardSVMenu(globalVars) end
     if placeType == "Special" then placeSpecialSVMenu(globalVars) end
     if placeType == "Still" then placeStillSVMenu(globalVars) end
-    if placeType == "Vibrato" then placeVibratoSVMenu(globalVars) end
+    if placeType == "Vibrato" then placeVibratoSVMenu(globalVars, false) end
 end
 function splitScrollAdvancedMenu(settingVars)
     chooseNumScrolls(settingVars)
@@ -3023,7 +3024,7 @@ function getStillPlaceMenuVars()
     getVariables("placeStillMenu", menuVars)
     return menuVars
 end
-function customVibratoMenu(menuVars, settingVars)
+function customVibratoMenu(menuVars, settingVars, separateWindow)
     local typingCode = false
     if (menuVars.vibratoMode == 1) then
         chooseCode(settingVars)
@@ -3035,12 +3036,12 @@ function customVibratoMenu(menuVars, settingVars)
         local func = eval(settingVars.code)
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, nil, menuVars, false, typingCode)
+        end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
         imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
     end
 end
-function exponentialVibratoMenu(menuVars, settingVars)
+function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseCurvatureCoefficient(settingVars)
@@ -3056,7 +3057,7 @@ function exponentialVibratoMenu(menuVars, settingVars)
         end
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, nil, menuVars)
+        end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
@@ -3081,7 +3082,7 @@ function exponentialVibratoMenu(menuVars, settingVars)
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
-function linearVibratoMenu(menuVars, settingVars)
+function linearVibratoMenu(menuVars, settingVars, separateWindow)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         local func = function(t)
@@ -3089,7 +3090,7 @@ function linearVibratoMenu(menuVars, settingVars)
         end
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, nil, menuVars)
+        end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
@@ -3102,7 +3103,7 @@ function linearVibratoMenu(menuVars, settingVars)
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
-function sinusoidalVibratoMenu(menuVars, settingVars)
+function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseMsxVerticalShift(settingVars, 0)
@@ -3114,7 +3115,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars)
         end
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, nil, menuVars)
+        end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
@@ -3144,7 +3145,7 @@ VIBRATO_SVS = {
     "Sinusoidal##Vibrato",
     "Custom##Vibrato"
 }
-function placeVibratoSVMenu(globalVars)
+function placeVibratoSVMenu(globalVars, separateWindow)
     exportImportSettingsButton(globalVars)
     local menuVars = getVibratoPlaceMenuVars()
     chooseVibratoSVType(menuVars)
@@ -3161,10 +3162,10 @@ function placeVibratoSVMenu(globalVars)
         return
     end
     addSeparator()
-    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
-    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars) end
-    if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars) end
-    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars) end
+    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars.separateWindow) end
+    if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars, separateWindow) end
     local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)
     saveVariables("placeVibratoMenu", menuVars)
@@ -4165,6 +4166,9 @@ function showPluginSettingsWindow(globalVars)
     end
     if (typeIndex == 4) then
         local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
+        if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
+            hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
+        end
         local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
         for k, v in pairs(hotkeyList) do
             if imgui.Button(awaitingIndex == k and "Listening...##listening" or v .. "##" .. k) then
@@ -7840,7 +7844,8 @@ end
 function ssf(startTime, multiplier)
     return utils.CreateScrollSpeedFactor(startTime, multiplier)
 end
-function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput)
+function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput,
+                          optionalKeyOverride)
     local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
     local infoText = table.concat({ "Select ", minimumNotes, " or more notes" })
     if (not enoughSelectedNotes) then
@@ -7853,6 +7858,11 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         toolTip("Press \'" .. GLOBAL_HOTKEY_LIST[2] .. "\' on your keyboard to do the same thing as this button")
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, globalVars, menuVars)
     else
+        if (optionalKeyOverride) then
+            toolTip("Press \'" .. optionalKeyOverride .. "\' on your keyboard to do the same thing as this button")
+            executeFunctionIfTrue(exclusiveKeyPressed(optionalKeyOverride), actionfunc, globalVars, menuVars)
+            return
+        end
         toolTip("Press \'" .. GLOBAL_HOTKEY_LIST[1] .. "\' on your keyboard to do the same thing as this button")
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
     end

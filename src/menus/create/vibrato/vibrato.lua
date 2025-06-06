@@ -8,7 +8,7 @@ VIBRATO_SVS = { -- types of vibrato SVs
 -- Creates the menu for placing special SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function placeVibratoSVMenu(globalVars)
+function placeVibratoSVMenu(globalVars, separateWindow)
     exportImportSettingsButton(globalVars)
     local menuVars = getVibratoPlaceMenuVars()
     chooseVibratoSVType(menuVars)
@@ -30,10 +30,10 @@ function placeVibratoSVMenu(globalVars)
 
     addSeparator()
 
-    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars) end
-    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars) end
-    if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars) end
-    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars) end
+    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars.separateWindow) end
+    if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars, separateWindow) end
 
     local labelText = table.concat({ currentSVType, "SettingsVibrato" .. menuVars.vibratoMode })
     saveVariables(labelText, settingVars)

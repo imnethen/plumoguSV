@@ -5,7 +5,8 @@
 --    actionfunc   : function to execute once button is pressed [Function]
 --    globalVars   : list of variables used globally across all menus [Table]
 --    menuVars     : list of variables used for the current menu [Table]
-function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput)
+function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput,
+                          optionalKeyOverride)
     local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
     local infoText = table.concat({ "Select ", minimumNotes, " or more notes" })
     if (not enoughSelectedNotes) then
@@ -18,6 +19,11 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         toolTip("Press \'" .. GLOBAL_HOTKEY_LIST[2] .. "\' on your keyboard to do the same thing as this button")
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, globalVars, menuVars)
     else
+        if (optionalKeyOverride) then
+            toolTip("Press \'" .. optionalKeyOverride .. "\' on your keyboard to do the same thing as this button")
+            executeFunctionIfTrue(exclusiveKeyPressed(optionalKeyOverride), actionfunc, globalVars, menuVars)
+            return
+        end
         toolTip("Press \'" .. GLOBAL_HOTKEY_LIST[1] .. "\' on your keyboard to do the same thing as this button")
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
     end

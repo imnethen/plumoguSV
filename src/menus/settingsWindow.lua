@@ -97,6 +97,9 @@ function showPluginSettingsWindow(globalVars)
     end
     if (typeIndex == 4) then
         local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
+        if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
+            hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
+        end
         local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
         for k, v in pairs(hotkeyList) do
             if imgui.Button(awaitingIndex == k and "Listening...##listening" or v .. "##" .. k) then

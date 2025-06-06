@@ -1,4 +1,4 @@
-function sinusoidalVibratoMenu(menuVars, settingVars)
+function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseMsxVerticalShift(settingVars, 0)
@@ -11,7 +11,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars)
 
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, nil, menuVars)
+        end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
