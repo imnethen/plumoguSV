@@ -11,13 +11,13 @@ function linearVibratoMenu(menuVars, settingVars)
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
 
-        local heightFunc1 = function(x)
-            return settingVars.lowerStart + x * (settingVars.lowerEnd - settingVars.lowerStart)
+        local func1 = function(t)
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
         end
-        local heightFunc2 = function(x)
-            return settingVars.higherStart + x * (settingVars.higherEnd - settingVars.higherStart)
+        local func2 = function(t)
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
 
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, heightFunc1, heightFunc2) end, nil, menuVars)
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end

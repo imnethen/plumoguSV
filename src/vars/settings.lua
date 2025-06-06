@@ -65,7 +65,8 @@ end]]
             higherEnd = 1,
             verticalShift = 0,
             periods = 1,
-            periodsShift = 0.25
+            periodsShift = 0.25,
+            applyToHigher = false,
         }
     elseif svType == "Exponential" then
         settingVars = {

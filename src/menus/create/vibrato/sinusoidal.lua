@@ -13,10 +13,25 @@ function sinusoidalVibratoMenu(menuVars, settingVars)
             svVibrato(v, func)
         end, nil, menuVars)
     else
-        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
-        -- customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        -- customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseConstantShift(settingVars)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        _, settingVars.applyToHigher = imgui.Checkbox("Apply Vibrato to Higher SSF?", settingVars.applyToHigher)
 
-        -- simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
+        local func1 = function(t)
+            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
+                (settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart) + settingVars.verticalShift)
+        end
+        local func2 = function(t)
+            if (settingVars.applyToHigher) then
+                return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
+                    (settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart) + settingVars.verticalShift)
+            end
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end

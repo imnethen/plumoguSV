@@ -2,8 +2,8 @@ function exponentialVibratoMenu(menuVars, settingVars)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local func = function(t)
-            local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else
@@ -17,10 +17,28 @@ function exponentialVibratoMenu(menuVars, settingVars)
             svVibrato(v, func)
         end, nil, menuVars)
     else
-        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
-        -- customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        -- customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
 
-        -- simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
+        local func1 = function(t)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
+        end
+        local func2 = function(t)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end

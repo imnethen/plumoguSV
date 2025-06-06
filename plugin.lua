@@ -833,7 +833,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
     end
     return { svsToRemove = svsToRemove, svsToAdd = svsToAdd }
 end
-function ssfVibrato(menuVars, heightFunc1, heightFunc2)
+function ssfVibrato(menuVars, func1, func2)
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
     local startTime = offsets[1]
@@ -847,14 +847,14 @@ function ssfVibrato(menuVars, heightFunc1, heightFunc2)
         local x = ((time - startTime) / (endTime - startTime))
         local y = ((time + delta - startTime) / (endTime - startTime))
         table.insert(ssfs,
-            ssf(time - 1 / getUsableDisplacementMultiplier(time), heightFunc2(x)
+            ssf(time - 1 / getUsableDisplacementMultiplier(time), func2(x)
             ))
-        table.insert(ssfs, ssf(time, heightFunc1(x)))
+        table.insert(ssfs, ssf(time, func1(x)))
         table.insert(ssfs,
             ssf(time + delta - 1 / getUsableDisplacementMultiplier(time),
-                heightFunc1(y)))
+                func1(y)))
         table.insert(ssfs,
-            ssf(time + delta, heightFunc2(y)))
+            ssf(time + delta, func2(y)))
         time = time + 2 * delta
     end
     actions.PerformBatch({
@@ -3043,8 +3043,8 @@ function exponentialVibratoMenu(menuVars, settingVars)
     if (menuVars.vibratoMode == 1) then
         customSwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local func = function(t)
-            local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else
@@ -3057,7 +3057,27 @@ function exponentialVibratoMenu(menuVars, settingVars)
             svVibrato(v, func)
         end, nil, menuVars)
     else
-        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
+        customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local func1 = function(t)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
+        end
+        local func2 = function(t)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
 function linearVibratoMenu(menuVars, settingVars)
@@ -3072,13 +3092,13 @@ function linearVibratoMenu(menuVars, settingVars)
     else
         customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
-        local heightFunc1 = function(x)
-            return settingVars.lowerStart + x * (settingVars.lowerEnd - settingVars.lowerStart)
+        local func1 = function(t)
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
         end
-        local heightFunc2 = function(x)
-            return settingVars.higherStart + x * (settingVars.higherEnd - settingVars.higherStart)
+        local func2 = function(t)
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, heightFunc1, heightFunc2) end, nil, menuVars)
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
 function sinusoidalVibratoMenu(menuVars, settingVars)
@@ -3095,7 +3115,24 @@ function sinusoidalVibratoMenu(menuVars, settingVars)
             svVibrato(v, func)
         end, nil, menuVars)
     else
-        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
+        customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseConstantShift(settingVars)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        _, settingVars.applyToHigher = imgui.Checkbox("Apply Vibrato to Higher SSF?", settingVars.applyToHigher)
+        local func1 = function(t)
+            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
+                (settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart) + settingVars.verticalShift)
+        end
+        local func2 = function(t)
+            if (settingVars.applyToHigher) then
+                return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
+                    (settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart) + settingVars.verticalShift)
+            end
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
 VIBRATO_SVS = {
@@ -6500,9 +6537,9 @@ function chooseCurvatureCoefficient(settingVars)
         else
             value = (1 - (1 - t) ^ (1 / curvature))
         end
-        if (settingVars.startMsx > settingVars.endMsx) then
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 1 - value
-        elseif (settingVars.startMsx == settingVars.endMsx) then
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 0.5
         end
         values:insert(value)
@@ -8138,7 +8175,8 @@ end]]
             higherEnd = 1,
             verticalShift = 0,
             periods = 1,
-            periodsShift = 0.25
+            periodsShift = 0.25,
+            applyToHigher = false,
         }
     elseif svType == "Exponential" then
         settingVars = {

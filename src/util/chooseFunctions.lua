@@ -1156,9 +1156,9 @@ function chooseCurvatureCoefficient(settingVars)
         else
             value = (1 - (1 - t) ^ (1 / curvature))
         end
-        if (settingVars.startMsx > settingVars.endMsx) then
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 1 - value
-        elseif (settingVars.startMsx == settingVars.endMsx) then
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 0.5
         end
         values:insert(value)

@@ -1,4 +1,4 @@
-function ssfVibrato(menuVars, heightFunc1, heightFunc2)
+function ssfVibrato(menuVars, func1, func2)
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
     local startTime = offsets[1]
@@ -12,14 +12,14 @@ function ssfVibrato(menuVars, heightFunc1, heightFunc2)
         local x = ((time - startTime) / (endTime - startTime))
         local y = ((time + delta - startTime) / (endTime - startTime))
         table.insert(ssfs,
-            ssf(time - 1 / getUsableDisplacementMultiplier(time), heightFunc2(x)
+            ssf(time - 1 / getUsableDisplacementMultiplier(time), func2(x)
             ))
-        table.insert(ssfs, ssf(time, heightFunc1(x)))
+        table.insert(ssfs, ssf(time, func1(x)))
         table.insert(ssfs,
             ssf(time + delta - 1 / getUsableDisplacementMultiplier(time),
-                heightFunc1(y)))
+                func1(y)))
         table.insert(ssfs,
-            ssf(time + delta, heightFunc2(y)))
+            ssf(time + delta, func2(y)))
         time = time + 2 * delta
     end
 
