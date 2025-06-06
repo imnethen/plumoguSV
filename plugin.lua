@@ -1356,9 +1356,10 @@ function flickerSVs(menuVars)
         local offsetDiff = flickerEndOffset - flickerStartOffset
         local factor = 0.5
         for i, _ in pairs(teleportOffsets) do
-            if (i % 2 == 1) then return end
-            local pushFactor = (2 * factor - 1) * 1 / numTeleports * offsetDiff
+            if (i % 2 == 1) then goto continueTeleport end
+            pushFactor = (2 * factor - 1) * 1 / numTeleports * offsetDiff
             teleportOffsets[i] = teleportOffsets[i] + pushFactor
+            ::continueTeleport::
         end
         for j = 1, numTeleports do
             local offsetIndex = j
