@@ -3108,8 +3108,8 @@ function sinusoidalVibratoMenu(menuVars, settingVars)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
         local func = function(t)
-            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
-                (settingVars.startMsx + t * (settingVars.endMsx - settingVars.startMsx) + settingVars.verticalShift)
+            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) * settingVars.startMsx +
+            t * (settingVars.endMsx - settingVars.startMsx) + settingVars.verticalShift
         end
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
@@ -3123,12 +3123,13 @@ function sinusoidalVibratoMenu(menuVars, settingVars)
         _, settingVars.applyToHigher = imgui.Checkbox("Apply Vibrato to Higher SSF?", settingVars.applyToHigher)
         local func1 = function(t)
             return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
-                (settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart) + settingVars.verticalShift)
+                settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart) + settingVars.verticalShift
         end
         local func2 = function(t)
             if (settingVars.applyToHigher) then
                 return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
-                    (settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart) + settingVars.verticalShift)
+                    settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart) +
+                    settingVars.verticalShift
             end
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
