@@ -13,15 +13,11 @@ end
 -- Parameters
 --    styleTheme : name of the desired style theme [String]
 function setPluginAppearanceStyles(styleTheme)
-    local boxedStyle = styleTheme == "Boxed" or
-        styleTheme == "Boxed + Border"
-    local cornerRoundnessValue = 5 -- up to 12, 14 for WindowRounding and 16 for ChildRounding
-    if boxedStyle then cornerRoundnessValue = 0 end
+    local cornerRoundnessValue = (styleTheme == "Boxed" or
+        styleTheme == "Boxed + Border") and 0 or 5 -- up to 12, 14 for WindowRounding and 16 for ChildRounding
 
-    local borderedStyle = styleTheme == "Rounded + Border" or
-        styleTheme == "Boxed + Border"
-    local borderSize = 0
-    if borderedStyle then borderSize = 1 end
+    local borderSize = (styleTheme == "Rounded + Border" or
+        styleTheme == "Boxed + Border") and 1 or 0
 
     imgui.PushStyleVar(imgui_style_var.FrameBorderSize, borderSize)
     imgui.PushStyleVar(imgui_style_var.WindowPadding, vector.New(PADDING_WIDTH, 8))

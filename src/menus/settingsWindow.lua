@@ -11,6 +11,7 @@ function showPluginSettingsWindow(globalVars)
 
     imgui.PopStyleColor(20)
     setIncognitoColors()
+    setPluginAppearanceStyles("Rounded + Border")
     imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
@@ -140,5 +141,6 @@ function showPluginSettingsWindow(globalVars)
     end
     imgui.PopStyleColor(40)
     setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex], globalVars.rgbPeriod)
+    setPluginAppearanceStyles(STYLE_THEMES[globalVars.styleThemeIndex])
     imgui.End()
 end

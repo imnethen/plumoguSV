@@ -4083,6 +4083,7 @@ function showPluginSettingsWindow(globalVars)
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
     imgui.PopStyleColor(20)
     setIncognitoColors()
+    setPluginAppearanceStyles("Rounded + Border")
     imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
     imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
@@ -4209,6 +4210,7 @@ function showPluginSettingsWindow(globalVars)
     end
     imgui.PopStyleColor(40)
     setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex], globalVars.rgbPeriod)
+    setPluginAppearanceStyles(STYLE_THEMES[globalVars.styleThemeIndex])
     imgui.End()
 end
 function provideBezierWebsiteLink(settingVars)
@@ -5536,14 +5538,10 @@ function setPluginAppearance(globalVars)
     setPluginAppearanceColors(colorTheme, globalVars.rgbPeriod)
 end
 function setPluginAppearanceStyles(styleTheme)
-    local boxedStyle = styleTheme == "Boxed" or
-        styleTheme == "Boxed + Border"
-    local cornerRoundnessValue = 5
-    if boxedStyle then cornerRoundnessValue = 0 end
-    local borderedStyle = styleTheme == "Rounded + Border" or
-        styleTheme == "Boxed + Border"
-    local borderSize = 0
-    if borderedStyle then borderSize = 1 end
+    local cornerRoundnessValue = (styleTheme == "Boxed" or
+        styleTheme == "Boxed + Border") and 0 or 5
+    local borderSize = (styleTheme == "Rounded + Border" or
+        styleTheme == "Boxed + Border") and 1 or 0
     imgui.PushStyleVar(imgui_style_var.FrameBorderSize, borderSize)
     imgui.PushStyleVar(imgui_style_var.WindowPadding, vector.New(PADDING_WIDTH, 8))
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
