@@ -89,7 +89,7 @@ For more information, please refer to <https://unlicense.org>
 ---@field StartTime integer
 --- ##### (READ-ONLY)
 --- #### The lane the note is in.
----@field Lane 1|2|3|4|5|6|7
+---@field Lane 1|2|3|4|5|6|7|8|9|10
 --- ##### (READ-ONLY)
 --- #### The time the long note ends. If this note is not a long note, this value is 0.
 ---@field EndTime number
@@ -481,7 +481,7 @@ function actions.PlaceHitObject(ho) end
 
 --- ##### (READ-ONLY)
 --- #### Places a new [hit object](lua://HitObject), without the need to create an [editor action](lua://EditorAction).
----@param lane 1|2|3|4|5|6|7 The lane of the [hit object](lua://HitObject).
+---@param lane 1|2|3|4|5|6|7|8|9|10 The lane of the [hit object](lua://HitObject).
 ---@param startTime integer The start time of the [hit object](lua://HitObject).
 ---@param endTime? integer If placing a rice note, this value should be 0. Otherwise, this should be the time the long note ends.
 ---@param editorLayer? integer The id of the layer in which the [hit object](lua://HitObject) will lie.
@@ -795,7 +795,7 @@ function utils.CreateScrollSpeedFactor(startTime, multiplier) end
 --- ##### (READ-ONLY)
 --- #### Creates a [hit object](lua://HitObject), to later be placed into an [`EditorAction`](lua://utils.CreateEditorAction) and executed.
 --- @param startTime number The time to create the note, in milliseconds.
---- @param lane 1|2|3|4|5|6|7 The lane to create the note in.
+--- @param lane 1|2|3|4|5|6|7|8|9|10 The lane to create the note in.
 --- @param endTime? number If given and non-zero, the note becomes a long note. This parameter determines when the long note will end.
 --- @param hitsounds? HitSounds The hitsounds that should be applied to the note.
 --- @param editorLayer? integer The index of the [editor layer](lua://EditorLayer) that this note should be added to.

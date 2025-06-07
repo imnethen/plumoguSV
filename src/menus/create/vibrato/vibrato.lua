@@ -31,7 +31,7 @@ function placeVibratoSVMenu(globalVars, separateWindow)
     addSeparator()
 
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
-    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars.separateWindow) end
+    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars, separateWindow) end
 
