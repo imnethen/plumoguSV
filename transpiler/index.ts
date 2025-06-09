@@ -7,7 +7,14 @@ import {
 } from "fs";
 import { getFilesRecursively } from "./getFilesRecursively.js";
 
-const brainrotList = readFileSync("./brainrot.csv", "utf-8").split("\n")
+const brainrotInit = readFileSync("./brainrot.csv", "utf-8").split("\n")
+const brainrotList = []
+
+for (let i = 0; i < 10; i++) {
+    const arr = brainrotInit.map((x) => `${x}##${i}`)
+    brainrotList.push(...arr)
+}
+
 
 export default async function transpiler(devMode = false, fuckify = true) {
     let fileCount = 0;
@@ -35,10 +42,10 @@ export default async function transpiler(devMode = false, fuckify = true) {
             const bannedWords = ["ctrl","shift","alt","string","boolean","true","false","userdata","table","number"]
             const match = matches[i]
 
-            if (!/^"([ A-z0-9_\(\)':\.\+]|##)*"$/g.test(match) || match.length == 3 || bannedWords.some((v) => match.includes(v)) || matchList.includes(match) || brainrotList.length < 1) continue
+            if (!/^"([ A-z0-9_\(\)':\.\+\/]|##)*"$/g.test(match) || match.length == 3 || bannedWords.some((v) => match.includes(v)) || matchList.includes(match) || brainrotList.length < 1) continue
             matchList.push(match)
-            // const randomWord = brainrotList.splice(Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1), 1)[0]
-            const randomWord = brainrotList[Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1)]
+            const randomWord = brainrotList.splice(Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1), 1)[0]
+            // const randomWord = brainrotList[Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1)]
             output = output.replaceAll(match, `"${randomWord}"`)
         } 
     }
