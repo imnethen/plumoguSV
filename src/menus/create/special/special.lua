@@ -38,8 +38,8 @@ function placeSpecialSVMenu(globalVars)
     if currentSVType == "Automate" then automateSVMenu(settingVars) end
 
 
-    local labelText = table.concat({ currentSVType, "SettingsSpecial" })
-    saveVariables(labelText, settingVars)
+    local labelText = table.concat({ currentSVType, "Special" })
+    saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeSpecialMenu", menuVars)
 end
 

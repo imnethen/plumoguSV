@@ -35,8 +35,8 @@ function placeStillSVMenu(globalVars)
     menuVars.settingVars = settingVars
     simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, globalVars, menuVars)
 
-    local labelText = table.concat({ currentSVType, "SettingsStill" })
-    saveVariables(labelText, settingVars)
+    local labelText = table.concat({ currentSVType, "Still" })
+    saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeStillMenu", menuVars)
 end
 

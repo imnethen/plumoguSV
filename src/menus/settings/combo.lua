@@ -10,8 +10,8 @@ function comboSettingsMenu(settingVars)
     local svType1 = STANDARD_SVS[settingVars.svType1Index]
     local settingVars1 = getSettingVars(svType1, "Combo1")
     settingsChanged = showSettingsMenu(svType1, settingVars1, true, nil) or settingsChanged
-    local labelText1 = table.concat({ svType1, "SettingsCombo1" })
-    saveVariables(labelText1, settingVars1)
+    local labelText1 = table.concat({ svType1, "Combo1" })
+    saveVariables(labelText1 .. "Settings", settingVars1)
     imgui.End()
 
     startNextWindowNotCollapsed("svType2AutoOpen")
@@ -20,8 +20,8 @@ function comboSettingsMenu(settingVars)
     local svType2 = STANDARD_SVS[settingVars.svType2Index]
     local settingVars2 = getSettingVars(svType2, "Combo2")
     settingsChanged = showSettingsMenu(svType2, settingVars2, true, nil) or settingsChanged
-    local labelText2 = table.concat({ svType2, "SettingsCombo2" })
-    saveVariables(labelText2, settingVars2)
+    local labelText2 = table.concat({ svType2, "Combo2" })
+    saveVariables(labelText2 .. "Settings", settingVars2)
     imgui.End()
 
     local maxComboPhase = settingVars1.svPoints + settingVars2.svPoints

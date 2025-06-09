@@ -20,7 +20,7 @@ const debounce = (fn: Function, ms = 300) => {
 
 chokidar.watch(["src", "packages"], { ignoreInitial: true }).on(
     "all",
-    debounce((event, path) => main(event, path), 100)
+    debounce((event: keyof chokidar.FSWatcherEventMap, path: string) => main(event, path), 100)
 );
 
 async function main(event, path) {

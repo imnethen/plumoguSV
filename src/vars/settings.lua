@@ -12,18 +12,18 @@ function getSettingVars(svType, label)
             finalSVIndex = 2,
             customSV = 1
         }
-    elseif svType == "Linear##Vibrato" and label == "Vibrato1" then
+    elseif svType == "Linear##Vibrato" and label == "Vibrato$$SV" then
         settingVars = {
             startMsx = 100,
             endMsx = 0
         }
-    elseif svType == "Exponential##Vibrato" and label == "Vibrato1" then
+    elseif svType == "Exponential##Vibrato" and label == "Vibrato$$SV" then
         settingVars = {
             startMsx = 100,
             endMsx = 0,
             curvatureIndex = 5
         }
-    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato1" then
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato$$SV" then
         settingVars = {
             startMsx = 100,
             endMsx = 0,
@@ -31,7 +31,7 @@ function getSettingVars(svType, label)
             periods = 1,
             periodsShift = 0.25
         }
-    elseif svType == "Custom##Vibrato" and label == "Vibrato1" then
+    elseif svType == "Custom##Vibrato" and label == "Vibrato$$SV" then
         settingVars = {
             code = [[return function (x)
     local maxHeight = 150
@@ -42,14 +42,14 @@ function getSettingVars(svType, label)
     return heightFactor * primaryCoefficient * sinusoidalCoefficient
 end]]
         }
-    elseif svType == "Linear##Vibrato" and label == "Vibrato2" then
+    elseif svType == "Linear##Vibrato" and label == "Vibrato$$SSF" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
             higherStart = 1,
             higherEnd = 1,
         }
-    elseif svType == "Exponential##Vibrato" and label == "Vibrato2" then
+    elseif svType == "Exponential##Vibrato" and label == "Vibrato$$SSF" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
@@ -57,7 +57,7 @@ end]]
             higherEnd = 1,
             curvatureIndex = 10
         }
-    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato2" then
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato##SSF" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
@@ -279,7 +279,7 @@ end]],
             ms = 1000
         }
     end
-    local labelText = table.concat({ svType, "Settings", label })
+    local labelText = table.concat({ svType, label, "Settings" })
     getVariables(labelText, settingVars)
     return settingVars
 end

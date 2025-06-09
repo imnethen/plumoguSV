@@ -51,8 +51,8 @@ function dynamicScaleMenu(globalVars)
     makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
         menuVars.svMultipliers, nil, true)
 
-    local labelText = table.concat({ currentSVType, "SettingsDynamicScale" })
-    saveVariables(labelText, settingVars)
+    local labelText = table.concat({ currentSVType, "DynamicScale" })
+    saveVariables(labelText .. "Settings", settingVars)
     saveVariables("dynamicScaleMenu", menuVars)
 
     addSeparator()

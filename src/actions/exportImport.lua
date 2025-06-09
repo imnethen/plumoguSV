@@ -422,19 +422,19 @@ function importPlaceSVButton(globalVars)
     end
     if standardPlaceType then
         updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false)
-        local labelText = table.concat({ currentSVType, "SettingsStandard" })
-        saveVariables(labelText, settingVars)
+        local labelText = table.concat({ currentSVType, "Standard" })
+        saveVariables(labelText .. "Settings", settingVars)
     elseif stillPlaceType then
         updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false)
-        local labelText = table.concat({ currentSVType, "SettingsStill" })
-        saveVariables(labelText, settingVars)
+        local labelText = table.concat({ currentSVType, "Still" })
+        saveVariables(labelText .. "Settings", settingVars)
     elseif stutterSVType then
         updateStutterMenuSVs(settingVars)
-        local labelText = table.concat({ currentSVType, "SettingsSpecial" })
-        saveVariables(labelText, settingVars)
+        local labelText = table.concat({ currentSVType, "Special" })
+        saveVariables(labelText .. "Settings", settingVars)
     else
-        local labelText = table.concat({ currentSVType, "SettingsSpecial" })
-        saveVariables(labelText, settingVars)
+        local labelText = table.concat({ currentSVType, "Special" })
+        saveVariables(labelText .. "Settings", settingVars)
     end
 
     if standardPlaceType then saveVariables("placeStandardMenu", menuVars) end

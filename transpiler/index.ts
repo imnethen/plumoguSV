@@ -7,7 +7,9 @@ import {
 } from "fs";
 import { getFilesRecursively } from "./getFilesRecursively.js";
 
-export default async function transpiler(devMode = false) {
+const brainrotList = readFileSync("./brainrot.csv", "utf-8").split("\n")
+
+export default async function transpiler(devMode = false, fuckify = true) {
     let fileCount = 0;
     let output = "";
 
@@ -25,11 +27,27 @@ export default async function transpiler(devMode = false) {
         fileCount++;
     });
 
+    if (true) {
+        const matchList = []
+        const matches = [...new Set(output.match(/(["]).+?(["])/g))]
+        for (let i = 0; i < matches.length; i++) {
+
+            const bannedWords = ["ctrl","shift","alt","string","boolean","true","false","userdata","table","number"]
+            const match = matches[i]
+
+            if (!/^"([ A-z0-9_\(\)':\.\+]|##)*"$/g.test(match) || match.length == 3 || bannedWords.some((v) => match.includes(v)) || matchList.includes(match) || brainrotList.length < 1) continue
+            matchList.push(match)
+            // const randomWord = brainrotList.splice(Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1), 1)[0]
+            const randomWord = brainrotList[Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1)]
+            output = output.replaceAll(match, `"${randomWord}"`)
+        } 
+    }
+
     if (existsSync("plugin.lua")) rmSync("plugin.lua");
     writeFileSync("temp.lua", output.replaceAll("\n\n", "\n"));
     renameSync("temp.lua", "plugin.lua");
 
     return fileCount;
-}
+    }
 
 transpiler();
