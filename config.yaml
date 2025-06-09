@@ -15,7 +15,7 @@ drawCapybara: false
 drawCapybara2: false
 drawCapybara312: false
 selectTypeIndex: 1
-placeTypeIndex: 1
+placeTypeIndex: 2
 editToolIndex: 1
 showExportImportMenu: false
 importData: ''

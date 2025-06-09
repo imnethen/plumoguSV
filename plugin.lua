@@ -393,6 +393,70 @@ function displaceNotesForAnimationFrames(settingVars)
     getRemovableSVs(svsToRemove, svTimeIsAdded, firstOffset, lastOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
+function automateCopySVs(settingVars)
+    settingVars.copiedSVs = {}
+    local offsets = uniqueSelectedNoteOffsets()
+    if (not offsets) then return end
+    local startOffset = offsets[1]
+    local endOffset = offsets[#offsets]
+    local svs = getSVsBetweenOffsets(startOffset, endOffset)
+    if (not #svs or #svs == 0) then
+        print("W!", "No SVs found within the copiable region.")
+        return
+    end
+    local firstSVTime = svs[1].StartTime
+    for _, sv in pairs(getSVsBetweenOffsets(startOffset, endOffset)) do
+        local copiedSV = {
+            relativeOffset = sv.StartTime - firstSVTime,
+            multiplier = sv.Multiplier
+        }
+        table.insert(settingVars.copiedSVs, copiedSV)
+    end
+    if (#settingVars.copiedSVs > 0) then print("S!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
+end
+function clearAutomateSVs(settingVars)
+    settingVars.copiedSVs = {}
+end
+function automateSVs(settingVars)
+    local selected = state.SelectedHitObjects
+    local timeDict = {}
+    for _, v in pairs(selected) do
+        if (not table.contains(table.keys(timeDict), "t_" .. v.StartTime)) then
+            timeDict["t_" .. v.StartTime] = { v }
+        else
+            table.insert(timeDict["t_" .. v.StartTime], v)
+        end
+    end
+    local ids = utils.GenerateTimingGroupIds(#table.keys(timeDict), "automate_")
+    local index = 1
+    local actionList = {}
+    for k, v in pairs(timeDict) do
+        local noteTime = tonumber(k:sub(3))
+        local svsToAdd = {}
+        for i, sv in ipairs(settingVars.copiedSVs) do
+            if (settingVars.maintainMs) then
+                local timeDistance = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset -
+                    settingVars.copiedSVs[1].relativeOffset
+                local progress = sv.relativeOffset / timeDistance
+                local timeToPasteSV = noteTime - settingVars.ms * (1 - progress)
+                table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+            else
+                local timeToPasteSV = noteTime -
+                    (#settingVars.copiedSVs - i) / (#settingVars.copiedSVs - 1) * (noteTime - selected[1].StartTime)
+                table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+            end
+        end
+        local r = math.random(255)
+        local g = math.random(255)
+        local b = math.random(255)
+        local tg = utils.CreateScrollGroup(svsToAdd, 1, r .. "," .. g .. "," .. b)
+        local id = ids[index]
+        table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, v))
+        index = index + 1
+    end
+    actions.PerformBatch(actionList)
+    print("w!", "Automated.")
+end
 function placePenisSV(settingVars)
     local startTime = uniqueNoteOffsetsBetweenSelected()[1]
     local svs = {}
@@ -2469,18 +2533,19 @@ end
 function rgbaToUint(r, g, b, a) return a * 16 ^ 6 + b * 16 ^ 4 + g * 16 ^ 2 + r end
 function combo(label, list, listIndex, colorList)
     local newListIndex = listIndex
+    if (newListIndex > #list) then newListIndex = #list end
     local currentComboItem = list[listIndex]
     local comboFlag = imgui_combo_flags.HeightLarge
     rgb = {}
     if (colorList) then
-        colorList[listIndex]:gsub("(%d+)", function(c)
+        colorList[newListIndex]:gsub("(%d+)", function(c)
             table.insert(rgb, c)
         end)
         imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
     end
     if not imgui.BeginCombo(label, currentComboItem, comboFlag) then
         if (colorList) then imgui.PopStyleColor() end
-        return listIndex
+        return newListIndex
     end
     if (colorList) then imgui.PopStyleColor() end
     for i = 1, #list do
@@ -2744,12 +2809,11 @@ function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
     if (copiedSVCount == 0) then
         simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, nil, settingVars)
-        saveVariables("copyMenu", settingVars)
         return
     end
     button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, settingVars)
     addSeparator()
-    _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", true)
+    _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", settingVars.maintainMs)
     if (settingVars.maintainMs) then
         imgui.SameLine(0, SAMELINE_SPACING)
         imgui.PushItemWidth(90)
@@ -2758,64 +2822,6 @@ function automateSVMenu(settingVars)
     end
     addSeparator()
     simpleActionMenu("Automate SVs for selected notes", 1, automateSVs, nil, settingVars)
-end
-function automateCopySVs(settingVars)
-    settingVars.copiedSVs = {}
-    local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
-    local startOffset = offsets[1]
-    local endOffset = offsets[#offsets]
-    local svs = getSVsBetweenOffsets(startOffset, endOffset)
-    if (not #svs or #svs == 0) then
-        print("W!", "No SVs found within the copiable region.")
-        return
-    end
-    local firstSVTime = svs[1].StartTime
-    for _, sv in pairs(getSVsBetweenOffsets(startOffset, endOffset)) do
-        local copiedSV = {
-            relativeOffset = sv.StartTime - firstSVTime,
-            multiplier = sv.Multiplier
-        }
-        table.insert(settingVars.copiedSVs, copiedSV)
-    end
-    if (#settingVars.copiedSVs > 0) then print("S!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
-end
-function clearAutomateSVs(settingVars)
-    settingVars.copiedSVs = {}
-end
-function automateSVs(settingVars)
-    local selected = state.SelectedHitObjects
-    local timeDict = {}
-    for _, v in pairs(selected) do
-        if (not table.contains(table.keys(timeDict), "t_" .. v.StartTime)) then
-            timeDict["t_" .. v.StartTime] = { v }
-        else
-            table.insert(timeDict["t_" .. v.StartTime], v)
-        end
-    end
-    local ids = utils.GenerateTimingGroupIds(#table.keys(timeDict), "automate_")
-    local index = 1
-    local actionList = {}
-    for k, v in pairs(timeDict) do
-        local startTime = tonumber(k:sub(3))
-        local svsToAdd = {}
-        for _, sv in ipairs(settingVars.copiedSVs) do
-            local timeDistance = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset -
-                settingVars.copiedSVs[1].relativeOffset
-            local progress = sv.relativeOffset / timeDistance
-            local timeToPasteSV = startTime - settingVars.ms * (1 - progress)
-            table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
-        end
-        local r = math.random(255)
-        local g = math.random(255)
-        local b = math.random(255)
-        local tg = utils.CreateScrollGroup(svsToAdd, 1, r .. "," .. g .. "," .. b)
-        local id = ids[index]
-        table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, v))
-        index = index + 1
-    end
-    actions.PerformBatch(actionList)
-    print("w!", "Automated.")
 end
 function penisMenu(settingVars)
     _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
@@ -8401,7 +8407,7 @@ end]],
     elseif svType == "Automate" then
         settingVars = {
             copiedSVs = {},
-            maintainMs = true,
+            maintainMs = false,
             ms = 1000
         }
     end

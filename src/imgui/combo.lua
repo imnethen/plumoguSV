@@ -6,18 +6,19 @@
 --    listIndex : current index of the item from the list being selected in the combo [Int]
 function combo(label, list, listIndex, colorList)
     local newListIndex = listIndex
+    if (newListIndex > #list) then newListIndex = #list end
     local currentComboItem = list[listIndex]
     local comboFlag = imgui_combo_flags.HeightLarge
     rgb = {}
     if (colorList) then
-        colorList[listIndex]:gsub("(%d+)", function(c)
+        colorList[newListIndex]:gsub("(%d+)", function(c)
             table.insert(rgb, c)
         end)
         imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
     end
     if not imgui.BeginCombo(label, currentComboItem, comboFlag) then
         if (colorList) then imgui.PopStyleColor() end
-        return listIndex
+        return newListIndex
     end
     if (colorList) then imgui.PopStyleColor() end
 

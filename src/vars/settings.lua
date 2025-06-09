@@ -275,7 +275,7 @@ end]],
     elseif svType == "Automate" then
         settingVars = {
             copiedSVs = {},
-            maintainMs = true,
+            maintainMs = false,
             ms = 1000
         }
     end
