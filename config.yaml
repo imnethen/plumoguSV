@@ -4,7 +4,7 @@ upscroll: false
 colorThemeIndex: 11
 styleThemeIndex: 1
 effectFPS: 90
-cursorTrailIndex: 1
+cursorTrailIndex: 4
 cursorTrailShapeIndex: 1
 cursorTrailPoints: 10
 cursorTrailSize: 5
@@ -15,7 +15,7 @@ drawCapybara: false
 drawCapybara2: false
 drawCapybara312: false
 selectTypeIndex: 1
-placeTypeIndex: 2
+placeTypeIndex: 1
 editToolIndex: 1
 showExportImportMenu: false
 importData: ''

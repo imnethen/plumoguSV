@@ -38,8 +38,8 @@ function drawGlare(o, coords, size, glareColor, auraColor)
         local innerY = innerRadius * math.sin(angle)
         local outerX = outerRadius * innerX
         local outerY = outerRadius * innerY
-        innerPoints[i] = { innerX + coords[1], innerY + coords[2] }
-        outerPoints[i] = { outerX + coords[1], outerY + coords[2] }
+        innerPoints[i] = { innerX + coords.x, innerY + coords.y }
+        outerPoints[i] = { outerX + coords.x, outerY + coords.y }
     end
     o.AddQuadFilled(innerPoints[1], outerPoints[2], innerPoints[3], outerPoints[4], glareColor)
     o.AddQuadFilled(outerPoints[1], innerPoints[2], outerPoints[3], innerPoints[4], glareColor)
