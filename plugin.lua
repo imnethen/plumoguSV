@@ -952,7 +952,7 @@ function svVibrato(menuVars, heightFunc)
         end
         table.insert(fpsList, trueFPS)
         local teleportCount = math.floor((next - start) / 1000 * trueFPS / 2) * 2
-        if (menuVars.oneSided) then
+        if (menuVars.sides == 1) then
             for tp = 1, teleportCount do
                 local x = (tp - 1) / (teleportCount)
                 local offset = next * x + start * (1 - x)
@@ -964,11 +964,11 @@ function svVibrato(menuVars, heightFunc)
                 prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, nil,
                     height, 0)
             end
-        else
+        elseif (menuVars.sides == 2) then
             prepareDisplacingSVs(start, svsToAdd, svTimeIsAdded, nil,
                 -heightFunc(startPos, 1), 0)
             for tp = 2, teleportCount - 1 do
-                local x = (tp - 1) / (teleportCount)
+                local x = (tp - 1) / (teleportCount - 1)
                 local offset = next * x + start * (1 - x)
                 local initHeight = heightFunc(((math.floor((tp - 2) / 2) * 2) / (teleportCount - 2)) * posDifference +
                     startPos, tp - 1)
@@ -985,9 +985,34 @@ function svVibrato(menuVars, heightFunc)
                 heightFunc(((math.floor((teleportCount - 2) / 2) * 2) / teleportCount) * posDifference + startPos,
                     teleportCount),
                 0, nil)
+        else
+            teleportCount = math.floor((next - start) / 1000 * trueFPS / 3) * 3
+            prepareDisplacingSVs(start, svsToAdd, svTimeIsAdded, nil,
+                -heightFunc(startPos, 1), 0)
+            prepareDisplacingSVs(start, svsToAdd, svTimeIsAdded, nil,
+                heightFunc(startPos + 2 / (teleportCount - 1) * posDifference, 3) + heightFunc(startPos, 1), 0)
+            for tp = 3, teleportCount - 3, 3 do
+                local x = (tp - 1) / (teleportCount - 1)
+                local offset = next * x + start * (1 - x)
+                local height = heightFunc(startPos + tp / (teleportCount - 1) * posDifference, tp)
+                prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, nil,
+                    -height, 0)
+                x = tp / (teleportCount - 1)
+                offset = next * x + start * (1 - x)
+                prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, nil,
+                    -height, 0)
+                x = (tp + 1) / (teleportCount - 1)
+                offset = next * x + start * (1 - x)
+                local newHeight = heightFunc(startPos + (tp + 3) / (teleportCount - 1) * posDifference, tp + 2)
+                prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, nil,
+                    height + newHeight, 0)
+            end
+            prepareDisplacingSVs(next, svsToAdd, svTimeIsAdded,
+                heightFunc(1, teleportCount), 0, nil)
         end
     end
-    getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
+    print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
+    getRemovableSVs(sort(svsToRemove, sortAscendingStartTime), svTimeIsAdded, startOffset, endOffset, svsToRemove)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 function deleteItems(menuVars)
@@ -3159,7 +3184,22 @@ function placeVibratoSVMenu(globalVars, separateWindow)
     chooseVibratoMode(menuVars)
     chooseVibratoQuality(menuVars)
     if (menuVars.vibratoMode ~= 2) then
-        _, menuVars.oneSided = imgui.Checkbox("One-Sided Vibrato?", menuVars.oneSided)
+        imgui.AlignTextToFramePadding()
+        imgui.Dummy(vector.New(27, 0))
+        imgui.SameLine()
+        imgui.Text("Sides:")
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton("1", menuVars.sides == 1) then
+            menuVars.sides = 1
+        end
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton("2", menuVars.sides == 2) then
+            menuVars.sides = 2
+        end
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton("3", menuVars.sides == 3) then
+            menuVars.sides = 3
+        end
     end
     local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Vibrato$" .. (menuVars.vibratoMode == 1 and "$SV" or "$SSF"))
@@ -3180,7 +3220,7 @@ function getVibratoPlaceMenuVars()
         svTypeIndex = 1,
         vibratoMode = 1,
         vibratoQuality = 3,
-        oneSided = false
+        sides = 2
     }
     getVariables("placeVibratoMenu", menuVars)
     return menuVars

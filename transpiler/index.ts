@@ -6,17 +6,17 @@ import {
     renameSync,
 } from "fs";
 import { getFilesRecursively } from "./getFilesRecursively.js";
+import * as chalk from "chalk";
 
 const brainrotInit = readFileSync("./brainrot.csv", "utf-8").split("\n")
 const brainrotList = []
 
-for (let i = 0; i < 10; i++) {
-    const arr = brainrotInit.map((x) => `${x}##${i}`)
-    brainrotList.push(...arr)
+for (let i = 0; i < 5; i++) {
+    brainrotList.push(...brainrotInit.map((x) => `${x}##${i}`))
+    brainrotList.push(..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((x) => `${x}##${i}`))
 }
 
-
-export default async function transpiler(devMode = false, fuckify = true) {
+export default async function transpiler(devMode = false, fuckify = false) {
     let fileCount = 0;
     let output = "";
 
@@ -34,7 +34,7 @@ export default async function transpiler(devMode = false, fuckify = true) {
         fileCount++;
     });
 
-    if (false) {
+    if (fuckify) {
         const matchList = []
         const matches = [...new Set(output.match(/(["]).+?(["])/g))]
         for (let i = 0; i < matches.length; i++) {
@@ -48,6 +48,7 @@ export default async function transpiler(devMode = false, fuckify = true) {
             // const randomWord = brainrotList[Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1)]
             output = output.replaceAll(match, `"${randomWord}"`)
         } 
+        console.log(chalk.red(`Fuckified ${matches.length} terms.`))
     }
 
     if (existsSync("plugin.lua")) rmSync("plugin.lua");

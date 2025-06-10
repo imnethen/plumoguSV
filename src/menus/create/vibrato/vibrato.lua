@@ -18,7 +18,22 @@ function placeVibratoSVMenu(globalVars, separateWindow)
     chooseVibratoMode(menuVars)
     chooseVibratoQuality(menuVars)
     if (menuVars.vibratoMode ~= 2) then
-        _, menuVars.oneSided = imgui.Checkbox("One-Sided Vibrato?", menuVars.oneSided)
+        imgui.AlignTextToFramePadding()
+        imgui.Dummy(vector.New(27, 0))
+        imgui.SameLine()
+        imgui.Text("Sides:")
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton("1", menuVars.sides == 1) then
+            menuVars.sides = 1
+        end
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton("2", menuVars.sides == 2) then
+            menuVars.sides = 2
+        end
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton("3", menuVars.sides == 3) then
+            menuVars.sides = 3
+        end
     end
 
     local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
@@ -46,7 +61,7 @@ function getVibratoPlaceMenuVars()
         svTypeIndex = 1,
         vibratoMode = 1,
         vibratoQuality = 3,
-        oneSided = false
+        sides = 2
     }
     getVariables("placeVibratoMenu", menuVars)
     return menuVars
