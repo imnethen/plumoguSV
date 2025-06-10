@@ -1,6 +1,6 @@
 function ssfVibrato(menuVars, func1, func2)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startTime = offsets[1]
     local endTime = offsets[#offsets]
     local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]

@@ -777,9 +777,11 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
+    print(offsets)
     if (not offsets) then return end
     if placingStillSVs then
         offsets = uniqueNoteOffsetsBetweenSelected()
+        if (not offsets) then return end
         if (place == false) then
             offsets = uniqueNoteOffsetsBetween(optionalStart, optionalEnd)
         end
@@ -852,6 +854,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
     local noteSpacing = menuVars.noteSpacing
     local stillDistance = menuVars.stillDistance
     local noteOffsets = uniqueNoteOffsetsBetween(optionalStart, optionalEnd)
+    if (not noteOffsets) then return { svsToRemove = {}, svsToAdd = {} } end
     local firstOffset = noteOffsets[1]
     local lastOffset = noteOffsets[#noteOffsets]
     if stillType == "Auto" then
@@ -2260,11 +2263,12 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
 end
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V" }
+devMode = true
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
 GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
-    "Execute Vibrato Separately" }
+    "Execute Vibrato Separately", "Use TG of Selected Note" }
 imgui_disable_vector_packing = true
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
@@ -2312,6 +2316,7 @@ function draw()
     if (globalVars.showMeasureDataWidget) then
         if #state.SelectedHitObjects < 2 then goto measureDataContinue end
         local offsets = uniqueSelectedNoteOffsets()
+        if (not offsets) then goto measureDataContinue end
         local startOffset = offsets[1]
         local endOffset = offsets[#offsets]
         if (endOffset == startOffset) then goto measureDataContinue end
@@ -2359,6 +2364,10 @@ function draw()
     local negatedBorderColor = vector4(1) - borderColor
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
     imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
+        if (#state.SelectedHitObjects > 1) then return end
+        state.SelectedScrollGroupId = state.SelectedHitObjects[1].TimingGroup
+    end
 end
 DEFAULT_WIDGET_HEIGHT = 26
 DEFAULT_WIDGET_WIDTH = 160
@@ -2502,7 +2511,6 @@ TRAIL_SHAPES = {
     "Circles",
     "Triangles"
 }
-ignoreNotesOutsideTg = false
 STILL_BEHAVIOR_TYPES = {
     "Entire Region",
     "Per Note Group",
@@ -7681,7 +7689,7 @@ end
 function uniqueNoteOffsetsBetween(startOffset, endOffset)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not ignoreNotesOutsideTg) then
+        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not state.GetValue("global_ignoreNotes", false)) then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
             if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
                 table.insert(noteOffsetsBetween,
@@ -7695,12 +7703,18 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
 end
 function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
+    if (not selectedNoteOffsets) then
+        print("E!",
+            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+        return nil
+    end
     local startOffset = selectedNoteOffsets[1]
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
     local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
     if (#offsets < 2) then
         print("E!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+        return nil
     end
     return offsets
 end
@@ -7711,6 +7725,7 @@ function uniqueSelectedNoteOffsets()
     end
     offsets = table.dedupe(offsets)
     offsets = sort(offsets, sortAscending)
+    if (#offsets == 0) then return nil end
     return offsets
 end
 function updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, skipFinalSV)
@@ -8132,6 +8147,10 @@ end
 ---@return Vector2 vctr The resultant vector of style `<n, n>`.
 function vector2(n)
     return vector.New(n, n)
+end
+---@diagnostic disable: param-type-mismatch
+function h()
+    return imgui.Text(nil)
 end
 function loadGlobalVars()
     return {

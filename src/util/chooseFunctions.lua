@@ -1191,7 +1191,7 @@ function chooseSplitscrollLayers(settingVars)
         local buttonText = "Assign SVs and notes between\nselected notes to scroll " .. currentLayerNum
         if imgui.Button(buttonText, ACTION_BUTTON_SIZE) then
             local offsets = uniqueSelectedNoteOffsets()
-            if (not offsets) then return end
+            if (not truthy(offsets)) then return end
             local startOffset = offsets[1]
             local endOffset = offsets[#offsets]
             local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)

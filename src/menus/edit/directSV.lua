@@ -1,6 +1,6 @@
 function updateDirectEdit()
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
 

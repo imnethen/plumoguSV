@@ -1,8 +1,8 @@
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V" }
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
 GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
-    "Execute Vibrato Separately" }
+    "Execute Vibrato Separately", "Use TG of Selected Note" }
 
 imgui_disable_vector_packing = true
 
@@ -61,6 +61,7 @@ function draw()
     if (globalVars.showMeasureDataWidget) then
         if #state.SelectedHitObjects < 2 then goto measureDataContinue end
         local offsets = uniqueSelectedNoteOffsets()
+        if (not truthy(offsets)) then goto measureDataContinue end
         local startOffset = offsets[1]
         local endOffset = offsets[#offsets]
         if (endOffset == startOffset) then goto measureDataContinue end
@@ -121,4 +122,9 @@ function draw()
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
 
     imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
+
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
+        if (#state.SelectedHitObjects > 1) then return end
+        state.SelectedScrollGroupId = state.SelectedHitObjects[1].TimingGroup
+    end
 end

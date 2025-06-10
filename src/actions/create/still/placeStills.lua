@@ -10,7 +10,7 @@ function placeStillSVsParent(globalVars, menuVars) -- FIX FINAL SV BEING A PIECE
         return
     end
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     for i = 1, (#offsets - 1) do
         if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
             tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
@@ -32,6 +32,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
     local noteSpacing = menuVars.noteSpacing
     local stillDistance = menuVars.stillDistance
     local noteOffsets = uniqueNoteOffsetsBetween(optionalStart, optionalEnd)
+    if (not noteOffsets) then return { svsToRemove = {}, svsToAdd = {} } end
     local firstOffset = noteOffsets[1]
     local lastOffset = noteOffsets[#noteOffsets]
     if stillType == "Auto" then

@@ -11,9 +11,12 @@ import * as chalk from "chalk";
 const brainrotInit = readFileSync("./brainrot.csv", "utf-8").split("\n")
 const brainrotList = []
 
+const alphabetArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+
 for (let i = 0; i < 5; i++) {
     brainrotList.push(...brainrotInit.map((x) => `${x}##${i}`))
-    brainrotList.push(..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((x) => `${x}##${i}`))
+    brainrotList.push(...alphabetArray.map((x) => `${x}##${i}`))
+    brainrotList.push(...alphabetArray.map((x) => `${x.toLowerCase()}##${i}`))
 }
 
 export default async function transpiler(devMode = false, fuckify = false) {
@@ -34,7 +37,7 @@ export default async function transpiler(devMode = false, fuckify = false) {
         fileCount++;
     });
 
-    if (fuckify) {
+    if (false) {
         const matchList = []
         const matches = [...new Set(output.match(/(["]).+?(["])/g))]
         for (let i = 0; i < matches.length; i++) {

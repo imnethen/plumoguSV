@@ -148,8 +148,6 @@ TRAIL_SHAPES = { -- shapes for cursor trails
     "Triangles"
 }
 
-ignoreNotesOutsideTg = false
-
 STILL_BEHAVIOR_TYPES = {
     "Entire Region",
     "Per Note Group",

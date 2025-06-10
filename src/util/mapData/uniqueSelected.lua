@@ -1,12 +1,18 @@
 -- Finds and returns a list of all unique offsets of notes between selected notes [Table]
 function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
+    if (not selectedNoteOffsets) then
+        print("E!",
+            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+        return {}
+    end
     local startOffset = selectedNoteOffsets[1]
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
     local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
     if (#offsets < 2) then
         print("E!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+        return {}
     end
     return offsets
 end
@@ -20,5 +26,6 @@ function uniqueSelectedNoteOffsets()
     end
     offsets = table.dedupe(offsets)
     offsets = sort(offsets, sortAscending)
+    if (#offsets == 0) then return {} end
     return offsets
 end

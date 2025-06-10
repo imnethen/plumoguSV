@@ -1,14 +1,14 @@
 stepSize: 5
 dontReplaceSV: false
 upscroll: false
-colorThemeIndex: 11
+colorThemeIndex: 2
 styleThemeIndex: 1
-effectFPS: 90
-cursorTrailIndex: 4
+effectFPS: 690
+cursorTrailIndex: 1
 cursorTrailShapeIndex: 1
-cursorTrailPoints: 10
-cursorTrailSize: 5
-snakeSpringConstant: 1
+cursorTrailPoints: 20
+cursorTrailSize: 100
+snakeSpringConstant: 0.80000001192092896
 cursorTrailGhost: false
 rgbPeriod: 1
 drawCapybara: false
@@ -26,7 +26,7 @@ hideSVInfo: true
 showVibratoWidget: true
 showNoteDataWidget: true
 showMeasureDataWidget: true
-ignoreNotesOutsideTg: false
+ignoreNotesOutsideTg: true
 advancedMode: true
 hideAutomatic: true
 pulseCoefficient: 1
@@ -45,3 +45,4 @@ hotkeyList:
 - B
 - M
 - V
+- G

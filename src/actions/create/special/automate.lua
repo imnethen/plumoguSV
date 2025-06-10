@@ -1,7 +1,7 @@
 function automateCopySVs(settingVars)
     settingVars.copiedSVs = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svs = getSVsBetweenOffsets(startOffset, endOffset)

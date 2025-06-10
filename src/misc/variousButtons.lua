@@ -49,7 +49,7 @@ function buttonsForSVsInScroll1(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 1st scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll1 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
@@ -73,7 +73,7 @@ function buttonsForSVsInScroll2(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 2nd scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll2 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
@@ -97,7 +97,7 @@ function buttonsForSVsInScroll3(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 3rd scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll3 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
@@ -121,7 +121,7 @@ function buttonsForSVsInScroll4(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 4th scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
 
         settingVars.svsInScroll4 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
