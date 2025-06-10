@@ -56,7 +56,7 @@ For more information, please refer to <https://unlicense.org>
 --- #### A string of format `r,g,b` representing the color of the [editor layer](lua://EditorLayer). `r`, `g`, and `b` are integers within [0,255].
 ---@field ColorRgb string
 --- ##### (READ-ONLY)
---- #### Determines whether or not the timing group is visible in the editor.
+--- #### Determines whether or not the timing group color is visible in the editor.
 ---@field Hidden boolean
 
 ---@class (exact) ScrollSpeedFactor
