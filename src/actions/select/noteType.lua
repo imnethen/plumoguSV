@@ -14,5 +14,5 @@ function selectByNoteType(menuVars)
     end
 
     actions.SetHitObjectSelection(notesToSelect)
-    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "s!" or "w!", #notesToSelect .. " notes selected")
 end

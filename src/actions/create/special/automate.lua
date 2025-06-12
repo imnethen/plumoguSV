@@ -6,7 +6,7 @@ function automateCopySVs(settingVars)
     local endOffset = offsets[#offsets]
     local svs = getSVsBetweenOffsets(startOffset, endOffset)
     if (not #svs or #svs == 0) then
-        print("W!", "No SVs found within the copiable region.")
+        print("w!", "No SVs found within the copiable region.")
         return
     end
     local firstSVTime = svs[1].StartTime
@@ -17,7 +17,7 @@ function automateCopySVs(settingVars)
         }
         table.insert(settingVars.copiedSVs, copiedSV)
     end
-    if (#settingVars.copiedSVs > 0) then print("S!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
+    if (#settingVars.copiedSVs > 0) then print("s!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
 end
 
 function clearAutomateSVs(settingVars)

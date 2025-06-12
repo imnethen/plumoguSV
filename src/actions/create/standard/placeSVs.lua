@@ -7,7 +7,6 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
-    print(offsets)
     if (not truthy(offsets)) then return end
     if placingStillSVs then
         offsets = uniqueNoteOffsetsBetweenSelected()

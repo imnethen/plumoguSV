@@ -1,8 +1,8 @@
 local SETTING_TYPES = {
     "General",
+    "Appearance",
     "Windows + Widgets",
-    "Themes/Appearance",
-    "Hotkeys + Keybinds"
+    "Keybinds"
 }
 
 
@@ -42,7 +42,7 @@ function showPluginSettingsWindow(globalVars)
 
     imgui.NextColumn()
     imgui.BeginChild(69)
-    if (typeIndex == 1) then
+    if (SETTING_TYPES[typeIndex] == "General") then
         chooseAdvancedMode(globalVars)
         if (not globalVars.advancedMode) then imgui.BeginDisabled() end
         chooseHideAutomatic(globalVars)
@@ -55,14 +55,14 @@ function showPluginSettingsWindow(globalVars)
         chooseStepSize(globalVars)
         addPadding()
     end
-    if (typeIndex == 2) then
+    if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
         chooseHideSVInfo(globalVars)
         chooseShowVibratoWidget(globalVars)
         addSeparator()
         chooseShowNoteDataWidget(globalVars)
         chooseShowMeasureDataWidget(globalVars)
     end
-    if (typeIndex == 3) then
+    if (SETTING_TYPES[typeIndex] == "Appearance") then
         imgui.PushItemWidth(150)
         chooseStyleTheme(globalVars)
         chooseColorTheme(globalVars)
@@ -96,7 +96,7 @@ function showPluginSettingsWindow(globalVars)
             state.SetValue("showColorPicker", false)
         end
     end
-    if (typeIndex == 4) then
+    if (SETTING_TYPES[typeIndex] == "Keybinds") then
         local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
         if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
             hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)

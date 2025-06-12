@@ -48,10 +48,10 @@ function copyItems(menuVars)
         table.insert(menuVars.copiedBMs, copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then print("S!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks") end
-    if (#menuVars.copiedSSFs > 0) then print("S!", "Copied " .. #menuVars.copiedSSFs .. " SSFs") end
-    if (#menuVars.copiedSVs > 0) then print("S!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
-    if (#menuVars.copiedLines > 0) then print("S!", "Copied " .. #menuVars.copiedLines .. " Lines") end
+    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks") end
+    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs") end
+    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
+    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines") end
 end
 
 -- Clears all copied SVs
@@ -128,18 +128,18 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
     if (truthy(#linesToRemove)) then
-        print("error!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+        print("e!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
     end
     if (truthy(#svsToRemove)) then
-        print("error!",
+        print("e!",
             "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
     end
     if (truthy(#ssfsToRemove)) then
-        print("error!",
+        print("e!",
             "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
     end
     if (truthy(#bmsToRemove)) then
-        print("error!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+        print("e!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
     end
 
     if (truthy(#linesToAdd)) then

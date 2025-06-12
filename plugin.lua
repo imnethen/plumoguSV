@@ -397,11 +397,12 @@ function automateCopySVs(settingVars)
     settingVars.copiedSVs = {}
     local offsets = uniqueSelectedNoteOffsets()
     if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svs = getSVsBetweenOffsets(startOffset, endOffset)
     if (not #svs or #svs == 0) then
-        print("W!", "No SVs found within the copiable region.")
+        print("w!", "No SVs found within the copiable region.")
         return
     end
     local firstSVTime = svs[1].StartTime
@@ -412,7 +413,7 @@ function automateCopySVs(settingVars)
         }
         table.insert(settingVars.copiedSVs, copiedSV)
     end
-    if (#settingVars.copiedSVs > 0) then print("S!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
+    if (#settingVars.copiedSVs > 0) then print("s!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
 end
 function clearAutomateSVs(settingVars)
     settingVars.copiedSVs = {}
@@ -579,7 +580,7 @@ function placeStutterSVs(settingVars)
         lastMultiplier = settingVars.svMultipliers2[3]
     end
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local totalNumStutters = (#offsets - 1) * settingVars.stuttersPerSection
@@ -618,7 +619,7 @@ function placeStutterSSFs(settingVars)
         lastMultiplier = settingVars.svMultipliers2[3]
     end
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local totalNumStutters = (#offsets - 1) * settingVars.stuttersPerSection
@@ -749,7 +750,7 @@ end
 function placeSSFs(globalVars, menuVars)
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     local ssfsToAdd = {}
@@ -777,11 +778,10 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
-    print(offsets)
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     if placingStillSVs then
         offsets = uniqueNoteOffsetsBetweenSelected()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if (place == false) then
             offsets = uniqueNoteOffsetsBetween(optionalStart, optionalEnd)
         end
@@ -836,7 +836,7 @@ function placeStillSVsParent(globalVars, menuVars)
         return
     end
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     for i = 1, (#offsets - 1) do
         if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
             tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
@@ -902,7 +902,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
 end
 function ssfVibrato(menuVars, func1, func2)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startTime = offsets[1]
     local endTime = offsets[#offsets]
     local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
@@ -1020,7 +1020,7 @@ function svVibrato(menuVars, heightFunc)
 end
 function deleteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local linesToRemove = getLinesBetweenOffsets(startOffset, endOffset)
@@ -1043,18 +1043,18 @@ function deleteItems(menuVars)
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
     if (truthy(#linesToRemove)) then
-        print("error!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+        print("e!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
     end
     if (truthy(#svsToRemove)) then
-        print("error!",
+        print("e!",
             "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
     end
     if (truthy(#ssfsToRemove)) then
-        print("error!",
+        print("e!",
             "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
     end
     if (truthy(#bmsToRemove)) then
-        print("error!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+        print("e!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
     end
 end
 function addTeleportSVs(menuVars)
@@ -1062,7 +1062,7 @@ function addTeleportSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local displaceAmount = menuVars.distance
@@ -1157,7 +1157,7 @@ function copyItems(menuVars)
     menuVars.copiedSSFs = {}
     menuVars.copiedBMs = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     if (not menuVars.copyTable[1]) then goto continue1 end
@@ -1198,10 +1198,10 @@ function copyItems(menuVars)
         table.insert(menuVars.copiedBMs, copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then print("S!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks") end
-    if (#menuVars.copiedSSFs > 0) then print("S!", "Copied " .. #menuVars.copiedSSFs .. " SSFs") end
-    if (#menuVars.copiedSVs > 0) then print("S!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
-    if (#menuVars.copiedLines > 0) then print("S!", "Copied " .. #menuVars.copiedLines .. " Lines") end
+    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks") end
+    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs") end
+    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
+    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines") end
 end
 function clearCopiedItems(menuVars)
     menuVars.copiedLines = {}
@@ -1211,7 +1211,7 @@ function clearCopiedItems(menuVars)
 end
 function pasteItems(globalVars, menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local lastCopiedLine = menuVars.copiedLines[#menuVars.copiedLines]
@@ -1267,18 +1267,18 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
     if (truthy(#linesToRemove)) then
-        print("error!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+        print("e!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
     end
     if (truthy(#svsToRemove)) then
-        print("error!",
+        print("e!",
             "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
     end
     if (truthy(#ssfsToRemove)) then
-        print("error!",
+        print("e!",
             "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
     end
     if (truthy(#bmsToRemove)) then
-        print("error!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+        print("e!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
     end
     if (truthy(#linesToAdd)) then
         print("s!", "Created " .. #linesToAdd .. (#linesToAdd == 1 and " timing point." or " timing points."))
@@ -1301,7 +1301,7 @@ function displaceNoteSVsParent(menuVars)
         return
     end
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local svsToRemove = {}
     local svsToAdd = {}
     for _, offset in pairs(offsets) do
@@ -1321,7 +1321,7 @@ function displaceNoteSVs(menuVars, place, optionalOffset)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return { svsToRemove = {}, svsToAdd = {} } end
+    if (not truthy(offsets)) then return { svsToRemove = {}, svsToAdd = {} } end
     if (place == false) then offsets = { optionalOffset } end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
@@ -1425,8 +1425,8 @@ function fixFlippedLNEnds(menuVars)
     if endOffset == 0 then endOffset = map.HitObjects[#map.HitObjects].StartTime end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
-    local type = "S!"
-    if (fixedLNEndsCount == 0) then type = "I!" end
+    local type = "s!"
+    if (fixedLNEndsCount == 0) then type = "!" end
     print(type, "Fixed " .. fixedLNEndsCount .. " flipped LN ends")
     menuVars.fixedText = table.concat({ "Fixed ", fixedLNEndsCount, " flipped LN ends" })
 end
@@ -1435,7 +1435,7 @@ function flickerSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local numTeleports = 2 * menuVars.numFlickers
@@ -1478,7 +1478,7 @@ end
 function measureSVs(menuVars)
     local roundingDecimalPlaces = 5
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
@@ -1514,7 +1514,7 @@ function measureSVs(menuVars)
 end
 function mergeSVs()
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsToAdd = {}
@@ -1582,7 +1582,7 @@ function scaleDisplaceSVs(menuVars)
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local isStartDisplace = DISPLACE_SCALE_SPOTS[menuVars.scaleSpotIndex] == "Start"
@@ -1621,7 +1621,7 @@ function scaleDisplaceSVs(menuVars)
 end
 function scaleMultiplySVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local svsToAdd = {}
     local svsToRemove = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
     for i = 1, (#offsets - 1) do
@@ -1651,7 +1651,7 @@ function swapNoteSVs()
     local svsToRemove = {}
     local svTimeIsAdded = {}
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
@@ -1673,7 +1673,7 @@ function swapNoteSVs()
 end
 function verticalShiftSVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local svsToAdd = {}
@@ -2098,7 +2098,7 @@ function importPlaceSVButton(globalVars)
 end
 function selectAlternating(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
@@ -2126,11 +2126,11 @@ function selectAlternating(menuVars)
         end
     end
     actions.SetHitObjectSelection(notesToSelect)
-    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "s!" or "w!", #notesToSelect .. " notes selected")
 end
 function selectByChordSizes(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
@@ -2162,11 +2162,11 @@ function selectByChordSizes(menuVars)
     if (menuVars.hand) then notesToSelect = table.combine(notesToSelect, sizeDict[3]) end
     if (menuVars.quad) then notesToSelect = table.combine(notesToSelect, sizeDict[4]) end
     actions.SetHitObjectSelection(notesToSelect)
-    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "s!" or "w!", #notesToSelect .. " notes selected")
 end
 function selectByNoteType(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local totalNotes = getNotesBetweenOffsets(startOffset, endOffset)
@@ -2176,11 +2176,11 @@ function selectByNoteType(menuVars)
         if (note.EndTime ~= 0 and menuVars.ln) then table.insert(notesToSelect, note) end
     end
     actions.SetHitObjectSelection(notesToSelect)
-    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "s!" or "w!", #notesToSelect .. " notes selected")
 end
 function selectBySnap(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
@@ -2226,7 +2226,7 @@ function selectBySnap(menuVars)
         end
     end
     actions.SetHitObjectSelection(notesToSelect)
-    print(truthy(notesToSelect) and "S!" or "W!", #notesToSelect .. " notes selected")
+    print(truthy(notesToSelect) and "s!" or "w!", #notesToSelect .. " notes selected")
 end
 function awake()
     local tempGlobalVars = read()
@@ -2263,7 +2263,6 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
 end
-devMode = true
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
 GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
@@ -2316,7 +2315,7 @@ function draw()
     if (globalVars.showMeasureDataWidget) then
         if #state.SelectedHitObjects < 2 then goto measureDataContinue end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then goto measureDataContinue end
+        if (not truthy(offsets)) then goto measureDataContinue end
         local startOffset = offsets[1]
         local endOffset = offsets[#offsets]
         if (endOffset == startOffset) then goto measureDataContinue end
@@ -3315,7 +3314,7 @@ function copyNPasteMenu(globalVars)
 end
 function updateDirectEdit()
     local offsets = uniqueSelectedNoteOffsets()
-    if (not offsets) then return end
+    if (not truthy(offsets)) then return end
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     if (#offsets < 2) then
@@ -4130,9 +4129,9 @@ function sinusoidalSettingsMenu(settingVars, skipFinalSV, _)
 end
 local SETTING_TYPES = {
     "General",
+    "Appearance",
     "Windows + Widgets",
-    "Themes/Appearance",
-    "Hotkeys + Keybinds"
+    "Keybinds"
 }
 function showPluginSettingsWindow(globalVars)
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
@@ -4166,7 +4165,7 @@ function showPluginSettingsWindow(globalVars)
     imgui.SetColumnWidth(1, 283)
     imgui.NextColumn()
     imgui.BeginChild(69)
-    if (typeIndex == 1) then
+    if (SETTING_TYPES[typeIndex] == "General") then
         chooseAdvancedMode(globalVars)
         if (not globalVars.advancedMode) then imgui.BeginDisabled() end
         chooseHideAutomatic(globalVars)
@@ -4179,14 +4178,14 @@ function showPluginSettingsWindow(globalVars)
         chooseStepSize(globalVars)
         addPadding()
     end
-    if (typeIndex == 2) then
+    if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
         chooseHideSVInfo(globalVars)
         chooseShowVibratoWidget(globalVars)
         addSeparator()
         chooseShowNoteDataWidget(globalVars)
         chooseShowMeasureDataWidget(globalVars)
     end
-    if (typeIndex == 3) then
+    if (SETTING_TYPES[typeIndex] == "Appearance") then
         imgui.PushItemWidth(150)
         chooseStyleTheme(globalVars)
         chooseColorTheme(globalVars)
@@ -4220,7 +4219,7 @@ function showPluginSettingsWindow(globalVars)
             state.SetValue("showColorPicker", false)
         end
     end
-    if (typeIndex == 4) then
+    if (SETTING_TYPES[typeIndex] == "Keybinds") then
         local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
         if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
             hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
@@ -4557,7 +4556,7 @@ function buttonsForSVsInScroll1(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 1st scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
         settingVars.svsInScroll1 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
     end
@@ -4575,7 +4574,7 @@ function buttonsForSVsInScroll2(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 2nd scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
         settingVars.svsInScroll2 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
     end
@@ -4593,7 +4592,7 @@ function buttonsForSVsInScroll3(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 3rd scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
         settingVars.svsInScroll3 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
     end
@@ -4611,7 +4610,7 @@ function buttonsForSVsInScroll4(settingVars, noSVsInitially)
         local buttonText = "Assign SVs between\nselected notes to 4th scroll"
         if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
         local offsets = uniqueSelectedNoteOffsets()
-        if (not offsets) then return end
+        if (not truthy(offsets)) then return end
         if #offsets < 2 then return end
         settingVars.svsInScroll4 = getSVsBetweenOffsets(offsets[1], offsets[#offsets])
     end
@@ -6624,7 +6623,7 @@ function chooseSplitscrollLayers(settingVars)
         local buttonText = "Assign SVs and notes between\nselected notes to scroll " .. currentLayerNum
         if imgui.Button(buttonText, ACTION_BUTTON_SIZE) then
             local offsets = uniqueSelectedNoteOffsets()
-            if (not offsets) then return end
+            if (not truthy(offsets)) then return end
             local startOffset = offsets[1]
             local endOffset = offsets[#offsets]
             local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
@@ -7704,17 +7703,17 @@ end
 function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     if (not selectedNoteOffsets) then
-        print("E!",
+        print("e!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
-        return nil
+        return {}
     end
     local startOffset = selectedNoteOffsets[1]
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
     local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
     if (#offsets < 2) then
-        print("E!",
+        print("e!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
-        return nil
+        return {}
     end
     return offsets
 end
@@ -7725,7 +7724,7 @@ function uniqueSelectedNoteOffsets()
     end
     offsets = table.dedupe(offsets)
     offsets = sort(offsets, sortAscending)
-    if (#offsets == 0) then return nil end
+    if (#offsets == 0) then return {} end
     return offsets
 end
 function updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, skipFinalSV)
@@ -8147,10 +8146,6 @@ end
 ---@return Vector2 vctr The resultant vector of style `<n, n>`.
 function vector2(n)
     return vector.New(n, n)
-end
----@diagnostic disable: param-type-mismatch
-function h()
-    return imgui.Text(nil)
 end
 function loadGlobalVars()
     return {

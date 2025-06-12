@@ -40,9 +40,9 @@ function fixFlippedLNEnds(menuVars)
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 
-    local type = "S!"
+    local type = "s!"
 
-    if (fixedLNEndsCount == 0) then type = "I!" end
+    if (fixedLNEndsCount == 0) then type = "!" end
 
     print(type, "Fixed " .. fixedLNEndsCount .. " flipped LN ends")
 
