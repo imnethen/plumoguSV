@@ -6,7 +6,7 @@ function setPluginAppearance(globalVars)
     local styleTheme = STYLE_THEMES[globalVars.styleThemeIndex]
 
     setPluginAppearanceStyles(styleTheme)
-    setPluginAppearanceColors(colorTheme, globalVars.rgbPeriod)
+    setPluginAppearanceColors(colorTheme, globalVars)
 end
 
 -- Configures the plugin GUI styles
@@ -37,4 +37,31 @@ function setPluginAppearanceStyles(styleTheme)
     -- https://github.com/ocornut/imgui/issues/7297
     -- Apparently TabBorderSize doesn't have a imgui_style_var, so it can only be changed with
     -- imgui.GetStyle() which hasn't worked from my testing in Quaver plugins
+end
+
+-- Configures the plugin GUI colors
+-- Parameters
+--    colorTheme : currently selected color theme [String]
+--    rgbPeriod  : length in seconds of one RGB color cycle [Int/Float]
+function setPluginAppearanceColors(colorTheme, globalVars)
+    local borderColor = vector4(1)
+
+    if colorTheme == "Classic" then borderColor = setClassicColors() end
+    if colorTheme == "Strawberry" then borderColor = setStrawberryColors() end
+    if colorTheme == "Amethyst" then borderColor = setAmethystColors() end
+    if colorTheme == "Tree" then borderColor = setTreeColors() end
+    if colorTheme == "Barbie" then borderColor = setBarbieColors() end
+    if colorTheme == "Incognito" then borderColor = setIncognitoColors() end
+    if colorTheme == "Incognito + RGB" then borderColor = setIncognitoRGBColors(globalVars.rgbPeriod) end
+    if colorTheme == "Tobi's Glass" then borderColor = setTobiGlassColors() end
+    if colorTheme == "Tobi's RGB Glass" then borderColor = setTobiRGBGlassColors(globalVars.rgbPeriod) end
+    if colorTheme == "Glass" then borderColor = setGlassColors() end
+    if colorTheme == "Glass + RGB" then borderColor = setGlassRGBColors(globalVars.rgbPeriod) end
+    if colorTheme == "RGB Gamer Mode" then borderColor = setRGBGamerColors(globalVars.rgbPeriod) end
+    if colorTheme == "edom remag BGR" then borderColor = setInvertedRGBGamerColors(globalVars.rgbPeriod) end
+    if colorTheme == "BGR + otingocnI" then borderColor = setInvertedIncognitoRGBColors(globalVars.rgbPeriod) end
+    if colorTheme == "otingocnI" then borderColor = setInvertedIncognitoColors() end
+    if colorTheme == "CUSTOM" then borderColor = setCustomColors(globalVars) end
+
+    state.SetValue("global_baseBorderColor", borderColor)
 end

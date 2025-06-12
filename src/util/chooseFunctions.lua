@@ -96,7 +96,7 @@ end
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseColorTheme(globalVars)
     local oldColorThemeIndex = globalVars.colorThemeIndex
-    globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex)
+    globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex, COLOR_THEME_COLORS)
 
     if (oldColorThemeIndex ~= globalVars.colorThemeIndex) then
         saveAndSyncGlobals(globalVars)

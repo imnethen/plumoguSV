@@ -34,6 +34,7 @@ function loadGlobalVars()
         pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0,
         pulseColor = state.GetValue("global_pulseColor") or vector4(1),
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
-        hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST
+        hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST,
+        customStyle = state.GetValue("global_customStyle", nil)
     }
 end

@@ -44,7 +44,26 @@ COLOR_THEMES = { -- available color themes for the plugin
     "RGB Gamer Mode",
     "edom remag BGR",
     "BGR + otingocnI",
-    "otingocnI"
+    "otingocnI",
+    "CUSTOM"
+}
+COLOR_THEME_COLORS = {
+    "255,255,255",
+    "251,41,67",
+    "153,102,204",
+    "150,111,51",
+    "227,5,173",
+    "150,150,150",
+    "255,0,0",
+    "200,200,200",
+    "0,255,0",
+    "220,220,220",
+    "0,0,255",
+    "255,100,100",
+    "100,255,100",
+    "100,100,255",
+    "255,255,255",
+    "0,0,0",
 }
 COMBO_SV_TYPE = { -- options for overlapping combo SVs
     "Add",

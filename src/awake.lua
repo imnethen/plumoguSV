@@ -35,4 +35,5 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
+    state.SetValue("global_customStyle", tempGlobalVars.customStyle or {})
 end
