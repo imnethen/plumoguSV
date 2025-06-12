@@ -3283,7 +3283,7 @@ function addTeleportMenu()
     simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, nil, menuVars)
 end
 function alignTimingLinesMenu()
-    simpleActionMenu("Align timing lines in this region", 0, alignTimingLines, nil, nil)
+    simpleActionMenu("Align Timing Lines In This Region", 0, alignTimingLines, nil, nil)
 end
 function convertSVSSFMenu()
     local menuVars = {
