@@ -9,12 +9,10 @@ function selectAlternatingMenu()
     chooseOffset(menuVars)
     saveVariables("selectAlternatingMenu", menuVars)
 
-    local text = ""
-    if (menuVars.every > 1) then text = "s" end
-
     addSeparator()
     simpleActionMenu(
-        "Select a note every " .. menuVars.every .. " note" .. text .. ", from note #" .. menuVars.offset,
+        "Select a note every " ..
+        menuVars.every .. pluralize(" note, from note #", menuVars.every, 5) .. menuVars.offset,
         2,
         selectAlternating, nil, menuVars)
 end

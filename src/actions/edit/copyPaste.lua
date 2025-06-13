@@ -48,10 +48,10 @@ function copyItems(menuVars)
         table.insert(menuVars.copiedBMs, copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks") end
-    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs") end
-    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
-    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines") end
+    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
+    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
+    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
+    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
 end
 
 -- Clears all copied SVs
@@ -100,21 +100,39 @@ function pasteItems(globalVars, menuVars)
     local bmsToAdd = {}
     for i = 1, #offsets do
         local pasteOffset = offsets[i]
+        local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
+        local ignoranceTolerance = 0.01
         for _, line in ipairs(menuVars.copiedLines) do
             local timeToPasteLine = pasteOffset + line.relativeOffset
+            if (math.abs(timeToPasteLine - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip1
+            end
             table.insert(linesToAdd, utils.CreateTimingPoint(timeToPasteLine, line.bpm, line.signature, line.hidden))
+            ::skip1::
         end
         for _, sv in ipairs(menuVars.copiedSVs) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
+            if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip2
+            end
             table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+            ::skip2::
         end
         for _, ssf in ipairs(menuVars.copiedSSFs) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
+            if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip3
+            end
             table.insert(ssfsToAdd, utils.CreateScrollSpeedFactor(timeToPasteSSF, ssf.multiplier))
+            ::skip3::
         end
         for _, bm in ipairs(menuVars.copiedBMs) do
             local timeToPasteBM = pasteOffset + bm.relativeOffset
+            if (math.abs(timeToPasteBM - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip4
+            end
             table.insert(bmsToAdd, utils.CreateBookmark(timeToPasteBM, bm.note))
+            ::skip4::
         end
     end
     actions.PerformBatch({
@@ -128,32 +146,31 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
     if (truthy(#linesToRemove)) then
-        print("e!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+        print("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
     end
     if (truthy(#svsToRemove)) then
         print("e!",
-            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+            "Deleted " .. #svsToRemove .. pluralize(" scroll velocity.", #svsToRemove, -2))
     end
     if (truthy(#ssfsToRemove)) then
         print("e!",
-            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+            "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        print("e!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+        print("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
     end
-
     if (truthy(#linesToAdd)) then
-        print("s!", "Created " .. #linesToAdd .. (#linesToAdd == 1 and " timing point." or " timing points."))
+        print("s!", "Created " .. #linesToAdd .. pluralize(" timing point.", #linesToAdd, -2))
     end
     if (truthy(#svsToAdd)) then
         print("s!",
-            "Created " .. #svsToAdd .. (#svsToAdd == 1 and " scroll velocity." or " scroll velocities."))
+            "Created " .. #svsToAdd .. pluralize(" scroll velocity.", #svsToAdd, -2))
     end
     if (truthy(#ssfsToAdd)) then
         print("s!",
-            "Created " .. #ssfsToAdd .. (#ssfsToAdd == 1 and " scroll speed factor." or " scroll speed factors."))
+            "Created " .. #ssfsToAdd .. pluralize(" scroll speed factor.", #ssfsToAdd, -2))
     end
     if (truthy(#bmsToAdd)) then
-        print("s!", "Created " .. #bmsToAdd .. (#bmsToAdd == 1 and " bookmark." or " bookmarks."))
+        print("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
     end
 end

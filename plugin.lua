@@ -412,7 +412,7 @@ function automateCopySVs(settingVars)
         }
         table.insert(settingVars.copiedSVs, copiedSV)
     end
-    if (#settingVars.copiedSVs > 0) then print("s!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
+    if (#settingVars.copiedSVs > 0) then print("s!", "Copied " .. #settingVars.copiedSVs .. " SVs.") end
 end
 function clearAutomateSVs(settingVars)
     settingVars.copiedSVs = {}
@@ -926,7 +926,7 @@ function ssfVibrato(menuVars, func1, func2)
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
-    print("s!", "Created " .. #ssfs .. (#ssfs == 1 and " SSF." or " SSFs."))
+    print("s!", "Created " .. #ssfs .. pluralize(" SSF.", #ssfs, -2))
 end
 function svVibrato(menuVars, heightFunc)
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -1042,18 +1042,18 @@ function deleteItems(menuVars)
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
     if (truthy(#linesToRemove)) then
-        print("e!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+        print("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
     end
     if (truthy(#svsToRemove)) then
         print("e!",
-            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+            "Deleted " .. #svsToRemove .. pluralize(" scroll velocity.", #svsToRemove, -2))
     end
     if (truthy(#ssfsToRemove)) then
         print("e!",
-            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+            "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        print("e!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+        print("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
     end
 end
 function addTeleportSVs(menuVars)
@@ -1112,7 +1112,7 @@ function alignTimingLines()
         utils.CreateEditorAction(action_type.AddTimingPointBatch, timingpoints),
         utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
     })
-    print("s!", "Created " .. #timingpoints .. (#timingpoints == 1 and " timing point." or " timing points."))
+    print("s!", "Created " .. #timingpoints .. pluralize(" timing point.", #timingpoints, -2))
 end
 function convertSVSSF(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
@@ -1197,10 +1197,10 @@ function copyItems(menuVars)
         table.insert(menuVars.copiedBMs, copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks") end
-    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs") end
-    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs") end
-    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines") end
+    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
+    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
+    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
+    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
 end
 function clearCopiedItems(menuVars)
     menuVars.copiedLines = {}
@@ -1238,21 +1238,39 @@ function pasteItems(globalVars, menuVars)
     local bmsToAdd = {}
     for i = 1, #offsets do
         local pasteOffset = offsets[i]
+        local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
+        local ignoranceTolerance = 0.01
         for _, line in ipairs(menuVars.copiedLines) do
             local timeToPasteLine = pasteOffset + line.relativeOffset
+            if (math.abs(timeToPasteLine - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip1
+            end
             table.insert(linesToAdd, utils.CreateTimingPoint(timeToPasteLine, line.bpm, line.signature, line.hidden))
+            ::skip1::
         end
         for _, sv in ipairs(menuVars.copiedSVs) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
+            if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip2
+            end
             table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+            ::skip2::
         end
         for _, ssf in ipairs(menuVars.copiedSSFs) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
+            if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip3
+            end
             table.insert(ssfsToAdd, utils.CreateScrollSpeedFactor(timeToPasteSSF, ssf.multiplier))
+            ::skip3::
         end
         for _, bm in ipairs(menuVars.copiedBMs) do
             local timeToPasteBM = pasteOffset + bm.relativeOffset
+            if (math.abs(timeToPasteBM - nextOffset) < ignoranceTolerance and i ~= #offsets) then
+                goto skip4
+            end
             table.insert(bmsToAdd, utils.CreateBookmark(timeToPasteBM, bm.note))
+            ::skip4::
         end
     end
     actions.PerformBatch({
@@ -1266,32 +1284,32 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
     if (truthy(#linesToRemove)) then
-        print("e!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+        print("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
     end
     if (truthy(#svsToRemove)) then
         print("e!",
-            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+            "Deleted " .. #svsToRemove .. pluralize(" scroll velocity.", #svsToRemove, -2))
     end
     if (truthy(#ssfsToRemove)) then
         print("e!",
-            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+            "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        print("e!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+        print("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
     end
     if (truthy(#linesToAdd)) then
-        print("s!", "Created " .. #linesToAdd .. (#linesToAdd == 1 and " timing point." or " timing points."))
+        print("s!", "Created " .. #linesToAdd .. pluralize(" timing point.", #linesToAdd, -2))
     end
     if (truthy(#svsToAdd)) then
         print("s!",
-            "Created " .. #svsToAdd .. (#svsToAdd == 1 and " scroll velocity." or " scroll velocities."))
+            "Created " .. #svsToAdd .. pluralize(" scroll velocity.", #svsToAdd, -2))
     end
     if (truthy(#ssfsToAdd)) then
         print("s!",
-            "Created " .. #ssfsToAdd .. (#ssfsToAdd == 1 and " scroll speed factor." or " scroll speed factors."))
+            "Created " .. #ssfsToAdd .. pluralize(" scroll speed factor.", #ssfsToAdd, -2))
     end
     if (truthy(#bmsToAdd)) then
-        print("s!", "Created " .. #bmsToAdd .. (#bmsToAdd == 1 and " bookmark." or " bookmarks."))
+        print("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
     end
 end
 function displaceNoteSVsParent(menuVars)
@@ -2555,6 +2573,10 @@ for i, v in pairs(VIBRATO_QUALITIES) do
     table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
 end
 VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
+ALPHABET_LIST = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+    "V", "W", "X", "Y", "Z" }
+CONSONANTS = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z" }
+VOWELS = { "A", "E", "I", "O", "U", "Z" }
 function copiableBox(text, label, content)
     imgui.TextWrapped(text)
     imgui.PushItemWidth(imgui.GetContentRegionAvailWidth())
@@ -3798,11 +3820,10 @@ function selectAlternatingMenu()
     chooseEvery(menuVars)
     chooseOffset(menuVars)
     saveVariables("selectAlternatingMenu", menuVars)
-    local text = ""
-    if (menuVars.every > 1) then text = "s" end
     addSeparator()
     simpleActionMenu(
-        "Select a note every " .. menuVars.every .. " note" .. text .. ", from note #" .. menuVars.offset,
+        "Select a note every " ..
+        menuVars.every .. pluralize(" note, from note #", menuVars.every, 5) .. menuVars.offset,
         2,
         selectAlternating, nil, menuVars)
 end
@@ -7829,12 +7850,7 @@ function exclusiveKeyPressed(keyCombo)
     return utils.IsKeyPressed(keys[keyReq])
 end
 function keyNumToKey(num)
-    local ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    local ALPHABET_LIST = {}
-    for k in ALPHABET:gmatch("%S") do
-        table.insert(ALPHABET_LIST, k)
-    end
-    return ALPHABET_LIST[num - 64]
+    return ALPHABET_LIST[math.clamp(num - 64, 1, #ALPHABET_LIST)]
 end
 function listenForAnyKeyPressed()
     local isCtrlHeld = utils.IsKeyDown(keys.LeftControl) or utils.IsKeyDown(keys.RightControl)
@@ -8187,7 +8203,7 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
         utils.CreateEditorAction(action_type.AddScrollVelocityBatch, svsToAdd)
     }
     actions.PerformBatch(editorActions)
-    print("s!", "Created " .. #svsToAdd .. (#svsToAdd == 1 and " SV." or " SVs."))
+    print("s!", "Created " .. #svsToAdd .. pluralize(" SV.", #svsToAdd, -2))
 end
 function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
     if #ssfsToAdd == 0 then return end
@@ -8196,7 +8212,7 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd)
     }
     actions.PerformBatch(editorActions)
-    print("s!", "Created " .. #ssfsToAdd .. (#ssfsToAdd == 1 and " SSF." or " SSFs."))
+    print("s!", "Created " .. #ssfsToAdd .. pluralize(" SSF.", #ssfsToAdd, -2))
 end
 function ssf(startTime, multiplier)
     return utils.CreateScrollSpeedFactor(startTime, multiplier)
@@ -8763,6 +8779,33 @@ end]],
     getVariables(labelText, settingVars)
     return settingVars
 end
+--- Very rudimentary function that returns a string depending on whether or not it should be plural.
+---@param str string The inital string, which should be a noun (e.g. `bookmark`)
+---@param val number The value, or count, of the noun, which will determine if it should be plural.
+---@return string pluralizedStr A new string that is pluralized if `val ~= 1`.
+function pluralize(str, val, pos)
+    if (pos) then
+        strEnding = str:sub(pos + 1, -1)
+        str = str:sub(1, pos)
+    end
+    local finalStr = str .. "s"
+    if (val == 1) then return str .. (strEnding or "") end
+    local lastLetter = str:sub(-1):upper()
+    local secondToLastLetter = str:sub(-2, -2):upper()
+    if (lastLetter == "Y" and table.contains(CONSONANTS, secondToLastLetter)) then
+        finalStr = str:sub(1, -2) .. "ies"
+    end
+    if (str:sub(-3):lower() == "quy") then
+        finalStr = str:sub(1, -2) .. "ies"
+    end
+    if (table.contains({ "J", "S", "X", "Z" }, lastLetter) or table.contains({ "SH", "CH" }, str:sub(-2))) then
+        finalStr = str .. "es"
+    end
+    return finalStr .. (strEnding or "")
+end
+---Returns `true` if given a string called "true", given a number greater than 0, given a table with an element, or is given `true`. Otherwise, returns `false`.
+---@param param any The parameter to truthify.
+---@return boolean truthy The truthy value of the parameter.
 function truthy(param)
     local t = type(param)
     if (t == "string") then

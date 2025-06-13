@@ -17,7 +17,7 @@ function automateCopySVs(settingVars)
         }
         table.insert(settingVars.copiedSVs, copiedSV)
     end
-    if (#settingVars.copiedSVs > 0) then print("s!", "Copied " .. #settingVars.copiedSVs .. " SVs") end
+    if (#settingVars.copiedSVs > 0) then print("s!", "Copied " .. #settingVars.copiedSVs .. " SVs.") end
 end
 
 function clearAutomateSVs(settingVars)

@@ -23,17 +23,17 @@ function deleteItems(menuVars)
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
     if (truthy(#linesToRemove)) then
-        print("e!", "Deleted " .. #linesToRemove .. (#linesToRemove == 1 and " timing point." or " timing points."))
+        print("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
     end
     if (truthy(#svsToRemove)) then
         print("e!",
-            "Deleted " .. #svsToRemove .. (#svsToRemove == 1 and " scroll velocity." or " scroll velocities."))
+            "Deleted " .. #svsToRemove .. pluralize(" scroll velocity.", #svsToRemove, -2))
     end
     if (truthy(#ssfsToRemove)) then
         print("e!",
-            "Deleted " .. #ssfsToRemove .. (#ssfsToRemove == 1 and " scroll speed factor." or " scroll speed factors."))
+            "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        print("e!", "Deleted " .. #bmsToRemove .. (#bmsToRemove == 1 and " bookmark." or " bookmarks."))
+        print("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
     end
 end
