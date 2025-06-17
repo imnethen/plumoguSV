@@ -2367,7 +2367,7 @@ function draw()
         state.SetValue("oldOffsetCount", #offsets)
     end
     ::measureDataContinue::
-    if (exclusiveKeyPressed("Ctrl+B")) then
+    if (exclusiveKeyPressed("Ctrl+H")) then
         ---@diagnostic disable-next-line: param-type-mismatch
         imgui.Text(nil)
     end

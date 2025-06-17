@@ -90,7 +90,7 @@ function draw()
     end
     ::measureDataContinue::
 
-    if (exclusiveKeyPressed("Ctrl+B")) then
+    if (exclusiveKeyPressed("Ctrl+H")) then
         -- crash the game
         ---@diagnostic disable-next-line: param-type-mismatch
         imgui.Text(nil)
