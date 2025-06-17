@@ -26,5 +26,5 @@ function ssfVibrato(menuVars, func1, func2)
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
-    print("s!", "Created " .. #ssfs .. pluralize(" SSF.", #ssfs, -2))
+    toggleablePrint("s!", "Created " .. #ssfs .. pluralize(" SSF.", #ssfs, -2))
 end

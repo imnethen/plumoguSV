@@ -401,7 +401,7 @@ function automateCopySVs(settingVars)
     local endOffset = offsets[#offsets]
     local svs = getSVsBetweenOffsets(startOffset, endOffset)
     if (not #svs or #svs == 0) then
-        print("w!", "No SVs found within the copiable region.")
+        toggleablePrint("w!", "No SVs found within the copiable region.")
         return
     end
     local firstSVTime = svs[1].StartTime
@@ -412,7 +412,7 @@ function automateCopySVs(settingVars)
         }
         table.insert(settingVars.copiedSVs, copiedSV)
     end
-    if (#settingVars.copiedSVs > 0) then print("s!", "Copied " .. #settingVars.copiedSVs .. " SVs.") end
+    if (#settingVars.copiedSVs > 0) then toggleablePrint("s!", "Copied " .. #settingVars.copiedSVs .. " SVs.") end
 end
 function clearAutomateSVs(settingVars)
     settingVars.copiedSVs = {}
@@ -455,7 +455,7 @@ function automateSVs(settingVars)
         index = index + 1
     end
     actions.PerformBatch(actionList)
-    print("w!", "Automated.")
+    toggleablePrint("w!", "Automated.")
 end
 function placePenisSV(settingVars)
     local startTime = uniqueNoteOffsetsBetweenSelected()[1]
@@ -926,7 +926,7 @@ function ssfVibrato(menuVars, func1, func2)
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
-    print("s!", "Created " .. #ssfs .. pluralize(" SSF.", #ssfs, -2))
+    toggleablePrint("s!", "Created " .. #ssfs .. pluralize(" SSF.", #ssfs, -2))
 end
 function svVibrato(menuVars, heightFunc)
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -1013,7 +1013,7 @@ function svVibrato(menuVars, heightFunc)
                 heightFunc(1, teleportCount), 0, nil)
         end
     end
-    print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
+    toggleablePrint("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
     getRemovableSVs(sort(svsToRemove, sortAscendingStartTime), svTimeIsAdded, startOffset, endOffset, svsToRemove)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
@@ -1042,18 +1042,18 @@ function deleteItems(menuVars)
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
     if (truthy(#linesToRemove)) then
-        print("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
+        toggleablePrint("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
     end
     if (truthy(#svsToRemove)) then
-        print("e!",
+        toggleablePrint("e!",
             "Deleted " .. #svsToRemove .. pluralize(" scroll velocity.", #svsToRemove, -2))
     end
     if (truthy(#ssfsToRemove)) then
-        print("e!",
+        toggleablePrint("e!",
             "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        print("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
+        toggleablePrint("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
     end
 end
 function addTeleportSVs(menuVars)
@@ -1112,7 +1112,7 @@ function alignTimingLines()
         utils.CreateEditorAction(action_type.AddTimingPointBatch, timingpoints),
         utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
     })
-    print("s!", "Created " .. #timingpoints .. pluralize(" timing point.", #timingpoints, -2))
+    toggleablePrint("s!", "Created " .. #timingpoints .. pluralize(" timing point.", #timingpoints, -2))
 end
 function convertSVSSF(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
@@ -1148,7 +1148,7 @@ function convertSVSSF(menuVars)
         editorActions:insert(utils.CreateEditorAction(action_type.AddScrollVelocityBatch, createTable))
     end
     actions.PerformBatch(editorActions)
-    print("w!", "Successfully converted.")
+    toggleablePrint("w!", "Successfully converted.")
 end
 function copyItems(menuVars)
     menuVars.copiedLines = {}
@@ -1197,10 +1197,10 @@ function copyItems(menuVars)
         table.insert(menuVars.copiedBMs, copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
-    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
-    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
-    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
+    if (#menuVars.copiedBMs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
+    if (#menuVars.copiedSSFs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
+    if (#menuVars.copiedSVs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
+    if (#menuVars.copiedLines > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
 end
 function clearCopiedItems(menuVars)
     menuVars.copiedLines = {}
@@ -1284,32 +1284,32 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
     if (truthy(#linesToRemove)) then
-        print("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
+        toggleablePrint("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
     end
     if (truthy(#svsToRemove)) then
-        print("e!",
+        toggleablePrint("e!",
             "Deleted " .. #svsToRemove .. pluralize(" scroll velocity.", #svsToRemove, -2))
     end
     if (truthy(#ssfsToRemove)) then
-        print("e!",
+        toggleablePrint("e!",
             "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        print("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
+        toggleablePrint("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
     end
     if (truthy(#linesToAdd)) then
-        print("s!", "Created " .. #linesToAdd .. pluralize(" timing point.", #linesToAdd, -2))
+        toggleablePrint("s!", "Created " .. #linesToAdd .. pluralize(" timing point.", #linesToAdd, -2))
     end
     if (truthy(#svsToAdd)) then
-        print("s!",
+        toggleablePrint("s!",
             "Created " .. #svsToAdd .. pluralize(" scroll velocity.", #svsToAdd, -2))
     end
     if (truthy(#ssfsToAdd)) then
-        print("s!",
+        toggleablePrint("s!",
             "Created " .. #ssfsToAdd .. pluralize(" scroll speed factor.", #ssfsToAdd, -2))
     end
     if (truthy(#bmsToAdd)) then
-        print("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
+        toggleablePrint("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
     end
 end
 function displaceNoteSVsParent(menuVars)
@@ -1491,6 +1491,12 @@ function flickerSVs(menuVars)
     end
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
+end
+function layerSnaps()
+    for _, noteTime in pairs(uniqueNoteOffsetsBetweenSelected()) do
+        print((noteTime - map.GetTimingPointAt(noteTime).StartTime) %
+            (60000 / map.GetTimingPointAt(noteTime).Bpm))
+    end
 end
 function measureSVs(menuVars)
     local roundingDecimalPlaces = 5
@@ -2278,6 +2284,7 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_showMeasureDataWidget", truthy(tempGlobalVars.showMeasureDataWidget))
     state.SetValue("global_advancedMode", truthy(tempGlobalVars.advancedMode))
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
+    state.SetValue("global_dontPrintCreation", truthy(tempGlobalVars.dontPrintCreation))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
     state.SetValue("global_customStyle", tempGlobalVars.customStyle or {})
 end
@@ -2360,6 +2367,10 @@ function draw()
         state.SetValue("oldOffsetCount", #offsets)
     end
     ::measureDataContinue::
+    if (exclusiveKeyPressed("Ctrl+B")) then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        imgui.Text(nil)
+    end
     imgui.End()
     saveVariables("globalVars", globalVars)
     local timeOffset = 50
@@ -3112,6 +3123,7 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
             typingCode = false
         end
         local func = eval(settingVars.code)
+        addSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
         end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
@@ -3133,6 +3145,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.endMsx * t +
                 settingVars.startMsx * (1 - t)
         end
+        addSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
         end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
@@ -3157,6 +3170,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
             end
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
+        addSeparator()
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
@@ -3166,6 +3180,7 @@ function linearVibratoMenu(menuVars, settingVars, separateWindow)
         local func = function(t)
             return settingVars.endMsx * t + settingVars.startMsx * (1 - t)
         end
+        addSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
         end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
@@ -3178,6 +3193,7 @@ function linearVibratoMenu(menuVars, settingVars, separateWindow)
         local func2 = function(t)
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
+        addSeparator()
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
@@ -3191,6 +3207,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
             return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) * (settingVars.startMsx +
                 t * (settingVars.endMsx - settingVars.startMsx)) + settingVars.verticalShift
         end
+        addSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
         end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
@@ -3214,6 +3231,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
             end
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
+        addSeparator()
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
     end
 end
@@ -3540,6 +3558,7 @@ EDIT_SV_TOOLS = {
     "Dynamic Scale",
     "Fix LN Ends",
     "Flicker",
+    "Layer Snaps",
     "Measure",
     "Merge",
     "Reverse Scroll",
@@ -3563,6 +3582,7 @@ function editSVTab(globalVars)
     if toolName == "Dynamic Scale" then dynamicScaleMenu(globalVars) end
     if toolName == "Fix LN Ends" then fixLNEndsMenu() end
     if toolName == "Flicker" then flickerMenu() end
+    if toolName == "Layer Snaps" then layerSnapMenu() end
     if toolName == "Measure" then measureMenu() end
     if toolName == "Merge" then mergeMenu() end
     if toolName == "Reverse Scroll" then reverseScrollMenu() end
@@ -3602,6 +3622,9 @@ function flickerMenu()
     saveVariables("flickerMenu", menuVars)
     addSeparator()
     simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, nil, menuVars)
+end
+function layerSnapMenu()
+    simpleActionMenu("Layer snaps between selection", 2, layerSnaps, nil, nil)
 end
 function measureMenu()
     local menuVars = {
@@ -3768,7 +3791,8 @@ function infoTab(globalVars)
             math.round(svSum * 1000 / map.TrackLength, 2) ..
             " SVs per second, or " .. math.round(ssfSum * 1000 / map.TrackLength, 2) .. " SSFs per second.")
         print("s!", "This map also contains " .. #map.TimingPoints .. " timing points.")
-        print("s!", "This map has " .. svSum .. " SVs and " .. ssfSum .. " SSFs across " .. #tgList .. " timing groups.")
+        print("s!",
+            "This map has " .. svSum .. " SVs and " .. ssfSum .. " SSFs across " .. #tgList .. " timing groups.")
         print("w!",
             "Remember that the quality of map has no correlation with the object count! Try to be optimal in your object usage.")
         state.SelectedScrollGroupId = currentTg
@@ -4203,7 +4227,7 @@ function showPluginSettingsWindow(globalVars)
     if (imgui.Button("Reset Settings")) then
         saveAndSyncGlobals({})
         globalVars = loadGlobalVars()
-        print("e!", "Settings have been reset.")
+        toggleablePrint("e!", "Settings have been reset.")
     end
     imgui.EndChild()
     imgui.SetColumnWidth(0, 150)
@@ -4221,6 +4245,7 @@ function showPluginSettingsWindow(globalVars)
         chooseDontReplaceSV(globalVars)
         chooseIgnoreNotes(globalVars)
         chooseStepSize(globalVars)
+        chooseDontPrintCreation(globalVars)
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
@@ -7240,6 +7265,14 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues ~= newValues
 end
+function chooseDontPrintCreation(globalVars)
+    local oldPrintCreation = globalVars.dontPrintCreation
+    _, globalVars.dontPrintCreation = imgui.Checkbox("Don't print SV creation messages",
+        oldPrintCreation)
+    if (oldPrintCreation ~= globalVars.dontPrintCreation) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
     local displacements = { 0 }
@@ -8012,7 +8045,7 @@ end
 function uniqueNoteOffsetsBetweenSelected()
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     if (not selectedNoteOffsets) then
-        print("e!",
+        toggleablePrint("e!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
         return {}
     end
@@ -8020,7 +8053,7 @@ function uniqueNoteOffsetsBetweenSelected()
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
     local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
     if (#offsets < 2) then
-        print("e!",
+        toggleablePrint("e!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
         return {}
     end
@@ -8203,7 +8236,7 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
         utils.CreateEditorAction(action_type.AddScrollVelocityBatch, svsToAdd)
     }
     actions.PerformBatch(editorActions)
-    print("s!", "Created " .. #svsToAdd .. pluralize(" SV.", #svsToAdd, -2))
+    toggleablePrint("s!", "Created " .. #svsToAdd .. pluralize(" SV.", #svsToAdd, -2))
 end
 function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
     if #ssfsToAdd == 0 then return end
@@ -8212,7 +8245,7 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd)
     }
     actions.PerformBatch(editorActions)
-    print("s!", "Created " .. #ssfsToAdd .. pluralize(" SSF.", #ssfsToAdd, -2))
+    toggleablePrint("s!", "Created " .. #ssfsToAdd .. pluralize(" SSF.", #ssfsToAdd, -2))
 end
 function ssf(startTime, multiplier)
     return utils.CreateScrollSpeedFactor(startTime, multiplier)
@@ -8493,7 +8526,8 @@ function loadGlobalVars()
         pulseColor = state.GetValue("global_pulseColor") or vector4(1),
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
         hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST,
-        customStyle = state.GetValue("global_customStyle", nil)
+        customStyle = state.GetValue("global_customStyle", nil),
+        dontPrintCreation = state.GetValue("global_dontPrintCreation") or false
     }
 end
 ---Gets the current menu's setting variables.
@@ -8802,6 +8836,11 @@ function pluralize(str, val, pos)
         finalStr = str .. "es"
     end
     return finalStr .. (strEnding or "")
+end
+function toggleablePrint(type, msg)
+    local creationMsg = msg:find("Create") and true or false
+    if (creationMsg and state.GetValue("global_dontPrintCreation", false)) then return end
+    print(type, msg)
 end
 ---Returns `true` if given a string called "true", given a number greater than 0, given a table with an element, or is given `true`. Otherwise, returns `false`.
 ---@param param any The parameter to truthify.

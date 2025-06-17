@@ -36,5 +36,5 @@ function alignTimingLines()
         utils.CreateEditorAction(action_type.RemoveTimingPoint, timingpoint)
     })
 
-    print("s!", "Created " .. #timingpoints .. pluralize(" timing point.", #timingpoints, -2))
+    toggleablePrint("s!", "Created " .. #timingpoints .. pluralize(" timing point.", #timingpoints, -2))
 end

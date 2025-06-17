@@ -1577,3 +1577,12 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues ~= newValues
 end
+
+function chooseDontPrintCreation(globalVars)
+    local oldPrintCreation = globalVars.dontPrintCreation
+    _, globalVars.dontPrintCreation = imgui.Checkbox("Don't print SV creation messages",
+        oldPrintCreation)
+    if (oldPrintCreation ~= globalVars.dontPrintCreation) then
+        saveAndSyncGlobals(globalVars)
+    end
+end

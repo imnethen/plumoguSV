@@ -16,7 +16,7 @@ drawCapybara2: false
 drawCapybara312: false
 selectTypeIndex: 1
 placeTypeIndex: 1
-editToolIndex: 1
+editToolIndex: 4
 showExportImportMenu: false
 importData: ''
 exportCustomSVData: ''
@@ -197,3 +197,4 @@ customStyle:
   - 0.60000002384185791
   - 0
   - 1
+dontPrintCreation: false

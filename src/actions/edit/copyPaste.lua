@@ -48,10 +48,10 @@ function copyItems(menuVars)
         table.insert(menuVars.copiedBMs, copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then print("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
-    if (#menuVars.copiedSSFs > 0) then print("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
-    if (#menuVars.copiedSVs > 0) then print("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
-    if (#menuVars.copiedLines > 0) then print("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
+    if (#menuVars.copiedBMs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
+    if (#menuVars.copiedSSFs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
+    if (#menuVars.copiedSVs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
+    if (#menuVars.copiedLines > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
 end
 
 -- Clears all copied SVs
@@ -146,31 +146,31 @@ function pasteItems(globalVars, menuVars)
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
     if (truthy(#linesToRemove)) then
-        print("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
+        toggleablePrint("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
     end
     if (truthy(#svsToRemove)) then
-        print("e!",
+        toggleablePrint("e!",
             "Deleted " .. #svsToRemove .. pluralize(" scroll velocity.", #svsToRemove, -2))
     end
     if (truthy(#ssfsToRemove)) then
-        print("e!",
+        toggleablePrint("e!",
             "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        print("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
+        toggleablePrint("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
     end
     if (truthy(#linesToAdd)) then
-        print("s!", "Created " .. #linesToAdd .. pluralize(" timing point.", #linesToAdd, -2))
+        toggleablePrint("s!", "Created " .. #linesToAdd .. pluralize(" timing point.", #linesToAdd, -2))
     end
     if (truthy(#svsToAdd)) then
-        print("s!",
+        toggleablePrint("s!",
             "Created " .. #svsToAdd .. pluralize(" scroll velocity.", #svsToAdd, -2))
     end
     if (truthy(#ssfsToAdd)) then
-        print("s!",
+        toggleablePrint("s!",
             "Created " .. #ssfsToAdd .. pluralize(" scroll speed factor.", #ssfsToAdd, -2))
     end
     if (truthy(#bmsToAdd)) then
-        print("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
+        toggleablePrint("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
     end
 end

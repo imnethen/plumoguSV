@@ -9,6 +9,7 @@ EDIT_SV_TOOLS = { -- tools for editing SVs
     "Dynamic Scale",
     "Fix LN Ends",
     "Flicker",
+    "Layer Snaps",
     "Measure",
     "Merge",
     "Reverse Scroll",
@@ -36,6 +37,7 @@ function editSVTab(globalVars)
     if toolName == "Dynamic Scale" then dynamicScaleMenu(globalVars) end
     if toolName == "Fix LN Ends" then fixLNEndsMenu() end
     if toolName == "Flicker" then flickerMenu() end
+    if toolName == "Layer Snaps" then layerSnapMenu() end
     if toolName == "Measure" then measureMenu() end
     if toolName == "Merge" then mergeMenu() end
     if toolName == "Reverse Scroll" then reverseScrollMenu() end

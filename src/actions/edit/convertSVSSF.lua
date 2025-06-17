@@ -33,5 +33,5 @@ function convertSVSSF(menuVars)
         editorActions:insert(utils.CreateEditorAction(action_type.AddScrollVelocityBatch, createTable))
     end
     actions.PerformBatch(editorActions)
-    print("w!", "Successfully converted.")
+    toggleablePrint("w!", "Successfully converted.")
 end

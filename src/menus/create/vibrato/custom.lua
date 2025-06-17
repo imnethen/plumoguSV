@@ -8,6 +8,7 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
             typingCode = false
         end
         local func = eval(settingVars.code)
+        addSeparator()
 
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)

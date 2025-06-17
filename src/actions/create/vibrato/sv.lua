@@ -89,7 +89,7 @@ function svVibrato(menuVars, heightFunc)
         end
     end
 
-    print("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
+    toggleablePrint("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
 
     getRemovableSVs(sort(svsToRemove, sortAscendingStartTime), svTimeIsAdded, startOffset, endOffset, svsToRemove)
     removeAndAddSVs(svsToRemove, svsToAdd)

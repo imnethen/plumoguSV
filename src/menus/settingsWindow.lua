@@ -40,7 +40,7 @@ function showPluginSettingsWindow(globalVars)
     if (imgui.Button("Reset Settings")) then
         saveAndSyncGlobals({})
         globalVars = loadGlobalVars()
-        print("e!", "Settings have been reset.")
+        toggleablePrint("e!", "Settings have been reset.")
     end
     imgui.EndChild()
     imgui.SetColumnWidth(0, 150)
@@ -59,6 +59,7 @@ function showPluginSettingsWindow(globalVars)
         chooseDontReplaceSV(globalVars)
         chooseIgnoreNotes(globalVars)
         chooseStepSize(globalVars)
+        chooseDontPrintCreation(globalVars)
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
