@@ -1,5 +1,5 @@
 -- Finds and returns a list of all unique offsets of notes between selected notes [Table]
-function uniqueNoteOffsetsBetweenSelected()
+function uniqueNoteOffsetsBetweenSelected(includeLN)
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     if (not selectedNoteOffsets) then
         toggleablePrint("e!",
@@ -8,7 +8,7 @@ function uniqueNoteOffsetsBetweenSelected()
     end
     local startOffset = selectedNoteOffsets[1]
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
-    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
+    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     if (#offsets < 2) then
         toggleablePrint("e!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")

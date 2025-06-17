@@ -1492,11 +1492,26 @@ function flickerSVs(menuVars)
     getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
+local COLOR_MAP = {
+    [1] = "Red",
+    [2] = "Blue",
+    [3] = "Purple",
+    [4] = "Yellow",
+    [5] = "White",
+    [6] = "Pink",
+    [8] =
+    "Orange",
+    [12] = "Cyan",
+    [16] = "Green"
+}
 function layerSnaps()
-    for _, noteTime in pairs(uniqueNoteOffsetsBetweenSelected()) do
-        print((noteTime - map.GetTimingPointAt(noteTime).StartTime) %
-            (60000 / map.GetTimingPointAt(noteTime).Bpm))
+    local bmsToAdd = {}
+    for _, noteTime in pairs(uniqueNoteOffsetsBetweenSelected(false)) do
+        local color = COLOR_MAP[getSnapFromTime(noteTime)]
+        local bm = utils.CreateBookmark(noteTime, "plumoguSV-snap-" .. color)
+        table.insert(bmsToAdd, bm)
     end
+    actions.Perform(utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd))
 end
 function measureSVs(menuVars)
     local roundingDecimalPlaces = 5
@@ -8027,12 +8042,12 @@ function getSSFsBetweenOffsets(startOffset, endOffset, includeEnd)
     end
     return sort(ssfsBetweenOffsets, sortAscendingStartTime)
 end
-function uniqueNoteOffsetsBetween(startOffset, endOffset)
+function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
         if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not state.GetValue("global_ignoreNotes", false)) then
             table.insert(noteOffsetsBetween, hitObject.StartTime)
-            if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset) then
+            if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset and includeLN) then
                 table.insert(noteOffsetsBetween,
                     hitObject.EndTime)
             end
@@ -8042,7 +8057,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset)
     noteOffsetsBetween = sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
-function uniqueNoteOffsetsBetweenSelected()
+function uniqueNoteOffsetsBetweenSelected(includeLN)
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     if (not selectedNoteOffsets) then
         toggleablePrint("e!",
@@ -8051,7 +8066,7 @@ function uniqueNoteOffsetsBetweenSelected()
     end
     local startOffset = selectedNoteOffsets[1]
     local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
-    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset)
+    local offsets = uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     if (#offsets < 2) then
         toggleablePrint("e!",
             "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
@@ -8288,6 +8303,35 @@ function executeFunctionIfTrue(boolean, func, globalVars, menuVars)
         return
     end
     func()
+end
+local SPECIAL_SNAPS = { 1, 2, 3, 4, 6, 8, 12, 16 }
+---Gets the snap color from a given time.
+---@param time number # The time to reference.
+---@return number
+function getSnapFromTime(time)
+    local previousBar = map.GetNearestSnapTimeFromTime(false, 1, time)
+    local barTime = 60000 / getTimingPointAt(time).Bpm
+    local distance = time - previousBar
+    if (math.abs(distance) / barTime < 0.02) then return 1 end
+    local absoluteSnap = barTime / distance
+    local foundCorrectSnap = false
+    for i = 1, math.ceil(16 / absoluteSnap) do
+        local currentSnap = absoluteSnap * i
+        local guessIndex = 1
+        while (SPECIAL_SNAPS[guessIndex] < currentSnap and guessIndex < #SPECIAL_SNAPS) do
+            guessIndex = guessIndex + 1
+        end
+        if (currentSnap > 17) then break end
+        guessedSnap = math.abs(SPECIAL_SNAPS[guessIndex] - currentSnap) <
+            math.abs(SPECIAL_SNAPS[math.max(guessIndex - 1, 1)] - currentSnap) and
+            SPECIAL_SNAPS[guessIndex] or SPECIAL_SNAPS[math.max(guessIndex - 1, 1)]
+        if (math.abs(guessedSnap - currentSnap) / (currentSnap) < 0.02) then
+            foundCorrectSnap = true
+            break
+        end
+    end
+    if (not foundCorrectSnap) then return 5 end
+    return guessedSnap
 end
 function getVariables(listName, variables)
     for key, _ in pairs(variables) do
