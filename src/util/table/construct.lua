@@ -1,4 +1,4 @@
----Creates a new numerical table with a custom metatable, allowing for `:` syntactic sugar.
+---Creates a new array with a custom metatable, allowing for `:` syntactic sugar.
 ---@vararg any Any entries to put into the table.
 ---@return table tbl A table with the given entries.
 function table.construct(...)
@@ -10,10 +10,11 @@ function table.construct(...)
     return tbl
 end
 
----Creates a new numerical table with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
----@param item any The entry to use.
+---Creates a new array with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
+---@generic T
+---@param item T The entry to use.
 ---@param num integer The number of entries to put into the table.
----@return table tbl A table with the given entries.
+---@return T[] tbl A table with the given entries.
 function table.constructRepeating(item, num)
     local tbl = table.construct()
     for _ = 1, num do

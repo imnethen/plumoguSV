@@ -1,7 +1,7 @@
----Concatenates two numeric tables together.
----@param t1 { [number]: any } The first table.
----@param t2 { [number]: any } The second table.
----@return { [number]: any } tbl The resultant table.
+---Concatenates two arrays together.
+---@param t1 any[] The first table.
+---@param t2 any[] The second table.
+---@return any[] tbl The resultant table.
 function table.combine(t1, t2)
     local newTbl = table.duplicate(t1)
     for i = 1, #t2 do

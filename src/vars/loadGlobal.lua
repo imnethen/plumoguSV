@@ -1,3 +1,5 @@
+---Returns the current global variables, as set in state.
+---@return table globalVars
 function loadGlobalVars()
     return {
         stepSize = state.GetValue("global_stepSize") or 5,

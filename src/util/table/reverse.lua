@@ -1,4 +1,4 @@
----Reverses the order of a numerically-indexed table.
+---Reverses the order of an array.
 ---@param tbl table The original table.
 ---@return table tbl The original table, reversed.
 function table.reverse(tbl)

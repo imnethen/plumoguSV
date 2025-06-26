@@ -1,10 +1,12 @@
--- Creates a simple action menu + button that does SV things
--- Parameters
---    buttonText   : text on the button that appears [String]
---    minimumNotes : minimum number of notes to select before the action button appears [Int/Float]
---    actionfunc   : function to execute once button is pressed [Function]
---    globalVars   : list of variables used globally across all menus [Table]
---    menuVars     : list of variables used for the current menu [Table]
+---Creates a big button that runs a function when clicked. If the number of notes selected is less than `minimumNotes`, returns a textual placeholder instead.
+---@param buttonText string The text that should be rendered on the button.
+---@param minimumNotes integer The minimum number of notes that are required to select berfore the button appears.
+---@param actionfunc fun(...): any The function to run on button press.
+---@param globalVars? {[string]: any} Optional global variable parameter.
+---@param menuVars? {[string]: any} Optional menu variable parameter.
+---@param hideNoteReq? boolean Whether or not to hide the textual placeholder if the selected note requirement isn't met.
+---@param disableKeyInput? boolean Whether or not to disallow keyboard inputs as a substitution to pressing the button.
+---@param optionalKeyOverride? string (Assumes `disableKeyInput` is false) Optional string to change the activation keybind.
 function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput,
                           optionalKeyOverride)
     local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
@@ -29,14 +31,13 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
     end
 end
 
--- Executes a function if a key is pressed
--- Parameters
---    key        : key to be pressed [keys.~, from Quaver's MonoGame.Framework.Input.Keys enum]
---    func       : function to execute once key is pressed [Function]
---    globalVars : list of variables used globally across all menus [Table]
---    menuVars   : list of variables used for the current menu [Table]
-function executeFunctionIfTrue(boolean, func, globalVars, menuVars)
-    if not boolean then return end
+---Runs a function with the given parameters if the given `condition` is true.
+---@param condition boolean The condition that is used.
+---@param func fun(...): nil The function to run if the condition is true.
+---@param globalVars? {[string]: any} Optional global variable parameter.
+---@param menuVars? {[string]: any} Optional menu variable parameter.
+function executeFunctionIfTrue(condition, func, globalVars, menuVars)
+    if not condition then return end
     if globalVars and menuVars then
         func(globalVars, menuVars)
         return

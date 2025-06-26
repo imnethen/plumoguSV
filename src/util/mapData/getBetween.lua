@@ -1,4 +1,4 @@
---- Returns a list of [hit objects](lua://HitObject) between two times, inclusive.
+---Returns a list of [hit objects](lua://HitObject) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return HitObject[] objs All of the [hit objects](lua://HitObject) within the area.
@@ -11,7 +11,7 @@ function getNotesBetweenOffsets(startOffset, endOffset)
     return sort(notesBetweenOffsets, sortAscendingStartTime)
 end
 
---- Returns a list of [timing points](lua://TimingPoint) between two times, inclusive.
+---Returns a list of [timing points](lua://TimingPoint) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return TimingPoint[] tps All of the [timing points](lua://TimingPoint) within the area.
@@ -24,7 +24,7 @@ function getLinesBetweenOffsets(startOffset, endOffset)
     return sort(linesBetweenoffsets, sortAscendingStartTime)
 end
 
---- Returns a list of [scroll velocities](lua://ScrollVelocity) between two times, inclusive.
+---Returns a list of [scroll velocities](lua://ScrollVelocity) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@param includeEnd? boolean Whether or not to include any SVs on the end time.
@@ -39,7 +39,7 @@ function getSVsBetweenOffsets(startOffset, endOffset, includeEnd)
     return sort(svsBetweenOffsets, sortAscendingStartTime)
 end
 
---- Returns a list of [bookmarks](lua://Bookmark) between two times, inclusive.
+---Returns a list of [bookmarks](lua://Bookmark) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return Bookmark[] bms All of the [bookmarks](lua://Bookmark) within the area.
@@ -52,12 +52,12 @@ function getBookmarksBetweenOffsets(startOffset, endOffset)
     return sort(bookmarksBetweenOffsets, sortAscendingStartTime)
 end
 
---- Given a predetermined set of SVs, returns a list of [scroll velocities](lua://ScrollVelocity) within a temporal boundary.
+---Given a predetermined set of SVs, returns a list of [scroll velocities](lua://ScrollVelocity) within a temporal boundary.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
 function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
-    local svsBetweenOffsets = {} --- @type ScrollVelocity[]
+    local svsBetweenOffsets = {} ---@type ScrollVelocity[]
     for _, sv in pairs(svs) do
         local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime < endOffset + 1
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
@@ -65,7 +65,7 @@ function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
     return sort(svsBetweenOffsets, sortAscendingStartTime)
 end
 
---- Returns a list of [scroll speed factors](lua://ScrollSpeedFactor) between two times, inclusive.
+---Returns a list of [scroll speed factors](lua://ScrollSpeedFactor) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@param includeEnd? boolean Whether or not to include any SVs on the end time.

@@ -16,7 +16,7 @@ function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 --    b : second object
 function sortAscendingTime(a, b) return a.time < b.time end
 
---- Sorts a table given a sorting function.
+---Sorts a table given a sorting function.
 ---@generic T
 ---@param tbl T[] The table to sort.
 ---@param compFn fun(a: T, b: T): boolean A comparison function. Given two elements `a` and `b`, how should they be sorted?

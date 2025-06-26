@@ -1,5 +1,5 @@
 ---In a nested table `tbl`, returns a table of property values with key `property`.
----@param tbl { [string]: any } The table to search in.
+---@param tbl { [string]: {[string]: any} } The table to search in.
 ---@param property string The property name.
 ---@return table properties The resultant table.
 function table.property(tbl, property)

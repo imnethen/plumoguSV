@@ -2,7 +2,7 @@ local SPECIAL_SNAPS = { 1, 2, 3, 4, 6, 8, 12, 16 }
 
 ---Gets the snap color from a given time.
 ---@param time number # The time to reference.
----@return number
+---@return SnapNumber
 function getSnapFromTime(time)
     local previousBar = map.GetNearestSnapTimeFromTime(false, 1, time)
     local barTime = 60000 / getTimingPointAt(time).Bpm

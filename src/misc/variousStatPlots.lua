@@ -7,8 +7,8 @@
 --    svDistances          : list of distances calculated from SV multipliers [Table]
 function updateSVStats(svGraphStats, svStats, svMultipliers, svMultipliersNoEndSV, svDistances)
     updateGraphStats(svGraphStats, svMultipliers, svDistances)
-    svStats.minSV = math.round(calculateMinValue(svMultipliersNoEndSV), 2)
-    svStats.maxSV = math.round(calculateMaxValue(svMultipliersNoEndSV), 2)
+    svStats.minSV = math.round(math.min(table.unpack(svMultipliersNoEndSV)), 2)
+    svStats.maxSV = math.round(math.max(table.unpack(svMultipliersNoEndSV)), 2)
     svStats.avgSV = math.round(table.average(svMultipliersNoEndSV, true), 3)
 end
 

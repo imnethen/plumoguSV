@@ -1,10 +1,7 @@
--------------------------------------------------------------------------------- Graph/Plot Related
-
--- Calculates distance vs time values of a note given a set of SV values
--- Returns the list of distances [Table]
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
---    svValues   : set of SV values [Table]
+---Calculates distance vs. time values of a note, given a set of SV values.
+---@param globalVars table A list of variables used globally across all menus.
+---@param svValues number[]
+---@return number[]
 function calculateDistanceVsTime(globalVars, svValues)
     local distance = 0
     local multiplier = 1
@@ -18,20 +15,10 @@ function calculateDistanceVsTime(globalVars, svValues)
     return table.reverse(distancesBackwards)
 end
 
--- Returns the minimum value from a list of values [Int/Float]
--- Parameters
---    values : list of numerical values [Table]
-function calculateMinValue(values) return math.min(table.unpack(values)) end
-
--- Returns the maximum value from a list of values [Int/Float]
--- Parameters
---    values : list of numerical values [Table]
-function calculateMaxValue(values) return math.max(table.unpack(values)) end
-
--- Calculates the minimum and maximum scale of a plot
--- Returns the minimum scale and maximum scale [Int/Float]
--- Parameters
---    plotValues : set of numbers to calculate plot scale for [Table]
+---Calculates the minimum and maximum scale of a plot.
+---@param plotValues number[]
+---@return number
+---@return number
 function calculatePlotScale(plotValues)
     local min = math.min(table.unpack(plotValues))
     local max = math.max(table.unpack(plotValues))
@@ -46,12 +33,11 @@ function calculatePlotScale(plotValues)
     return minScale, maxScale
 end
 
--- Calculates distance vs time values of a note given a set of stutter SV values
--- Returns the list of distances [Table]
--- Parameters
---    svValues           : set of SV values [Table]
---    stutterDuration    : duration of stutter SV [Int/Float]
---    stuttersPerSection : number of stutters per section [Int]
+---Calculates distance vs. time values of a note, given a set of stutter SV values.
+---@param svValues number[]
+---@param stutterDuration number
+---@param stuttersPerSection integer
+---@return number[]
 function calculateStutterDistanceVsTime(svValues, stutterDuration, stuttersPerSection)
     local distance = 0
     local distancesBackwards = { distance }
@@ -69,21 +55,19 @@ function calculateStutterDistanceVsTime(svValues, stutterDuration, stuttersPerSe
     return table.reverse(distancesBackwards)
 end
 
--- Creates a distance vs time graph/plot of SV motion
--- Parameters
---    noteDistances : list of note distances [Table]
---    minScale      : minimum scale of the plot [Int/Float]
---    maxScale      : maximum scale of the plot [Int/Float]
+---Creates a distance vs. time graph of SV distances.
+---@param noteDistances number[]
+---@param minScale number
+---@param maxScale number
 function plotSVMotion(noteDistances, minScale, maxScale)
     local plotSize = PLOT_GRAPH_SIZE
     imgui.PlotLines("##motion", noteDistances, #noteDistances, 0, "", minScale, maxScale, plotSize)
 end
 
--- Creates a bar graph/plot of SVs
--- Parameters
---    svVals   : list of numerical SV values [Table]
---    minScale : minimum scale of the plot [Int/Float]
---    maxScale : maximum scale of the plot [Int/Float]
+---Creates a histogram of SV values.
+---@param svVals number[]
+---@param minScale number
+---@param maxScale number
 function plotSVs(svVals, minScale, maxScale)
     local plotSize = PLOT_GRAPH_SIZE
     imgui.PlotHistogram("##svplot", svVals, #svVals, 0, "", minScale, maxScale, plotSize)

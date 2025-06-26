@@ -1,4 +1,4 @@
---- Very rudimentary function that returns a string depending on whether or not it should be plural.
+---Very rudimentary function that returns a string depending on whether or not it should be plural.
 ---@param str string The inital string, which should be a noun (e.g. `bookmark`)
 ---@param val number The value, or count, of the noun, which will determine if it should be plural.
 ---@return string pluralizedStr A new string that is pluralized if `val ~= 1`.
