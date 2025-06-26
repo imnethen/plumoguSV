@@ -5,22 +5,16 @@ function exclusiveKeyPressed(keyCombo)
         table.insert(comboList, v)
     end
     local keyReq = comboList[#comboList]
-    if (table.contains(comboList, "CTRL") and (utils.IsKeyUp(keys.LeftControl) and utils.IsKeyUp(keys.RightControl))) then
+    local ctrlHeld = utils.IsKeyDown(keys.LeftControl) or utils.IsKeyDown(keys.RightControl)
+    local shiftHeld = utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)
+    local altHeld = utils.IsKeyDown(keys.LeftAlt) or utils.IsKeyDown(keys.RightAlt)
+    if (table.contains(comboList, "CTRL") ~= ctrlHeld) then
         return false
     end
-    if (table.contains(comboList, "SHIFT") and (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift))) then
+    if (table.contains(comboList, "SHIFT") ~= shiftHeld) then
         return false
     end
-    if (table.contains(comboList, "ALT") and (utils.IsKeyUp(keys.LeftAlt) and utils.IsKeyUp(keys.RightAlt))) then
-        return false
-    end
-    if (not table.contains(comboList, "CTRL") and not (utils.IsKeyUp(keys.LeftControl) and utils.IsKeyUp(keys.RightControl))) then
-        return false
-    end
-    if (not table.contains(comboList, "SHIFT") and not (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift))) then
-        return false
-    end
-    if (not table.contains(comboList, "ALT") and not (utils.IsKeyUp(keys.LeftAlt) and utils.IsKeyUp(keys.RightAlt))) then
+    if (table.contains(comboList, "ALT") ~= altHeld) then
         return false
     end
     return utils.IsKeyPressed(keys[keyReq])
