@@ -1337,8 +1337,7 @@ history_type = {
 
 -- Imgui shit
 
-
-
+imgui = {}
 
 --- ##### (READ-ONLY)
 ---@param type string
