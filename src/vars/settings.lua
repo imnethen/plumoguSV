@@ -57,7 +57,7 @@ end]]
             higherEnd = 1,
             curvatureIndex = 10
         }
-    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato##SSF" then
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato$$SSF" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
@@ -67,6 +67,11 @@ end]]
             periods = 1,
             periodsShift = 0.25,
             applyToHigher = false,
+        }
+    elseif svType == "Custom##Vibrato" and label == "Vibrato$$SSF" then
+        settingVars = {
+            code1 = "peanits",
+            code2 = "balls"
         }
     elseif svType == "Exponential" then
         settingVars = {
