@@ -1,5 +1,5 @@
 ---Creates a new array with a custom metatable, allowing for `:` syntactic sugar.
----@vararg any Any entries to put into the table.
+---@param ... any entries to put into the table.
 ---@return table tbl A table with the given entries.
 function table.construct(...)
     local tbl = {}
