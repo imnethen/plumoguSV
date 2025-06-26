@@ -1,9 +1,8 @@
--- Restricts a number to be within a closed interval that wraps around
--- Returns the result of the restriction [Int/Float]
--- Parameters
---    number     : number to keep within the interval [Int/Float]
---    lowerBound : lower bound of the interval [Int/Float]
---    upperBound : upper bound of the interval [Int/Float]
+---Restricts a number to be within a closed ring.
+---@param number number
+---@param lowerBound number
+---@param upperBound number
+---@return number
 function math.wrap(number, lowerBound, upperBound)
     if number < lowerBound then return upperBound end
     if number > upperBound then return lowerBound end
