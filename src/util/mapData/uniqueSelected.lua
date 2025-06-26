@@ -1,4 +1,6 @@
--- Finds and returns a list of all unique offsets of notes between selected notes [Table]
+--- Finds and returns a list of all unique offsets of notes between selected notes [Table]
+---@param includeLN? boolean
+---@return number[]
 function uniqueNoteOffsetsBetweenSelected(includeLN)
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     if (not selectedNoteOffsets) then
@@ -17,8 +19,8 @@ function uniqueNoteOffsetsBetweenSelected(includeLN)
     return offsets
 end
 
--- Finds unique offsets of all notes currently selected in the editor
--- Returns a list of unique offsets (in increasing order) of selected notes [Table]
+---Returns a list of unique offsets (in increasing order) of selected notes [Table]
+---@return number[]
 function uniqueSelectedNoteOffsets()
     local offsets = {}
     for i, hitObject in pairs(state.SelectedHitObjects) do

@@ -1,6 +1,7 @@
--- Returns the SV multiplier at a specified offset in the map [Int/Float]
--- Parameters
---    offset : millisecond time [Int/Float]
+---Returns the SV multiplier in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
 function getHypotheticalSVMultiplierAt(svs, offset)
     if (#svs == 1) then return svs[1].Multiplier end
     local index = #svs
@@ -14,6 +15,10 @@ function getHypotheticalSVMultiplierAt(svs, offset)
     return 1
 end
 
+---Returns the SV time in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
 function getHypotheticalSVTimeAt(svs, offset)
     if (#svs == 1) then return svs[1].StartTime end
     local index = #svs
@@ -24,21 +29,15 @@ function getHypotheticalSVTimeAt(svs, offset)
             return svs[index].StartTime
         end
     end
-    return 1
+    return -69
 end
 
--- Returns the most recent SV's starttime [Int/Float]
--- Parameters
---    offset : millisecond time [Int/Float]
 function getSVStartTimeAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.StartTime end
     return -1
 end
 
--- Returns the SV multiplier at a specified offset in the map [Int/Float]
--- Parameters
---    offset : millisecond time [Int/Float]
 function getSVMultiplierAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.Multiplier end
@@ -46,9 +45,6 @@ function getSVMultiplierAt(offset)
     return map.InitialScrollVelocity or 1
 end
 
--- Returns the SSF multiplier at a specified offset in the map [Int/Float]
--- Parameters
---    offset : millisecond time [Int/Float]
 function getSSFMultiplierAt(offset)
     local ssf = map.GetScrollSpeedFactorAt(offset)
     if ssf then return ssf.Multiplier end

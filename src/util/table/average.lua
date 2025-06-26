@@ -1,6 +1,6 @@
 ---Returns the average value of an array.
 ---@param values number[] The list of numbers.
----@param includeLastValue boolean Whether or not to include the last value in the table.
+---@param includeLastValue? boolean Whether or not to include the last value in the table.
 ---@return number avg The arithmetic mean of the table.
 function table.average(values, includeLastValue)
     if #values == 0 then return 0 end

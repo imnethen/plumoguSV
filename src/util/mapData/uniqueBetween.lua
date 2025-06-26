@@ -1,7 +1,8 @@
--- Finds and returns a list of all unique offsets of notes between a start and an end time [Table]
--- Parameters
---    startOffset : start time in milliseconds [Int/Float]
---    endOffset   : end time in milliseconds [Int/Float]
+---Finds and returns a list of all unique offsets of notes between a start and an end time [Table]
+---@param startOffset number
+---@param endOffset number
+---@param includeLN? boolean
+---@return number[]
 function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
