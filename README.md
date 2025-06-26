@@ -3,7 +3,7 @@
 
 > "The ultimate community-driven and open-source competitive SV plugin. Remastered with many new features."
 
-This is a plugin for [Quaver](https://github.com/Quaver), the ultimate community-driven and open-source competitive rhythm game. Originally made by [amogu](https://github.com/kloi34), this fork aims to continue the legacy that kloi left behind. The plugin has support for manipulating SVs (scroll velocities) and SSFs (scroll speed factors) in all sorts of ways, and it is the de facto plugin for SV mapmaking.
+This is a plugin for [Quaver](https://github.com/Quaver), the ultimate community-driven and open-source competitive rhythm game. Originally made by [amogu](https://github.com/kloi34), this fork aims to continue the legacy that he left behind. The plugin has support for manipulating SVs (scroll velocities) and SSFs (scroll speed factors) in all sorts of ways, and it is the de facto plugin for SV mapmaking.
 
 ## Installation
 1. Go to the releases tab on the right, and download the latest release's `.zip` file.
