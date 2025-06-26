@@ -12,7 +12,7 @@ function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     if (settingVars.startSV < 0 and settingVars.endSV > 0 and math.abs(settingVars.startSV / settingVars.endSV) < 5) then
         height = state.GetValue("JumpHeight") or 0
         if settingsChanged then
-            linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1)
+            linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1, true)
             local sum = 0
             for i = 1, #linearSet - 1 do
                 if (linearSet[i] >= 0) then break end

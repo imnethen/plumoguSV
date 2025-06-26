@@ -7,7 +7,7 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
     local multipliers = vector.New(727, 69)
     if svType == "Linear" then
         multipliers = generateLinearSet(settingVars.startSV, settingVars.endSV,
-            settingVars.svPoints + 1)
+            settingVars.svPoints + 1, true)
     elseif svType == "Exponential" then
         local behavior = SV_BEHAVIORS[settingVars.behaviorIndex]
         if (settingVars.distanceMode == 3) then

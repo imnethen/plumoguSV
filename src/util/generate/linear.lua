@@ -3,11 +3,11 @@
 --    startValue : starting value of the linear set [Int/Float]
 --    endValue   : ending value of the linear set [Int/Float]
 --    numValues  : total number of values in the linear set [Int]
-function generateLinearSet(startValue, endValue, numValues)
+function generateLinearSet(startValue, endValue, numValues, placingSV)
     local linearSet = { startValue }
     if numValues < 2 then return linearSet end
 
-    if (state.GetValue("global_equalizeLinear", false)) then
+    if (state.GetValue("global_equalizeLinear", false) and placingSV) then
         endValue = endValue +
             (endValue - startValue) / (numValues - 1)
     end

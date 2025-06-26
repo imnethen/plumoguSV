@@ -1589,7 +1589,7 @@ end
 
 function chooseEqualizeLinear(globalVars)
     local oldEqualizeLinear = globalVars.equalizeLinear
-    _, globalVars.equalizeLinear = imgui.Checkbox("Equalize linear settings",
+    _, globalVars.equalizeLinear = imgui.Checkbox("Equalize linear SV",
         oldEqualizeLinear)
     if (oldEqualizeLinear ~= globalVars.equalizeLinear) then
         saveAndSyncGlobals(globalVars)

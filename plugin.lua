@@ -2302,7 +2302,9 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_dontPrintCreation", truthy(tempGlobalVars.dontPrintCreation))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
     state.SetValue("global_customStyle", tempGlobalVars.customStyle or {})
+    state.SetValue("global_equalizeLinear", truthy(tempGlobalVars.equalizeLinear))
 end
+devMode = true
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
 GLOBAL_HOTKEY_LIST = DEFAULT_HOTKEY_LIST
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
@@ -4158,7 +4160,7 @@ function linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     if (settingVars.startSV < 0 and settingVars.endSV > 0 and math.abs(settingVars.startSV / settingVars.endSV) < 5) then
         height = state.GetValue("JumpHeight") or 0
         if settingsChanged then
-            linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1)
+            linearSet = generateLinearSet(settingVars.startSV, settingVars.endSV, settingVars.svPoints + 1, true)
             local sum = 0
             for i = 1, #linearSet - 1 do
                 if (linearSet[i] >= 0) then break end
@@ -4261,6 +4263,7 @@ function showPluginSettingsWindow(globalVars)
         chooseIgnoreNotes(globalVars)
         chooseStepSize(globalVars)
         chooseDontPrintCreation(globalVars)
+        chooseEqualizeLinear(globalVars)
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
@@ -7288,6 +7291,14 @@ function chooseDontPrintCreation(globalVars)
         saveAndSyncGlobals(globalVars)
     end
 end
+function chooseEqualizeLinear(globalVars)
+    local oldEqualizeLinear = globalVars.equalizeLinear
+    _, globalVars.equalizeLinear = imgui.Checkbox("Equalize linear SV",
+        oldEqualizeLinear)
+    if (oldEqualizeLinear ~= globalVars.equalizeLinear) then
+        saveAndSyncGlobals(globalVars)
+    end
+end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
     local displacements = { 0 }
@@ -7643,9 +7654,13 @@ function generateHermiteSet(startValue, endValue, verticalShift, avgValue, numVa
     table.insert(hermiteSet, avgValue)
     return hermiteSet
 end
-function generateLinearSet(startValue, endValue, numValues)
+function generateLinearSet(startValue, endValue, numValues, placingSV)
     local linearSet = { startValue }
     if numValues < 2 then return linearSet end
+    if (state.GetValue("global_equalizeLinear", false) and placingSV) then
+        endValue = endValue +
+            (endValue - startValue) / (numValues - 1)
+    end
     local increment = (endValue - startValue) / (numValues - 1)
     for i = 1, (numValues - 1) do
         table.insert(linearSet, startValue + i * increment)
@@ -7715,7 +7730,7 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
     local multipliers = vector.New(727, 69)
     if svType == "Linear" then
         multipliers = generateLinearSet(settingVars.startSV, settingVars.endSV,
-            settingVars.svPoints + 1)
+            settingVars.svPoints + 1, true)
     elseif svType == "Exponential" then
         local behavior = SV_BEHAVIORS[settingVars.behaviorIndex]
         if (settingVars.distanceMode == 3) then
@@ -8571,7 +8586,8 @@ function loadGlobalVars()
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
         hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST,
         customStyle = state.GetValue("global_customStyle", nil),
-        dontPrintCreation = state.GetValue("global_dontPrintCreation") or false
+        dontPrintCreation = state.GetValue("global_dontPrintCreation") or false,
+        equalizeLinear = state.GetValue("global_equalizeLinear") or false
     }
 end
 ---Gets the current menu's setting variables.
@@ -8632,7 +8648,7 @@ end]]
             higherEnd = 1,
             curvatureIndex = 10
         }
-    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato##SSF" then
+    elseif svType == "Sinusoidal##Vibrato" and label == "Vibrato$$SSF" then
         settingVars = {
             lowerStart = 0.5,
             lowerEnd = 0.5,
@@ -8642,6 +8658,11 @@ end]]
             periods = 1,
             periodsShift = 0.25,
             applyToHigher = false,
+        }
+    elseif svType == "Custom##Vibrato" and label == "Vibrato$$SSF" then
+        settingVars = {
+            code1 = "peanits",
+            code2 = "balls"
         }
     elseif svType == "Exponential" then
         settingVars = {
