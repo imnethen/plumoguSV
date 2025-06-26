@@ -40,8 +40,21 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * [mulch](https://github.com/Emik03/mulch) by Emik03
 
 ## TO-DO
-* ~~Automate TG effects (v2)~~
-* Separate settings tab (v2)
-* ~~Move to vector system (v2)~~
-* ~~Fix all syntax errors in intellisense (v2)~~
-* ~~Migrate affine vibrato (v2)~~
+* ~~Automate TG effects~~
+* ~~Separate settings tab~~
+* ~~Move to vector system~~
+* ~~Fix all syntax errors in intellisense~~
+* ~~Migrate affine vibrato~~
+* ~~Add three sided vibrato algorithm~~
+* Add code based ssf vibrato
+* ~~Custom vibrato with sv and lua eval~~
+* ~~Map statistics~~
+* ~~Custom theme maker~~
+* ~~Dynamic automation~~
+* ~~Flicker duration option~~
+* Finish snap editor
+* Customizable default page settings
+* Preset menu
+* Refactor custom theme settings
+* Add import/export custom theme
+* Add tooltips to settings
