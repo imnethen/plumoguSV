@@ -446,72 +446,6 @@ function chooseDistanceBack3(settingVars)
     helpMarker("Splitscroll distance separating scroll3 and scroll4 planes")
 end
 
--- Lets you choose whether or not to replace SVs when placing SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function chooseDontReplaceSV(globalVars)
-    local label = "Don't replace SVs when placing regular SVs"
-    local oldDontReplaceSV = globalVars.dontReplaceSV
-    _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
-    if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
--- Lets you choose whether or not to replace SVs when placing SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function chooseIgnoreNotes(globalVars)
-    local oldIgnore = globalVars.ignoreNotesOutsideTg
-    _, globalVars.ignoreNotesOutsideTg = imgui.Checkbox("Ignore notes outside current timing group",
-        oldIgnore)
-    if (oldIgnore ~= globalVars.ignoreNotesOutsideTg) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
--- Lets you choose whether or not to replace SVs when placing SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function chooseHideSVInfo(globalVars)
-    local oldHideInfo = globalVars.hideSVInfo
-    _, globalVars.hideSVInfo = imgui.Checkbox("Hide SV Info Window",
-        oldHideInfo)
-    if (oldHideInfo ~= globalVars.hideSVInfo) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
--- Lets you choose whether or not to replace SVs when placing SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
-function chooseShowVibratoWidget(globalVars)
-    local oldVibratoWidget = globalVars.showVibratoWidget
-    _, globalVars.showVibratoWidget = imgui.Checkbox("Separate Vibrato Into New Window",
-        oldVibratoWidget)
-    if (oldVibratoWidget ~= globalVars.showVibratoWidget) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
-function chooseShowNoteDataWidget(globalVars)
-    local oldNoteDataWidget = globalVars.showNoteDataWidget
-    _, globalVars.showNoteDataWidget = imgui.Checkbox("Show Note Data Of Selection",
-        oldNoteDataWidget)
-    if (oldNoteDataWidget ~= globalVars.showNoteDataWidget) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
-function chooseShowMeasureDataWidget(globalVars)
-    local oldMeasureDataWidget = globalVars.showMeasureDataWidget
-    _, globalVars.showMeasureDataWidget = imgui.Checkbox("Show Measure Data Of Selection",
-        oldMeasureDataWidget)
-    if (oldMeasureDataWidget ~= globalVars.showMeasureDataWidget) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
 -- Lets you choose whether or not to draw a capybara on screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -752,26 +686,6 @@ function chooseLinearlyChangeDist(settingVars)
     local _, newChoice = imgui.Checkbox("Change distance over time", oldChoice)
     settingVars.linearlyChange = newChoice
     return oldChoice ~= newChoice
-end
-
--- Lets you choose whether to activate or deactivate "Advanced Mode"
-function chooseAdvancedMode(globalVars)
-    local oldAdvancedMode = globalVars.advancedMode
-    _, globalVars.advancedMode = imgui.Checkbox("Enable Advanced Mode", oldAdvancedMode)
-    if (oldAdvancedMode ~= globalVars.advancedMode) then
-        saveAndSyncGlobals(globalVars)
-        state.SetValue("global_advancedMode", globalVars.advancedMode)
-    end
-end
-
--- Lets you choose whether to activate or deactivate hiding automated timing groups.
-function chooseHideAutomatic(globalVars)
-    local oldHideAutomatic = globalVars.hideAutomatic
-    _, globalVars.hideAutomatic = imgui.Checkbox("Hide Automatically Placed TGs?", oldHideAutomatic)
-    if (oldHideAutomatic ~= globalVars.hideAutomatic) then
-        saveAndSyncGlobals(globalVars)
-        state.SetValue("globalVars.hideAutomatic", globalVars.hideAutomatic)
-    end
 end
 
 -- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
@@ -1578,20 +1492,9 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
         oldValues ~= newValues
 end
 
-function chooseDontPrintCreation(globalVars)
-    local oldPrintCreation = globalVars.dontPrintCreation
-    _, globalVars.dontPrintCreation = imgui.Checkbox("Don't print SV creation messages",
-        oldPrintCreation)
-    if (oldPrintCreation ~= globalVars.dontPrintCreation) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-
-function chooseEqualizeLinear(globalVars)
-    local oldEqualizeLinear = globalVars.equalizeLinear
-    _, globalVars.equalizeLinear = imgui.Checkbox("Equalize linear SV",
-        oldEqualizeLinear)
-    if (oldEqualizeLinear ~= globalVars.equalizeLinear) then
-        saveAndSyncGlobals(globalVars)
-    end
+function createGlobalCheckbox(globalVars, parameter, label, tooltipText)
+    local oldValue = globalVars[parameter]
+    _, globalVars[parameter] = imgui.Checkbox(label, oldValue)
+    if (tooltipText) then toolTip(tooltipText) end
+    if (oldValue ~= globalVars[parameter]) then saveAndSyncGlobals(globalVars) end
 end

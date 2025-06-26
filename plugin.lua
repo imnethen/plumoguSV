@@ -4252,26 +4252,26 @@ function showPluginSettingsWindow(globalVars)
     imgui.NextColumn()
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
-        chooseAdvancedMode(globalVars)
+        createGlobalCheckbox(globalVars, "advancedMode", "Enable advanced mode")
         if (not globalVars.advancedMode) then imgui.BeginDisabled() end
-        chooseHideAutomatic(globalVars)
+        createGlobalCheckbox(globalVars, "hideAutomatic", "Hide automatically placed TGs")
         if (not globalVars.advancedMode) then imgui.EndDisabled() end
         addSeparator()
         chooseUpscroll(globalVars)
         addSeparator()
-        chooseDontReplaceSV(globalVars)
-        chooseIgnoreNotes(globalVars)
+        createGlobalCheckbox(globalVars, "dontReplaceSV", "Don't replace SVs when placing regular SVs")
+        createGlobalCheckbox(globalVars, "ignoreNotesOutsideTg", "Ignore notes outside current timing group")
         chooseStepSize(globalVars)
-        chooseDontPrintCreation(globalVars)
-        chooseEqualizeLinear(globalVars)
+        createGlobalCheckbox(globalVars, "dontPrintCreation", "Don't print SV creation messages")
+        createGlobalCheckbox(globalVars, "equalizeLinear", "Equalize linear SV")
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
-        chooseHideSVInfo(globalVars)
-        chooseShowVibratoWidget(globalVars)
+        createGlobalCheckbox(globalVars, "hideSVInfo", "Hide SV info window")
+        createGlobalCheckbox(globalVars, "showVibratoWidget", "Separate Vibrato Into New Window")
         addSeparator()
-        chooseShowNoteDataWidget(globalVars)
-        chooseShowMeasureDataWidget(globalVars)
+        createGlobalCheckbox(globalVars, "showNoteDataWidget", "Show Note Data Of Selection")
+        createGlobalCheckbox(globalVars, "showMeasureDataWidget", "Show Measure Data Of Selection")
     end
     if (SETTING_TYPES[typeIndex] == "Appearance") then
         imgui.PushItemWidth(150)
@@ -6472,54 +6472,6 @@ function chooseDistanceBack3(settingVars)
         0, 0, "%.3f msx")
     helpMarker("Splitscroll distance separating scroll3 and scroll4 planes")
 end
-function chooseDontReplaceSV(globalVars)
-    local label = "Don't replace SVs when placing regular SVs"
-    local oldDontReplaceSV = globalVars.dontReplaceSV
-    _, globalVars.dontReplaceSV = imgui.Checkbox(label, oldDontReplaceSV)
-    if (oldDontReplaceSV ~= globalVars.dontReplaceSV) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-function chooseIgnoreNotes(globalVars)
-    local oldIgnore = globalVars.ignoreNotesOutsideTg
-    _, globalVars.ignoreNotesOutsideTg = imgui.Checkbox("Ignore notes outside current timing group",
-        oldIgnore)
-    if (oldIgnore ~= globalVars.ignoreNotesOutsideTg) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-function chooseHideSVInfo(globalVars)
-    local oldHideInfo = globalVars.hideSVInfo
-    _, globalVars.hideSVInfo = imgui.Checkbox("Hide SV Info Window",
-        oldHideInfo)
-    if (oldHideInfo ~= globalVars.hideSVInfo) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-function chooseShowVibratoWidget(globalVars)
-    local oldVibratoWidget = globalVars.showVibratoWidget
-    _, globalVars.showVibratoWidget = imgui.Checkbox("Separate Vibrato Into New Window",
-        oldVibratoWidget)
-    if (oldVibratoWidget ~= globalVars.showVibratoWidget) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-function chooseShowNoteDataWidget(globalVars)
-    local oldNoteDataWidget = globalVars.showNoteDataWidget
-    _, globalVars.showNoteDataWidget = imgui.Checkbox("Show Note Data Of Selection",
-        oldNoteDataWidget)
-    if (oldNoteDataWidget ~= globalVars.showNoteDataWidget) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-function chooseShowMeasureDataWidget(globalVars)
-    local oldMeasureDataWidget = globalVars.showMeasureDataWidget
-    _, globalVars.showMeasureDataWidget = imgui.Checkbox("Show Measure Data Of Selection",
-        oldMeasureDataWidget)
-    if (oldMeasureDataWidget ~= globalVars.showMeasureDataWidget) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
 function chooseDrawCapybara(globalVars)
     local oldDrawCapybara = globalVars.drawCapybara
     _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
@@ -6678,22 +6630,6 @@ function chooseLinearlyChangeDist(settingVars)
     local _, newChoice = imgui.Checkbox("Change distance over time", oldChoice)
     settingVars.linearlyChange = newChoice
     return oldChoice ~= newChoice
-end
-function chooseAdvancedMode(globalVars)
-    local oldAdvancedMode = globalVars.advancedMode
-    _, globalVars.advancedMode = imgui.Checkbox("Enable Advanced Mode", oldAdvancedMode)
-    if (oldAdvancedMode ~= globalVars.advancedMode) then
-        saveAndSyncGlobals(globalVars)
-        state.SetValue("global_advancedMode", globalVars.advancedMode)
-    end
-end
-function chooseHideAutomatic(globalVars)
-    local oldHideAutomatic = globalVars.hideAutomatic
-    _, globalVars.hideAutomatic = imgui.Checkbox("Hide Automatically Placed TGs?", oldHideAutomatic)
-    if (oldHideAutomatic ~= globalVars.hideAutomatic) then
-        saveAndSyncGlobals(globalVars)
-        state.SetValue("globalVars.hideAutomatic", globalVars.hideAutomatic)
-    end
 end
 function chooseStepSize(globalVars)
     imgui.PushItemWidth(40)
@@ -7283,21 +7219,11 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues ~= newValues
 end
-function chooseDontPrintCreation(globalVars)
-    local oldPrintCreation = globalVars.dontPrintCreation
-    _, globalVars.dontPrintCreation = imgui.Checkbox("Don't print SV creation messages",
-        oldPrintCreation)
-    if (oldPrintCreation ~= globalVars.dontPrintCreation) then
-        saveAndSyncGlobals(globalVars)
-    end
-end
-function chooseEqualizeLinear(globalVars)
-    local oldEqualizeLinear = globalVars.equalizeLinear
-    _, globalVars.equalizeLinear = imgui.Checkbox("Equalize linear SV",
-        oldEqualizeLinear)
-    if (oldEqualizeLinear ~= globalVars.equalizeLinear) then
-        saveAndSyncGlobals(globalVars)
-    end
+function createGlobalCheckbox(globalVars, parameter, label, tooltipText)
+    local oldValue = globalVars[parameter]
+    _, globalVars[parameter] = imgui.Checkbox(label, oldValue)
+    if (tooltipText) then toolTip(tooltipText) end
+    if (oldValue ~= globalVars[parameter]) then saveAndSyncGlobals(globalVars) end
 end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0

@@ -49,26 +49,26 @@ function showPluginSettingsWindow(globalVars)
     imgui.NextColumn()
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
-        chooseAdvancedMode(globalVars)
+        createGlobalCheckbox(globalVars, "advancedMode", "Enable advanced mode")
         if (not globalVars.advancedMode) then imgui.BeginDisabled() end
-        chooseHideAutomatic(globalVars)
+        createGlobalCheckbox(globalVars, "hideAutomatic", "Hide automatically placed TGs")
         if (not globalVars.advancedMode) then imgui.EndDisabled() end
         addSeparator()
         chooseUpscroll(globalVars)
         addSeparator()
-        chooseDontReplaceSV(globalVars)
-        chooseIgnoreNotes(globalVars)
+        createGlobalCheckbox(globalVars, "dontReplaceSV", "Don't replace SVs when placing regular SVs")
+        createGlobalCheckbox(globalVars, "ignoreNotesOutsideTg", "Ignore notes outside current timing group")
         chooseStepSize(globalVars)
-        chooseDontPrintCreation(globalVars)
-        chooseEqualizeLinear(globalVars)
+        createGlobalCheckbox(globalVars, "dontPrintCreation", "Don't print SV creation messages")
+        createGlobalCheckbox(globalVars, "equalizeLinear", "Equalize linear SV")
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
-        chooseHideSVInfo(globalVars)
-        chooseShowVibratoWidget(globalVars)
+        createGlobalCheckbox(globalVars, "hideSVInfo", "Hide SV info window")
+        createGlobalCheckbox(globalVars, "showVibratoWidget", "Separate Vibrato Into New Window")
         addSeparator()
-        chooseShowNoteDataWidget(globalVars)
-        chooseShowMeasureDataWidget(globalVars)
+        createGlobalCheckbox(globalVars, "showNoteDataWidget", "Show Note Data Of Selection")
+        createGlobalCheckbox(globalVars, "showMeasureDataWidget", "Show Measure Data Of Selection")
     end
     if (SETTING_TYPES[typeIndex] == "Appearance") then
         imgui.PushItemWidth(150)
