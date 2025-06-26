@@ -1586,3 +1586,12 @@ function chooseDontPrintCreation(globalVars)
         saveAndSyncGlobals(globalVars)
     end
 end
+
+function chooseEqualizeLinear(globalVars)
+    local oldEqualizeLinear = globalVars.equalizeLinear
+    _, globalVars.equalizeLinear = imgui.Checkbox("Equalize linear settings",
+        oldEqualizeLinear)
+    if (oldEqualizeLinear ~= globalVars.equalizeLinear) then
+        saveAndSyncGlobals(globalVars)
+    end
+end

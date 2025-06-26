@@ -60,6 +60,7 @@ function showPluginSettingsWindow(globalVars)
         chooseIgnoreNotes(globalVars)
         chooseStepSize(globalVars)
         chooseDontPrintCreation(globalVars)
+        chooseEqualizeLinear(globalVars)
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then

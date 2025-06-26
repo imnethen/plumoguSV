@@ -36,6 +36,7 @@ function loadGlobalVars()
         useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
         hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST,
         customStyle = state.GetValue("global_customStyle", nil),
-        dontPrintCreation = state.GetValue("global_dontPrintCreation") or false
+        dontPrintCreation = state.GetValue("global_dontPrintCreation") or false,
+        equalizeLinear = state.GetValue("global_equalizeLinear") or false
     }
 end

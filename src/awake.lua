@@ -37,4 +37,5 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_dontPrintCreation", truthy(tempGlobalVars.dontPrintCreation))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
     state.SetValue("global_customStyle", tempGlobalVars.customStyle or {})
+    state.SetValue("global_equalizeLinear", truthy(tempGlobalVars.equalizeLinear))
 end
