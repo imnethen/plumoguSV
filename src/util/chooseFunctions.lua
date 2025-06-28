@@ -1496,7 +1496,15 @@ end
 function codeInput(settingVars, parameterName, label, tooltipText)
     local oldCode = settingVars[parameterName]
     _, settingVars[parameterName] = imgui.InputTextMultiline(label, settingVars[parameterName], 16384,
-    vector.New(240, 120))
+        vector.New(240, 120))
     if (tooltipText) then toolTip(tooltipText) end
     return oldCode ~= settingVars[parameterName]
+end
+
+function colorInput(customStyle, parameterName, label, defaultValue, tooltipText)
+    addSeparator()
+    local oldCode = customStyle[parameterName]
+    _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or defaultValue)
+    if (tooltipText) then toolTip(tooltipText) end
+    return oldCode ~= customStyle[parameterName]
 end
