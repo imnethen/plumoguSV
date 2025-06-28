@@ -10,5 +10,5 @@
 - Avoid using bracket notation for tables unless the key is not known beforehand (e.g. during runtime)
 - Try to either have all variables necessary assigned at the top of a function, or have their first assignment be - as close to their next call as possible.
 - Use the existing conventions within the repository if they're not listed here.
-
+- When printing a particular type of message, the format that should be used is `i!`, `w!`, `s!`, or `e!`.
 
