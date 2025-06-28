@@ -57,4 +57,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * Preset menu
 * ~~Refactor custom theme settings~~
 * Add import/export custom theme
-* Add tooltips to settings
+* ~~Add tooltips to settings~~
