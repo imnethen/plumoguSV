@@ -6,7 +6,7 @@
 --    svPointsForce : number of SV points to force [Int or nil]
 function codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
-    chooseCode(settingVars)
+    codeInput(settingVars, "code", "##code")
     if (imgui.Button("Refresh Plot", vector.New(ACTION_BUTTON_SIZE.x, 30))) then
         settingsChanged = true
     end

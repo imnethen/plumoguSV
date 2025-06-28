@@ -46,7 +46,7 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Fix all syntax errors in intellisense~~
 * ~~Migrate affine vibrato~~
 * ~~Add three sided vibrato algorithm~~
-* Add code based ssf vibrato
+* ~~Add code based ssf vibrato~~
 * ~~Custom vibrato with sv and lua eval~~
 * ~~Map statistics~~
 * ~~Custom theme maker~~

@@ -21,6 +21,7 @@ function linearVibratoMenu(menuVars, settingVars, separateWindow)
         end
         addSeparator()
 
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end

@@ -1059,12 +1059,6 @@ function chooseVibratoQuality(menuVars)
     toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 
-function chooseCode(settingVars)
-    local oldCode = settingVars.code
-    _, settingVars.code = imgui.InputTextMultiline("##fn", settingVars.code, 16384, vector.New(240, 120))
-    return oldCode ~= settingVars.code
-end
-
 function chooseCurvatureCoefficient(settingVars)
     imgui.PushItemWidth(28)
     imgui.PushStyleColor(imgui_col.FrameBg, 0)
@@ -1492,9 +1486,17 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
         oldValues ~= newValues
 end
 
-function createGlobalCheckbox(globalVars, parameter, label, tooltipText)
-    local oldValue = globalVars[parameter]
-    _, globalVars[parameter] = imgui.Checkbox(label, oldValue)
+function globalCheckbox(globalVars, parameterName, label, tooltipText)
+    local oldValue = globalVars[parameterName]
+    _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
     if (tooltipText) then toolTip(tooltipText) end
-    if (oldValue ~= globalVars[parameter]) then saveAndSyncGlobals(globalVars) end
+    if (oldValue ~= globalVars[parameterName]) then saveAndSyncGlobals(globalVars) end
+end
+
+function codeInput(settingVars, parameterName, label, tooltipText)
+    local oldCode = settingVars[parameterName]
+    _, settingVars[parameterName] = imgui.InputTextMultiline(label, settingVars[parameterName], 16384,
+    vector.New(240, 120))
+    if (tooltipText) then toolTip(tooltipText) end
+    return oldCode ~= settingVars[parameterName]
 end

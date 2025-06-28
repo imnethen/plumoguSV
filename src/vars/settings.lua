@@ -70,8 +70,8 @@ end]]
         }
     elseif svType == "Custom##Vibrato" and label == "Vibrato$$SSF" then
         settingVars = {
-            code1 = "peanits",
-            code2 = "balls"
+            code1 = "return function (x) return 0.69 end",
+            code2 = "return function (x) return 1.420 end"
         }
     elseif svType == "Exponential" then
         settingVars = {

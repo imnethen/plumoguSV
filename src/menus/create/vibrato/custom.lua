@@ -1,7 +1,7 @@
 function customVibratoMenu(menuVars, settingVars, separateWindow)
     local typingCode = false
     if (menuVars.vibratoMode == 1) then
-        chooseCode(settingVars)
+        codeInput(settingVars, "code", "##code")
         if imgui.IsItemActive() then
             typingCode = true
         else
@@ -14,10 +14,24 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
             svVibrato(v, func)
         end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
-        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
-        -- customSwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        -- customSwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        codeInput(settingVars, "code1", "##code1")
+        if imgui.IsItemActive() then
+            typingCode = true
+        else
+            typingCode = false
+        end
+        codeInput(settingVars, "code2", "##code2")
+        if imgui.IsItemActive() then
+            typingCode = true
+        else
+            typingCode = typingCode or false
+        end
+        local func1 = eval(settingVars.code1)
+        local func2 = eval(settingVars.code2)
+        addSeparator()
 
-        -- simpleActionMenu("Vibrate", 2, linearSSFVibrato, nil, settingVars)
+        simpleActionMenu("Vibrate", 2, function(v)
+            ssfVibrato(v, func1, func2)
+        end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end

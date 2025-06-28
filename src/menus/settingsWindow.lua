@@ -49,26 +49,36 @@ function showPluginSettingsWindow(globalVars)
     imgui.NextColumn()
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
-        createGlobalCheckbox(globalVars, "advancedMode", "Enable advanced mode")
+        globalCheckbox(globalVars, "advancedMode", "Enable Advanced Mode",
+            "Advanced mode enables a few features that simplify SV creation, at the cost of making the plugin more cluttered.")
         if (not globalVars.advancedMode) then imgui.BeginDisabled() end
-        createGlobalCheckbox(globalVars, "hideAutomatic", "Hide automatically placed TGs")
+        globalCheckbox(globalVars, "hideAutomatic", "Hide Automatically Placed TGs",
+            "Timing groups placed by the \"Automatic\" feature will not be shown in the plumoguSV timing group selector.")
         if (not globalVars.advancedMode) then imgui.EndDisabled() end
         addSeparator()
         chooseUpscroll(globalVars)
         addSeparator()
-        createGlobalCheckbox(globalVars, "dontReplaceSV", "Don't replace SVs when placing regular SVs")
-        createGlobalCheckbox(globalVars, "ignoreNotesOutsideTg", "Ignore notes outside current timing group")
+        globalCheckbox(globalVars, "dontReplaceSV", "Don't Replace SVs When Placing Regular SVs",
+            "Self-explanatory. Highly recommended to keep this setting disabled.")
+        globalCheckbox(globalVars, "ignoreNotesOutsideTg", "Ignore Notes Outside Current Timing Group",
+            "Notes that are in a timing group outside of the current one will be ignored by stills, selection checks, etc.")
         chooseStepSize(globalVars)
-        createGlobalCheckbox(globalVars, "dontPrintCreation", "Don't print SV creation messages")
-        createGlobalCheckbox(globalVars, "equalizeLinear", "Equalize linear SV")
+        globalCheckbox(globalVars, "dontPrintCreation", "Don't Print SV Creation Messages",
+            "Disables printing \"Created __ SVs\" messages.")
+        globalCheckbox(globalVars, "equalizeLinear", "Equalize Linear SV",
+            "Forces the standard > linear option to have an average sv of 0 if the start and end SVs are equal. For beginners, this should be enabled.")
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
-        createGlobalCheckbox(globalVars, "hideSVInfo", "Hide SV info window")
-        createGlobalCheckbox(globalVars, "showVibratoWidget", "Separate Vibrato Into New Window")
+        globalCheckbox(globalVars, "hideSVInfo", "Hide SV Info Window",
+            "Disables the window that shows note distances when placing Standard, Special, or Still SVs.")
+        globalCheckbox(globalVars, "showVibratoWidget", "Separate Vibrato Into New Window",
+            "For those who are used to having Vibrato as a separate plugin, this option makes a new, independent window with vibrato only.")
         addSeparator()
-        createGlobalCheckbox(globalVars, "showNoteDataWidget", "Show Note Data Of Selection")
-        createGlobalCheckbox(globalVars, "showMeasureDataWidget", "Show Measure Data Of Selection")
+        globalCheckbox(globalVars, "showNoteDataWidget", "Show Note Data Of Selection",
+            "If one note is selected, shows simple data about that note.")
+        globalCheckbox(globalVars, "showMeasureDataWidget", "Show Measure Data Of Selection",
+            "If two notes are selected, shows measure data within the selected region.")
     end
     if (SETTING_TYPES[typeIndex] == "Appearance") then
         imgui.PushItemWidth(150)
