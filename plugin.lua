@@ -3133,7 +3133,7 @@ end
 function customVibratoMenu(menuVars, settingVars, separateWindow)
     local typingCode = false
     if (menuVars.vibratoMode == 1) then
-        chooseCode(settingVars)
+        codeInput(settingVars, "code", "##code")
         if imgui.IsItemActive() then
             typingCode = true
         else
@@ -3145,7 +3145,24 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
             svVibrato(v, func)
         end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
-        imgui.TextColored(vector.New(1, 0, 0, 1), "this function is not yet supported.")
+        codeInput(settingVars, "code1", "##code1")
+        if imgui.IsItemActive() then
+            typingCode = true
+        else
+            typingCode = false
+        end
+        codeInput(settingVars, "code2", "##code2")
+        if imgui.IsItemActive() then
+            typingCode = true
+        else
+            typingCode = typingCode or false
+        end
+        local func1 = eval(settingVars.code1)
+        local func2 = eval(settingVars.code2)
+        addSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            ssfVibrato(v, func1, func2)
+        end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end
 function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
@@ -3188,7 +3205,8 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
         addSeparator()
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end
 function linearVibratoMenu(menuVars, settingVars, separateWindow)
@@ -3211,7 +3229,8 @@ function linearVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
         addSeparator()
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end
 function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
@@ -3249,7 +3268,8 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
         addSeparator()
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars)
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end
 VIBRATO_SVS = {
@@ -4032,7 +4052,7 @@ function circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
 end
 function codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
-    chooseCode(settingVars)
+    codeInput(settingVars, "code", "##code")
     if (imgui.Button("Refresh Plot", vector.New(ACTION_BUTTON_SIZE.x, 30))) then
         settingsChanged = true
     end
@@ -4252,26 +4272,36 @@ function showPluginSettingsWindow(globalVars)
     imgui.NextColumn()
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
-        createGlobalCheckbox(globalVars, "advancedMode", "Enable advanced mode")
+        globalCheckbox(globalVars, "advancedMode", "Enable Advanced Mode",
+            "Advanced mode enables a few features that simplify SV creation, at the cost of making the plugin more cluttered.")
         if (not globalVars.advancedMode) then imgui.BeginDisabled() end
-        createGlobalCheckbox(globalVars, "hideAutomatic", "Hide automatically placed TGs")
+        globalCheckbox(globalVars, "hideAutomatic", "Hide Automatically Placed TGs",
+            "Timing groups placed by the \"Automatic\" feature will not be shown in the plumoguSV timing group selector.")
         if (not globalVars.advancedMode) then imgui.EndDisabled() end
         addSeparator()
         chooseUpscroll(globalVars)
         addSeparator()
-        createGlobalCheckbox(globalVars, "dontReplaceSV", "Don't replace SVs when placing regular SVs")
-        createGlobalCheckbox(globalVars, "ignoreNotesOutsideTg", "Ignore notes outside current timing group")
+        globalCheckbox(globalVars, "dontReplaceSV", "Don't Replace SVs When Placing Regular SVs",
+            "Self-explanatory. Highly recommended to keep this setting disabled.")
+        globalCheckbox(globalVars, "ignoreNotesOutsideTg", "Ignore Notes Outside Current Timing Group",
+            "Notes that are in a timing group outside of the current one will be ignored by stills, selection checks, etc.")
         chooseStepSize(globalVars)
-        createGlobalCheckbox(globalVars, "dontPrintCreation", "Don't print SV creation messages")
-        createGlobalCheckbox(globalVars, "equalizeLinear", "Equalize linear SV")
+        globalCheckbox(globalVars, "dontPrintCreation", "Don't Print SV Creation Messages",
+            "Disables printing \"Created __ SVs\" messages.")
+        globalCheckbox(globalVars, "equalizeLinear", "Equalize Linear SV",
+            "Forces the standard > linear option to have an average sv of 0 if the start and end SVs are equal. For beginners, this should be enabled.")
         addPadding()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
-        createGlobalCheckbox(globalVars, "hideSVInfo", "Hide SV info window")
-        createGlobalCheckbox(globalVars, "showVibratoWidget", "Separate Vibrato Into New Window")
+        globalCheckbox(globalVars, "hideSVInfo", "Hide SV Info Window",
+            "Disables the window that shows note distances when placing Standard, Special, or Still SVs.")
+        globalCheckbox(globalVars, "showVibratoWidget", "Separate Vibrato Into New Window",
+            "For those who are used to having Vibrato as a separate plugin, this option makes a new, independent window with vibrato only.")
         addSeparator()
-        createGlobalCheckbox(globalVars, "showNoteDataWidget", "Show Note Data Of Selection")
-        createGlobalCheckbox(globalVars, "showMeasureDataWidget", "Show Measure Data Of Selection")
+        globalCheckbox(globalVars, "showNoteDataWidget", "Show Note Data Of Selection",
+            "If one note is selected, shows simple data about that note.")
+        globalCheckbox(globalVars, "showMeasureDataWidget", "Show Measure Data Of Selection",
+            "If two notes are selected, shows measure data within the selected region.")
     end
     if (SETTING_TYPES[typeIndex] == "Appearance") then
         imgui.PushItemWidth(150)
@@ -4309,215 +4339,70 @@ function showPluginSettingsWindow(globalVars)
     end
     if (SETTING_TYPES[typeIndex] == "Custom Theme") then
         local settingsChanged = false
-        oldCustomThemeVal = globalVars.customStyle.windowBg
-        _, globalVars.customStyle.windowBg = imgui.ColorPicker4("Window BG",
-            globalVars.customStyle.windowBg or vector.New(0.00, 0.00, 0.00, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.windowBg or settingsChanged) then
-            settingsChanged = true
+        if (imgui.Button("Reset")) then
+            globalVars.customInput = {}
+            saveAndSyncGlobals(globalVars)
         end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.popupBg
-        _, globalVars.customStyle.popupBg = imgui.ColorPicker4("Popup BG",
-            globalVars.customStyle.popupBg or vector.New(0.08, 0.08, 0.08, 0.94))
-        if (oldCustomThemeVal ~= globalVars.customStyle.popupBg or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.frameBg
-        _, globalVars.customStyle.frameBg = imgui.ColorPicker4("Frame BG",
-            globalVars.customStyle.frameBg or vector.New(0.14, 0.24, 0.28, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.frameBg or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.frameBgHovered
-        _, globalVars.customStyle.frameBgHovered = imgui.ColorPicker4("Frame BG\n(Hovered)",
-            globalVars.customStyle.frameBgHovered or vector.New(0.24, 0.34, 0.38, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.frameBgHovered or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.frameBgActive
-        _, globalVars.customStyle.frameBgActive = imgui.ColorPicker4("Frame BG\n(Active)",
-            globalVars.customStyle.frameBgActive or vector.New(0.29, 0.39, 0.43, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.frameBgActive or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.titleBg
-        _, globalVars.customStyle.titleBg = imgui.ColorPicker4("Title BG",
-            globalVars.customStyle.titleBg or vector.New(0.14, 0.24, 0.28, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.titleBg or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.titleBgActive
-        _, globalVars.customStyle.titleBgActive = imgui.ColorPicker4("Title BG\n(Active)",
-            globalVars.customStyle.titleBgActive or vector.New(0.51, 0.58, 0.75, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.titleBgActive or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.titleBgCollapsed
-        _, globalVars.customStyle.titleBgCollapsed = imgui.ColorPicker4("Title BG\n(Collapsed)",
-            globalVars.customStyle.titleBgCollapsed or vector.New(0.51, 0.58, 0.75, 0.50))
-        if (oldCustomThemeVal ~= globalVars.customStyle.titleBgCollapsed or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.checkMark
-        _, globalVars.customStyle.checkMark = imgui.ColorPicker4("Checkmark",
-            globalVars.customStyle.checkMark or vector.New(0.81, 0.88, 1.00, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.checkMark or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.sliderGrab
-        _, globalVars.customStyle.sliderGrab = imgui.ColorPicker4("Slider Grab",
-            globalVars.customStyle.sliderGrab or vector.New(0.56, 0.63, 0.75, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.sliderGrab or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.sliderGrabActive
-        _, globalVars.customStyle.sliderGrabActive = imgui.ColorPicker4("Slider Grab\n(Active)",
-            globalVars.customStyle.sliderGrabActive or vector.New(0.61, 0.68, 0.80, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.sliderGrabActive or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.button
-        _, globalVars.customStyle.button = imgui.ColorPicker4("Button",
-            globalVars.customStyle.button or vector.New(0.31, 0.38, 0.50, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.button or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.buttonHovered
-        _, globalVars.customStyle.buttonHovered = imgui.ColorPicker4("Button\n(Hovered)",
-            globalVars.customStyle.buttonHovered or vector.New(0.41, 0.48, 0.60, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.buttonHovered or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.buttonActive
-        _, globalVars.customStyle.buttonActive = imgui.ColorPicker4("Button\n(Active)",
-            globalVars.customStyle.buttonActive or vector.New(0.51, 0.58, 0.70, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.buttonActive or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.tab
-        _, globalVars.customStyle.tab = imgui.ColorPicker4("Tab",
-            globalVars.customStyle.tab or vector.New(0.31, 0.38, 0.50, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.tab or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.tabHovered
-        _, globalVars.customStyle.tabHovered = imgui.ColorPicker4("Tab\n(Hovered)",
-            globalVars.customStyle.tabHovered or vector.New(0.51, 0.58, 0.75, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.tabHovered or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.tabActive
-        _, globalVars.customStyle.tabActive = imgui.ColorPicker4("Tab\n(Active)",
-            globalVars.customStyle.tabActive or vector.New(0.51, 0.58, 0.75, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.tabActive or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.header
-        _, globalVars.customStyle.header = imgui.ColorPicker4("Header",
-            globalVars.customStyle.header or vector.New(0.81, 0.88, 1.00, 0.40))
-        if (oldCustomThemeVal ~= globalVars.customStyle.header or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.headerHovered
-        _, globalVars.customStyle.headerHovered = imgui.ColorPicker4("Header\n(Hovered)",
-            globalVars.customStyle.headerHovered or vector.New(0.81, 0.88, 1.00, 0.50))
-        if (oldCustomThemeVal ~= globalVars.customStyle.headerHovered or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.headerActive
-        _, globalVars.customStyle.headerActive = imgui.ColorPicker4("Header\n(Active)",
-            globalVars.customStyle.headerActive or vector.New(0.81, 0.88, 1.00, 0.54))
-        if (oldCustomThemeVal ~= globalVars.customStyle.headerActive or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.separator
-        _, globalVars.customStyle.separator = imgui.ColorPicker4("Separator",
-            globalVars.customStyle.separator or vector.New(0.81, 0.88, 1.00, 0.30))
-        if (oldCustomThemeVal ~= globalVars.customStyle.separator or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.text
-        _, globalVars.customStyle.text = imgui.ColorPicker4("Text",
-            globalVars.customStyle.text or vector.New(1.00, 1.00, 1.00, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.text or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.textSelectedBg
-        _, globalVars.customStyle.textSelectedBg = imgui.ColorPicker4("Text Selected\n(BG)",
-            globalVars.customStyle.textSelectedBg or vector.New(0.81, 0.88, 1.00, 0.40))
-        if (oldCustomThemeVal ~= globalVars.customStyle.textSelectedBg or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.scrollbarGrab
-        _, globalVars.customStyle.scrollbarGrab = imgui.ColorPicker4("Scrollbar Grab",
-            globalVars.customStyle.scrollbarGrab or vector.New(0.31, 0.38, 0.50, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.scrollbarGrab or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.scrollbarGrabHovered
-        _, globalVars.customStyle.scrollbarGrabHovered = imgui.ColorPicker4("Scrollbar Grab\n(Hovered)",
-            globalVars.customStyle.scrollbarGrabHovered or vector.New(0.41, 0.48, 0.60, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.scrollbarGrabHovered or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.scrollbarGrabActive
-        _, globalVars.customStyle.scrollbarGrabActive = imgui.ColorPicker4("Scrollbar Grab\n(Active)",
-            globalVars.customStyle.scrollbarGrabActive or vector.New(0.51, 0.58, 0.70, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.scrollbarGrabActive or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.plotLines
-        _, globalVars.customStyle.plotLines = imgui.ColorPicker4("Plot Lines",
-            globalVars.customStyle.plotLines or vector.New(0.61, 0.61, 0.61, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.plotLines or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.plotLinesHovered
-        _, globalVars.customStyle.plotLinesHovered = imgui.ColorPicker4("Plot Lines\n(Hovered)",
-            globalVars.customStyle.plotLinesHovered or vector.New(1.00, 0.43, 0.35, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.plotLinesHovered or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.plotHistogram
-        _, globalVars.customStyle.plotHistogram = imgui.ColorPicker4("Plot Histogram",
-            globalVars.customStyle.plotHistogram or vector.New(0.90, 0.70, 0.00, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.plotHistogram or settingsChanged) then
-            settingsChanged = true
-        end
-        addSeparator()
-        oldCustomThemeVal = globalVars.customStyle.plotHistogramHovered
-        _, globalVars.customStyle.plotHistogramHovered = imgui.ColorPicker4("Plot Histogram\n(Hovered)",
-            globalVars.customStyle.plotHistogramHovered or vector.New(1.00, 0.60, 0.00, 1.00))
-        if (oldCustomThemeVal ~= globalVars.customStyle.plotHistogramHovered or settingsChanged) then
-            settingsChanged = true
-        end
+        settingsChanged = colorInput(globalVars.customInput, "windowBg", "Window BG", vector.New(0.00, 0.00, 0.00, 1.00)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "popupBg", "Popup BG", vector.New(0.08, 0.08, 0.08, 0.94)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "frameBg", "Frame BG", vector.New(0.14, 0.24, 0.28, 1.00)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "frameBgHovered", "Frame BG\n(Hovered)",
+            vector.New(0.24, 0.34, 0.38, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "frameBgActive", "Frame BG\n(Active)",
+            vector.New(0.29, 0.39, 0.43, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "titleBg", "Title BG", vector.New(0.14, 0.24, 0.28, 1.00)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "titleBgActive", "Title BG\n(Active)",
+            vector.New(0.51, 0.58, 0.75, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "titleBgCollapsed", "Title BG\n(Collapsed)",
+            vector.New(0.51, 0.58, 0.75, 0.50)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "checkMark", "Checkmark", vector.New(0.81, 0.88, 1.00, 1.00)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "sliderGrab", "Slider Grab",
+            vector.New(0.56, 0.63, 0.75, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "sliderGrabActive", "Slider Grab\n(Active)",
+            vector.New(0.61, 0.68, 0.80, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "button", "Button", vector.New(0.31, 0.38, 0.50, 1.00)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "buttonHovered", "Button\n(Hovered)",
+            vector.New(0.41, 0.48, 0.60, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "buttonActive", "Button\n(Active)",
+            vector.New(0.51, 0.58, 0.70, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "tab", "Tab", vector.New(0.31, 0.38, 0.50, 1.00)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "tabHovered", "Tab\n(Hovered)",
+            vector.New(0.51, 0.58, 0.75, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "tabActive", "Tab\n(Active)",
+            vector.New(0.51, 0.58, 0.75, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "header", "Header", vector.New(0.81, 0.88, 1.00, 0.40)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "headerHovered", "Header\n(Hovered)",
+            vector.New(0.81, 0.88, 1.00, 0.50)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "headerActive", "Header\n(Active)",
+            vector.New(0.81, 0.88, 1.00, 0.54)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "separator", "Separator", vector.New(0.81, 0.88, 1.00, 0.30)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "text", "Text", vector.New(1.00, 1.00, 1.00, 1.00)) or
+            settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "textSelectedBg", "Text Selected\n(BG)",
+            vector.New(0.81, 0.88, 1.00, 0.40)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "scrollbarGrab", "Scrollbar Grab",
+            vector.New(0.31, 0.38, 0.50, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "scrollbarGrabHovered", "Scrollbar Grab\n(Hovered)",
+            vector.New(0.41, 0.48, 0.60, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "scrollbarGrabActive", "Scrollbar Grab\n(Active)",
+            vector.New(0.51, 0.58, 0.70, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "plotLines", "Plot Lines",
+            vector.New(0.61, 0.61, 0.61, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "plotLinesHovered", "Plot Lines\n(Hovered)",
+            vector.New(1.00, 0.43, 0.35, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "plotHistogram", "Plot Histogram",
+            vector.New(0.90, 0.70, 0.00, 1.00)) or settingsChanged
+        settingsChanged = colorInput(globalVars.customInput, "plotHistogramHovered", "Plot Histogram\n(Hovered)",
+            vector.New(1.00, 0.60, 0.00, 1.00)) or settingsChanged
         if (settingsChanged) then
             saveAndSyncGlobals(globalVars)
         end
@@ -4956,8 +4841,8 @@ function exportImportSettingsButton(globalVars)
 end
 function updateSVStats(svGraphStats, svStats, svMultipliers, svMultipliersNoEndSV, svDistances)
     updateGraphStats(svGraphStats, svMultipliers, svDistances)
-    svStats.minSV = math.round(calculateMinValue(svMultipliersNoEndSV), 2)
-    svStats.maxSV = math.round(calculateMaxValue(svMultipliersNoEndSV), 2)
+    svStats.minSV = math.round(math.min(table.unpack(svMultipliersNoEndSV)), 2)
+    svStats.maxSV = math.round(math.max(table.unpack(svMultipliersNoEndSV)), 2)
     svStats.avgSV = math.round(table.average(svMultipliersNoEndSV, true), 3)
 end
 function updateGraphStats(graphStats, svMultipliers, svDistances)
@@ -6875,11 +6760,6 @@ function chooseVibratoQuality(menuVars)
     menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
     toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
-function chooseCode(settingVars)
-    local oldCode = settingVars.code
-    _, settingVars.code = imgui.InputTextMultiline("##fn", settingVars.code, 16384, vector.New(240, 120))
-    return oldCode ~= settingVars.code
-end
 function chooseCurvatureCoefficient(settingVars)
     imgui.PushItemWidth(28)
     imgui.PushStyleColor(imgui_col.FrameBg, 0)
@@ -7219,11 +7099,25 @@ function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName,
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
         oldValues ~= newValues
 end
-function createGlobalCheckbox(globalVars, parameter, label, tooltipText)
-    local oldValue = globalVars[parameter]
-    _, globalVars[parameter] = imgui.Checkbox(label, oldValue)
+function globalCheckbox(globalVars, parameterName, label, tooltipText)
+    local oldValue = globalVars[parameterName]
+    _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
     if (tooltipText) then toolTip(tooltipText) end
-    if (oldValue ~= globalVars[parameter]) then saveAndSyncGlobals(globalVars) end
+    if (oldValue ~= globalVars[parameterName]) then saveAndSyncGlobals(globalVars) end
+end
+function codeInput(settingVars, parameterName, label, tooltipText)
+    local oldCode = settingVars[parameterName]
+    _, settingVars[parameterName] = imgui.InputTextMultiline(label, settingVars[parameterName], 16384,
+        vector.New(240, 120))
+    if (tooltipText) then toolTip(tooltipText) end
+    return oldCode ~= settingVars[parameterName]
+end
+function colorInput(customStyle, parameterName, label, defaultValue, tooltipText)
+    addSeparator()
+    local oldCode = customStyle[parameterName]
+    _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or defaultValue)
+    if (tooltipText) then toolTip(tooltipText) end
+    return oldCode ~= customStyle[parameterName]
 end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
@@ -7737,6 +7631,10 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
     end
     return multipliers
 end
+---Calculates distance vs. time values of a note, given a set of SV values.
+---@param globalVars table A list of variables used globally across all menus.
+---@param svValues number[]
+---@return number[]
 function calculateDistanceVsTime(globalVars, svValues)
     local distance = 0
     local multiplier = 1
@@ -7749,8 +7647,10 @@ function calculateDistanceVsTime(globalVars, svValues)
     end
     return table.reverse(distancesBackwards)
 end
-function calculateMinValue(values) return math.min(table.unpack(values)) end
-function calculateMaxValue(values) return math.max(table.unpack(values)) end
+---Calculates the minimum and maximum scale of a plot.
+---@param plotValues number[]
+---@return number
+---@return number
 function calculatePlotScale(plotValues)
     local min = math.min(table.unpack(plotValues))
     local max = math.max(table.unpack(plotValues))
@@ -7761,6 +7661,11 @@ function calculatePlotScale(plotValues)
     if min >= 0 then minScale = 0 end
     return minScale, maxScale
 end
+---Calculates distance vs. time values of a note, given a set of stutter SV values.
+---@param svValues number[]
+---@param stutterDuration number
+---@param stuttersPerSection integer
+---@return number[]
 function calculateStutterDistanceVsTime(svValues, stutterDuration, stuttersPerSection)
     local distance = 0
     local distancesBackwards = { distance }
@@ -7777,10 +7682,18 @@ function calculateStutterDistanceVsTime(svValues, stutterDuration, stuttersPerSe
     end
     return table.reverse(distancesBackwards)
 end
+---Creates a distance vs. time graph of SV distances.
+---@param noteDistances number[]
+---@param minScale number
+---@param maxScale number
 function plotSVMotion(noteDistances, minScale, maxScale)
     local plotSize = PLOT_GRAPH_SIZE
     imgui.PlotLines("##motion", noteDistances, #noteDistances, 0, "", minScale, maxScale, plotSize)
 end
+---Creates a histogram of SV values.
+---@param svVals number[]
+---@param minScale number
+---@param maxScale number
 function plotSVs(svVals, minScale, maxScale)
     local plotSize = PLOT_GRAPH_SIZE
     imgui.PlotHistogram("##svplot", svVals, #svVals, 0, "", minScale, maxScale, plotSize)
@@ -7818,22 +7731,16 @@ function exclusiveKeyPressed(keyCombo)
         table.insert(comboList, v)
     end
     local keyReq = comboList[#comboList]
-    if (table.contains(comboList, "CTRL") and (utils.IsKeyUp(keys.LeftControl) and utils.IsKeyUp(keys.RightControl))) then
+    local ctrlHeld = utils.IsKeyDown(keys.LeftControl) or utils.IsKeyDown(keys.RightControl)
+    local shiftHeld = utils.IsKeyDown(keys.LeftShift) or utils.IsKeyDown(keys.RightShift)
+    local altHeld = utils.IsKeyDown(keys.LeftAlt) or utils.IsKeyDown(keys.RightAlt)
+    if (table.contains(comboList, "CTRL") ~= ctrlHeld) then
         return false
     end
-    if (table.contains(comboList, "SHIFT") and (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift))) then
+    if (table.contains(comboList, "SHIFT") ~= shiftHeld) then
         return false
     end
-    if (table.contains(comboList, "ALT") and (utils.IsKeyUp(keys.LeftAlt) and utils.IsKeyUp(keys.RightAlt))) then
-        return false
-    end
-    if (not table.contains(comboList, "CTRL") and not (utils.IsKeyUp(keys.LeftControl) and utils.IsKeyUp(keys.RightControl))) then
-        return false
-    end
-    if (not table.contains(comboList, "SHIFT") and not (utils.IsKeyUp(keys.LeftShift) and utils.IsKeyUp(keys.RightShift))) then
-        return false
-    end
-    if (not table.contains(comboList, "ALT") and not (utils.IsKeyUp(keys.LeftAlt) and utils.IsKeyUp(keys.RightAlt))) then
+    if (table.contains(comboList, "ALT") ~= altHeld) then
         return false
     end
     return utils.IsKeyPressed(keys[keyReq])
@@ -7857,6 +7764,10 @@ function listenForAnyKeyPressed()
     end
     return prefixes, key
 end
+---Returns the SV multiplier in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
 function getHypotheticalSVMultiplierAt(svs, offset)
     if (#svs == 1) then return svs[1].Multiplier end
     local index = #svs
@@ -7869,6 +7780,10 @@ function getHypotheticalSVMultiplierAt(svs, offset)
     end
     return 1
 end
+---Returns the SV time in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
 function getHypotheticalSVTimeAt(svs, offset)
     if (#svs == 1) then return svs[1].StartTime end
     local index = #svs
@@ -7879,7 +7794,7 @@ function getHypotheticalSVTimeAt(svs, offset)
             return svs[index].StartTime
         end
     end
-    return 1
+    return -69
 end
 function getSVStartTimeAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
@@ -7902,7 +7817,7 @@ function getTimingPointAt(offset)
     if line then return line end
     return { StartTime = -69420, Bpm = 42.69 }
 end
---- Returns a list of [hit objects](lua://HitObject) between two times, inclusive.
+---Returns a list of [hit objects](lua://HitObject) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return HitObject[] objs All of the [hit objects](lua://HitObject) within the area.
@@ -7914,7 +7829,7 @@ function getNotesBetweenOffsets(startOffset, endOffset)
     end
     return sort(notesBetweenOffsets, sortAscendingStartTime)
 end
---- Returns a list of [timing points](lua://TimingPoint) between two times, inclusive.
+---Returns a list of [timing points](lua://TimingPoint) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return TimingPoint[] tps All of the [timing points](lua://TimingPoint) within the area.
@@ -7926,7 +7841,7 @@ function getLinesBetweenOffsets(startOffset, endOffset)
     end
     return sort(linesBetweenoffsets, sortAscendingStartTime)
 end
---- Returns a list of [scroll velocities](lua://ScrollVelocity) between two times, inclusive.
+---Returns a list of [scroll velocities](lua://ScrollVelocity) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@param includeEnd? boolean Whether or not to include any SVs on the end time.
@@ -7940,7 +7855,7 @@ function getSVsBetweenOffsets(startOffset, endOffset, includeEnd)
     end
     return sort(svsBetweenOffsets, sortAscendingStartTime)
 end
---- Returns a list of [bookmarks](lua://Bookmark) between two times, inclusive.
+---Returns a list of [bookmarks](lua://Bookmark) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return Bookmark[] bms All of the [bookmarks](lua://Bookmark) within the area.
@@ -7952,19 +7867,19 @@ function getBookmarksBetweenOffsets(startOffset, endOffset)
     end
     return sort(bookmarksBetweenOffsets, sortAscendingStartTime)
 end
---- Given a predetermined set of SVs, returns a list of [scroll velocities](lua://ScrollVelocity) within a temporal boundary.
+---Given a predetermined set of SVs, returns a list of [scroll velocities](lua://ScrollVelocity) within a temporal boundary.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
 function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
-    local svsBetweenOffsets = {} --- @type ScrollVelocity[]
+    local svsBetweenOffsets = {} ---@type ScrollVelocity[]
     for _, sv in pairs(svs) do
         local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime < endOffset + 1
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
     return sort(svsBetweenOffsets, sortAscendingStartTime)
 end
---- Returns a list of [scroll speed factors](lua://ScrollSpeedFactor) between two times, inclusive.
+---Returns a list of [scroll speed factors](lua://ScrollSpeedFactor) between two times, inclusive.
 ---@param startOffset number The lower bound of the search area.
 ---@param endOffset number The upper bound of the search area.
 ---@param includeEnd? boolean Whether or not to include any SVs on the end time.
@@ -7983,6 +7898,11 @@ function getSSFsBetweenOffsets(startOffset, endOffset, includeEnd)
     end
     return sort(ssfsBetweenOffsets, sortAscendingStartTime)
 end
+---Finds and returns a list of all unique offsets of notes between a start and an end time [Table]
+---@param startOffset number
+---@param endOffset number
+---@param includeLN? boolean
+---@return number[]
 function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     local noteOffsetsBetween = {}
     for _, hitObject in pairs(map.HitObjects) do
@@ -7998,6 +7918,9 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     noteOffsetsBetween = sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
+--- Finds and returns a list of all unique offsets of notes between selected notes [Table]
+---@param includeLN? boolean
+---@return number[]
 function uniqueNoteOffsetsBetweenSelected(includeLN)
     local selectedNoteOffsets = uniqueSelectedNoteOffsets()
     if (not selectedNoteOffsets) then
@@ -8015,6 +7938,8 @@ function uniqueNoteOffsetsBetweenSelected(includeLN)
     end
     return offsets
 end
+---Returns a list of unique offsets (in increasing order) of selected notes [Table]
+---@return number[]
 function uniqueSelectedNoteOffsets()
     local offsets = {}
     for i, hitObject in pairs(state.SelectedHitObjects) do
@@ -8077,14 +8002,28 @@ end
 function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end
+---Restricts a number to be within a chosen bound.
+---@param number number
+---@param lowerBound number
+---@param upperBound number
+---@return number
 function math.clamp(number, lowerBound, upperBound)
     if number < lowerBound then return lowerBound end
     if number > upperBound then return upperBound end
     return number
 end
+---Forces a number to have a quarterly decimal part.
+---@param number number
+---@return number
 function math.quarter(number)
     return math.floor(number * 4 + 0.5) / 4
 end
+---Evaluates a simplified one-dimensional hermite related (?) spline for SV purposes
+---@param m1 number
+---@param m2 number
+---@param y2 number
+---@param t number
+---@return number
 function math.hermite(m1, m2, y2, t)
     local a = m1 + m2 - 2 * y2
     local b = 3 * y2 - 2 * m1 - m2
@@ -8107,15 +8046,27 @@ end
 function math.inverseLerp(num, lowerBound, upperBound)
     return (num - lowerBound) / (upperBound - lowerBound)
 end
+---Rounds a number to a given amount of decimal places.
+---@param number number
+---@param decimalPlaces? integer
+---@return number
 function math.round(number, decimalPlaces)
     if (not decimalPlaces) then decimalPlaces = 0 end
     local multiplier = 10 ^ decimalPlaces
     return math.floor(multiplier * number + 0.5) / multiplier
 end
+---Returns the sign of a number: `1` if the number is non-negative, `-1` if negative.
+---@param number number
+---@return 1|-1
 function math.sign(number)
     if number >= 0 then return 1 end
     return -1
 end
+---Restricts a number to be within a closed ring.
+---@param number number
+---@param lowerBound number
+---@param upperBound number
+---@return number
 function math.wrap(number, lowerBound, upperBound)
     if number < lowerBound then return upperBound end
     if number > upperBound then return lowerBound end
@@ -8206,6 +8157,15 @@ end
 function ssf(startTime, multiplier)
     return utils.CreateScrollSpeedFactor(startTime, multiplier)
 end
+---Creates a big button that runs a function when clicked. If the number of notes selected is less than `minimumNotes`, returns a textual placeholder instead.
+---@param buttonText string The text that should be rendered on the button.
+---@param minimumNotes integer The minimum number of notes that are required to select berfore the button appears.
+---@param actionfunc fun(...): any The function to run on button press.
+---@param globalVars? {[string]: any} Optional global variable parameter.
+---@param menuVars? {[string]: any} Optional menu variable parameter.
+---@param hideNoteReq? boolean Whether or not to hide the textual placeholder if the selected note requirement isn't met.
+---@param disableKeyInput? boolean Whether or not to disallow keyboard inputs as a substitution to pressing the button.
+---@param optionalKeyOverride? string (Assumes `disableKeyInput` is false) Optional string to change the activation keybind.
 function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menuVars, hideNoteReq, disableKeyInput,
                           optionalKeyOverride)
     local enoughSelectedNotes = checkEnoughSelectedNotes(minimumNotes)
@@ -8229,8 +8189,13 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, globalVars, menu
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, globalVars, menuVars)
     end
 end
-function executeFunctionIfTrue(boolean, func, globalVars, menuVars)
-    if not boolean then return end
+---Runs a function with the given parameters if the given `condition` is true.
+---@param condition boolean The condition that is used.
+---@param func fun(...): nil The function to run if the condition is true.
+---@param globalVars? {[string]: any} Optional global variable parameter.
+---@param menuVars? {[string]: any} Optional menu variable parameter.
+function executeFunctionIfTrue(condition, func, globalVars, menuVars)
+    if not condition then return end
     if globalVars and menuVars then
         func(globalVars, menuVars)
         return
@@ -8248,7 +8213,7 @@ end
 local SPECIAL_SNAPS = { 1, 2, 3, 4, 6, 8, 12, 16 }
 ---Gets the snap color from a given time.
 ---@param time number # The time to reference.
----@return number
+---@return SnapNumber
 function getSnapFromTime(time)
     local previousBar = map.GetNearestSnapTimeFromTime(false, 1, time)
     local barTime = 60000 / getTimingPointAt(time).Bpm
@@ -8274,6 +8239,10 @@ function getSnapFromTime(time)
     if (not foundCorrectSnap) then return 5 end
     return guessedSnap
 end
+---#### (NOTE: This function is impure and has no return value. This should be changed eventually.)
+---Gets a list of variables.
+---@param listName string An identifier to avoid statee collisions.
+---@param variables {[string]: any} The key-value table to get data for.
 function getVariables(listName, variables)
     for key, _ in pairs(variables) do
         if (state.GetValue(listName .. key) ~= nil) then
@@ -8281,18 +8250,23 @@ function getVariables(listName, variables)
         end
     end
 end
+---Saves a table in state, independently.
+---@param listName string An identifier to avoid state collisions.
+---@param variables {[string]: any} A key-value table to save.
 function saveVariables(listName, variables)
     for key, value in pairs(variables) do
         state.SetValue(listName .. key, value)
     end
 end
+---Sets the state of all global variables, and saves them to the `config.yaml` file.
+---@param globalVars table
 function saveAndSyncGlobals(globalVars)
     write(globalVars)
     syncGlobalVarsState(globalVars)
 end
----Returns the average value of a numeric table.
+---Returns the average value of an array.
 ---@param values number[] The list of numbers.
----@param includeLastValue boolean Whether or not to include the last value in the table.
+---@param includeLastValue? boolean Whether or not to include the last value in the table.
 ---@return number avg The arithmetic mean of the table.
 function table.average(values, includeLastValue)
     if #values == 0 then return 0 end
@@ -8306,10 +8280,10 @@ function table.average(values, includeLastValue)
     end
     return sum / #values
 end
----Concatenates two numeric tables together.
----@param t1 { [number]: any } The first table.
----@param t2 { [number]: any } The second table.
----@return { [number]: any } tbl The resultant table.
+---Concatenates two arrays together.
+---@param t1 any[] The first table.
+---@param t2 any[] The second table.
+---@return any[] tbl The resultant table.
 function table.combine(t1, t2)
     local newTbl = table.duplicate(t1)
     for i = 1, #t2 do
@@ -8317,8 +8291,8 @@ function table.combine(t1, t2)
     end
     return newTbl
 end
----Creates a new numerical table with a custom metatable, allowing for `:` syntactic sugar.
----@vararg any Any entries to put into the table.
+---Creates a new array with a custom metatable, allowing for `:` syntactic sugar.
+---@param ... any entries to put into the table.
 ---@return table tbl A table with the given entries.
 function table.construct(...)
     local tbl = {}
@@ -8328,10 +8302,11 @@ function table.construct(...)
     setmetatable(tbl, { __index = table })
     return tbl
 end
----Creates a new numerical table with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
----@param item any The entry to use.
+---Creates a new array with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
+---@generic T
+---@param item T The entry to use.
 ---@param num integer The number of entries to put into the table.
----@return table tbl A table with the given entries.
+---@return T[] tbl A table with the given entries.
 function table.constructRepeating(item, num)
     local tbl = table.construct()
     for _ = 1, num do
@@ -8368,10 +8343,27 @@ end
 ---@return table tbl The new table.
 function table.duplicate(tbl)
     local dupeTbl = {}
-    for _, value in ipairs(tbl) do
-        table.insert(dupeTbl, value)
+    if (tbl[1]) then
+        for _, value in ipairs(tbl) do
+            table.insert(dupeTbl, type(value) == "table" and table.duplicate(value) or value)
+        end
+    else
+        for _, key in pairs(table.keys(tbl)) do
+            local value = tbl[key]
+            dupeTbl[key] = type(value) == "table" and table.duplicate(value) or value
+        end
     end
     return dupeTbl
+end
+---Returns a 1-indexed value corresponding to the location of an element within a table.
+---@param tbl table The table to search in.
+---@param item any The item to search for.
+---@return integer idx The index of the item. If the item doesn't exist, returns -1 instead.
+function table.indexOf(tbl, item)
+  for i, v in pairs(tbl) do
+    if (v == item) then return i end
+  end
+  return -1
 end
 ---Returns a table of keys from a table.
 ---@param tbl { [string]: any } The table to search in.
@@ -8397,7 +8389,7 @@ function table.normalize(values, targetAverage, includeLastValueInAverage)
     end
 end
 ---In a nested table `tbl`, returns a table of property values with key `property`.
----@param tbl { [string]: any } The table to search in.
+---@param tbl { [string]: {[string]: any} } The table to search in.
 ---@param property string The property name.
 ---@return table properties The resultant table.
 function table.property(tbl, property)
@@ -8407,7 +8399,7 @@ function table.property(tbl, property)
     end
     return resultsTbl
 end
----Reverses the order of a numerically-indexed table.
+---Reverses the order of an array.
 ---@param tbl table The original table.
 ---@return table tbl The original table, reversed.
 function table.reverse(tbl)
@@ -8420,7 +8412,7 @@ end
 function sortAscending(a, b) return a < b end
 function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
 function sortAscendingTime(a, b) return a.time < b.time end
---- Sorts a table given a sorting function.
+---Sorts a table given a sorting function.
 ---@generic T
 ---@param tbl T[] The table to sort.
 ---@param compFn fun(a: T, b: T): boolean A comparison function. Given two elements `a` and `b`, how should they be sorted?
@@ -8431,8 +8423,8 @@ function sort(tbl, compFn)
     return newTbl
 end
 ---@diagnostic disable: return-type-mismatch
----Because we want the functions to be identity functions when passing in vectors instead of tables.
---- Converts a table of length 4 into a [`Vector4`](lua://Vector4).
+---The above is made because we want the functions to be identity functions when passing in vectors instead of tables.
+---Converts a table of length 4 into a [`Vector4`](lua://Vector4).
 ---@param tbl number[] The table to convert.
 ---@return Vector4 vctr The output vector.
 function table.vectorize4(tbl)
@@ -8440,7 +8432,7 @@ function table.vectorize4(tbl)
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
 end
---- Converts a table of length 3 into a [`Vector3`](lua://Vector3).
+---Converts a table of length 3 into a [`Vector3`](lua://Vector3).
 ---@param tbl number[] The table to convert.
 ---@return Vector3 vctr The output vector.
 function table.vectorize3(tbl)
@@ -8448,7 +8440,7 @@ function table.vectorize3(tbl)
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2], tbl[3])
 end
---- Converts a table of length 2 into a [`Vector2`](lua://Vector2).
+---Converts a table of length 2 into a [`Vector2`](lua://Vector2).
 ---@param tbl number[] The table to convert.
 ---@return Vector2 vctr The output vector.
 function table.vectorize2(tbl)
@@ -8474,6 +8466,8 @@ end
 function vector2(n)
     return vector.New(n, n)
 end
+---Returns the current global variables, as set in state.
+---@return table globalVars
 function loadGlobalVars()
     return {
         stepSize = state.GetValue("global_stepSize") or 5,
@@ -8587,8 +8581,8 @@ end]]
         }
     elseif svType == "Custom##Vibrato" and label == "Vibrato$$SSF" then
         settingVars = {
-            code1 = "peanits",
-            code2 = "balls"
+            code1 = "return function (x) return 0.69 end",
+            code2 = "return function (x) return 1.420 end"
         }
     elseif svType == "Exponential" then
         settingVars = {
@@ -8804,7 +8798,7 @@ end]],
     getVariables(labelText, settingVars)
     return settingVars
 end
---- Very rudimentary function that returns a string depending on whether or not it should be plural.
+---Very rudimentary function that returns a string depending on whether or not it should be plural.
 ---@param str string The inital string, which should be a noun (e.g. `bookmark`)
 ---@param val number The value, or count, of the noun, which will determine if it should be plural.
 ---@return string pluralizedStr A new string that is pluralized if `val ~= 1`.
