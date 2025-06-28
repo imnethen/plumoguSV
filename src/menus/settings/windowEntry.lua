@@ -45,7 +45,6 @@ function showPluginSettingsWindow(globalVars)
     imgui.EndChild()
     imgui.SetColumnWidth(0, 150)
     imgui.SetColumnWidth(1, 283)
-
     imgui.NextColumn()
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
