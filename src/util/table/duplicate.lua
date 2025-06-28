@@ -3,8 +3,15 @@
 ---@return table tbl The new table.
 function table.duplicate(tbl)
     local dupeTbl = {}
-    for _, value in ipairs(tbl) do
-        table.insert(dupeTbl, value)
+    if (tbl[1]) then
+        for _, value in ipairs(tbl) do
+            table.insert(dupeTbl, type(value) == "table" and table.duplicate(value) or value)
+        end
+    else
+        for _, key in pairs(table.keys(tbl)) do
+            local value = tbl[key]
+            dupeTbl[key] = type(value) == "table" and table.duplicate(value) or value
+        end
     end
     return dupeTbl
 end
