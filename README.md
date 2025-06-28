@@ -7,8 +7,8 @@ This is a plugin for [Quaver](https://github.com/Quaver), the ultimate community
 
 ## Installation
 1. Go to the releases tab on the right, and download the latest release's `.zip` file.
-2. Extract the downloaded `.zip` file to get the plumoguSV-main folder
-3. Move the plumoguSV-main folder into the `/Plugins` folder (located in the `/Quaver` folder)
+2. Extract the downloaded `.zip` file to get the plumoguSV-main folder.
+3. Move the plumoguSV-main folder into the `/Plugins` folder (located in the `/Quaver` folder).
 
 ## Plugin Overview 
 plumoguSV makes working with SVs quick and easy!

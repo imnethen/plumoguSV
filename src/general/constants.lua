@@ -205,3 +205,56 @@ ALPHABET_LIST = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M
 CONSONANTS = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z" }
 
 VOWELS = { "A", "E", "I", "O", "U", "Z" }
+
+DEFAULT_STYLE = {
+    windowBg = vector.New(0.00, 0.00, 0.00, 1.00),
+    popupBg = vector.New(0.08, 0.08, 0.08, 0.94),
+    frameBg = vector.New(0.14, 0.24, 0.28, 1.00),
+    frameBgHovered =
+        vector.New(0.24, 0.34, 0.38, 1.00),
+    frameBgActive =
+        vector.New(0.29, 0.39, 0.43, 1.00),
+    titleBg = vector.New(0.14, 0.24, 0.28, 1.00),
+    titleBgActive =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    titleBgCollapsed =
+        vector.New(0.51, 0.58, 0.75, 0.50),
+    checkMark = vector.New(0.81, 0.88, 1.00, 1.00),
+    sliderGrab =
+        vector.New(0.56, 0.63, 0.75, 1.00),
+    sliderGrabActive =
+        vector.New(0.61, 0.68, 0.80, 1.00),
+    button = vector.New(0.31, 0.38, 0.50, 1.00),
+    buttonHovered =
+        vector.New(0.41, 0.48, 0.60, 1.00),
+    buttonActive =
+        vector.New(0.51, 0.58, 0.70, 1.00),
+    tab = vector.New(0.31, 0.38, 0.50, 1.00),
+    tabHovered =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    tabActive =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    header = vector.New(0.81, 0.88, 1.00, 0.40),
+    headerHovered =
+        vector.New(0.81, 0.88, 1.00, 0.50),
+    headerActive =
+        vector.New(0.81, 0.88, 1.00, 0.54),
+    separator = vector.New(0.81, 0.88, 1.00, 0.30),
+    text = vector.New(1.00, 1.00, 1.00, 1.00),
+    textSelectedBg =
+        vector.New(0.81, 0.88, 1.00, 0.40),
+    scrollbarGrab =
+        vector.New(0.31, 0.38, 0.50, 1.00),
+    scrollbarGrabHovered =
+        vector.New(0.41, 0.48, 0.60, 1.00),
+    scrollbarGrabActive =
+        vector.New(0.51, 0.58, 0.70, 1.00),
+    plotLines =
+        vector.New(0.61, 0.61, 0.61, 1.00),
+    plotLinesHovered =
+        vector.New(1.00, 0.43, 0.35, 1.00),
+    plotHistogram =
+        vector.New(0.90, 0.70, 0.00, 1.00),
+    plotHistogramHovered =
+        vector.New(1.00, 0.60, 0.00, 1.00)
+}

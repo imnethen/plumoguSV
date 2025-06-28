@@ -1492,10 +1492,10 @@ function codeInput(settingVars, parameterName, label, tooltipText)
     return oldCode ~= settingVars[parameterName]
 end
 
-function colorInput(customStyle, parameterName, label, defaultValue, tooltipText)
+function colorInput(customStyle, parameterName, label, tooltipText)
     addSeparator()
     local oldCode = customStyle[parameterName]
-    _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or defaultValue)
+    _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or DEFAULT_STYLE[parameterName])
     if (tooltipText) then toolTip(tooltipText) end
     return oldCode ~= customStyle[parameterName]
 end
