@@ -258,3 +258,5 @@ DEFAULT_STYLE = {
     plotHistogramHovered =
         vector.New(1.00, 0.60, 0.00, 1.00)
 }
+
+HEXADECIMAL = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" }
