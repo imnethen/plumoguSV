@@ -106,7 +106,7 @@ For more information, please refer to <https://unlicense.org>
 --- #### `true` if this note is a long note, false otherwise.
 ---@field IsLongNote boolean
 ---##### (READ-ONLY)
---- ####  The id of the [timing group](lua://ScrollGroup) that this note belongs to.
+--- #### The id of the [timing group](lua://ScrollGroup) that this note belongs to.
 ---@field TimingGroup string
 
 ---@class (exact) TimingPoint
@@ -192,7 +192,7 @@ function vector.Add(v1, v2) end
 --- ##### (READ-ONLY)
 --- #### Clamps a vector between two others.
 ---@param v T The vector to clamp.
----@param min T  The floor of the resultant vector.
+---@param min T The floor of the resultant vector.
 ---@param max T The ceiling of the resultant vector.
 ---@return T vctr The resultant vector.
 ---@nodiscard
@@ -217,7 +217,7 @@ function vector.Distance(v1, v2) end
 
 ---@generic T : number | Vector2 | Vector3 | Vector4
 --- ##### (READ-ONLY)
---- #### Finds the distance between two vectors,  squared.
+--- #### Finds the distance between two vectors, squared.
 ---@param v1 T The first vector.
 ---@param v2 T The second vector.
 ---@return number distanceSq The squared distance between the two vectors.
@@ -510,7 +510,7 @@ function actions.RemoveHitObjectBatch(hos) end
 --- ##### (READ-ONLY)
 --- #### Changes the length of a long-note type [hit object](lua://HitObject).
 ---@param ho HitObject The [hit object](lua://HitObject) to modify, which must be obtained via [`map.HitObjects`](lua://map.HitObjects) or something similar.
----@param oldEndTime integer The original end time of the  [hit object](lua://HitObject), or `hitObject.endTime`.
+---@param oldEndTime integer The original end time of the [hit object](lua://HitObject), or `hitObject.endTime`.
 ---@param newEndTime integer The desired time to move the LN end to.
 function actions.ResizeLongNote(ho, oldEndTime, newEndTime) end
 
@@ -843,7 +843,7 @@ function utils.CreateBookmark(startTime, note) end
 function utils.CreateScrollGroup(svs, initialSV, colorRgb) end
 
 --- ##### (READ-ONLY)
---- #### Creates an  [editor action](lua://EditorAction), to later be executed with [`actions.Perform`](lua://actions.Perform).
+--- #### Creates an [editor action](lua://EditorAction), to later be executed with [`actions.Perform`](lua://actions.Perform).
 ---@param type EditorActionType The type of action to perform.
 ---@vararg any The parameters of the action. Depending on the prefix of the action, different parameters should be passed in:
 --- - Place/Add/Remove // ... should only be one term, the object to add.
@@ -1071,7 +1071,7 @@ function expr(str) end
 function eval(str) end
 
 --- ##### (READ-ONLY)
---- ####  Displays a notification in Quaver.
+--- #### Displays a notification in Quaver.
 ---@vararg any The notification contents.
 function print(...) end
 
