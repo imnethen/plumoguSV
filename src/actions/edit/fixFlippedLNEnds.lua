@@ -7,8 +7,8 @@ function fixFlippedLNEnds(menuVars)
     local svTimeIsAdded = {}
     local lnEndTimeFixed = {}
     local fixedLNEndsCount = 0
-    for _, hitObject in pairs(map.HitObjects) do
-        local lnEndTime = hitObject.EndTime
+    for _, ho in pairs(map.HitObjects) do
+        local lnEndTime = ho.EndTime
         local isLN = lnEndTime ~= 0
         local endHasNegativeSV = (getSVMultiplierAt(lnEndTime) <= 0)
         local hasntAlreadyBeenFixed = lnEndTimeFixed[lnEndTime] == nil

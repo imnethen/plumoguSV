@@ -5,8 +5,8 @@ function selectAlternating(menuVars)
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
     local times = {}
-    for _, v in pairs(notes) do
-        table.insert(times, v.StartTime)
+    for _, ho in pairs(notes) do
+        table.insert(times, ho.StartTime)
     end
     times = table.dedupe(times)
     local allowedTimes = {}

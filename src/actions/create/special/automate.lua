@@ -29,11 +29,11 @@ function automateSVs(settingVars)
 
     local timeDict = {}
 
-    for _, v in pairs(selected) do
-        if (not table.contains(table.keys(timeDict), "t_" .. v.StartTime)) then
-            timeDict["t_" .. v.StartTime] = { v }
+    for _, ho in pairs(selected) do
+        if (not table.contains(table.keys(timeDict), "t_" .. ho.StartTime)) then
+            timeDict["t_" .. ho.StartTime] = { ho }
         else
-            table.insert(timeDict["t_" .. v.StartTime], v)
+            table.insert(timeDict["t_" .. ho.StartTime], ho)
         end
     end
 
@@ -43,8 +43,8 @@ function automateSVs(settingVars)
 
     local actionList = {}
 
-    for k, v in pairs(timeDict) do
-        local noteTime = tonumber(k:sub(3))
+    for timeCode, hos in pairs(timeDict) do
+        local noteTime = tonumber(timeCode:sub(3))
         local svsToAdd = {}
         for i, sv in ipairs(settingVars.copiedSVs) do
             if (settingVars.maintainMs) then
@@ -64,7 +64,7 @@ function automateSVs(settingVars)
         local b = math.random(255)
         local tg = utils.CreateScrollGroup(svsToAdd, 1, r .. "," .. g .. "," .. b)
         local id = ids[index]
-        table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, v))
+        table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, hos))
         index = index + 1
     end
     actions.PerformBatch(actionList)

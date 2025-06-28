@@ -36,8 +36,8 @@ function infoTab(globalVars)
         local tgList = map.GetTimingGroupIds()
         local svSum = 0
         local ssfSum = 0
-        for _, v in pairs(tgList) do
-            state.SelectedScrollGroupId = v
+        for _, tg in pairs(tgList) do
+            state.SelectedScrollGroupId = tg
             svSum = svSum + #map.ScrollVelocities
             ssfSum = ssfSum + #map.ScrollSpeedFactors
         end

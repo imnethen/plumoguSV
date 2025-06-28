@@ -20,9 +20,9 @@ function addFrameTimes(settingVars)
             hasAlreadyAddedLaneTime[lane][time] = true
         end
     end
-    for _, hitObject in pairs(state.SelectedHitObjects) do
-        local lane = hitObject.Lane
-        local time = hitObject.StartTime
+    for _, ho in pairs(state.SelectedHitObjects) do
+        local lane = ho.Lane
+        local time = ho.StartTime
         if (not hasAlreadyAddedLaneTime[lane][time]) then
             hasAlreadyAddedLaneTime[lane][time] = true
             if frameTimeToIndex[time] then
@@ -121,8 +121,8 @@ end
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
 function addSelectedNoteTimesToList(menuVars)
-    for _, hitObject in pairs(state.SelectedHitObjects) do
-        table.insert(menuVars.noteTimes, hitObject.StartTime)
+    for _, ho in pairs(state.SelectedHitObjects) do
+        table.insert(menuVars.noteTimes, ho.StartTime)
     end
     menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
     menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)

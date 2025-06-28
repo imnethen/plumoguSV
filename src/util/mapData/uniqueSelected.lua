@@ -23,8 +23,8 @@ end
 ---@return number[]
 function uniqueSelectedNoteOffsets()
     local offsets = {}
-    for i, hitObject in pairs(state.SelectedHitObjects) do
-        offsets[i] = hitObject.StartTime
+    for i, ho in pairs(state.SelectedHitObjects) do
+        offsets[i] = ho.StartTime
     end
     offsets = table.dedupe(offsets)
     offsets = sort(offsets, sortAscending)

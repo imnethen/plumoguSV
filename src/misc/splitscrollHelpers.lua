@@ -47,8 +47,8 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function addSelectedNoteTimes(settingVars)
-    for _, hitObject in pairs(state.SelectedHitObjects) do
-        table.insert(settingVars.noteTimes2, hitObject.StartTime)
+    for _, ho in pairs(state.SelectedHitObjects) do
+        table.insert(settingVars.noteTimes2, ho.StartTime)
     end
     settingVars.noteTimes2 = table.dedupe(settingVars.noteTimes2)
     settingVars.noteTimes2 = sort(settingVars.noteTimes2, sortAscending)
@@ -58,8 +58,8 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function addSelectedNoteTimes2(settingVars)
-    for _, hitObject in pairs(state.SelectedHitObjects) do
-        table.insert(settingVars.noteTimes3, hitObject.StartTime)
+    for _, ho in pairs(state.SelectedHitObjects) do
+        table.insert(settingVars.noteTimes3, ho.StartTime)
     end
     settingVars.noteTimes3 = table.dedupe(settingVars.noteTimes3)
     settingVars.noteTimes3 = sort(settingVars.noteTimes3, sortAscending)
@@ -69,8 +69,8 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function addSelectedNoteTimes3(settingVars)
-    for _, hitObject in pairs(state.SelectedHitObjects) do
-        table.insert(settingVars.noteTimes4, hitObject.StartTime)
+    for _, ho in pairs(state.SelectedHitObjects) do
+        table.insert(settingVars.noteTimes4, ho.StartTime)
     end
     settingVars.noteTimes4 = table.dedupe(settingVars.noteTimes4)
     settingVars.noteTimes4 = sort(settingVars.noteTimes4, sortAscending)

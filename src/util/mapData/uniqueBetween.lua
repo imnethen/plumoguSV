@@ -5,12 +5,12 @@
 ---@return number[]
 function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     local noteOffsetsBetween = {}
-    for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset and ((state.SelectedScrollGroupId == hitObject.TimingGroup) or not state.GetValue("global_ignoreNotes", false)) then
-            table.insert(noteOffsetsBetween, hitObject.StartTime)
-            if (hitObject.EndTime ~= 0 and hitObject.EndTime <= endOffset and includeLN) then
+    for _, ho in pairs(map.HitObjects) do
+        if ho.StartTime >= startOffset and ho.StartTime <= endOffset and ((state.SelectedScrollGroupId == ho.TimingGroup) or not state.GetValue("global_ignoreNotes", false)) then
+            table.insert(noteOffsetsBetween, ho.StartTime)
+            if (ho.EndTime ~= 0 and ho.EndTime <= endOffset and includeLN) then
                 table.insert(noteOffsetsBetween,
-                    hitObject.EndTime)
+                    ho.EndTime)
             end
         end
     end

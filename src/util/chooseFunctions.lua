@@ -868,26 +868,17 @@ end
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function chooseCurrentScrollGroup(globalVars)
-    function indexOf(tbl, var)
-        for k, v in pairs(tbl) do
-            if v == var then
-                return k
-            end
-        end
-        return nil
-    end
-
     imgui.AlignTextToFramePadding()
     imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
     local groups = { "$Default", "$Global" }
     local cols = { map.TimingGroups["$Default"].ColorRgb or "255,255,255", map.TimingGroups["$Global"].ColorRgb or
     "255,255,255" }
-    for k, v in pairs(map.TimingGroups) do
-        if string.find(k, "%$") then goto cont end
-        if (globalVars.hideAutomatic and string.find(k, "automate_")) then goto cont end
-        table.insert(groups, k)
-        table.insert(cols, v.ColorRgb or "255,255,255")
+    for tgId, tg in pairs(map.TimingGroups) do
+        if string.find(tgId, "%$") then goto cont end
+        if (globalVars.hideAutomatic and string.find(tgId, "automate_")) then goto cont end
+        table.insert(groups, tgId)
+        table.insert(cols, tg.ColorRgb or "255,255,255")
         ::cont::
     end
     local prevIndex = globalVars.scrollGroupIndex
@@ -905,7 +896,7 @@ function chooseCurrentScrollGroup(globalVars)
         state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
     end
     if (state.SelectedScrollGroupId ~= groups[globalVars.scrollGroupIndex]) then
-        globalVars.scrollGroupIndex = indexOf(groups, state.SelectedScrollGroupId)
+        globalVars.scrollGroupIndex = table.indexOf(groups, state.SelectedScrollGroupId)
     end
 end
 
@@ -1105,10 +1096,10 @@ function chooseSplitscrollLayers(settingVars)
             local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
             addStartSVIfMissing(svsBetweenOffsets, startOffset)
             local newNotes = {}
-            for _, hitObject in pairs(state.SelectedHitObjects) do
-                local newNote = utils.CreateHitObject(hitObject.StartTime, hitObject.Lane,
-                    hitObject.EndTime, hitObject.HitSound,
-                    hitObject.EditorLayer)
+            for _, ho in pairs(state.SelectedHitObjects) do
+                local newNote = utils.CreateHitObject(ho.StartTime, ho.Lane,
+                    ho.EndTime, ho.HitSound,
+                    ho.EditorLayer)
                 table.insert(newNotes, newNote)
             end
             newNotes = sort(newNotes, sortAscendingStartTime)
@@ -1150,9 +1141,9 @@ end
 
 function actionRemoveNotesBetween(startOffset, endOffset)
     local notesToRemove = {}
-    for _, hitObject in pairs(map.HitObjects) do
-        if hitObject.StartTime >= startOffset and hitObject.StartTime <= endOffset then
-            table.insert(notesToRemove, hitObject)
+    for _, ho in pairs(map.HitObjects) do
+        if ho.StartTime >= startOffset and ho.StartTime <= endOffset then
+            table.insert(notesToRemove, ho)
         end
     end
     return utils.CreateEditorAction(action_type.RemoveHitObjectBatch, notesToRemove)

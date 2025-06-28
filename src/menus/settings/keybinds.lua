@@ -4,17 +4,17 @@ function showKeybindSettings(globalVars)
     hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
   end
   local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
-  for k, v in pairs(hotkeyList) do
-    if imgui.Button(awaitingIndex == k and "Listening...##listening" or v .. "##" .. k) then
-      if (awaitingIndex == k) then
+  for hotkeyIndex, hotkeyCombo in pairs(hotkeyList) do
+    if imgui.Button(awaitingIndex == hotkeyIndex and "Listening...##listening" or hotkeyCombo .. "##" .. hotkeyIndex) then
+      if (awaitingIndex == hotkeyIndex) then
         awaitingIndex = 0
       else
-        awaitingIndex = k
+        awaitingIndex = hotkeyIndex
       end
     end
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.SetCursorPosX(95)
-    imgui.Text("" .. HOTKEY_LABELS[k])
+    imgui.Text("" .. HOTKEY_LABELS[hotkeyIndex])
   end
   addSeparator()
   simpleActionMenu("Reset Hotkey Settings", 0, function()
