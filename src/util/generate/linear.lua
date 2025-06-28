@@ -7,7 +7,7 @@ function generateLinearSet(startValue, endValue, numValues, placingSV)
     local linearSet = { startValue }
     if numValues < 2 then return linearSet end
 
-    if (state.GetValue("global_equalizeLinear", false) and placingSV) then
+    if (state.GetValue("global_equalizeLinear") and placingSV) then
         endValue = endValue +
             (endValue - startValue) / (numValues - 1)
     end

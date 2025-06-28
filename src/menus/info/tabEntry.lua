@@ -28,7 +28,7 @@ function infoTab(globalVars)
         local coordinatesToCenter = vector.New(centeringX, centeringY)
         imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
     end
-    if (state.GetValue("showSettingsWindow", false)) then
+    if (state.GetValue("showSettingsWindow")) then
         showPluginSettingsWindow(globalVars)
     end
     if (imgui.Button("Click Here To Get Map Stats", ACTION_BUTTON_SIZE)) then

@@ -33,7 +33,7 @@ end
 --    skipDistGraph   : whether or not to skip showing the distance graph [Boolean]
 function makeSVInfoWindow(windowText, svGraphStats, svStats, svDistances, svMultipliers,
                           stutterDuration, skipDistGraph)
-    if (state.GetValue("global_hideSVInfo") == true) then return end
+    if (state.GetValue("global_hideSVInfo")) then return end
     imgui.Begin(windowText, imgui_window_flags.AlwaysAutoResize)
     if not skipDistGraph then
         imgui.Text("Projected Note Motion:")
