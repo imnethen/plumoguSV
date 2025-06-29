@@ -1,13 +1,6 @@
 -- Creates the scale (displace) menu
 function scaleDisplaceMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        scaleSpotIndex = 1,
-        scaleTypeIndex = 1,
-        avgSV = 0.6,
-        distance = 100,
-        ratio = 0.6,
-    }
-    getVariables("scaleDisplaceMenu", menuVars)
+    local menuVars = getMenuVars("scaleDisplace")
     chooseScaleDisplaceSpot(menuVars)
     chooseScaleType(menuVars)
     saveVariables("scaleDisplaceMenu", menuVars)
@@ -19,13 +12,7 @@ end
 
 -- Creates the scale (multiply) menu
 function scaleMultiplyMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        scaleTypeIndex = 1,
-        avgSV = 0.6,
-        distance = 100,
-        ratio = 0.6
-    }
-    getVariables("scaleMultiplyMenu", menuVars)
+    local menuVars = getMenuVars("scaleMultiply")
     chooseScaleType(menuVars)
     saveVariables("scaleMultiplyMenu", menuVars)
 

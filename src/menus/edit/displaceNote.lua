@@ -1,12 +1,6 @@
 -- Creates the displace note menu
 function displaceNoteMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        distance = 200,
-        distance1 = 0,
-        distance2 = 200,
-        linearlyChange = false
-    }
-    getVariables("displaceNoteMenu", menuVars)
+    local menuVars = getMenuVars("displaceNote")
     chooseVaryingDistance(menuVars)
     chooseLinearlyChangeDist(menuVars)
     saveVariables("displaceNoteMenu", menuVars)

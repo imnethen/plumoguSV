@@ -2,15 +2,7 @@
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function dynamicScaleMenu(globalVars)
-    local menuVars = { -- TODO: CONVERT TO STATE
-        noteTimes = {},
-        svTypeIndex = 1,
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats()
-    }
-    getVariables("dynamicScaleMenu", menuVars)
+    local menuVars = getMenuVars("dynamicScale")
     local numNoteTimes = #menuVars.noteTimes
     imgui.Text(#menuVars.noteTimes .. " note times assigned to scale SVs between")
     addNoteTimesToDynamicScaleButton(menuVars)

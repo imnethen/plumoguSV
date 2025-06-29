@@ -1,10 +1,6 @@
 -- Creates the add teleport menu
 function addTeleportMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        distance = 10727,
-        teleportBeforeHand = false
-    }
-    getVariables("addTeleportMenu", menuVars)
+    local menuVars = getMenuVars("addTeleport")
     chooseDistance(menuVars)
     chooseHand(menuVars)
     saveVariables("addTeleportMenu", menuVars)

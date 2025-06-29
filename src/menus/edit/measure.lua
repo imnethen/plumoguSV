@@ -1,21 +1,6 @@
 -- Creates the measure menu
 function measureMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        unrounded = false,
-        nsvDistance = "",
-        svDistance = "",
-        avgSV = "",
-        startDisplacement = "",
-        endDisplacement = "",
-        avgSVDisplaceless = "",
-        roundedNSVDistance = 0,
-        roundedSVDistance = 0,
-        roundedAvgSV = 0,
-        roundedStartDisplacement = 0,
-        roundedEndDisplacement = 0,
-        roundedAvgSVDisplaceless = 0
-    }
-    getVariables("measureMenu", menuVars)
+    local menuVars = getMenuVars("measure")
     chooseMeasuredStatsView(menuVars)
 
     addSeparator()

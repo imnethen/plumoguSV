@@ -1,12 +1,5 @@
 function selectChordSizeMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        single = false,
-        jump = true,
-        hand = true,
-        quad = false
-    }
-
-    getVariables("selectChordSizeMenu", menuVars)
+    local menuVars = getMenuVars("selectChordSize")
 
     _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
     imgui.SameLine(0, SAMELINE_SPACING)

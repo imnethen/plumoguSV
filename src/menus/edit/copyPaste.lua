@@ -2,14 +2,7 @@
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function copyNPasteMenu(globalVars)
-    local menuVars = {                          -- TODO: CONVERT TO STATE
-        copyTable = { true, true, true, true }, -- 1: timing lines, 2: svs, 3: ssfs, 4: bookmarks
-        copiedLines = {},
-        copiedSVs = {},
-        copiedSSFs = {},
-        copiedBMs = {},
-    }
-    getVariables("copyMenu", menuVars)
+    local menuVars = getMenuVars("copy")
 
     _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
     imgui.SameLine(0, SAMELINE_SPACING)

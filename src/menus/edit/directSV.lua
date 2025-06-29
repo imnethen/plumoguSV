@@ -15,14 +15,8 @@ function updateDirectEdit()
 end
 
 function directSVMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        selectableIndex = 1,
-        startTime = 0,
-        multiplier = 0,
-        pageNumber = 1
-    }
+    local menuVars = getMenuVars("directSV")
 
-    getVariables("directSVMenu", menuVars)
     local clockTime = 0.2
     if ((state.UnixTime or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
         state.SetValue("lastRecordedTime", state.UnixTime or 0)

@@ -1,9 +1,6 @@
 -- Creates the reverse scroll menu
 function reverseScrollMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        distance = 400
-    }
-    getVariables("reverseScrollMenu", menuVars)
+    local menuVars = getMenuVars("reverseScroll")
     chooseDistance(menuVars)
     helpMarker("Height at which reverse scroll notes are hit")
     saveVariables("reverseScrollMenu", menuVars)

@@ -17,7 +17,7 @@ STANDARD_SVS = { -- types of standard SVs
 --    globalVars : list of variables used globally across all menus [Table]
 function placeStandardSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
-    local menuVars = getStandardPlaceMenuVars()
+    local menuVars = getMenuVars("placeStandared")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
 
@@ -53,20 +53,4 @@ function placeStandardSVMenu(globalVars)
     local labelText = table.concat({ currentSVType, "Standard" })
     saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeStandardMenu", menuVars)
-end
-
--- Returns menuVars for the menu at Place SVs > Standard
-function getStandardPlaceMenuVars()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        svTypeIndex = 1,
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats(),
-        interlace = false,
-        interlaceRatio = -0.5,
-        overrideFinal = false
-    }
-    getVariables("placeStandardMenu", menuVars)
-    return menuVars
 end

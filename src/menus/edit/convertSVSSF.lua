@@ -1,9 +1,5 @@
 function convertSVSSFMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        conversionDirection = true
-    }
-
-    getVariables("convertSVSSFMenu", menuVars)
+    local menuVars = getMenuVars("convertSVSSF")
 
     imgui.AlignTextToFramePadding()
     imgui.Text("Direction:")

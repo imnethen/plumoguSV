@@ -1,7 +1,5 @@
 -- Flips flipped LN ends with SVs
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
-function fixFlippedLNEnds(menuVars)
+function fixFlippedLNEnds()
     local svsToRemove = {}
     local svsToAdd = {}
     local svTimeIsAdded = {}
@@ -45,6 +43,4 @@ function fixFlippedLNEnds(menuVars)
     if (fixedLNEndsCount == 0) then type = "!" end
 
     print(type, "Fixed " .. fixedLNEndsCount .. " flipped LN ends")
-
-    menuVars.fixedText = table.concat({ "Fixed ", fixedLNEndsCount, " flipped LN ends" })
 end

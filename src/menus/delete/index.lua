@@ -2,10 +2,7 @@
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function deleteTab(_)
-    local menuVars = { -- TODO: CONVERT TO STATE
-        deleteTable = { true, true, true, true }
-    }
-    getVariables("deleteMenu", menuVars)
+    local menuVars = getMenuVars("delete")
     _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
     imgui.SameLine(0, SAMELINE_SPACING)
     _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])

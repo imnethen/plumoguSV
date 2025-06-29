@@ -3,7 +3,7 @@
 --    globalVars : list of variables used globally across all menus [Table]
 function placeStillSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
-    local menuVars = getStillPlaceMenuVars()
+    local menuVars = getMenuVars("placeStill")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
 
@@ -38,25 +38,4 @@ function placeStillSVMenu(globalVars)
     local labelText = table.concat({ currentSVType, "Still" })
     saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeStillMenu", menuVars)
-end
-
--- Returns menuVars for the menu at Place SVs > Still
-function getStillPlaceMenuVars()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        svTypeIndex = 1,
-        noteSpacing = 1,
-        stillTypeIndex = 1,
-        stillDistance = 0,
-        stillBehavior = 1,
-        prePlaceDistances = {},
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats(),
-        interlace = false,
-        interlaceRatio = -0.5,
-        overrideFinal = false
-    }
-    getVariables("placeStillMenu", menuVars)
-    return menuVars
 end

@@ -14,7 +14,7 @@ SPECIAL_SVS = { -- types of special SVs
 --    globalVars : list of variables used globally across all menus [Table]
 function placeSpecialSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
-    local menuVars = getSpecialPlaceMenuVars()
+    local menuVars = getMenuVars("placeSpecial")
     chooseSpecialSVType(menuVars)
 
     addSeparator()
@@ -41,13 +41,4 @@ function placeSpecialSVMenu(globalVars)
     local labelText = table.concat({ currentSVType, "Special" })
     saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeSpecialMenu", menuVars)
-end
-
--- Returns menuVars for the menu at Place SVs > Special
-function getSpecialPlaceMenuVars()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        svTypeIndex = 1
-    }
-    getVariables("placeSpecialMenu", menuVars)
-    return menuVars
 end

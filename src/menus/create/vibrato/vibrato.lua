@@ -10,7 +10,7 @@ VIBRATO_SVS = { -- types of vibrato SVs
 --    globalVars : list of variables used globally across all menus [Table]
 function placeVibratoSVMenu(globalVars, separateWindow)
     exportImportSettingsButton(globalVars)
-    local menuVars = getVibratoPlaceMenuVars()
+    local menuVars = getMenuVars("placeVibrato")
     chooseVibratoSVType(menuVars)
 
     addSeparator()
@@ -53,16 +53,4 @@ function placeVibratoSVMenu(globalVars, separateWindow)
     local labelText = table.concat({ currentSVType, "Vibrato$" .. (menuVars.vibratoMode == 1 and "$SV" or "$SSF") })
     saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeVibratoMenu", menuVars)
-end
-
--- Returns menuVars for the menu at Place SVs > Special
-function getVibratoPlaceMenuVars()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        svTypeIndex = 1,
-        vibratoMode = 1,
-        vibratoQuality = 3,
-        sides = 2
-    }
-    getVariables("placeVibratoMenu", menuVars)
-    return menuVars
 end

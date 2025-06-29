@@ -1,10 +1,6 @@
 -- Creates the select alternating menu
 function selectAlternatingMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        every = 1,
-        offset = 0
-    }
-    getVariables("selectAlternatingMenu", menuVars)
+    local menuVars = getMenuVars("selectAlternating")
     chooseEvery(menuVars)
     chooseOffset(menuVars)
     saveVariables("selectAlternatingMenu", menuVars)

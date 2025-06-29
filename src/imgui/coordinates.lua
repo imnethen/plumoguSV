@@ -22,9 +22,7 @@ end
 --    currentTime : current in-game time of the plugin [Int/Float]
 --    fps         : frames per second set by the user/plugin [Int]
 function checkIfFrameChanged(currentTime, fps)
-    local oldFrameInfo = {
-        frameNumber = 0
-    }
+    local oldFrameInfo = { frameNumber = 0 }
     getVariables("oldFrameInfo", oldFrameInfo)
     local newFrameNumber = math.floor(currentTime * fps) % fps
     local frameChanged = oldFrameInfo.frameNumber ~= newFrameNumber

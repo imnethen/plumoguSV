@@ -1,10 +1,5 @@
 function selectNoteTypeMenu()
-    local menuVars = { -- TODO: CONVERT TO STATE
-        rice = true,
-        ln = true
-    }
-
-    getVariables("selectNoteTypeMenu", menuVars)
+    local menuVars = getMenuVars("selectNoteType")
 
     _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
     imgui.SameLine(0, SAMELINE_SPACING)
