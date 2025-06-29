@@ -2,5 +2,5 @@
 ---@param number number
 ---@return number
 function math.quarter(number)
-    return math.floor(number * 4 + 0.5) / 4
+    return math.round(number * 4) / 4
 end
