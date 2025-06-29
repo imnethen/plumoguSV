@@ -11,13 +11,15 @@ function matrix.solve(mtrx, vctr)
     for i = 1, #mtrx do
         matrix.scaleRow(augMtrx, i, 1 / augMtrx[i][i])
         for j = i + 1, #mtrx do
-            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i])
+            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i]) -- Triangular Downward Sweep
         end
     end
 
     for i = #mtrx, 2, -1 do
         for j = i - 1, 1, -1 do
-            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i])
+            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i]) -- Triangular Upward Sweep
         end
     end
+
+    return table.unpack(table.property(augMtrx, #mtrx + 1)) -- Last Column
 end
