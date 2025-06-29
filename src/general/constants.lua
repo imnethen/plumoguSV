@@ -204,7 +204,7 @@ ALPHABET_LIST = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M
 
 CONSONANTS = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z" }
 
-VOWELS = { "A", "E", "I", "O", "U", "Z" }
+VOWELS = { "A", "E", "I", "O", "U", "Y" }
 
 DEFAULT_STYLE = {
     windowBg = vector.New(0.00, 0.00, 0.00, 1.00),
@@ -276,7 +276,14 @@ COLOR_MAP = {
 
 DEFAULT_SETTING_TYPES = {
     "General",
+    "Default Preferences",
     "Appearance",
     "Windows + Widgets",
-    "Keybinds"
+    "Keybinds",
 }
+
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
+GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" } -- Cannot make shallow copy with reference, and table.duplicate might not have been instantiated before running this.
+HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
+    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
+    "Execute Vibrato Separately", "Use TG of Selected Note" }

@@ -19,7 +19,7 @@ function showPluginSettingsWindow(globalVars)
 
     local typeIndex = state.GetValue("settings_typeIndex", 1)
 
-    imgui.Columns(2, "Settings_ColumnList", true)
+    imgui.Columns(2, "settings_columnList", true)
     imgui.SetColumnWidth(0, 150)
     imgui.SetColumnWidth(1, 283)
 
