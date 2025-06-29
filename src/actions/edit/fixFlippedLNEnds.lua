@@ -1,4 +1,4 @@
--- Fixes flipped LN ends with SVs
+-- Flips flipped LN ends with SVs
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
 function fixFlippedLNEnds(menuVars)
