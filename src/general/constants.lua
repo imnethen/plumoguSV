@@ -18,7 +18,7 @@ MAX_SV_POINTS = 1000                          -- maximum number of SV points all
 MAX_ANIMATION_FRAMES = 999                    -- maximum number of animation frames allowed
 MAX_IMPORT_CHARACTER_LIMIT = 999999           -- maximum number of characters allowed for import text
 
-CHINCHILLA_TYPES = {                          -- types of chinchilla SVs
+CHINCHILLA_TYPES = {
     "Exponential",
     "Polynomial",
     "Circular",
@@ -27,7 +27,7 @@ CHINCHILLA_TYPES = {                          -- types of chinchilla SVs
     "Inverse Power",
     "Peter Stock"
 }
-COLOR_THEMES = { -- available color themes for the plugin
+COLOR_THEMES = {
     "Classic",
     "Strawberry",
     "Amethyst",
@@ -45,7 +45,7 @@ COLOR_THEMES = { -- available color themes for the plugin
     "otingocnI",
     "CUSTOM"
 }
-COLOR_THEME_COLORS = {
+COLOR_THEME_COLORS = { -- colors of theme dropdown
     "255,255,255",
     "251,41,67",
     "153,102,204",
@@ -127,7 +127,6 @@ SCALE_TYPES = { -- ways to scale SVs
     "Relative Ratio"
 }
 
-
 STANDARD_SVS_NO_COMBO = { -- types of standard SVs (excluding combo)
     "Linear",
     "Exponential",
@@ -176,7 +175,7 @@ DISTANCE_TYPES = {
     "Start / End"
 }
 
-VIBRATO_TYPES = { -- types of vibrato
+VIBRATO_TYPES = {
     "SV (msx)",
     "SSF (x)",
 }
@@ -191,7 +190,7 @@ VIBRATO_QUALITIES = {
 
 VIBRATO_FRAME_RATES = { 45, 90, 150, 210, 450 }
 
-VIBRATO_DETAILED_QUALITIES = {}
+VIBRATO_DETAILED_QUALITIES = {} -- what actually shows up in-game
 
 for i, v in pairs(VIBRATO_QUALITIES) do
     table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")

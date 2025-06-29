@@ -15,15 +15,15 @@ function layerSnaps()
         end
     end
 
-    local createLayerActions = {}
-    local moveNoteActions = {}
+    local createLayerQueue = {}
+    local moveNoteQueue = {}
 
     for layerName, layerData in pairs(layerDict) do
         local layer = utils.CreateEditorLayer(layerName, layerData.ColorRgb, layerData.Hidden)
-        table.insert(createLayerActions,
+        table.insert(createLayerQueue,
             utils.CreateEditorAction(action_type.CreateLayer, layer))
-        table.insert(moveNoteActions, utils.CreateEditorAction(action_type.MoveToLayer, layerData.hos, layer))
+        table.insert(moveNoteQueue, utils.CreateEditorAction(action_type.MoveToLayer, layerData.hos, layer))
     end
-    actions.PerformBatch(createLayerActions)
-    actions.PerformBatch(moveNoteActions)
+    actions.PerformBatch(createLayerQueue)
+    actions.PerformBatch(moveNoteQueue)
 end
