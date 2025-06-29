@@ -90,12 +90,6 @@ function draw()
     end
     ::measureDataContinue::
 
-    if (exclusiveKeyPressed("Ctrl+H")) then
-        -- crash the game
-        ---@diagnostic disable-next-line: param-type-mismatch
-        imgui.Text(nil)
-    end
-
     imgui.End()
 
     saveVariables("globalVars", globalVars)

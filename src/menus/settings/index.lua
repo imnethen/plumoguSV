@@ -42,6 +42,10 @@ function showPluginSettingsWindow(globalVars)
         globalVars = loadGlobalVars()
         toggleablePrint("e!", "Settings have been reset.")
     end
+    if (imgui.Button("Crash The Game.")) then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        imgui.Text(nil)
+    end
     imgui.EndChild()
     imgui.SetColumnWidth(0, 150)
     imgui.SetColumnWidth(1, 283)
