@@ -276,7 +276,7 @@ COLOR_MAP = {
 
 DEFAULT_SETTING_TYPES = {
     "General",
-    "Default Preferences",
+    "Default Properties",
     "Appearance",
     "Windows + Widgets",
     "Keybinds",
