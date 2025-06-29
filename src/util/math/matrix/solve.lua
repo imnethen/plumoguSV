@@ -1,4 +1,4 @@
----Given a matrix A and vector B, returns a vector x such that Ax=B.
+---Given a square matrix A and equally-sized vector B, returns a vector x such that Ax=B.
 ---@param mtrx number[][]
 ---@param vctr number[]
 function matrix.solve(mtrx, vctr)
@@ -12,6 +12,10 @@ function matrix.solve(mtrx, vctr)
         matrix.scaleRow(augMtrx, i, 1 / augMtrx[i][i])
         for j = i + 1, #mtrx do
             matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i]) -- Triangular Downward Sweep
+            if (matrix.findZeroRow(augMtrx) ~= -1) then
+                return augMtrx[matrix.findZeroRow(augMtrx)][#mtrx + 1] == 0 and 1 / 0 or 0
+                -- infinity for singular full zero row, zero for singular 0 = x
+            end
         end
     end
 
