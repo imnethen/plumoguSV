@@ -1,11 +1,3 @@
-local DEFAULT_SETTING_TYPES = {
-    "General",
-    "Appearance",
-    "Windows + Widgets",
-    "Keybinds"
-}
-
-
 function showPluginSettingsWindow(globalVars)
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
     SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)

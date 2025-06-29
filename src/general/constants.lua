@@ -260,3 +260,23 @@ DEFAULT_STYLE = {
 }
 
 HEXADECIMAL = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" }
+
+COLOR_MAP = {
+    [1] = "Red",
+    [2] = "Blue",
+    [3] = "Purple",
+    [4] = "Yellow",
+    [5] = "White",
+    [6] = "Pink",
+    [8] =
+    "Orange",
+    [12] = "Cyan",
+    [16] = "Green"
+}
+
+DEFAULT_SETTING_TYPES = {
+    "General",
+    "Appearance",
+    "Windows + Widgets",
+    "Keybinds"
+}

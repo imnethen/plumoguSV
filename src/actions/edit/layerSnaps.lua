@@ -1,16 +1,3 @@
-local COLOR_MAP = {
-    [1] = "Red",
-    [2] = "Blue",
-    [3] = "Purple",
-    [4] = "Yellow",
-    [5] = "White",
-    [6] = "Pink",
-    [8] =
-    "Orange",
-    [12] = "Cyan",
-    [16] = "Green"
-}
-
 function layerSnaps()
     local layerDict = {}
     for _, ho in pairs(uniqueNotesBetweenSelected()) do
