@@ -12,11 +12,31 @@ local COLOR_MAP = {
 }
 
 function layerSnaps()
-    local bmsToAdd = {}
-    for _, noteTime in pairs(uniqueNoteOffsetsBetweenSelected(false)) do
-        local color = COLOR_MAP[getSnapFromTime(noteTime)]
-        local bm = utils.CreateBookmark(noteTime, "plumoguSV-snap-" .. color)
-        table.insert(bmsToAdd, bm)
+    local layerDict = {}
+    for _, ho in pairs(uniqueNotesBetweenSelected()) do
+        local color = COLOR_MAP[getSnapFromTime(ho.StartTime)]
+        if (ho.EditorLayer == 0) then
+            layer = { Name = "Default", ColorRgb = "255,255,255", Hidden = false }
+        else
+            layer = map.EditorLayers[ho.EditorLayer]
+        end
+        local newLayerName = layer.Name .. "-plumoguSV-snap-" .. color
+        if (layerDict:includes(newLayerName)) then
+            table.insert(layerDict[newLayerName].hos, ho)
+        else
+            layerDict[newLayerName] = { hos = { ho }, ColorRgb = layer.ColorRgb, Hidden = layer.Hidden }
+        end
     end
-    actions.Perform(utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd))
+
+    local createLayerActions = {}
+    local moveNoteActions = {}
+
+    for layerName, layerData in pairs(layerDict) do
+        local layer = utils.CreateEditorLayer(layerName, layerData.ColorRgb, layerData.Hidden)
+        table.insert(createLayerActions,
+            utils.CreateEditorAction(action_type.CreateLayer, layer))
+        table.insert(moveNoteActions, utils.CreateEditorAction(action_type.MoveToLayer, layerData.hos, layer))
+    end
+    actions.PerformBatch(createLayerActions)
+    actions.PerformBatch(moveNoteActions)
 end

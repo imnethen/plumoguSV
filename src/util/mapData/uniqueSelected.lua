@@ -31,3 +31,21 @@ function uniqueSelectedNoteOffsets()
     if (#offsets == 0) then return {} end
     return offsets
 end
+
+function uniqueNotesBetweenSelected()
+    local selectedNoteOffsets = uniqueSelectedNoteOffsets()
+    if (not selectedNoteOffsets) then
+        toggleablePrint("e!",
+            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+        return {}
+    end
+    local startOffset = selectedNoteOffsets[1]
+    local endOffset = selectedNoteOffsets[#selectedNoteOffsets]
+    local offsets = getNotesBetweenOffsets(startOffset, endOffset)
+    if (#offsets < 2) then
+        toggleablePrint("e!",
+            "Warning: There are not enough notes in the current selection (within this timing group) to perform the action.")
+        return {}
+    end
+    return offsets
+end
