@@ -9,8 +9,8 @@ function ssfVibrato(menuVars, func1, func2)
     local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
         getSSFMultiplierAt(time)) }
     while time < endTime do
-        local x = ((time - startTime) / (endTime - startTime))
-        local y = ((time + delta - startTime) / (endTime - startTime))
+        local x = math.inverseLerp(time, startTime, endTime)
+        local y = math.inverseLerp(time + delta, startTime, endTime)
         table.insert(ssfs,
             ssf(time - 1 / getUsableDisplacementMultiplier(time), func2(x)
             ))
