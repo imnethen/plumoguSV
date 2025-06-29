@@ -1,5 +1,5 @@
 function selectNoteTypeMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         rice = true,
         ln = true
     }

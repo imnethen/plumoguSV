@@ -57,7 +57,7 @@ end
 
 -- Returns menuVars for the menu at Place SVs > Special
 function getVibratoPlaceMenuVars()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         svTypeIndex = 1,
         vibratoMode = 1,
         vibratoQuality = 3,

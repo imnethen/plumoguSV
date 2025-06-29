@@ -1,5 +1,5 @@
 function convertSVSSFMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         conversionDirection = true
     }
 

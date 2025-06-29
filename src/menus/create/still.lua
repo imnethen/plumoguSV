@@ -42,7 +42,7 @@ end
 
 -- Returns menuVars for the menu at Place SVs > Still
 function getStillPlaceMenuVars()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         svTypeIndex = 1,
         noteSpacing = 1,
         stillTypeIndex = 1,

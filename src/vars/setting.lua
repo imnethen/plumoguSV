@@ -3,7 +3,7 @@
 ---@param label string A delineator to separate two categories with similar SV types (Standard/Still, etc).
 ---@return table
 function getSettingVars(svType, label)
-    local settingVars
+    local settingVars = {} -- TODO: CONVERT TO STATE
     if svType == "Linear" then
         settingVars = {
             startSV = 1.5,

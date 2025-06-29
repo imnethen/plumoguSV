@@ -1,6 +1,6 @@
 -- Creates the select alternating menu
 function selectAlternatingMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         every = 1,
         offset = 0
     }

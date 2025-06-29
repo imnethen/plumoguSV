@@ -1,6 +1,6 @@
 -- Creates the fix LN ends menu
 function fixLNEndsMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         fixedText = "No flipped LN ends fixed yet"
     }
     getVariables("fixLNEndsMenu", menuVars)

@@ -57,7 +57,7 @@ end
 
 -- Returns menuVars for the menu at Place SVs > Standard
 function getStandardPlaceMenuVars()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         svTypeIndex = 1,
         svMultipliers = {},
         svDistances = {},

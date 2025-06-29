@@ -1,5 +1,5 @@
 function selectChordSizeMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         single = false,
         jump = true,
         hand = true,

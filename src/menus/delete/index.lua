@@ -2,7 +2,7 @@
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function deleteTab(_)
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         deleteTable = { true, true, true, true }
     }
     getVariables("deleteMenu", menuVars)

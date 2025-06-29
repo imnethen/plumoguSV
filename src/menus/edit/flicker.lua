@@ -1,6 +1,6 @@
 -- Creates the flicker menu
 function flickerMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         flickerTypeIndex = 1,
         distance = -69420.727,
         distance1 = 0,

@@ -15,7 +15,7 @@ function updateDirectEdit()
 end
 
 function directSVMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         selectableIndex = 1,
         startTime = 0,
         multiplier = 0,

@@ -2,7 +2,7 @@
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function dynamicScaleMenu(globalVars)
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         noteTimes = {},
         svTypeIndex = 1,
         svMultipliers = {},

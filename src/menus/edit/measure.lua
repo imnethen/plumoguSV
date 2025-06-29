@@ -1,6 +1,6 @@
 -- Creates the measure menu
 function measureMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         unrounded = false,
         nsvDistance = "",
         svDistance = "",

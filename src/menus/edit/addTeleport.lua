@@ -1,6 +1,6 @@
 -- Creates the add teleport menu
 function addTeleportMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         distance = 10727,
         teleportBeforeHand = false
     }

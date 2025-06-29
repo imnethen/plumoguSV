@@ -1,6 +1,6 @@
 -- Creates the displace view menu
 function displaceViewMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         distance = 200
     }
     getVariables("displaceViewMenu", menuVars)

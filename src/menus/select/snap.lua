@@ -1,6 +1,6 @@
 -- Creates the select by snap menu
 function selectBySnapMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         snap = 1,
     }
     getVariables("selectBySnapMenu", menuVars)

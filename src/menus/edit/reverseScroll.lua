@@ -1,6 +1,6 @@
 -- Creates the reverse scroll menu
 function reverseScrollMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         distance = 400
     }
     getVariables("reverseScrollMenu", menuVars)

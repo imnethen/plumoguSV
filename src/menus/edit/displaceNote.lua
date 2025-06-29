@@ -1,6 +1,6 @@
 -- Creates the displace note menu
 function displaceNoteMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         distance = 200,
         distance1 = 0,
         distance2 = 200,

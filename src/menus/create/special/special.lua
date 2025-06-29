@@ -45,7 +45,7 @@ end
 
 -- Returns menuVars for the menu at Place SVs > Special
 function getSpecialPlaceMenuVars()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         svTypeIndex = 1
     }
     getVariables("placeSpecialMenu", menuVars)

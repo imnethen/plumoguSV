@@ -1,6 +1,6 @@
 -- Creates the scale (displace) menu
 function scaleDisplaceMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         scaleSpotIndex = 1,
         scaleTypeIndex = 1,
         avgSV = 0.6,
@@ -19,7 +19,7 @@ end
 
 -- Creates the scale (multiply) menu
 function scaleMultiplyMenu()
-    local menuVars = {
+    local menuVars = { -- TODO: CONVERT TO STATE
         scaleTypeIndex = 1,
         avgSV = 0.6,
         distance = 100,
