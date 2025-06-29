@@ -1,6 +1,6 @@
 function awake()
     local tempGlobalVars = read()
-    if (not tempGlobalVars) then tempGlobalVars = {} end
+    if (not tempGlobalVars) then tempGlobalVars = table.construct() end
 
     syncGlobalVarsState(tempGlobalVars)
 
@@ -36,6 +36,6 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_hideAutomatic", truthy(tempGlobalVars.hideAutomatic))
     state.SetValue("global_dontPrintCreation", truthy(tempGlobalVars.dontPrintCreation))
     state.SetValue("global_hotkeyList", tempGlobalVars.hotkeyList)
-    state.SetValue("global_customStyle", tempGlobalVars.customStyle or {})
+    state.SetValue("global_customStyle", tempGlobalVars.customStyle or table.construct())
     state.SetValue("global_equalizeLinear", truthy(tempGlobalVars.equalizeLinear))
 end

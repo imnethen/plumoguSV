@@ -28,6 +28,11 @@ function showPluginSettingsWindow(globalVars)
     local typeIndex = state.GetValue("settings_typeIndex", 1)
 
     imgui.Columns(2, "Settings_ColumnList", true)
+    imgui.SetColumnWidth(0, 150)
+    imgui.SetColumnWidth(1, 283)
+
+    -- CATEGORY COLUMN
+
     imgui.BeginChild(420)
     imgui.Text("Setting Type")
     imgui.Separator()
@@ -42,14 +47,15 @@ function showPluginSettingsWindow(globalVars)
         globalVars = loadGlobalVars()
         toggleablePrint("e!", "Settings have been reset.")
     end
-    if (imgui.Button("Crash The Game.")) then
+    if (imgui.Button("Crash The Game")) then
         ---@diagnostic disable-next-line: param-type-mismatch
         imgui.Text(nil)
     end
     imgui.EndChild()
-    imgui.SetColumnWidth(0, 150)
-    imgui.SetColumnWidth(1, 283)
     imgui.NextColumn()
+
+    -- SETTINGS COLUMN
+
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
         showGeneralSettings(globalVars)
