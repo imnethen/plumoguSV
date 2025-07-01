@@ -1,7 +1,5 @@
 local SPECIAL_SNAPS = { 1, 2, 3, 4, 6, 8, 12, 16 }
 
----@alias SnapNumber 1|2|3|4|5|6|8|12|16
-
 ---Gets the snap color from a given time.
 ---@param time number # The time to reference.
 ---@return SnapNumber
