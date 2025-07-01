@@ -21,7 +21,6 @@ function copyNPasteMenu(globalVars)
         button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, nil, menuVars)
     end
 
-
     saveVariables("copyMenu", menuVars)
 
     if copiedItemCount == 0 then return end

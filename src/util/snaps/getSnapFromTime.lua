@@ -40,7 +40,6 @@ function getSnapFromTime(time)
         end
     end
 
-
     if (not foundCorrectSnap) then return 5 end
 
     return guessedSnap

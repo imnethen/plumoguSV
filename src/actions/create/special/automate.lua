@@ -37,7 +37,6 @@ function automateSVs(settingVars)
         end
     end
 
-
     local ids = utils.GenerateTimingGroupIds(#table.keys(timeDict), "automate_")
     local index = 1
 

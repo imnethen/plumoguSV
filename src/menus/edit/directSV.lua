@@ -85,7 +85,6 @@ function directSVMenu()
         menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
     end
 
-
     imgui.Separator()
     imgui.Text("Start Time")
     imgui.SameLine(0, SAMELINE_SPACING)

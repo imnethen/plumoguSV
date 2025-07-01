@@ -310,7 +310,6 @@ function chooseCursorShapeSize(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
-
     --Reference
     local label = "Shape Size"
     local oldCursorTrailSize = globalVars.cursorTrailSize

@@ -6,7 +6,6 @@ function selectBookmarkMenu()
     local filterTerm = state.GetValue("filterTerm") or ""
     local times = {}
 
-
     if (#bookmarks == 0) then
         imgui.TextWrapped("There are no bookmarks! Add one to navigate.")
     else
@@ -26,7 +25,6 @@ function selectBookmarkMenu()
         imgui.NextColumn()
 
         imgui.Separator()
-
 
         local skippedBookmarks = 0
         local skippedIndices = 0
@@ -68,7 +66,6 @@ function selectBookmarkMenu()
             end
             imgui.NextColumn()
 
-
             if (imgui.Button("Go to #" .. idx - skippedIndices, vector.New(65, 24))) then
                 actions.GoToObjects(v.StartTime)
             end
@@ -87,7 +84,6 @@ function selectBookmarkMenu()
         imgui.PopItemWidth()
         imgui.Columns(1)
     end
-
 
     state.SetValue("selectedIndex", selectedIndex)
     state.SetValue("searchTerm", searchTerm)
