@@ -1,0 +1,46 @@
+---Converts a string (generated from [table.stringify](lua://table.stringify)) into a table.
+---@param str string
+---@return any
+function table.parse(str)
+    if (str == "FALSE" or str == "TRUE") then return str == "TRUE" end
+    if (str:sub(1, 1) == '"') then return str:sub(2, -2) end
+    if (str:match("^[%d%.]+$")) then return tonumber(str) end
+    if (not table.contains({ "{", "[" }, str:sub(1, 1))) then return str end
+    local tableType = str:sub(1, 1) == "[" and "arr" or "dict"
+    local tbl = {}
+    local terms = {}
+    while true do
+        local nestedTableFactor = table.contains({ "[", "{" }, str:sub(2, 2)) and 1 or 0
+        local depth = nestedTableFactor
+        local searchIdx = 2 + nestedTableFactor
+        local inQuotes = false
+        while (searchIdx < str:len()) do
+            if (str:sub(searchIdx, searchIdx) == '"') then
+                inQuotes = not inQuotes
+            end
+            if (table.contains({ "]", "}" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
+                depth = depth - 1
+            end
+            if (table.contains({ "[", "{" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
+                depth = depth + 1
+            end
+            if ((str:sub(searchIdx, searchIdx) == "," or nestedTableFactor == 1) and not inQuotes and depth == 0) then break end
+            searchIdx = searchIdx + 1
+        end
+        table.insert(terms, str:sub(2, searchIdx + nestedTableFactor - 1))
+        str = str:sub(searchIdx + nestedTableFactor)
+        if (str:len() <= 1) then break end
+    end
+
+    if (tableType == "arr") then
+        for _, v in pairs(terms) do
+            table.insert(tbl, table.parse(v))
+        end
+    else
+        for _, v in pairs(terms) do
+            local idx = v:find("=")
+            tbl[v:sub(1, idx - 1)] = table.parse(v:sub(idx + 1))
+        end
+    end
+    return tbl
+end
