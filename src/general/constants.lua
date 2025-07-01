@@ -272,7 +272,17 @@ COLOR_MAP = {
     [12] = "Cyan",
     [16] = "Green"
 }
-
+REVERSE_COLOR_MAP = {
+    Red = 1,
+    Blue = 2,
+    Purple = 3,
+    Yellow = 4,
+    White = 5,
+    Pink = 6,
+    Orange = 8,
+    Cyan = 12,
+    Green = 16
+}
 DEFAULT_SETTING_TYPES = {
     "General",
     "Default Properties",

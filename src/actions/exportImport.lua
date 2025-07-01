@@ -223,9 +223,9 @@ function importPlaceSVButton(globalVars)
 
     local menuVars
 
-    if standardPlaceType then menuVars = getStandardPlaceMenuVars() end
-    if specialPlaceType then menuVars = getSpecialPlaceMenuVars() end
-    if stillPlaceType then menuVars = getStillPlaceMenuVars() end
+    if standardPlaceType then menuVars = getMenuVars("placeStandard") end
+    if specialPlaceType then menuVars = getMenuVars("placeSpecial") end
+    if stillPlaceType then menuVars = getMenuVars("placeStill") end
 
     local linearSVType      = currentSVType == "Linear"
     local exponentialSVType = currentSVType == "Exponential"

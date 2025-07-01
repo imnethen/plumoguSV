@@ -17,7 +17,7 @@ STANDARD_SVS = { -- types of standard SVs
 --    globalVars : list of variables used globally across all menus [Table]
 function placeStandardSVMenu(globalVars)
     exportImportSettingsButton(globalVars)
-    local menuVars = getMenuVars("placeStandared")
+    local menuVars = getMenuVars("placeStandard")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
 

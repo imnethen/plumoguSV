@@ -1,5 +1,7 @@
 local SPECIAL_SNAPS = { 1, 2, 3, 4, 6, 8, 12, 16 }
 
+---@alias SnapNumber 1|2|3|4|5|6|8|12|16
+
 ---Gets the snap color from a given time.
 ---@param time number # The time to reference.
 ---@return SnapNumber
@@ -27,11 +29,19 @@ function getSnapFromTime(time)
             math.abs(SPECIAL_SNAPS[math.max(guessIndex - 1, 1)] - currentSnap) and
             SPECIAL_SNAPS[guessIndex] or SPECIAL_SNAPS[math.max(guessIndex - 1, 1)]
 
-        if (math.abs(guessedSnap - currentSnap) / (currentSnap) < 0.02) then
+        local approximateError = math.abs(guessedSnap - currentSnap) / currentSnap
+
+        if (approximateError < 0.05) then
+            if (approximateError > 0.03) then
+                print("w!",
+                    "The snap for the note at time " ..
+                    time .. " could be incorrect (confidence < 97%). Please double check to see if it's correct.")
+            end
             foundCorrectSnap = true
             break
         end
     end
+
 
     if (not foundCorrectSnap) then return 5 end
 
