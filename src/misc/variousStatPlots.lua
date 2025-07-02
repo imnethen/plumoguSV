@@ -74,10 +74,8 @@ function displayStutterSVStats(svMultipliers, stutterDuration)
     imgui.Text("First SV:")
     imgui.Text("Second SV:")
     imgui.NextColumn()
-    local firstText = table.concat({ firstSV, "x  (", firstDuration, "%% duration)" })
-    local secondText = table.concat({ secondSV, "x  (", secondDuration, "%% duration)" })
-    imgui.Text(firstText)
-    imgui.Text(secondText)
+    imgui.Text(firstSV .. "x  (" .. firstDuration .. "%% duration)")
+    imgui.Text(secondSV .. "x  (" .. secondDuration .. "%% duration)")
     imgui.Columns(1)
 end
 

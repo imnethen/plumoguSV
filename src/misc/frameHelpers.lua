@@ -59,10 +59,10 @@ function displayFrameTimes(settingVars)
         local frameTimeData = {}
         local frameTime = settingVars.frameTimes[i]
         frameTimeData[1] = frameTime.time
-        frameTimeData[2] = table.concat(frameTime.lanes, ", ")
+        frameTimeData[2] = frameTime.lanes .. ", "
         frameTimeData[3] = frameTime.frame
         frameTimeData[4] = frameTime.position
-        local selectableText = table.concat(frameTimeData, " | ")
+        local selectableText = frameTimeData .. " | "
         if imgui.Selectable(selectableText, settingVars.selectedTimeIndex == i) then
             settingVars.selectedTimeIndex = i
         end

@@ -262,7 +262,7 @@ function getSettingVars(svType, label)
     searchTerm = searchTerm:sub(1, 1):lower() .. searchTerm:sub(2)
     local settingVars = DEFAULT_STARTING_SETTING_VARS[searchTerm]
 
-    local labelText = table.concat({ svType, label, "Settings" })
+    local labelText = svType .. label .. "Settings"
     getVariables(labelText, settingVars)
     return settingVars
 end

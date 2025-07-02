@@ -345,7 +345,7 @@ end
 function chooseCustomMultipliers(settingVars)
     imgui.BeginChild("Custom Multipliers", vector.New(imgui.GetContentRegionAvailWidth(), 90), 1)
     for i = 1, #settingVars.svMultipliers do
-        local selectableText = table.concat({ i, " )   ", settingVars.svMultipliers[i] })
+        local selectableText = i .. " )   " .. settingVars.svMultipliers[i]
         if imgui.Selectable(selectableText, settingVars.selectedMultiplierIndex == i) then
             settingVars.selectedMultiplierIndex = i
         end
@@ -1116,7 +1116,7 @@ function chooseSplitscrollLayers(settingVars)
     else
         local currentLayerSVs = currentLayer.svs
         local currentLayerNotes = currentLayer.notes
-        imgui.Text(table.concat({ #currentLayerSVs, " SVs, ", #currentLayerNotes, " notes assigned" }))
+        imgui.Text(#currentLayerSVs .. " SVs, " .. #currentLayerNotes .. " notes assigned")
         if imgui.Button("Clear assigned\nnotes and SVs", HALF_ACTION_BUTTON_SIZE) then
             settingVars.splitscrollLayers[currentLayerNum] = nil
         end

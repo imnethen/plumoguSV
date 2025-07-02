@@ -50,7 +50,7 @@ function placeStandardSVMenu(globalVars)
     end
     simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, globalVars, menuVars, true)
 
-    local labelText = table.concat({ currentSVType, "Standard" })
+    local labelText = currentSVType .. "Standard"
     saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeStandardMenu", menuVars)
 end

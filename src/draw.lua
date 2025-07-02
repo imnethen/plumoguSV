@@ -56,7 +56,7 @@ function renderNoteDataWidget()
     imgui.BeginTooltip()
     imgui.Text("Note Info:")
     local selectedNote = state.SelectedHitObjects[1]
-    imgui.Text(table.concat({ "StartTime = ", selectedNote.StartTime, " ms" }))
+    imgui.Text("StartTime = " .. selectedNote.StartTime .. " ms")
     local noteIsNotLN = selectedNote.EndTime == 0
     if noteIsNotLN then
         imgui.EndTooltip()
@@ -64,8 +64,8 @@ function renderNoteDataWidget()
     end
 
     local lnLength = selectedNote.EndTime - selectedNote.StartTime
-    imgui.Text(table.concat({ "EndTime = ", selectedNote.EndTime, " ms" }))
-    imgui.Text(table.concat({ "LN Length = ", lnLength, " ms" }))
+    imgui.Text("EndTime = " .. selectedNote.EndTime .. " ms")
+    imgui.Text("LN Length = " .. lnLength .. " ms")
     imgui.EndTooltip()
 end
 
@@ -92,8 +92,8 @@ function renderMeasureDataWidget()
 
     imgui.BeginTooltip()
     imgui.Text("Measure Info:")
-    imgui.Text(table.concat({ "Distance = ", roundedSVDistance, " msx" }))
-    imgui.Text(table.concat({ "Avg SV = ", roundedAvgSV, "x" }))
+    imgui.Text("Distance = " .. roundedSVDistance .. " msx")
+    imgui.Text("Avg SV = " .. roundedAvgSV .. "x")
     imgui.EndTooltip()
     state.SetValue("oldStartOffset", startOffset)
     state.SetValue("oldEndOffset", endOffset)

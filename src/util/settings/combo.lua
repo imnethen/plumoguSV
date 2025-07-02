@@ -10,7 +10,7 @@ function comboSettingsMenu(settingVars)
     local svType1 = STANDARD_SVS[settingVars.svType1Index]
     local settingVars1 = getSettingVars(svType1, "Combo1")
     settingsChanged = showSettingsMenu(svType1, settingVars1, true, nil) or settingsChanged
-    local labelText1 = table.concat({ svType1, "Combo1" })
+    local labelText1 = svType1 .. "Combo1"
     saveVariables(labelText1 .. "Settings", settingVars1)
     imgui.End()
 
@@ -20,7 +20,7 @@ function comboSettingsMenu(settingVars)
     local svType2 = STANDARD_SVS[settingVars.svType2Index]
     local settingVars2 = getSettingVars(svType2, "Combo2")
     settingsChanged = showSettingsMenu(svType2, settingVars2, true, nil) or settingsChanged
-    local labelText2 = table.concat({ svType2, "Combo2" })
+    local labelText2 = svType2 .. "Combo2"
     saveVariables(labelText2 .. "Settings", settingVars2)
     imgui.End()
 

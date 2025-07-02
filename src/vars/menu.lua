@@ -140,7 +140,7 @@ DEFAULT_STARTING_MENU_VARS = {
 function getMenuVars(menuType)
     local menuVars = DEFAULT_STARTING_MENU_VARS[menuType]
 
-    local labelText = table.concat({ menuType, "Menu" })
+    local labelText = menuType .. "Menu"
     getVariables(labelText, menuVars)
     return menuVars
 end
