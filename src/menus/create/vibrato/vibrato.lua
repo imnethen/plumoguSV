@@ -37,7 +37,7 @@ function placeVibratoSVMenu(globalVars, separateWindow)
     end
 
     local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Vibrato$" .. (menuVars.vibratoMode == 1 and "$SV" or "$SSF"))
+    local settingVars = getSettingVars(currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF"), "Vibrato")
     if globalVars.showExportImportMenu then
         -- exportImportSettingsMenu(globalVars, menuVars, settingVars)
         return
