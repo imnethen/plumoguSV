@@ -8,6 +8,7 @@ function automateSVMenu(settingVars)
 
     button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, settingVars)
     addSeparator()
+    _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
     _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", settingVars.maintainMs)
     if (settingVars.maintainMs) then
         imgui.SameLine(0, SAMELINE_SPACING)

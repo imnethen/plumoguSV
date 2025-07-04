@@ -28,10 +28,12 @@ function automateSVs(settingVars)
     local selected = state.SelectedHitObjects
 
     local timeDict = {}
+    local noteTimes = {}
 
     for _, ho in pairs(selected) do
         if (not table.contains(table.keys(timeDict), "t_" .. ho.StartTime)) then
             timeDict["t_" .. ho.StartTime] = { ho }
+            table.insert(noteTimes, ho.StartTime)
         else
             table.insert(timeDict["t_" .. ho.StartTime], ho)
         end
@@ -42,8 +44,9 @@ function automateSVs(settingVars)
 
     local actionList = {}
 
-    for timeCode, hos in pairs(timeDict) do
-        local noteTime = tonumber(timeCode:sub(3))
+    for noteIndex, noteTime in ipairs(sort(noteTimes, sortAscending)) do
+        timeCode = timeDict["t_" .. noteTime]
+        hos = timeDict[timeCode]
         local svsToAdd = {}
         for i, sv in ipairs(settingVars.copiedSVs) do
             if (settingVars.maintainMs) then
@@ -51,11 +54,13 @@ function automateSVs(settingVars)
                     settingVars.copiedSVs[1].relativeOffset
                 local progress = sv.relativeOffset / timeDistance
                 local timeToPasteSV = noteTime - settingVars.ms * (1 - progress)
-                table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+                local multiplier = sv.multiplier * (settingVars.scaleSVs and noteIndex or 1)
+                table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, multiplier))
             else
                 local timeToPasteSV = noteTime -
-                    (#settingVars.copiedSVs - i) / (#settingVars.copiedSVs - 1) * (noteTime - selected[1].StartTime)
-                table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+                    (#settingVars.copiedSVs - i) / (#settingVars.copiedSVs - 1) * (noteTimes - selected[1].StartTime)
+                local multiplier = sv.multiplier * (settingVars.scaleSVs and 1 / noteIndex or 1)
+                table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, multiplier))
             end
         end
         local r = math.random(255)

@@ -249,7 +249,8 @@ end]],
     automate = {
         copiedSVs = {},
         maintainMs = false,
-        ms = 1000
+        ms = 1000,
+        scaleSVs = false,
     }
 }
 
