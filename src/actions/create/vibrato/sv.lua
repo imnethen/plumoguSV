@@ -36,12 +36,12 @@ function svVibrato(menuVars, heightFunc)
         elseif (menuVars.sides == 2) then
             prepareDisplacingSVs(start, svsToAdd, svTimeIsAdded, nil,
                 -heightFunc(startPos, 1), 0)
-            for tp = 2, teleportCount - 1 do
-                local x = (tp - 1) / (teleportCount - 1)
+            for tp = 1, teleportCount - 2 do
+                local x = tp / (teleportCount - 1)
                 local offset = next * x + start * (1 - x)
-                local initHeight = heightFunc(((math.floor((tp - 2) / 2) * 2) / (teleportCount - 2)) * posDifference +
+                local initHeight = heightFunc(tp / (teleportCount - 1) * posDifference +
                     startPos, tp - 1)
-                local newHeight = heightFunc(((math.floor((tp - 1) / 2) * 2) / (teleportCount - 2)) * posDifference +
+                local newHeight = heightFunc((tp + 1) / (teleportCount - 1) * posDifference +
                     startPos, tp)
                 local height = initHeight + newHeight
                 if (tp % 2 == 1) then
@@ -51,9 +51,7 @@ function svVibrato(menuVars, heightFunc)
                     height, 0)
             end
             prepareDisplacingSVs(next, svsToAdd, svTimeIsAdded,
-                heightFunc(((math.floor((teleportCount - 2) / 2) * 2) / teleportCount) * posDifference + startPos,
-                    teleportCount),
-                0, nil)
+                heightFunc(endPos, teleportCount), 0, nil)
         else
             teleportCount = math.floor((next - start) / 1000 * trueFPS / 3) * 3
             prepareDisplacingSVs(start, svsToAdd, svTimeIsAdded, nil,
