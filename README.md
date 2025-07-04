@@ -62,4 +62,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Add nsv measure tool~~
 * Fix merge inefficiency
 * Animation palette generator
-* 
+* Mod svtimeisadded check
