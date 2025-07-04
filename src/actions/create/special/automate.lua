@@ -40,11 +40,14 @@ function automateSVs(settingVars)
     end
 
     local ids = utils.GenerateTimingGroupIds(#table.keys(timeDict), "automate_")
-    local index = 1
-
     local actionList = {}
+    noteTimes = sort(noteTimes, sortAscending)
+    local timeSinceLastTgRefresh = 0
+    local maintainedTgId = 0
 
-    for noteIndex, noteTime in ipairs(sort(noteTimes, sortAscending)) do
+    for noteIndex, noteTime in ipairs(noteTimes) do
+        timeSinceLastTgRefresh = timeSinceLastTgRefresh +
+            (noteTimes[noteIndex] - noteTimes[math.clamp(noteIndex - 1, 1, 1e69)])
         timeCode = timeDict["t_" .. noteTime]
         hos = timeDict[timeCode]
         local svsToAdd = {}
@@ -56,20 +59,27 @@ function automateSVs(settingVars)
                 local timeToPasteSV = noteTime - settingVars.ms * (1 - progress)
                 local multiplier = sv.multiplier * (settingVars.scaleSVs and noteIndex or 1)
                 table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, multiplier))
+                if (timeSinceLastTgRefresh > settingVars.ms) then
+                    timeSinceLastTgRefresh = timeSinceLastTgRefresh - settingVars.ms
+                    maintainedTgId         = 1
+                else
+                    maintainedTgId = maintainedTgId + 1
+                end
+                id = ids[maintainedTgId]
             else
                 local timeToPasteSV = noteTime -
                     (#settingVars.copiedSVs - i) / (#settingVars.copiedSVs - 1) * (noteTimes - selected[1].StartTime)
                 local multiplier = sv.multiplier * (settingVars.scaleSVs and 1 / noteIndex or 1)
                 table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, multiplier))
+                id = ids[noteIndex]
             end
         end
         local r = math.random(255)
         local g = math.random(255)
         local b = math.random(255)
         local tg = utils.CreateScrollGroup(svsToAdd, 1, r .. "," .. g .. "," .. b)
-        local id = ids[index]
+
         table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, hos))
-        index = index + 1
     end
     actions.PerformBatch(actionList)
     toggleablePrint("w!", "Automated.")
