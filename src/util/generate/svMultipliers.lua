@@ -19,8 +19,7 @@ function generateSVMultipliers(svType, settingVars, interlaceMultiplier)
                 settingVars.intensity, settingVars.verticalShift)
         end
     elseif svType == "Bezier" then
-        multipliers = generateBezierSet(settingVars.x1, settingVars.y1, settingVars.x2,
-            settingVars.y2, settingVars.avgSV,
+        multipliers = generateBezierSet(settingVars.p1, settingVars.p2, settingVars.avgSV,
             settingVars.svPoints + 1, settingVars.verticalShift)
     elseif svType == "Hermite" then
         multipliers = generateHermiteSet(settingVars.startSV, settingVars.endSV,

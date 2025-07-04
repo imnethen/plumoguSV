@@ -46,25 +46,19 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseBezierPoints(settingVars)
-    local oldFirstPoint = vector.New(settingVars.x1, settingVars.y1)
-    local oldSecondPoint = vector.New(settingVars.x2, settingVars.y2)
-    local _, newFirstPoint = imgui.DragFloat2("(x1, y1)", oldFirstPoint, 0.01, -1, 2, "%.2f")
+    local oldFirstPoint = settingVars.p1
+    local oldSecondPoint = settingVars.p2
+    local _, newFirstPoint = imgui.DragFloat2("(x1, y1)", settingVars.p1, 0.01, -1, 2, "%.2f")
     helpMarker("Coordinates of the first point of the cubic bezier")
-    local _, newSecondPoint = imgui.DragFloat2("(x2, y2)", oldSecondPoint, 0.01, -1, 2, "%.2f")
+    local _, newSecondPoint = imgui.DragFloat2("(x2, y2)", settingVars.p2, 0.01, -1, 2, "%.2f")
     helpMarker("Coordinates of the second point of the cubic bezier")
-    settingVars.x1 = newFirstPoint.x
-    settingVars.y1 = newFirstPoint.y
-    settingVars.x2 = newSecondPoint.x
-    settingVars.y2 = newSecondPoint.y
-    settingVars.x1 = math.clamp(settingVars.x1, 0, 1)
-    settingVars.y1 = math.clamp(settingVars.y1, -1, 2)
-    settingVars.x2 = math.clamp(settingVars.x2, 0, 1)
-    settingVars.y2 = math.clamp(settingVars.y2, -1, 2)
-    local x1Changed = (oldFirstPoint.x ~= settingVars.x1)
-    local y1Changed = (oldFirstPoint.y ~= settingVars.y1)
-    local x2Changed = (oldSecondPoint.x ~= settingVars.x2)
-    local y2Changed = (oldSecondPoint.y ~= settingVars.y2)
-    return x1Changed or y1Changed or x2Changed or y2Changed
+    settingVars.p1 = newFirstPoint
+    settingVars.p2 = newSecondPoint
+    local clampMin = vector.New(0, -1)
+    local clampMax = vector.New(1, 2)
+    settingVars.p1 = vector.Clamp(settingVars.p1, clampMin, clampMax)
+    settingVars.p2 = vector.Clamp(settingVars.p2, clampMin, clampMax)
+    return settingVars.p1 ~= oldFirstPoint or settingVars.p2 ~= oldSecondPoint
 end
 
 -- Lets you choose the chinchilla SV intensity

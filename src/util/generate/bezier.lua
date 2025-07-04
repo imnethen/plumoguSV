@@ -1,13 +1,11 @@
 -- Returns a set of cubic bezier values [Table]
 -- Parameters
---    x1            : x-coordinate of the first (inputted) cubic bezier point [Int/Float]
---    y1            : y-coordinate of the first (inputted) cubic bezier point [Int/Float]
---    x2            : x-coordinate of the second (inputted) cubic bezier point [Int/Float]
---    y2            : y-coordinate of the second (inputted) cubic bezier point [Int/Float]
+--    p1            : first (inputted) cubic bezier point [Int/Float]
+--    p2            : second (inputted) cubic bezier point [Int/Float]
 --    avgValue      : average value of the set [Int/Float]
 --    numValues     : total number of values in the bezier set [Int]
 --    verticalShift : constant to add to each value in the set at very the end [Int/Float]
-function generateBezierSet(x1, y1, x2, y2, avgValue, numValues, verticalShift)
+function generateBezierSet(p1, p2, avgValue, numValues, verticalShift)
     avgValue = avgValue - verticalShift
     local startingTimeGuess = 0.5
     local timeGuesses = {}
@@ -20,7 +18,7 @@ function generateBezierSet(x1, y1, x2, y2, avgValue, numValues, verticalShift)
     for i = 1, iterations do
         local timeIncrement = 0.5 ^ (i + 1)
         for j = 1, numValues do
-            local xPositionGuess = math.cubicBezier(x1, x2, timeGuesses[j])
+            local xPositionGuess = math.cubicBezier(p1.x, p1.y, timeGuesses[j])
             if xPositionGuess < targetXPositions[j] then
                 timeGuesses[j] = timeGuesses[j] + timeIncrement
             elseif xPositionGuess > targetXPositions[j] then
@@ -30,7 +28,7 @@ function generateBezierSet(x1, y1, x2, y2, avgValue, numValues, verticalShift)
     end
     local yPositions = { 0 }
     for i = 1, #timeGuesses do
-        local yPosition = math.cubicBezier(y1, y2, timeGuesses[i])
+        local yPosition = math.cubicBezier(p2.x, p2.y, timeGuesses[i])
         table.insert(yPositions, yPosition)
     end
     local bezierSet = {}

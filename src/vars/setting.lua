@@ -1,11 +1,4 @@
 DEFAULT_STARTING_SETTING_VARS = {
-    linear = {
-        startSV = 1.5,
-        endSV = 0.5,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1
-    },
     linearVibratoSV = {
         startMsx = 100,
         endMsx = 0
@@ -59,6 +52,13 @@ end]]
         code1 = "return function (x) return 0.69 end",
         code2 = "return function (x) return 1.420 end"
     },
+    linear = {
+        startSV = 1.5,
+        endSV = 0.5,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1
+    },
     exponential = {
         behaviorIndex = 1,
         intensity = 30,
@@ -73,10 +73,8 @@ end]]
         distanceMode = 1
     },
     bezier = {
-        x1 = 0,
-        y1 = 0,
-        x2 = 0,
-        y2 = 1,
+        p1 = vector2(0),
+        p2 = vector2(1),
         verticalShift = 0,
         avgSV = 1,
         svPoints = 16,

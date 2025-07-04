@@ -8,17 +8,15 @@ function provideBezierWebsiteLink(settingVars)
     local imguiFlag = imgui_input_text_flags.AutoSelectAll
     _, bezierText = imgui.InputText("##bezierWebsite", bezierText, 100, imguiFlag)
     imgui.SameLine(0, SAMELINE_SPACING)
-    if imgui.Button("Parse##beizerValues", SECONDARY_BUTTON_SIZE) then
+    if imgui.Button("Parse##bezierValues", SECONDARY_BUTTON_SIZE) then
         local regex = "(-?%d*%.?%d+)"
         local values = {}
         for value, _ in string.gmatch(bezierText, regex) do
             table.insert(values, tonumber(value))
         end
         if #values >= 4 then
-            settingVars.x1 = values.x
-            settingVars.y1 = values.y
-            settingVars.x2 = values.z
-            settingVars.y2 = values.w
+            settingVars.p1 = vector.New(values[1], values[2])
+            settingVars.p2 = vector.New(values[3], values[4])
             coordinateParsed = true
         end
         bezierText = "https://cubic-bezier.com/"
