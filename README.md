@@ -60,7 +60,7 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Add import/export custom theme~~
 * ~~Add tooltips to settings~~
 * ~~Add nsv measure tool~~
-* Fix merge inefficiency
+* ~~Fix merge inefficiency~~
 * Animation palette generator
 * Mod svtimeisadded check
 * Rework bezier backend to use vectors
