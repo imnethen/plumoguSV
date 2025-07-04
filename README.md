@@ -63,3 +63,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * Fix merge inefficiency
 * Animation palette generator
 * Mod svtimeisadded check
+* Rework bezier backend to use vectors

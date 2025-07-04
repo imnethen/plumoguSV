@@ -17,10 +17,8 @@ end
 --    settingVars : list of variables used for the current menu [Table]
 function chooseArcPercent(settingVars)
     local oldPercent = settingVars.arcPercent
-    local _, newPercent = imgui.SliderInt("Arc Percent", oldPercent, 1, 99, oldPercent .. "%%")
-    newPercent = math.clamp(newPercent, 1, 99)
-    settingVars.arcPercent = newPercent
-    return oldPercent ~= newPercent
+    _, settingVars.arcPercent = imgui.SliderInt("Arc Percent", math.clamp(oldPercent, 1, 99), 1, 99, oldPercent .. "%%")
+    return oldPercent ~= settingVars.arcPercent
 end
 
 -- Lets you choose the average SV
@@ -1181,36 +1179,10 @@ end
 function chooseStartEndSVs(settingVars)
     if settingVars.linearlyChange == false then
         local oldValue = settingVars.startSV
-        local _, newValue = imgui.InputFloat("SV Value", oldValue, 0, 0, "%.2fx")
-        settingVars.startSV = newValue
-        return oldValue ~= newValue
+        _, settingVars.startSV = imgui.InputFloat("SV Value", oldValue, 0, 0, "%.2fx")
+        return oldValue ~= settingVars.startSV
     end
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
-    local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
-    toolTip("Swap start/end SV values")
-    local oldValues = vector.New(settingVars.startSV, settingVars.endSV)
-    imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
-    toolTip("Negate start/end SV values")
-    imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2("Start/End SV", oldValues, "%.2fx")
-    imgui.PopItemWidth()
-    settingVars.startSV = newValues.x
-    settingVars.endSV = newValues.y
-    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars.startSV = oldValues.y
-        settingVars.endSV = oldValues.x
-    end
-    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars.startSV = -oldValues.x
-        settingVars.endSV = -oldValues.y
-    end
-    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
-        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues ~= newValues
+    return customSwappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
 end
 
 -- Lets you choose a start SV percent
@@ -1445,22 +1417,22 @@ end
 -- Returns whether or not the start or end SVs changed [Boolean]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
-function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, tag, suffix, digits, widthFactor)
+function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
     digits = digits or 2
     suffix = suffix or "x"
     widthFactor = widthFactor or 0.7
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
-    toolTip("Swap start/end SV values")
+    toolTip("Swap start/end values")
     local oldValues = vector.New(settingVars[lowerName], settingVars[higherName])
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
-    toolTip("Negate start/end SV values")
+    toolTip("Negate start/end values")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2(tag, oldValues, "%." .. digits .. "f" .. suffix)
+    local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
     imgui.PopItemWidth()
     settingVars[lowerName] = newValues.x
     settingVars[higherName] = newValues.y
