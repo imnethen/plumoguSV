@@ -64,3 +64,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * Animation palette generator
 * Mod svtimeisadded check
 * Rework bezier backend to use vectors
+* Allow for dynamic sv fps instead of static sv points
