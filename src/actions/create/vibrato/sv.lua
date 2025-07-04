@@ -7,7 +7,6 @@ function svVibrato(menuVars, heightFunc)
     local svTimeIsAdded = {}
 
     local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
-    local fpsList = {}
 
     for i = 1, #offsets - 1 do
         local start = offsets[i]
