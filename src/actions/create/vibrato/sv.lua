@@ -44,7 +44,7 @@ function svVibrato(menuVars, heightFunc)
                 local newHeight = heightFunc((tp + 1) / (teleportCount - 1) * posDifference +
                     startPos, tp)
                 local height = initHeight + newHeight
-                if (tp % 2 == 1) then
+                if (tp % 2 == 0) then
                     height = -height
                 end
                 prepareDisplacingSVs(offset, svsToAdd, svTimeIsAdded, nil,
