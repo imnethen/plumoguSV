@@ -78,21 +78,25 @@ function renderMeasureDataWidget()
     if (endOffset == startOffset) then return end
     if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69) or #offsets ~= state.GetValue("oldOffsetCount", -1)) then
         svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
+        nsvDistance = endOffset - startOffset
         addStartSVIfMissing(svsBetweenOffsets, startOffset)
         totalDistance = calculateDisplacementFromSVs(svsBetweenOffsets, startOffset, endOffset)
         roundedSVDistance = math.round(totalDistance, 3)
         avgSV = totalDistance / (endOffset - startOffset)
         roundedAvgSV = math.round(avgSV, 3)
+        state.SetValue("tooltip_nsvDistance", nsvDistance)
         state.SetValue("tooltip_roundedSVDistance", roundedSVDistance)
         state.SetValue("tooltip_roundedAvgSV", roundedAvgSV)
     else
+        nsvDistance = state.GetValue("tooltip_nsvDistance", 0)
         roundedSVDistance = state.GetValue("tooltip_roundedSVDistance", 0)
         roundedAvgSV = state.GetValue("tooltip_roundedAvgSV", 0)
     end
 
     imgui.BeginTooltip()
     imgui.Text("Measure Info:")
-    imgui.Text("Distance = " .. roundedSVDistance .. " msx")
+    imgui.Text("NSV Distance = " .. nsvDistance .. " ms")
+    imgui.Text("SV Distance = " .. roundedSVDistance .. " msx")
     imgui.Text("Avg SV = " .. roundedAvgSV .. "x")
     imgui.EndTooltip()
     state.SetValue("oldStartOffset", startOffset)

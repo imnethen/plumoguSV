@@ -59,3 +59,7 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Refactor custom theme settings~~
 * ~~Add import/export custom theme~~
 * ~~Add tooltips to settings~~
+* ~~Add nsv measure tool~~
+* Fix merge inefficiency
+* Animation palette generator
+* 
