@@ -8,12 +8,7 @@ function mergeSVs()
     local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
     local svTimeToMultiplier = {}
     for _, sv in pairs(svsToRemove) do
-        local currentMultiplier = svTimeToMultiplier[sv.StartTime]
-        if currentMultiplier then
-            svTimeToMultiplier[sv.StartTime] = currentMultiplier + sv.Multiplier
-        else
-            svTimeToMultiplier[sv.StartTime] = sv.Multiplier
-        end
+        svTimeToMultiplier[sv.StartTime] = sv.Multiplier
     end
     for svTime, svMultiplier in pairs(svTimeToMultiplier) do
         addSVToList(svsToAdd, svTime, svMultiplier, true)

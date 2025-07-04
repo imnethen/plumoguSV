@@ -15,8 +15,8 @@ function displaceNoteSVsParent(menuVars)
                     (menuVars.distance2 - menuVars.distance1) + menuVars.distance1
             },
             false, offset)
-        table.combine(svsToRemove, tbl.svsToRemove)
-        table.combine(svsToAdd, tbl.svsToAdd)
+        svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
+        svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)
     end
 
     removeAndAddSVs(svsToRemove, svsToAdd)

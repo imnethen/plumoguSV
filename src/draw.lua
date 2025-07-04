@@ -72,7 +72,7 @@ end
 function renderMeasureDataWidget()
     if #state.SelectedHitObjects < 2 then return end
     local offsets = uniqueSelectedNoteOffsets()
-    if (not truthy(offsets)) then return end
+    if (#offsets > 2) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
     if (endOffset == startOffset) then return end

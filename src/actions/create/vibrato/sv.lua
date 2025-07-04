@@ -16,14 +16,6 @@ function svVibrato(menuVars, heightFunc)
         local endPos = (next - startOffset) / (endOffset - startOffset)
         local posDifference = endPos - startPos
         local trueFPS = fps
-        local lowestDecimal = 1e10
-        for t = fps - 3, fps + 3 do
-            local decimal = ((next - start) / 1000 * fps / 2) % 1
-            if (decimal < lowestDecimal) then
-                trueFPS = t
-                lowestDecimal = decimal
-            end
-        end
 
         table.insert(fpsList, trueFPS)
 
@@ -88,8 +80,6 @@ function svVibrato(menuVars, heightFunc)
                 heightFunc(1, teleportCount), 0, nil)
         end
     end
-
-    toggleablePrint("s!", "Created " .. #svsToAdd .. " SVs at a frame rate of " .. table.average(fpsList, true) .. "fps.")
 
     getRemovableSVs(sort(svsToRemove, sortAscendingStartTime), svTimeIsAdded, startOffset, endOffset, svsToRemove)
     removeAndAddSVs(svsToRemove, svsToAdd)
