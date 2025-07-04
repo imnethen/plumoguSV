@@ -75,7 +75,7 @@ function svVibrato(menuVars, heightFunc)
                     height + newHeight, 0)
             end
             prepareDisplacingSVs(next, svsToAdd, svTimeIsAdded,
-                heightFunc(1, teleportCount), 0, nil)
+                heightFunc(endPos, teleportCount), 0, nil)
         end
     end
 
