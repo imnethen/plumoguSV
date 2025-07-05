@@ -39,7 +39,6 @@ function draw()
     imgui.End()
 
     saveVariables("globalVars", globalVars)
-
     pulseController(globalVars)
 
     if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then

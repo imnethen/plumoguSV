@@ -31,8 +31,8 @@ function placeStandardSVMenu(globalVars)
     end
 
     needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
-
     addSeparator()
+    
     needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
     if needSVUpdate then updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false) end
 
@@ -50,7 +50,6 @@ function placeStandardSVMenu(globalVars)
     end
     simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, globalVars, menuVars, true)
 
-    local labelText = currentSVType .. "Standard"
-    saveVariables(labelText .. "Settings", settingVars)
+    saveVariables(currentSVType .. "StandardSettings", settingVars)
     saveVariables("placeStandardMenu", menuVars)
 end

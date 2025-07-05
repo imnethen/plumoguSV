@@ -55,7 +55,7 @@ export default async function transpiler(devMode = false, fuckify = false) {
     }
 
     if (existsSync("plugin.lua")) rmSync("plugin.lua");
-    writeFileSync("temp.lua", output.replaceAll("\n\n", "\n"));
+    writeFileSync("temp.lua", output.replaceAll("\n\n", "\n").trim());
     renameSync("temp.lua", "plugin.lua");
 
     return fileCount;

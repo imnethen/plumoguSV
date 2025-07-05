@@ -78,10 +78,12 @@ function pasteItems(globalVars, menuVars)
     local lastCopiedSSF = menuVars.copiedSSFs[#menuVars.copiedSSFs]
     local lastCopiedBM = menuVars.copiedBMs[#menuVars.copiedBMs]
 
-    local lastCopiedValue = lastCopiedSV
-    if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedSSF end
-    if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedLine end
-    if (lastCopiedValue == nil) then lastCopiedValue = lastCopiedBM end
+    local lastCopiedValue= lastCopiedSV
+    if (lastCopiedValue == nil) then 
+        lastCopiedValue = lastCopiedSSF 
+lastCopiedValue = lastCopiedLine
+lastCopiedValue = lastCopiedBM
+    end
 
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128
     local linesToRemove = menuVars.copyTable[1] and getLinesBetweenOffsets(startOffset, endRemoveOffset) or {}

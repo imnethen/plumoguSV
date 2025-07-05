@@ -10,11 +10,3 @@ function copiableBox(text, label, content)
     imgui.PopItemWidth()
     addPadding()
 end
-
--- Creates a copy-pastable link box
--- Parameters
---    text : text to describe the link [String]
---    url  : link [String]
-function linkBox(text, url)
-    copiableBox(text, "##" .. url, url)
-end

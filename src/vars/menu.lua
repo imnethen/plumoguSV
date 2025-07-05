@@ -120,14 +120,14 @@ DEFAULT_STARTING_MENU_VARS = {
         offset = 0
     },
     selectChordSize = {
-        single = false,
-        jump = true,
-        hand = true,
+        single = true,
+        jump = false,
+        hand = false,
         quad = false
     },
     selectNoteType = {
         rice = true,
-        ln = true
+        ln = false
     },
     selectBySnap = {
         snap = 1

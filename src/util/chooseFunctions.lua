@@ -29,7 +29,7 @@ function chooseAverageSV(menuVars)
     local oldAvg = menuVars.avgSV
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
-    toolTip("Negate start/end SV values")
+    toolTip("Negate SV value")
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
@@ -159,7 +159,7 @@ function chooseConstantShift(settingVars, defaultShift)
     if negateButtonPressed and settingVars.verticalShift ~= 0 then
         settingVars.verticalShift = -settingVars.verticalShift
     end
-    toolTip("Negate start/end SV values")
+    toolTip("Negate vertical shift")
 
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
@@ -189,7 +189,7 @@ function chooseMsxVerticalShift(settingVars, defaultShift)
     if negateButtonPressed and settingVars.verticalShift ~= 0 then
         settingVars.verticalShift = -settingVars.verticalShift
     end
-    toolTip("Negate start/end SV values")
+    toolTip("Negate vertical shift")
 
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
@@ -410,33 +410,6 @@ function chooseSnap(menuVars)
     menuVars.snap = math.clamp(menuVars.snap, 1, 100)
 end
 
--- Lets you choose the distance back for splitscroll between scroll1 and scroll2
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseDistanceBack(settingVars)
-    _, settingVars.distanceBack = imgui.InputFloat("Split Distance", settingVars.distanceBack,
-        0, 0, "%.3f msx")
-    helpMarker("Splitscroll distance separating scroll1 and scroll2 planes")
-end
-
--- Lets you choose the distance back for splitscroll between scroll2 and scroll3
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseDistanceBack2(settingVars)
-    _, settingVars.distanceBack2 = imgui.InputFloat("Split Dist 2", settingVars.distanceBack2,
-        0, 0, "%.3f msx")
-    helpMarker("Splitscroll distance separating scroll2 and scroll3 planes")
-end
-
--- Lets you choose the distance back for splitscroll between scroll3 and scroll4
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseDistanceBack3(settingVars)
-    _, settingVars.distanceBack3 = imgui.InputFloat("Split Dist 3", settingVars.distanceBack3,
-        0, 0, "%.3f msx")
-    helpMarker("Splitscroll distance separating scroll3 and scroll4 planes")
-end
-
 -- Lets you choose whether or not to draw a capybara on screen
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
@@ -487,6 +460,7 @@ function chooseSelectTool(globalVars)
     if selectTool == "By Snap" then toolTip("Select all notes with a certain snap color") end
     if selectTool == "Bookmark" then toolTip("Jump to a bookmark") end
     if selectTool == "Chord Size" then toolTip("Select all notes with a certain chord size") end
+    if selectTool == "Note Type" then toolTip("Select rice/ln notes") end
 end
 
 -- Lets you choose which edit tool to use
@@ -501,6 +475,7 @@ function chooseEditTool(globalVars)
     local svTool = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if svTool == "Add Teleport" then toolTip("Add a large teleport SV to move far away") end
     if svTool == "Align Timing Lines" then toolTip("Create timing lines at notes to avoid desync") end
+    if svTool == "Convert SV <-> SSF" then toolTip("Convert multipliers between SV/SSF") end
     if svTool == "Copy & Paste" then toolTip("Copy SVs and SSFs and paste them somewhere else") end
     if svTool == "Direct SV" then toolTip("Directly update SVs within your selection") end
     if svTool == "Displace Note" then toolTip("Move where notes are hit on the screen") end
@@ -508,6 +483,7 @@ function chooseEditTool(globalVars)
     if svTool == "Dynamic Scale" then toolTip("Dynamically scale SVs across notes") end
     if svTool == "Fix LN Ends" then toolTip("Fix flipped LN ends") end
     if svTool == "Flicker" then toolTip("Flash notes on and off the screen") end
+    if svTool == "Layer Snaps" then toolTip("Transfer snap colors into layers, to be loaded later") end
     if svTool == "Measure" then toolTip("Get stats about SVs in a section") end
     if svTool == "Merge" then toolTip("Combine SVs that overlap") end
     if svTool == "Reverse Scroll" then toolTip("Reverse the scroll direction using SVs") end
@@ -559,22 +535,6 @@ function chooseFinalSV(settingVars, skipFinalSV)
     end
     imgui.PopItemWidth()
     return (oldIndex ~= settingVars.finalSVIndex) or (oldCustomSV ~= settingVars.customSV)
-end
-
--- Lets you choose the first height/displacement for splitscroll
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseFirstHeight(settingVars)
-    _, settingVars.height1 = imgui.InputFloat("1st Height", settingVars.height1, 0, 0, "%.3f msx")
-    helpMarker("Height at which notes are hit at on screen for the 1st scroll speed")
-end
-
--- Lets you choose the first scroll speed for splitscroll
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseFirstScrollSpeed(settingVars)
-    local text = "1st Scroll Speed"
-    _, settingVars.scrollSpeed1 = imgui.InputFloat(text, settingVars.scrollSpeed1, 0, 0, "%.2fx")
 end
 
 -- Lets you choose the flicker type
@@ -745,17 +705,6 @@ function chooseMenuStep(settingVars)
     settingVars.menuStep = math.wrap(settingVars.menuStep, 1, 3)
 end
 
--- Lets you choose the mspf (milliseconds per frame) for splitscroll
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseMSPF(settingVars)
-    local _, newMSPF = imgui.InputFloat("ms Per Frame", settingVars.msPerFrame, 0.5, 0.5, "%.1f")
-    newMSPF = math.clamp(newMSPF, 4, 10000)
-    settingVars.msPerFrame = newMSPF
-    helpMarker("Number of milliseconds splitscroll will display a set of SVs before jumping to " ..
-        "the next set of SVs")
-end
-
 -- Lets you choose to not normalize values
 -- Returns whether or not the setting changed [Boolean]
 -- Parameters
@@ -822,14 +771,6 @@ function chooseNumPeriods(settingVars)
     return oldPeriods ~= newPeriods
 end
 
--- Lets you choose the number of scrolls for advanced splitscroll
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseNumScrolls(settingVars)
-    _, settingVars.numScrolls = imgui.InputInt("# of scrolls", settingVars.numScrolls, 1, 1)
-    settingVars.numScrolls = math.wrap(settingVars.numScrolls, 2, 4)
-end
-
 -- Lets you choose the number of periods to shift over for a sinusoidal wave
 -- Returns whether or not the period shift value changed [Boolean]
 -- Parameters
@@ -863,10 +804,12 @@ function chooseCurrentScrollGroup(globalVars)
     imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
     local groups = { "$Default", "$Global" }
+    local backendGroups = {}
     local cols = { map.TimingGroups["$Default"].ColorRgb or "255,255,255", map.TimingGroups["$Global"].ColorRgb or
     "255,255,255" }
     for tgId, tg in pairs(map.TimingGroups) do
         if string.find(tgId, "%$") then goto cont end
+        table.insert(backendGroups, tgId)
         if (globalVars.hideAutomatic and string.find(tgId, "automate_")) then goto cont end
         table.insert(groups, tgId)
         table.insert(cols, tg.ColorRgb or "255,255,255")
@@ -933,22 +876,6 @@ function chooseRGBPeriod(globalVars)
     end
 end
 
--- Lets you choose the second height/displacement for splitscroll
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseSecondHeight(settingVars)
-    _, settingVars.height2 = imgui.InputFloat("2nd Height", settingVars.height2, 0, 0, "%.3f msx")
-    helpMarker("Height at which notes are hit at on screen for the 2nd scroll speed")
-end
-
--- Lets you choose the second scroll speed for splitscroll
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseSecondScrollSpeed(settingVars)
-    local text = "2nd Scroll Speed"
-    _, settingVars.scrollSpeed2 = imgui.InputFloat(text, settingVars.scrollSpeed2, 0, 0, "%.2fx")
-end
-
 -- Lets you choose the spot to displace when adding scaling SVs
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
@@ -967,29 +894,6 @@ function chooseScaleType(menuVars)
     if scaleType == "Average SV" then chooseAverageSV(menuVars) end
     if scaleType == "Absolute Distance" then chooseDistance(menuVars) end
     if scaleType == "Relative Ratio" then chooseRatio(menuVars) end
-end
-
--- Lets you choose a scroll to make changes to for advanced splitscroll
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseScrollIndex(settingVars)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Currently viewing scroll #:")
-    imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PushItemWidth(35)
-    if imgui.ArrowButton("##leftScrollIndex", imgui_dir.Left) then
-        settingVars.scrollIndex = settingVars.scrollIndex - 1
-    end
-    imgui.SameLine(0, SAMELINE_SPACING)
-    local inputText = "##currentScrollIndex"
-    _, settingVars.scrollIndex = imgui.InputInt(inputText, settingVars.scrollIndex, 0, 0)
-    imgui.SameLine(0, SAMELINE_SPACING)
-    if imgui.ArrowButton("##rightScrollIndex", imgui_dir.Right) then
-        settingVars.scrollIndex = settingVars.scrollIndex + 1
-    end
-    helpMarker("Assign notes and SVs for every single scroll in order to place splitscroll SVs")
-    settingVars.scrollIndex = math.wrap(settingVars.scrollIndex, 1, settingVars.numScrolls)
-    imgui.PopItemWidth()
 end
 
 -- Lets you choose the "spring constant" for the snake
@@ -1068,76 +972,6 @@ function chooseCurvatureCoefficient(settingVars)
     imgui.SameLine(0, 0)
     _, settingVars.curvatureIndex = imgui.SliderInt("Curvature", settingVars.curvatureIndex, 1, #VIBRATO_CURVATURES,
         tostring(VIBRATO_CURVATURES[settingVars.curvatureIndex]))
-end
-
--- Lets you choose the current splitscroll layer
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
-function chooseSplitscrollLayers(settingVars)
-    local currentLayerNum = settingVars.scrollIndex
-    local currentLayer = settingVars.splitscrollLayers[currentLayerNum]
-    if currentLayer == nil then
-        imgui.Text("0 SVs, 0 notes assigned")
-        local buttonText = "Assign SVs and notes between\nselected notes to scroll " .. currentLayerNum
-        if imgui.Button(buttonText, ACTION_BUTTON_SIZE) then
-            local offsets = uniqueSelectedNoteOffsets()
-            if (not truthy(offsets)) then return end
-            local startOffset = offsets[1]
-            local endOffset = offsets[#offsets]
-            local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
-            addStartSVIfMissing(svsBetweenOffsets, startOffset)
-            local newNotes = {}
-            for _, ho in pairs(state.SelectedHitObjects) do
-                local newNote = utils.CreateHitObject(ho.StartTime, ho.Lane,
-                    ho.EndTime, ho.HitSound,
-                    ho.EditorLayer)
-                table.insert(newNotes, newNote)
-            end
-            newNotes = sort(newNotes, sortAscendingStartTime)
-            settingVars.splitscrollLayers[currentLayerNum] = {
-                svs = svsBetweenOffsets,
-                notes = newNotes
-            }
-            local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
-            local editorActions = {
-                actionRemoveNotesBetween(startOffset, endOffset),
-                utils.CreateEditorAction(action_type.RemoveScrollVelocityBatch, svsToRemove)
-            }
-            actions.PerformBatch(editorActions)
-        end
-    else
-        local currentLayerSVs = currentLayer.svs
-        local currentLayerNotes = currentLayer.notes
-        imgui.Text(#currentLayerSVs .. " SVs, " .. #currentLayerNotes .. " notes assigned")
-        if imgui.Button("Clear assigned\nnotes and SVs", HALF_ACTION_BUTTON_SIZE) then
-            settingVars.splitscrollLayers[currentLayerNum] = nil
-        end
-        imgui.SameLine(0, SAMELINE_SPACING)
-        if imgui.Button("Re-place assigned\nnotes and SVs", HALF_ACTION_BUTTON_SIZE) then
-            local svStartOffset = currentLayerSVs[1].StartTime
-            local svEndOffset = currentLayerSVs[#currentLayerSVs].StartTime
-            local svsToRemove = getSVsBetweenOffsets(svStartOffset, svEndOffset)
-            local noteStartOffset = currentLayerNotes[1].StartTime
-            local noteEndOffset = currentLayerNotes[#currentLayerNotes].StartTime
-            local editorActions = {
-                actionRemoveNotesBetween(noteStartOffset, noteEndOffset),
-                utils.CreateEditorAction(action_type.RemoveScrollVelocityBatch, svsToRemove),
-                utils.CreateEditorAction(action_type.AddScrollVelocityBatch, currentLayerSVs),
-                utils.CreateEditorAction(action_type.PlaceHitObjectBatch, currentLayerNotes)
-            }
-            actions.PerformBatch(editorActions)
-        end
-    end
-end
-
-function actionRemoveNotesBetween(startOffset, endOffset)
-    local notesToRemove = {}
-    for _, ho in pairs(map.HitObjects) do
-        if ho.StartTime >= startOffset and ho.StartTime <= endOffset then
-            table.insert(notesToRemove, ho)
-        end
-    end
-    return utils.CreateEditorAction(action_type.RemoveHitObjectBatch, notesToRemove)
 end
 
 -- Lets you choose the standard SV type
@@ -1397,8 +1231,8 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
             tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or tostring(var):match("%d*[%-]?%d+") or 0),
         4096,
         imgui_input_text_flags.AutoSelectAll)
-    if (not imgui.IsItemActive() and (state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex) or false)) then
-        local desiredComp = tostring(var):gsub(" *" .. suffix:gsub(" ", "") .. " *", "")
+    if (not imgui.IsItemActive() and state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex, false)) then
+        local desiredComp = tostring(var):gsub(" ", "")
         var = expr(desiredComp)
     end
     state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())

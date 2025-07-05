@@ -53,23 +53,3 @@ function infoTab(globalVars)
         state.SelectedScrollGroupId = currentTg
     end
 end
-
--- Gives basic info about how to use the plugin
-function provideBasicPluginInfo()
-    imgui.SeparatorText("Welcome to plumoguSV!")
-    imgui.TextWrapped("This plugin is your one-stop shop for all of your SV needs. Using it is quick and easy:")
-    imgui.BulletText("Choose an SV tool in the Create tab.")
-    imgui.BulletText("Adjust the tool's settings to your liking.")
-    imgui.BulletText("Select notes to use the tool at.")
-    imgui.BulletText("Press the '" .. GLOBAL_HOTKEY_LIST[1] .. "' hotkey.")
-    addPadding()
-end
-
--- Gives more info about the plugin
-function provideMorePluginInfo()
-    if not imgui.CollapsingHeader("More Info") then return end
-    addPadding()
-    linkBox("Goofy SV mapping guide",
-        "https://docs.google.com/document/d/1ug_WV_BI720617ybj4zuHhjaQMwa0PPekZyJoa17f-I")
-    linkBox("GitHub repository", "https://github.com/ESV-Sweetplum/plumoguSV")
-end

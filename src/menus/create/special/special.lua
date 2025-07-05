@@ -1,12 +1,9 @@
 SPECIAL_SVS = { -- types of special SVs
     "Stutter",
     "Teleport Stutter",
-    "Splitscroll (Basic)",
-    "Splitscroll (Advanced)",
-    "Splitscroll (Adv v2)",
-    "Penis",
     "Frames Setup",
-    "Automate"
+    "Automate",
+    "Penis",
 }
 
 -- Creates the menu for placing special SVs
@@ -28,9 +25,6 @@ function placeSpecialSVMenu(globalVars)
 
     if currentSVType == "Stutter" then stutterMenu(settingVars) end
     if currentSVType == "Teleport Stutter" then teleportStutterMenu(settingVars) end
-    if currentSVType == "Splitscroll (Basic)" then splitScrollBasicMenu(settingVars) end
-    if currentSVType == "Splitscroll (Advanced)" then splitScrollAdvancedMenu(settingVars) end
-    if currentSVType == "Splitscroll (Adv v2)" then splitScrollAdvancedV2Menu(settingVars) end
     if currentSVType == "Penis" then penisMenu(settingVars) end
     if currentSVType == "Frames Setup" then
         animationFramesSetupMenu(globalVars, settingVars)

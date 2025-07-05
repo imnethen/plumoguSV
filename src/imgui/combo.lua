@@ -5,8 +5,7 @@
 --    list      : list for the combo to use [Table]
 --    listIndex : current index of the item from the list being selected in the combo [Int]
 function combo(label, list, listIndex, colorList)
-    local newListIndex = listIndex
-    if (newListIndex > #list) then newListIndex = #list end
+    local newListIndex = math.clamp(listIndex, 1, #list)
     local currentComboItem = list[listIndex]
     local comboFlag = imgui_combo_flags.HeightLarge
     rgb = {}
