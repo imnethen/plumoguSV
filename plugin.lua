@@ -79,6 +79,9 @@ function automateSVs(settingVars)
     local timeSinceLastTgRefresh = 0
     local maintainedTgId = 0
     local timeCodedSVDict = {}
+    for _, noteTime in ipairs(noteTimes) do
+        timeCodedSVDict["t_" .. noteTime] = {}
+    end
     for noteIndex, noteTime in ipairs(noteTimes) do
         timeSinceLastTgRefresh = timeSinceLastTgRefresh +
             (noteTimes[noteIndex] - noteTimes[math.clamp(noteIndex - 1, 1, 1e69)])
@@ -95,14 +98,12 @@ function automateSVs(settingVars)
                 local progress = sv.relativeOffset / timeDistance
                 local timeToPasteSV = noteTime - settingVars.ms * (1 - progress)
                 local multiplier = sv.multiplier * (settingVars.scaleSVs and noteIndex or 1)
-                if (not timeCodedSVDict["t_" .. noteTime]) then timeCodedSVDict["t_" .. noteTime] = {} end
                 table.insert(timeCodedSVDict["t_" .. noteTime], utils.CreateScrollVelocity(timeToPasteSV, multiplier))
                 id = ids[maintainedTgId]
             else
                 local timeToPasteSV = noteTime -
                     (#settingVars.copiedSVs - i) / (#settingVars.copiedSVs - 1) * (noteTime - selected[1].StartTime)
                 local multiplier = sv.multiplier * (settingVars.scaleSVs and 1 / noteIndex or 1)
-                if (not timeCodedSVDict["t_" .. noteTime]) then timeCodedSVDict["t_" .. noteTime] = {} end
                 table.insert(timeCodedSVDict["t_" .. noteTime], utils.CreateScrollVelocity(timeToPasteSV, multiplier))
                 id = ids[noteIndex]
             end
@@ -355,7 +356,7 @@ function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optio
     local firstOffset = offsets[1]
     local lastOffset = offsets[#offsets]
     if placingStillSVs then offsets = { firstOffset, lastOffset } end
-    local svsToAdd  = {}
+    local svsToAdd = {}
     local svsToRemove = getSVsBetweenOffsets(firstOffset, lastOffset, finalSVType == "Override")
     if (not placingStillSVs) and globalVars.dontReplaceSV then
         svsToRemove = {}
@@ -448,7 +449,7 @@ function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRem
         local noteOffset = noteOffsets[i]
         local beforeDisplacement = nil
         local atDisplacement = 0
-        local afterDisplacement= nil
+        local afterDisplacement = nil
         if i ~= #noteOffsets then
             atDisplacement = -finalDisplacements[i]
             afterDisplacement = 0
@@ -575,10 +576,10 @@ function deleteItems(menuVars)
     if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
-    local linesToRemove  = getLinesBetweenOffsets(startOffset, endOffset)
-    local svsToRemove  = getSVsBetweenOffsets(startOffset, endOffset)
-    local ssfsToRemove  = getSSFsBetweenOffsets(startOffset, endOffset)
-    local bmsToRemove  = getBookmarksBetweenOffsets(startOffset, endOffset)
+    local linesToRemove = getLinesBetweenOffsets(startOffset, endOffset)
+    local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
+    local ssfsToRemove = getSSFsBetweenOffsets(startOffset, endOffset)
+    local bmsToRemove = getBookmarksBetweenOffsets(startOffset, endOffset)
     if (not menuVars.deleteTable[1]) then linesToRemove = {} end
     if (not menuVars.deleteTable[2]) then svsToRemove = {} end
     if (not menuVars.deleteTable[3]) then ssfsToRemove = {} end
@@ -1934,6 +1935,7 @@ function syncGlobalVarsState(tempGlobalVars)
     state.SetValue("global_customStyle", tempGlobalVars.customStyle or table.construct())
     state.SetValue("global_equalizeLinear", truthy(tempGlobalVars.equalizeLinear))
 end
+devMode = true
 imgui_disable_vector_packing = true
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
@@ -5230,18 +5232,14 @@ function chooseAverageSV(menuVars)
     return oldAvg ~= menuVars.avgSV
 end
 function chooseBezierPoints(settingVars)
-    local oldFirstPoint = settingVars.p1
-    local oldSecondPoint = settingVars.p2
-    local _, newFirstPoint = imgui.DragFloat2("(x1, y1)", settingVars.p1, 0.01, -1, 2, "%.2f")
+    local oldFirstPoint = settingVars.p1 * 100
+    local oldSecondPoint = settingVars.p2 * 100
+    local _, newFirstPoint = imgui.SliderInt2("(x1, y1)", settingVars.p1, 0, 1, "%.2f")
     helpMarker("Coordinates of the first point of the cubic bezier")
-    local _, newSecondPoint = imgui.DragFloat2("(x2, y2)", settingVars.p2, 0.01, -1, 2, "%.2f")
+    local _, newSecondPoint = imgui.SliderInt2("(x2, y2)", settingVars.p2, 0, 1, "%.2f")
     helpMarker("Coordinates of the second point of the cubic bezier")
-    settingVars.p1 = newFirstPoint
-    settingVars.p2 = newSecondPoint
-    local clampMin = vector.New(0, -1)
-    local clampMax = vector.New(1, 2)
-    settingVars.p1 = vector.Clamp(settingVars.p1, clampMin, clampMax)
-    settingVars.p2 = vector.Clamp(settingVars.p2, clampMin, clampMax)
+    settingVars.p1 = newFirstPoint / 100
+    settingVars.p2 = newSecondPoint / 100
     return settingVars.p1 ~= oldFirstPoint or settingVars.p2 ~= oldSecondPoint
 end
 function chooseChinchillaIntensity(settingVars)
@@ -5263,12 +5261,7 @@ function chooseColorTheme(globalVars)
         saveAndSyncGlobals(globalVars)
     end
     local currentTheme = COLOR_THEMES[globalVars.colorThemeIndex]
-    local isRGBColorTheme = currentTheme == "Tobi's RGB Glass" or
-        currentTheme == "Glass + RGB" or
-        currentTheme == "Incognito + RGB" or
-        currentTheme == "RGB Gamer Mode" or
-        currentTheme == "edom remag BGR" or
-        currentTheme == "BGR + otingocnI"
+    local isRGBColorTheme = currentTheme:find("RGB") or currentTheme:find("BGR")
     if not isRGBColorTheme then return end
     chooseRGBPeriod(globalVars)
 end
@@ -5417,10 +5410,8 @@ function chooseCurveSharpness(settingVars)
     end
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    local _, newSharpness = imgui.DragInt("Curve Sharpness", settingVars.curveSharpness, 1, 1,
-        100, "%d%%")
+    local _, newSharpness = imgui.SliderInt("Curve Sharpness", settingVars.curveSharpness, 1, 100, "%d%%")
     imgui.PopItemWidth()
-    newSharpness = math.clamp(newSharpness, 1, 100)
     settingVars.curveSharpness = newSharpness
     return oldSharpness ~= newSharpness
 end
@@ -8261,39 +8252,6 @@ end]],
         avgSV = 1,
         finalSVIndex = 2,
         customSV = 1
-    },
-    splitscrollBasic = {
-        scrollSpeed1 = 0.9,
-        height1 = 0,
-        scrollSpeed2 = -0.9,
-        height2 = 400,
-        distanceBack = 1000000,
-        msPerFrame = 16,
-        noteTimes2 = {},
-    },
-    splitscrollAdvanced = {
-        numScrolls = 2,
-        msPerFrame = 16,
-        scrollIndex = 1,
-        distanceBack = 1000000,
-        distanceBack2 = 1000000,
-        distanceBack3 = 1000000,
-        noteTimes2 = {},
-        noteTimes3 = {},
-        noteTimes4 = {},
-        svsInScroll1 = {},
-        svsInScroll2 = {},
-        svsInScroll3 = {},
-        svsInScroll4 = {}
-    },
-    splitscrollAdvv2 = {
-        numScrolls = 2,
-        msPerFrame = 16,
-        scrollIndex = 1,
-        distanceBack = 1000000,
-        distanceBack2 = 1000000,
-        distanceBack3 = 1000000,
-        splitscrollLayers = {}
     },
     framesSetup = {
         menuStep = 1,

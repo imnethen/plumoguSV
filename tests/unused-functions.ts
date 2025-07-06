@@ -2,7 +2,7 @@ import chalk = require("chalk")
 
 export default function checkUnusedFunctions(file: string[]) {
     const functions = file.reduce((idxs, line) => {
-        if (line.includes("function ") && line.includes("(")) idxs.push(line.split("function ")[1].split("(")[0])
+        if (!line.startsWith("---") && line.includes("function ") && line.includes("(")) idxs.push(line.split("function ")[1].split("(")[0])
         return idxs
     }, [])
 

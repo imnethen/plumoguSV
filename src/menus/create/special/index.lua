@@ -25,11 +25,11 @@ function placeSpecialSVMenu(globalVars)
 
     if currentSVType == "Stutter" then stutterMenu(settingVars) end
     if currentSVType == "Teleport Stutter" then teleportStutterMenu(settingVars) end
-    if currentSVType == "Penis" then penisMenu(settingVars) end
     if currentSVType == "Frames Setup" then
         animationFramesSetupMenu(globalVars, settingVars)
     end
     if currentSVType == "Automate" then automateSVMenu(settingVars) end
+    if currentSVType == "Penis" then penisMenu(settingVars) end
 
     local labelText = currentSVType .. "Special"
     saveVariables(labelText .. "Settings", settingVars)
