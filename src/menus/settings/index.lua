@@ -1,3 +1,11 @@
+DEFAULT_SETTING_TYPES = {
+    "General",
+    "Default Properties",
+    "Appearance",
+    "Windows + Widgets",
+    "Keybinds",
+}
+
 function showPluginSettingsWindow(globalVars)
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
     SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)
@@ -51,6 +59,9 @@ function showPluginSettingsWindow(globalVars)
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
         showGeneralSettings(globalVars)
+    end
+    if (SETTING_TYPES[typeIndex] == "Default Properties") then
+        showDefaultPropertiesSettings(globalVars)
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
         showWindowSettings(globalVars)

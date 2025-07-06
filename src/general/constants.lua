@@ -198,13 +198,6 @@ end
 
 VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
 
-ALPHABET_LIST = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-    "V", "W", "X", "Y", "Z" }
-
-CONSONANTS = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z" }
-
-VOWELS = { "A", "E", "I", "O", "U", "Y" }
-
 DEFAULT_STYLE = {
     windowBg = vector.New(0.00, 0.00, 0.00, 1.00),
     popupBg = vector.New(0.08, 0.08, 0.08, 0.94),
@@ -256,39 +249,6 @@ DEFAULT_STYLE = {
         vector.New(0.90, 0.70, 0.00, 1.00),
     plotHistogramHovered =
         vector.New(1.00, 0.60, 0.00, 1.00)
-}
-
-HEXADECIMAL = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" }
-
-COLOR_MAP = {
-    [1] = "Red",
-    [2] = "Blue",
-    [3] = "Purple",
-    [4] = "Yellow",
-    [5] = "White",
-    [6] = "Pink",
-    [8] =
-    "Orange",
-    [12] = "Cyan",
-    [16] = "Green"
-}
-REVERSE_COLOR_MAP = {
-    Red = 1,
-    Blue = 2,
-    Purple = 3,
-    Yellow = 4,
-    White = 5,
-    Pink = 6,
-    Orange = 8,
-    Cyan = 12,
-    Green = 16
-}
-DEFAULT_SETTING_TYPES = {
-    "General",
-    "Default Properties",
-    "Appearance",
-    "Windows + Widgets",
-    "Keybinds",
 }
 
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }

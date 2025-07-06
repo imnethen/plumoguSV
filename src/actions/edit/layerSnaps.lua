@@ -1,3 +1,29 @@
+COLOR_MAP = {
+    [1] = "Red",
+    [2] = "Blue",
+    [3] = "Purple",
+    [4] = "Yellow",
+    [5] = "White",
+    [6] = "Pink",
+    [8] =
+    "Orange",
+    [12] = "Cyan",
+    [16] = "Green"
+}
+
+REVERSE_COLOR_MAP = {
+    Red = 1,
+    Blue = 2,
+    Purple = 3,
+    Yellow = 4,
+    White = 5,
+    Pink = 6,
+    Orange = 8,
+    Cyan = 12,
+    Green = 16
+}
+
+
 function layerSnaps()
     local layerDict = {}
     local layerNames = table.property(map.EditorLayers, "Name")

@@ -1,0 +1,3 @@
+function showDefaultPropertiesSettings(globalVars)
+
+end

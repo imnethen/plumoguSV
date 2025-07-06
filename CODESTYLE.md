@@ -26,3 +26,10 @@
 ## Creating a new category
 1. In the corresponding tab folder, create a folder for your category.
 2. Add the category to the tab's `index.lua` file and include it in the list of if-statements.
+
+## Notes on general codebase specifics
+- Most constants defined in the root of the file should be located in the file it's needed, unless one of the following are met:
+    - The constant is used in a `chooseFunction`.
+    - The constant is used in multiple files.
+    - The constant is linked to other constants that follow one of the above rules.
+    - The constant is a table with functions linking from it, without the table itself being defined.

@@ -1,3 +1,5 @@
+CONSONANTS = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z" }
+
 ---Very rudimentary function that returns a string depending on whether or not it should be plural.
 ---@param str string The inital string, which should be a noun (e.g. `bookmark`)
 ---@param val number The value, or count, of the noun, which will determine if it should be plural.
