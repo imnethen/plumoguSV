@@ -46,18 +46,15 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseBezierPoints(settingVars)
-    local oldFirstPoint = settingVars.p1
-    local oldSecondPoint = settingVars.p2
-    local _, newFirstPoint = imgui.DragFloat2("(x1, y1)", settingVars.p1, 0.01, -1, 2, "%.2f")
+    local oldFirstPoint = settingVars.p1 * 100
+    local oldSecondPoint = settingVars.p2 * 100
+    local _, newFirstPoint = imgui.SliderInt2("(x1, y1)", settingVars.p1, 0, 1, "%.2f")
     helpMarker("Coordinates of the first point of the cubic bezier")
-    local _, newSecondPoint = imgui.DragFloat2("(x2, y2)", settingVars.p2, 0.01, -1, 2, "%.2f")
+    local _, newSecondPoint = imgui.SliderInt2("(x2, y2)", settingVars.p2, 0, 1, "%.2f")
     helpMarker("Coordinates of the second point of the cubic bezier")
-    settingVars.p1 = newFirstPoint
-    settingVars.p2 = newSecondPoint
-    local clampMin = vector.New(0, -1)
-    local clampMax = vector.New(1, 2)
-    settingVars.p1 = vector.Clamp(settingVars.p1, clampMin, clampMax)
-    settingVars.p2 = vector.Clamp(settingVars.p2, clampMin, clampMax)
+    settingVars.p1 = newFirstPoint / 100
+    settingVars.p2 = newSecondPoint / 100
+
     return settingVars.p1 ~= oldFirstPoint or settingVars.p2 ~= oldSecondPoint
 end
 
@@ -322,10 +319,8 @@ function chooseCurveSharpness(settingVars)
     end
     imgui.SameLine(0, SAMELINE_SPACING)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    local _, newSharpness = imgui.DragInt("Curve Sharpness", settingVars.curveSharpness, 1, 1,
-        100, "%d%%")
+    local _, newSharpness = imgui.SliderInt("Curve Sharpness", settingVars.curveSharpness, 1, 100, "%d%%")
     imgui.PopItemWidth()
-    newSharpness = math.clamp(newSharpness, 1, 100)
     settingVars.curveSharpness = newSharpness
     return oldSharpness ~= newSharpness
 end
