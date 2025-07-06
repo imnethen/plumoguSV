@@ -12,3 +12,17 @@
 - Use the existing conventions within the repository if they're not listed here.
 - When printing a particular type of message, the format that should be used is `i!`, `w!`, `s!`, or `e!`.
 
+## Creating a new window/feature steps
+1. In the corresponding `menu` folder, add a file with a new function that will dictate the menu.
+2. Add the feature name in the category's index file, and add another if statement to link to the function created in (1).
+3. Define the default menu variables in `src/vars/menu.lua`.
+3a. Define optional default setting variables (if the function will be used in more than one category) in `src/vars/settings.lua`.
+4. Create an identical path through `actions` where your menu will interact with the map upon execution of a `simpleAction`.
+
+## Creating a new global variable
+1. Update `loadGlobalVars` to include your new value and the default value.
+2. Update `syncGlobalVarsState` to whitelist your global variable into the database.
+
+## Creating a new category
+1. In the corresponding tab folder, create a folder for your category.
+2. Add the category to the tab's `index.lua` file and include it in the list of if-statements.
