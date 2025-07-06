@@ -8,3 +8,5 @@ function table.contains(tbl, item)
     end
     return false
 end
+
+table.includes = table.contains -- provide alias bc i'm a js user kekw

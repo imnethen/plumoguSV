@@ -26,67 +26,62 @@ end
 
 function automateSVs(settingVars)
     local selected = state.SelectedHitObjects
-
-    local timeDict = {}
-    local noteTimes = {}
-
-    for _, ho in pairs(selected) do
-        if (not table.contains(table.keys(timeDict), "t_" .. ho.StartTime)) then
-            timeDict["t_" .. ho.StartTime] = { ho }
-            table.insert(noteTimes, ho.StartTime)
-        else
-            table.insert(timeDict["t_" .. ho.StartTime], ho)
-        end
-    end
-
-    local ids = utils.GenerateTimingGroupIds(#table.keys(timeDict), "automate_")
     local actionList = {}
-    noteTimes = sort(noteTimes, sortAscending)
-    local timeSinceLastTgRefresh = 0
-    local maintainedTgId = 0
-    local timeCodedSVDict = {}
 
-    for _, noteTime in ipairs(noteTimes) do
-        timeCodedSVDict["t_" .. noteTime] = {} -- Instantiate all tables beforehand to prevent crash
-    end
-
-    for noteIndex, noteTime in ipairs(noteTimes) do
-        timeSinceLastTgRefresh = timeSinceLastTgRefresh +
-            (noteTimes[noteIndex] - noteTimes[math.clamp(noteIndex - 1, 1, 1e69)])
-        if (timeSinceLastTgRefresh > settingVars.ms and settingVars.maintainMs) then
-            timeSinceLastTgRefresh = timeSinceLastTgRefresh - settingVars.ms
-            maintainedTgId         = 1
-        else
-            maintainedTgId = maintainedTgId + 1
-        end
-        for i, sv in ipairs(settingVars.copiedSVs) do
-            if (settingVars.maintainMs) then
-                local timeDistance = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset -
-                    settingVars.copiedSVs[1].relativeOffset
-                local progress = sv.relativeOffset / timeDistance
-                local timeToPasteSV = noteTime - settingVars.ms * (1 - progress)
-                local multiplier = sv.multiplier * (settingVars.scaleSVs and noteIndex or 1)
-                table.insert(timeCodedSVDict["t_" .. noteTime], utils.CreateScrollVelocity(timeToPasteSV, multiplier))
-                id = ids[maintainedTgId]
+    local ids = utils.GenerateTimingGroupIds(#selected, "automate_")
+    local neededIds = {}
+    local timeSinceLastObject = 0
+    local idIndex = 0
+    for idx, ho in pairs(selected) do
+        if (not settingVars.maintainMs and idx == 1) then goto continue end
+        do -- avoid jumping over local scope error
+            timeSinceLastObject = timeSinceLastObject + ho.StartTime - selected[math.max(1, idx - 1)].StartTime
+            if (timeSinceLastObject > settingVars.ms and settingVars.maintainMs and settingVars.optimizeTGs) then
+                idIndex = 1
+                timeSinceLastObject = 0
             else
-                local timeToPasteSV = noteTime -
-                    (#settingVars.copiedSVs - i) / (#settingVars.copiedSVs - 1) * (noteTime - selected[1].StartTime)
-                local multiplier = sv.multiplier * (settingVars.scaleSVs and 1 / noteIndex or 1)
-                table.insert(timeCodedSVDict["t_" .. noteTime], utils.CreateScrollVelocity(timeToPasteSV, multiplier))
-                id = ids[noteIndex]
+                idIndex = idIndex + 1
+            end
+            local idName = ids[idIndex]
+            if (not neededIds[idName]) then
+                neededIds[idName] = { hos = {}, svs = {} }
+            end
+            table.insert(neededIds[idName].hos, ho)
+            for _, sv in ipairs(settingVars.copiedSVs) do
+                local maxRelativeOffset = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset
+                local progress = 1 - sv.relativeOffset / maxRelativeOffset
+                if (settingVars.scaleSVs) then
+                    local scalingFactor =
+                        (ho.StartTime - selected[1].StartTime) / (selected[2].StartTime - selected[1].StartTime)
+                    if (not settingVars.maintainMs) then scalingFactor = 1 / scalingFactor end
+                    svMultiplier = sv.multiplier * scalingFactor
+                else
+                    svMultiplier = sv.multiplier
+                end
+
+                if (settingVars.maintainMs) then
+                    svTime = ho.StartTime - progress * settingVars.ms
+                else
+                    svTime = ho.StartTime - progress * (ho.StartTime - selected[1].StartTime)
+                end
+                table.insert(neededIds[idName].svs, utils.CreateScrollVelocity(svTime, svMultiplier))
             end
         end
+        ::continue::
     end
 
-    for timeCode, svs in ipairs(timeCodedSVDict) do
+    for id, data in pairs(neededIds) do
         local r = math.random(255)
         local g = math.random(255)
         local b = math.random(255)
-        local tg = utils.CreateScrollGroup(svs, 1, r .. "," .. g .. "," .. b)
 
-        table.insert(actionList, utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, timeDict[timeCode]))
+        local tg = utils.CreateScrollGroup(data.svs, settingVars.initialSV or 1, table.concat({ r, g, b }, ","))
+        local action = utils.CreateEditorAction(action_type.CreateTimingGroup, id, tg, data.hos)
+
+        table.insert(actionList, action)
     end
 
     actions.PerformBatch(actionList)
+
     toggleablePrint("w!", "Automated.")
 end

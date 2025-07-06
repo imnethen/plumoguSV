@@ -8,14 +8,17 @@ function automateSVMenu(settingVars)
 
     button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, settingVars)
     addSeparator()
+    settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
     _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
-    _, settingVars.maintainMs = imgui.Checkbox("Maintain Time?", settingVars.maintainMs)
+    imgui.SameLine(0, SAMELINE_SPACING)
+    _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
+    _, settingVars.maintainMs = imgui.Checkbox("Static Time?", settingVars.maintainMs)
     if (settingVars.maintainMs) then
         imgui.SameLine(0, SAMELINE_SPACING)
-        imgui.PushItemWidth(90)
+        imgui.PushItemWidth(71)
         settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
         imgui.PopItemWidth()
     end
     addSeparator()
-    simpleActionMenu("Automate SVs for selected notes", 1, automateSVs, nil, settingVars)
+    simpleActionMenu("Automate SVs for selected notes", 2, automateSVs, nil, settingVars)
 end

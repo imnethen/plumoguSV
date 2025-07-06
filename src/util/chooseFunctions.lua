@@ -26,19 +26,9 @@ end
 -- Parameters
 --    menuVars : list of variables used for the current menu [Table]
 function chooseAverageSV(menuVars)
-    local oldAvg = menuVars.avgSV
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
-    toolTip("Negate SV value")
-    imgui.SameLine(0, SAMELINE_SPACING)
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    _, menuVars.avgSV = imgui.InputFloat("Average SV", menuVars.avgSV, 0, 0, "%.2fx")
-    imgui.PopItemWidth()
-    if ((negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) and menuVars.avgSV ~= 0) then
-        menuVars.avgSV = -menuVars.avgSV
-    end
-    return oldAvg ~= menuVars.avgSV
+    local outputValue, settingsChanged = negatableComputableInputFloat("Average SV", menuVars.avgSV, 2, "x")
+    menuVars.avgSV = outputValue
+    return settingsChanged
 end
 
 -- Lets you choose the bezier point coordinates
@@ -46,14 +36,14 @@ end
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
 function chooseBezierPoints(settingVars)
-    local oldFirstPoint = settingVars.p1 * 100
-    local oldSecondPoint = settingVars.p2 * 100
-    local _, newFirstPoint = imgui.SliderInt2("(x1, y1)", settingVars.p1, 0, 1, "%.2f")
+    local oldFirstPoint = settingVars.p1
+    local oldSecondPoint = settingVars.p2
+    local _, newFirstPoint = imgui.SliderFloat2("(x1, y1)", oldFirstPoint, 0, 1, "%.2f")
     helpMarker("Coordinates of the first point of the cubic bezier")
-    local _, newSecondPoint = imgui.SliderInt2("(x2, y2)", settingVars.p2, 0, 1, "%.2f")
+    local _, newSecondPoint = imgui.SliderFloat2("(x2, y2)", oldSecondPoint, 0, 1, "%.2f")
     helpMarker("Coordinates of the second point of the cubic bezier")
-    settingVars.p1 = newFirstPoint / 100
-    settingVars.p2 = newSecondPoint / 100
+    settingVars.p1 = newFirstPoint
+    settingVars.p2 = newSecondPoint
 
     return settingVars.p1 ~= oldFirstPoint or settingVars.p2 ~= oldSecondPoint
 end
@@ -466,6 +456,7 @@ function chooseEditTool(globalVars)
     local svTool = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if svTool == "Add Teleport" then toolTip("Add a large teleport SV to move far away") end
     if svTool == "Align Timing Lines" then toolTip("Create timing lines at notes to avoid desync") end
+    if svTool == "Change Timing Group" then toolTip("Moves SVs and SSFs to a designated timing group.") end
     if svTool == "Convert SV <-> SSF" then toolTip("Convert multipliers between SV/SSF") end
     if svTool == "Copy & Paste" then toolTip("Copy SVs and SSFs and paste them somewhere else") end
     if svTool == "Direct SV" then toolTip("Directly update SVs within your selection") end
@@ -795,8 +786,7 @@ function chooseCurrentScrollGroup(globalVars)
     imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
     local groups = { "$Default", "$Global" }
-    local backendGroups = {}
-    local cols = { map.TimingGroups["$Default"].ColorRgb or "255,255,255", map.TimingGroups["$Global"].ColorRgb or
+    local cols = { map.TimingGroups["$Default"].ColorRgb or "86,253,110", map.TimingGroups["$Global"].ColorRgb or
     "255,255,255" }
     local hiddenGroups = {}
     for tgId, tg in pairs(map.TimingGroups) do
@@ -1001,7 +991,7 @@ function chooseStartEndSVs(settingVars)
         _, settingVars.startSV = imgui.InputFloat("SV Value", oldValue, 0, 0, "%.2fx")
         return oldValue ~= settingVars.startSV
     end
-    return customSwappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
+    return swappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
 end
 
 -- Lets you choose a start SV percent
@@ -1216,6 +1206,7 @@ end
 
 function computableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
+    local previousValue = var
 
     _, var = imgui.InputText(label,
         string.format("%." .. decimalPlaces .. "f" .. suffix,
@@ -1229,14 +1220,31 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
     state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())
     state.SetValue("computableInputFloatIndex", computableStateIndex + 1)
 
-    return tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+"))
+    return tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")),
+        previousValue ~= var
+end
+
+function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
+    local oldValue = var
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
+    local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
+    toolTip("Negate SV value")
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
+    local newValue = computableInputFloat(label, var, decimalPlaces, suffix)
+    imgui.PopItemWidth()
+    if ((negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) and newValue ~= 0) then
+        newValue = -newValue
+    end
+    return newValue, oldValue ~= newValue
 end
 
 -- sum shit idk
 -- Returns whether or not the start or end SVs changed [Boolean]
 -- Parameters
 --    settingVars : list of variables used for the current menu [Table]
-function customSwappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
+function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
     digits = digits or 2
     suffix = suffix or "x"
     widthFactor = widthFactor or 0.7

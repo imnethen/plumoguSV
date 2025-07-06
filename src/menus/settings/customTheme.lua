@@ -4,7 +4,7 @@ function showCustomThemeSettings(globalVars)
     globalVars.customStyle = table.duplicate(DEFAULT_STYLE)
     saveAndSyncGlobals(globalVars)
   end
-  imgui.SameLine()
+  imgui.SameLine(0, SAMELINE_SPACING)
   if (imgui.Button("Import")) then
     state.SetValue("importingCustomTheme", true)
   end
@@ -16,12 +16,12 @@ function showCustomThemeSettings(globalVars)
     local input = state.GetValue("importingCustomThemeInput", "")
     _, input = imgui.InputText("##customThemeStr", input, 69420)
     state.SetValue("importingCustomThemeInput", input)
-    imgui.SameLine()
+    imgui.SameLine(0, SAMELINE_SPACING)
     if (imgui.Button("Send")) then
       setCustomStyleString(globalVars, input)
       state.SetValue("importingCustomTheme", false)
     end
-    imgui.SameLine()
+    imgui.SameLine(0, SAMELINE_SPACING)
     if (imgui.Button("X")) then
       state.SetValue("importingCustomTheme", false)
     end

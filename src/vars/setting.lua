@@ -213,9 +213,14 @@ end]],
     },
     automate = {
         copiedSVs = {},
-        maintainMs = false,
+        maintainMs = true,
         ms = 1000,
         scaleSVs = false,
+        initialSV = 1,
+        optimizeTGs = true,
+    },
+    animationPalette = {
+        instructions = ""
     }
 }
 

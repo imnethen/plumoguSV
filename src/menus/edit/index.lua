@@ -1,6 +1,7 @@
 EDIT_SV_TOOLS = { -- tools for editing SVs
     "Add Teleport",
     "Align Timing Lines",
+    "Change Groups",
     "Convert SV <-> SSF",
     "Copy & Paste",
     "Direct SV",
@@ -29,6 +30,7 @@ function editSVTab(globalVars)
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
+    if toolName == "Change Groups" then changeGroupsMenu() end
     if toolName == "Convert SV <-> SSF" then convertSVSSFMenu() end
     if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
     if toolName == "Direct SV" then directSVMenu() end

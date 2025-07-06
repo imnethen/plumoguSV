@@ -20,7 +20,7 @@ function placeVibratoSVMenu(globalVars, separateWindow)
     if (menuVars.vibratoMode ~= 2) then
         imgui.AlignTextToFramePadding()
         imgui.Dummy(vector.New(27, 0))
-        imgui.SameLine()
+        imgui.SameLine(0, SAMELINE_SPACING)
         imgui.Text("Sides:")
         imgui.SameLine(0, RADIO_BUTTON_SPACING)
         if imgui.RadioButton("1", menuVars.sides == 1) then

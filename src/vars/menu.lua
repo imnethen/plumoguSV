@@ -39,6 +39,11 @@ DEFAULT_STARTING_MENU_VARS = {
         distance = 10727,
         teleportBeforeHand = false
     },
+    changeGroups = {
+        designatedTimingGroup = "$Default",
+        changeSVs = true,
+        changeSSFs = true,
+    },
     convertSVSSF = {
         conversionDirection = true
     },

@@ -3,6 +3,7 @@ SPECIAL_SVS = { -- types of special SVs
     "Teleport Stutter",
     "Frames Setup",
     "Automate",
+    "Animation Palette",
     "Penis",
 }
 
@@ -29,6 +30,7 @@ function placeSpecialSVMenu(globalVars)
         animationFramesSetupMenu(globalVars, settingVars)
     end
     if currentSVType == "Automate" then automateSVMenu(settingVars) end
+    if currentSVType == "Animation Palette" then animationPaletteMenu(settingVars) end
     if currentSVType == "Penis" then penisMenu(settingVars) end
 
     local labelText = currentSVType .. "Special"

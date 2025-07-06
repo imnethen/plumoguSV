@@ -30,12 +30,8 @@ async function main(event, path) {
             path
         )}. Now retranspiling...`
     );
-    if (path.includes("src\\dev\\unlock")) {
-        devMode = true;
-    }
-    if (path.includes("src\\dev\\lock")) {
-        devMode = false;
-    }
+
+    const devMode = path.includes("src\\dev\\unlock");
     const fileCount = await transpiler(devMode);
     const endTime = Date.now();
     console.log(

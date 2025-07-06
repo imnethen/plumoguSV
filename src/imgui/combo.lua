@@ -9,6 +9,7 @@ function combo(label, list, listIndex, colorList, hiddenGroups)
     local currentComboItem = list[listIndex]
     local comboFlag = imgui_combo_flags.HeightLarge
     rgb = {}
+    hiddenGroups = hiddenGroups or {}
 
     if (colorList) then
         colorList[newListIndex]:gsub("(%d+)", function(c)
@@ -32,7 +33,7 @@ function combo(label, list, listIndex, colorList, hiddenGroups)
             imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
         end
         local listItem = list[i]
-        if (table.contains(hiddenGroups, i)) then goto skipRender end
+        if (table.contains(hiddenGroups, listItem)) then goto skipRender end
         if imgui.Selectable(listItem) then
             newListIndex = i
         end

@@ -70,12 +70,17 @@ end
 
 function renderMeasureDataWidget()
     if #state.SelectedHitObjects < 2 then return end
-    local offsets = uniqueSelectedNoteOffsets()
-    if (#offsets > 2) then return end
-    local startOffset = offsets[1]
-    local endOffset = offsets[#offsets]
+    local uniqueDict = {}
+    for _, ho in pairs(state.SelectedHitObjects) do -- uniqueSelectedNoteOffsets was not used here because this approach exits the function faster
+        if (not table.contains(uniqueDict, ho.StartTime)) then
+            table.insert(uniqueDict, ho.StartTime)
+        end
+        if (#uniqueDict > 2) then return end
+    end
+    local startOffset = uniqueDict[1]
+    local endOffset = uniqueDict[2]
     if (endOffset == startOffset) then return end
-    if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69) or #offsets ~= state.GetValue("oldOffsetCount", -1)) then
+    if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69)) then
         svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
         nsvDistance = endOffset - startOffset
         addStartSVIfMissing(svsBetweenOffsets, startOffset)
@@ -100,7 +105,6 @@ function renderMeasureDataWidget()
     imgui.EndTooltip()
     state.SetValue("oldStartOffset", startOffset)
     state.SetValue("oldEndOffset", endOffset)
-    state.SetValue("oldOffsetCount", #offsets)
 end
 
 function pulseController(globalVars)
