@@ -9,12 +9,14 @@ function combo(label, list, listIndex, colorList)
     local currentComboItem = list[listIndex]
     local comboFlag = imgui_combo_flags.HeightLarge
     rgb = {}
+
     if (colorList) then
         colorList[newListIndex]:gsub("(%d+)", function(c)
             table.insert(rgb, c)
         end)
         imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
     end
+
     if not imgui.BeginCombo(label, currentComboItem, comboFlag) then
         if (colorList) then imgui.PopStyleColor() end
         return newListIndex

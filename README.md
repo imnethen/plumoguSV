@@ -62,7 +62,8 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Add nsv measure tool~~
 * ~~Fix merge inefficiency~~
 * Animation palette generator
-* Mod svtimeisadded check
 * ~~Rework bezier backend to use vectors~~
 * Allow for dynamic sv fps instead of static sv points
 * ~~automate optimizations~~
+* ~~Use sliderint instead of clamped dragint as much as possible~~
+* Fix automate TGs being hidden breaking stuff

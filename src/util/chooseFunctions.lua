@@ -92,12 +92,8 @@ function chooseColorTheme(globalVars)
     end
 
     local currentTheme = COLOR_THEMES[globalVars.colorThemeIndex]
-    local isRGBColorTheme = currentTheme == "Tobi's RGB Glass" or
-        currentTheme == "Glass + RGB" or
-        currentTheme == "Incognito + RGB" or
-        currentTheme == "RGB Gamer Mode" or
-        currentTheme == "edom remag BGR" or
-        currentTheme == "BGR + otingocnI"
+    local isRGBColorTheme = currentTheme:find("RGB") or currentTheme:find("BGR")
+
     if not isRGBColorTheme then return end
 
     chooseRGBPeriod(globalVars)
