@@ -66,4 +66,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * Allow for dynamic sv fps instead of static sv points
 * ~~automate optimizations~~
 * ~~Use sliderint instead of clamped dragint as much as possible~~
-* Fix automate TGs being hidden breaking stuff
+* ~~Fix automate TGs being hidden breaking stuff~~
