@@ -4,7 +4,7 @@
 --    label     : label for the combo [String]
 --    list      : list for the combo to use [Table]
 --    listIndex : current index of the item from the list being selected in the combo [Int]
-function combo(label, list, listIndex, colorList)
+function combo(label, list, listIndex, colorList, hiddenGroups)
     local newListIndex = math.clamp(listIndex, 1, #list)
     local currentComboItem = list[listIndex]
     local comboFlag = imgui_combo_flags.HeightLarge
@@ -32,9 +32,11 @@ function combo(label, list, listIndex, colorList)
             imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
         end
         local listItem = list[i]
+        if (table.contains(hiddenGroups, i)) then goto skipRender end
         if imgui.Selectable(listItem) then
             newListIndex = i
         end
+        ::skipRender::
         if (colorList) then imgui.PopStyleColor() end
     end
     imgui.EndCombo()
