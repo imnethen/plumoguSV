@@ -1,3 +1,4 @@
+## Lua-specific code styling
 - The indent width in this codebase is 4.
 - Use `camelCase` whenever possible. While many other projects use `snake_case` for Lua, since the exposed globals from Quaver use `camelCase`, it makes sense to follow this paradigm.
 - Avoid using `k` or `v` as parameters in `pairs(tbl)`, unless iterating over a generic table.
@@ -7,16 +8,17 @@
 - Any variable prefixed with `_` is not meant to be used.
 - Avoid writing comments explaining code unless the logic within the code is unclear.
 - Use double quotes for strings, unless they contain a double quote themselves; in that case, use single quotes.
-- Avoid using bracket notation for tables unless the key is not known beforehand (e.g. during runtime)
-- Try to either have all variables necessary assigned at the top of a function, or have their first assignment be - as close to their next call as possible.
+- Avoid using bracket notation for tables unless the key is not known beforehand (e.g. during runtime) or if the key must be surrounded by quotations.
+- Try to either have all variables necessary assigned at the top of a function, or have their first assignment be as close to their next call as possible.
 - Use the existing conventions within the repository if they're not listed here.
 - When printing a particular type of message, the format that should be used is `i!`, `w!`, `s!`, or `e!`.
 
 ## Creating a new window/feature steps
 1. In the corresponding `menu` folder, add a file with a new function that will dictate the menu.
 2. Add the feature name in the category's index file, and add another if statement to link to the function created in (1).
-3. Define the default menu variables in `src/vars/menu.lua`.
+3. Define the default menu variables in `src/vars/menu.lua`, and the preset values should be editable in `defaultProperties.lua`.
 3a. Define optional default setting variables (if the function will be used in more than one category) in `src/vars/settings.lua`.
+3b. If the other features in the category have a tooltip, add it.
 4. Create an identical path through `actions` where your menu will interact with the map upon execution of a `simpleAction`.
 
 ## Creating a new global variable
