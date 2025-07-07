@@ -1,6 +1,9 @@
-function saveSettingsButton(settingVars, label)
+function saveSettingsButton(globalVars, settingVars, label)
     imgui.SameLine(0, SAMELINE_SPACING)
     if (not imgui.Button("Save")) then return end
+    globalVars.defaultProperties[label] = settingVars
+    loadDefaultProperties(globalVars.defaultProperties)
+    saveAndSyncGlobals(globalVars)
 end
 
 function showDefaultPropertiesSettings(globalVars)
@@ -10,6 +13,6 @@ function showDefaultPropertiesSettings(globalVars)
         chooseStartEndSVs(settingVars)
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
-        saveSettingsButton(settingVars, "linear")
+        saveSettingsButton(globalVars, settingVars, "linear")
     end
 end

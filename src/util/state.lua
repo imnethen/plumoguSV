@@ -18,10 +18,3 @@ function saveVariables(listName, variables)
         state.SetValue(listName .. key, value)
     end
 end
-
----Sets the state of all global variables, and saves them to the `config.yaml` file.
----@param globalVars table
-function saveAndSyncGlobals(globalVars)
-    write(globalVars)
-    syncGlobalVarsState(globalVars)
-end

@@ -1,6 +1,7 @@
 ---Returns a deep copy of a table.
----@param tbl table The original table.
----@return table tbl The new table.
+---@generic T : table
+---@param tbl T The original table.
+---@return T tbl The new table.
 function table.duplicate(tbl)
     local dupeTbl = {}
     if (tbl[1]) then

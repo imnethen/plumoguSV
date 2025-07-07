@@ -3,6 +3,7 @@ function awake()
     if (not tempGlobalVars) then tempGlobalVars = table.construct() end
 
     syncGlobalVarsState(tempGlobalVars)
+    loadDefaultProperties(tempGlobalVars.defaultProperties)
 
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 end

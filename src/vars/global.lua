@@ -42,3 +42,10 @@ function loadGlobalVars()
         equalizeLinear = state.GetValue("global_equalizeLinear") or false
     }
 end
+
+---Sets the state of all global variables, and saves them to the `config.yaml` file.
+---@param globalVars table
+function saveAndSyncGlobals(globalVars)
+    write(globalVars)
+    syncGlobalVarsState(globalVars)
+end
