@@ -1,6 +1,3 @@
--- Creates the "Delete SVs" tab
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function deleteTab(_)
     local menuVars = getMenuVars("delete")
     _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])

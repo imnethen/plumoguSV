@@ -104,9 +104,6 @@ function startNextWindowNotCollapsed(windowName)
     state.SetValue(windowName, true)
 end
 
--- Makes the SV info windows for stutter SV
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function displayStutterSVWindows(settingVars)
     if settingVars.linearlyChange then
         startNextWindowNotCollapsed("svInfo2AutoOpen")

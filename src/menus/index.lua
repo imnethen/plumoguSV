@@ -6,10 +6,9 @@ TAB_MENUS = { -- names of the tab menus
     "Delete"
 }
 
--- Creates a menu tab
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
---    tabName    : name of the currently selected tab [String]
+---Creates a menu tab.
+---@param globalVars table
+---@param tabName string
 function createMenuTab(globalVars, tabName)
     if not imgui.BeginTabItem(tabName) then return end
     addPadding()

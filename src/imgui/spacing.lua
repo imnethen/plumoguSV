@@ -3,7 +3,6 @@ function addPadding()
     imgui.Dummy(vector.New(0, 0))
 end
 
--- Creates a horizontal line separator on the GUI
 function addSeparator()
     addPadding()
     imgui.Separator()

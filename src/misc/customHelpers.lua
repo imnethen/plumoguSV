@@ -1,7 +1,3 @@
--- Provides an import box to parse inputted custom SVs
--- Returns whether new custom SVs were parsed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function importCustomSVs(settingVars)
     local svsParsed = false
     local customSVText = state.GetValue("customSVText") or "Import SV values here"
@@ -27,9 +23,6 @@ function importCustomSVs(settingVars)
     return svsParsed
 end
 
--- Adjusts the number of SV multipliers available for the custom SV menu
--- Parameters
---    settingVars : list of variables used for the custom SV menu [Table]
 function adjustNumberOfMultipliers(settingVars)
     if settingVars.svPoints > #settingVars.svMultipliers then
         local difference = settingVars.svPoints - #settingVars.svMultipliers

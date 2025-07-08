@@ -1,4 +1,3 @@
--- Creates the displace note menu
 function displaceNoteMenu()
     local menuVars = getMenuVars("displaceNote")
     chooseVaryingDistance(menuVars)

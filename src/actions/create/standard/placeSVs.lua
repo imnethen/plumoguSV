@@ -1,7 +1,3 @@
--- Places standard SVs between selected notes
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
---    menuVars   : list of variables used for the current menu [Table]
 function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optionalDistance)
     local finalSVType = FINAL_SV_TYPES[menuVars.settingVars.finalSVIndex]
     local placingStillSVs = menuVars.noteSpacing ~= nil

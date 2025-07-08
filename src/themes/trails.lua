@@ -1,6 +1,3 @@
--- Draws the currently selected cursor trail
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function drawCursorTrail(globalVars)
     local o = imgui.GetOverlayDrawList()
     local m = getCurrentMousePosition()
@@ -16,9 +13,6 @@ function drawCursorTrail(globalVars)
     if cursorTrail == "Sparkle" then drawSparkleTrail(globalVars, o, m, t, sz) end
 end
 
--- Draws the "Snake" cursor trail
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 --    o          : [imgui overlay drawlist]
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
@@ -125,9 +119,6 @@ function drawTriangleTrailPoint(o, m, point, cursorTrailSize, color)
     drawEquilateralTriangle(o, point, cursorTrailSize, angle, color)
 end
 
--- Draws the "Dust" cursor trail
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 --    o          : [imgui overlay drawlist]
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
@@ -216,9 +207,6 @@ function renderDustParticles(rgbPeriod, o, t, dustParticles, dustDuration, dustS
     end
 end
 
--- Draws the "Sparkle" cursor trail
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 --    o          : [imgui overlay drawlist]
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]

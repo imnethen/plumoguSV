@@ -1,4 +1,3 @@
--- Flips flipped LN ends with SVs
 function fixFlippedLNEnds()
     local svsToRemove = {}
     local svsToAdd = {}

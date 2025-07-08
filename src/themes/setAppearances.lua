@@ -1,6 +1,3 @@
--- Configures the plugin GUI appearance
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function setPluginAppearance(globalVars)
     local colorTheme = COLOR_THEMES[globalVars.colorThemeIndex]
     local styleTheme = STYLE_THEMES[globalVars.styleThemeIndex]

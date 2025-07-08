@@ -1,6 +1,5 @@
 --[[ may implement in the future when making mouse click effects
--- Checks and returns whether or not the mouse has been clicked [Boolean]
-function checkIfMouseClicked()
+function  checkIfMouseClicked()
     local mouseDownBefore = state.GetValue("wasMouseDown")
     local mouseDownNow = imgui.IsAnyMouseDown()
     state.SetValue("wasMouseDown", mouseDownNow)

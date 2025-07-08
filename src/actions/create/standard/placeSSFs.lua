@@ -1,7 +1,3 @@
--- Places standard SVs between selected notes
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
---    menuVars   : list of variables used for the current menu [Table]
 function placeSSFs(globalVars, menuVars)
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()

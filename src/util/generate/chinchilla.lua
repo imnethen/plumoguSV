@@ -1,6 +1,3 @@
--- Returns a set of chinchilla values [Table]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function generateChinchillaSet(settingVars)
     if settingVars.svPoints == 1 then return { settingVars.avgSV, settingVars.avgSV } end
 
@@ -28,9 +25,7 @@ function generateChinchillaSet(settingVars)
 end
 
 -- Scales a percent value based on the selected scale type
--- Scaling graphs on Desmos: https://www.desmos.com/calculator/z00xjksfnk
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
+
 --    percent     : percent value to scale [Int/Float]
 function scalePercent(settingVars, percent)
     local behaviorType = SV_BEHAVIORS[settingVars.behaviorIndex]

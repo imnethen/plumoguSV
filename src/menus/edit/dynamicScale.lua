@@ -1,6 +1,3 @@
--- Creates the dynamic scale menu
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function dynamicScaleMenu(globalVars)
     local menuVars = getMenuVars("dynamicScale")
     local numNoteTimes = #menuVars.noteTimes

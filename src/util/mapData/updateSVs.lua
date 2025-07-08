@@ -36,9 +36,6 @@ function updateFinalSV(finalSVIndex, svMultipliers, customSV, skipFinalSV)
     svMultipliers[#svMultipliers] = customSV
 end
 
--- Updates SVs and SV info stored in the stutter menu
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function updateStutterMenuSVs(settingVars)
     settingVars.svMultipliers = generateSVMultipliers("Stutter1", settingVars, nil)
     local svMultipliersNoEndSV = table.duplicate(settingVars.svMultipliers)

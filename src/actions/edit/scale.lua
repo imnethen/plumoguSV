@@ -1,6 +1,3 @@
--- Scales SVs by adding displacing SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function scaleDisplaceSVs(menuVars)
     local svsToAdd = {}
     local svsToRemove = {}
@@ -44,9 +41,6 @@ function scaleDisplaceSVs(menuVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
--- Scales SVs by multiplying SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function scaleMultiplySVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end

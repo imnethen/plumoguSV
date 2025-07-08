@@ -1,4 +1,3 @@
--- Creates the flicker menu
 function flickerMenu()
     local menuVars = getMenuVars("flicker")
     chooseFlickerType(menuVars)

@@ -1,4 +1,3 @@
--- Creates the select alternating menu
 function selectAlternatingMenu()
     local menuVars = getMenuVars("selectAlternating")
     chooseEvery(menuVars)

@@ -12,7 +12,6 @@ STANDARD_SVS = { -- types of standard SVs
     "Code"
 }
 
--- Creates the menu for placing standard SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function placeStandardSVMenu(globalVars)

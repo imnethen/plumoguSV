@@ -1,6 +1,3 @@
--- Adds displacing SVs to mave notes to animation frames relative to the first selected note
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function displaceNotesForAnimationFrames(settingVars)
     local frameDistance = settingVars.frameDistance
     local initialDistance = settingVars.distance

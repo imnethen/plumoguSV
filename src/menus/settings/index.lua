@@ -22,7 +22,7 @@ function showPluginSettingsWindow(globalVars)
     imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
     imgui.PushStyleColor(imgui_col.Border, vector4(1))
     imgui.SetNextWindowCollapsed(false)
-    _, settingsOpened = imgui.Begin("plumoguSV Settings", true, 34)
+    _, settingsOpened = imgui.Begin("plumoguSV Settings", true, 42)
     imgui.SetWindowSize("plumoguSV Settings", vector.New(433, 400))
 
     local typeIndex = state.GetValue("settings_typeIndex", 1)

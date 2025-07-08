@@ -1,6 +1,3 @@
--- Places stutter SVs between selected notes
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function placeStutterSVs(settingVars)
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local lastFirstStutter = settingVars.startSV

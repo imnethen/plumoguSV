@@ -23,8 +23,8 @@ export default async function transpiler(devMode = false, fuckify = false) {
     let fileCount = 0;
     let output = "";
 
-    const files = getFilesRecursively("./src");
-    files.push(...getFilesRecursively("./packages"));
+    const files = getFilesRecursively("./packages");
+    files.push(...getFilesRecursively("./src"));
 
     const ignoredFiles = ["classes.lua", "intellisense.lua"];
 
@@ -37,7 +37,7 @@ export default async function transpiler(devMode = false, fuckify = false) {
         fileCount++;
     });
 
-    if (false) {
+    if (fuckify) {
         const matchList = []
         const matches = [...new Set(output.match(/(["]).+?(["])/g))]
         for (let i = 0; i < matches.length; i++) {

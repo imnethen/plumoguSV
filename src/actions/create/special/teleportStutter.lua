@@ -1,6 +1,3 @@
--- Places teleport stutter SVs between selected notes
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function placeTeleportStutterSVs(settingVars)
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local svPercent = settingVars.svPercent / 100
@@ -49,9 +46,6 @@ function placeTeleportStutterSVs(settingVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
--- Places teleport stutter SVs between selected notes
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function placeTeleportStutterSSFs(settingVars)
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
     local svPercent = settingVars.svPercent / 100

@@ -11,6 +11,7 @@ function showCustomThemeSettings(globalVars)
   if (imgui.Button("Export")) then
     local str = stringifyCustomStyle(globalVars.customStyle)
     imgui.SetClipboardText(str)
+    print("i!", "Exported custom theme to your clipboard.")
   end
   if (state.GetValue("importingCustomTheme")) then
     local input = state.GetValue("importingCustomThemeInput", "")

@@ -1,6 +1,3 @@
--- Draws a capybara on the bottom right of the screen
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function drawCapybara(globalVars)
     if not globalVars.drawCapybara then return end
     local o = imgui.GetOverlayDrawList()
@@ -34,9 +31,6 @@ function drawCapybara(globalVars)
     o.AddRectFilled({ stemCoords[1] - 10, stemCoords[2] }, { stemCoords[1] + 20, stemCoords[2] - 5 }, stemColor)
 end
 
--- Draws a capybara on the bottom left of the screen
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function drawCapybara2(globalVars)
     if not globalVars.drawCapybara2 then return end
     local o = imgui.GetOverlayDrawList()
@@ -215,9 +209,6 @@ function drawCapybara2(globalVars)
     o.AddTriangleFilled(p97, p98, p99, color10)
 end
 
--- Draws a capybara???!?!??!!!!?
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function drawCapybara312(globalVars)
     if not globalVars.drawCapybara312 then return end
     local o = imgui.GetOverlayDrawList()

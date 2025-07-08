@@ -22,9 +22,6 @@ function displaceNoteSVsParent(menuVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
--- Displaces selected notes with SVs
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function displaceNoteSVs(menuVars, place, optionalOffset)
     local svsToAdd = {}
     local svsToRemove = {}

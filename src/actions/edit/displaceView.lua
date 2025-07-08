@@ -1,6 +1,3 @@
--- Displaces the playfield view with SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function displaceViewSVs(menuVars)
     local svsToAdd = {}
     local svsToRemove = {}

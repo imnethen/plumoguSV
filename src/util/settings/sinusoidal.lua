@@ -1,9 +1,3 @@
--- Creates the menu for sinusoidal SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this sinusoidal menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
 function sinusoidalSettingsMenu(settingVars, skipFinalSV, _)
     local settingsChanged = false
     imgui.Text("Amplitude:")

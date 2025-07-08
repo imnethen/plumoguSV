@@ -1,4 +1,3 @@
--- Initializes and returns a default svGraphStats object [Table]
 function createSVGraphStats()
     local svGraphStats = {
         minScale = 0,
@@ -9,7 +8,6 @@ function createSVGraphStats()
     return svGraphStats
 end
 
--- Initializes and returns a default svStats object [Table]
 function createSVStats()
     local svStats = {
         minSV = 0,

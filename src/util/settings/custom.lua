@@ -1,9 +1,3 @@
--- Creates the menu for custom SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this custom menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
 function customSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = importCustomSVs(settingVars) or settingsChanged

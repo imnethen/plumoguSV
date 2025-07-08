@@ -1,7 +1,4 @@
 -- Provides a copy-pastable link to a cubic bezier website and also can parse inputted links
--- Returns whether new bezier coordinates were parsed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function provideBezierWebsiteLink(settingVars)
     local coordinateParsed = false
     local bezierText = state.GetValue("bezierText") or "https://cubic-bezier.com/"

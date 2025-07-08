@@ -1,4 +1,3 @@
--- Creates the measure menu
 function measureMenu()
     local menuVars = getMenuVars("measure")
     chooseMeasuredStatsView(menuVars)
@@ -18,9 +17,6 @@ function measureMenu()
     saveVariables("measureMenu", menuVars)
 end
 
--- Displays measured SV stats rounded
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function displayMeasuredStatsRounded(menuVars)
     imgui.Columns(2, "Measured SV Stats", false)
     imgui.Text("NSV distance:")
@@ -44,9 +40,6 @@ function displayMeasuredStatsRounded(menuVars)
     imgui.Columns(1)
 end
 
--- Displays measured SV stats unrounded
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function displayMeasuredStatsUnrounded(menuVars)
     copiableBox("NSV distance", "##nsvDistance", menuVars.nsvDistance)
     copiableBox("SV distance", "##svDistance", menuVars.svDistance)

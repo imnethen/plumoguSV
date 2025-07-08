@@ -1,7 +1,3 @@
--- Makes the export and import menu for place SV settings
--- Parameters
---    globalVars  : list of variables used globally across all menus [Table]
---    menuVars    : list of setting variables for the current menu [Table]
 --    settingVars : list of setting variables for the current sv type [Table]
 function exportImportSettingsMenu(globalVars, menuVars, settingVars)
     local multilineWidgetSize = { ACTION_BUTTON_SIZE.x, 50 }

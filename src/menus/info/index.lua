@@ -1,6 +1,3 @@
--- Creates the "Info" tab
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function infoTab(globalVars)
     imgui.SeparatorText("Welcome to plumoguSV!")
     imgui.TextWrapped("This plugin is your one-stop shop for all of \nyour SV needs. Using it is quick and easy:")

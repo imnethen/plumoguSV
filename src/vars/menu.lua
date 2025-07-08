@@ -33,7 +33,6 @@ DEFAULT_STARTING_MENU_VARS = {
     },
     delete = {
         deleteTable = { true, true, true, true }
-
     },
     addTeleport = {
         distance = 10727,

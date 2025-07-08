@@ -1,6 +1,3 @@
--- Dynamically scales SVs between assigned notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function dynamicScaleSVs(menuVars)
     local offsets = menuVars.noteTimes
     local targetAvgSVs = menuVars.svMultipliers

@@ -1,6 +1,3 @@
--- Copies SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function copyItems(menuVars)
     menuVars.copiedLines = {}
     menuVars.copiedSVs = {}
@@ -54,9 +51,6 @@ function copyItems(menuVars)
     if (#menuVars.copiedLines > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
 end
 
--- Clears all copied SVs
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function clearCopiedItems(menuVars)
     menuVars.copiedLines = {}
     menuVars.copiedSVs = {}
@@ -64,10 +58,6 @@ function clearCopiedItems(menuVars)
     menuVars.copiedBMs = {}
 end
 
--- Pastes copied SVs at selected notes
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
---    menuVars   : list of variables used for the current menu [Table]
 function pasteItems(globalVars, menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end
@@ -78,11 +68,11 @@ function pasteItems(globalVars, menuVars)
     local lastCopiedSSF = menuVars.copiedSSFs[#menuVars.copiedSSFs]
     local lastCopiedBM = menuVars.copiedBMs[#menuVars.copiedBMs]
 
-    local lastCopiedValue= lastCopiedSV
-    if (lastCopiedValue == nil) then 
-        lastCopiedValue = lastCopiedSSF 
-lastCopiedValue = lastCopiedLine
-lastCopiedValue = lastCopiedBM
+    local lastCopiedValue = lastCopiedSV
+    if (lastCopiedValue == nil) then
+        lastCopiedValue = lastCopiedSSF
+        lastCopiedValue = lastCopiedLine
+        lastCopiedValue = lastCopiedBM
     end
 
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128

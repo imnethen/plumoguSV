@@ -1,6 +1,3 @@
--- Measures SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function measureSVs(menuVars)
     local roundingDecimalPlaces = 5
     local offsets = uniqueSelectedNoteOffsets()

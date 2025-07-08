@@ -1,7 +1,3 @@
--- Creates the menu for custom SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars : list of setting variables for this combo menu [Table]
 function comboSettingsMenu(settingVars)
     local settingsChanged = false
     startNextWindowNotCollapsed("svType1AutoOpen")

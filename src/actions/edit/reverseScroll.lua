@@ -1,6 +1,3 @@
--- Reverses scroll direction by adding/modifying SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function reverseScrollSVs(menuVars)
     local offsets = uniqueNoteOffsetsBetweenSelected()
     local startOffset = offsets[1]

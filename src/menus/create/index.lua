@@ -5,9 +5,7 @@ CREATE_TYPES = { -- general categories of SVs to place
     "Vibrato",
 }
 
--- Creates the "Place SVs" tab
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
+
 function createSVTab(globalVars)
     if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
     choosePlaceSVType(globalVars)

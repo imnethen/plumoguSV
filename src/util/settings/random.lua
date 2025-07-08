@@ -1,9 +1,3 @@
--- Creates the menu for random SV settings
--- Returns whether settings have changed or not [Boolean]
--- Parameters
---    settingVars   : list of setting variables for this random menu [Table]
---    skipFinalSV   : whether or not to skip choosing the final SV [Boolean]
---    svPointsForce : number of SV points to force [Int or nil]
 function randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
 
@@ -26,9 +20,6 @@ function randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     return settingsChanged
 end
 
--- Creates a new set of random SV multipliers for the random menu's SVs
--- Parameters
---    settingVars : list of variables used for the random SV menu [Table]
 function generateRandomSetMenuSVs(settingVars)
     local randomType = RANDOM_TYPES[settingVars.randomTypeIndex]
     settingVars.svMultipliers = generateRandomSet(settingVars.svPoints + 1, randomType,

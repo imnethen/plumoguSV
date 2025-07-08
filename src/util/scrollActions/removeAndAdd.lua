@@ -1,7 +1,6 @@
--- Removes and adds SVs
--- Parameters
---    svsToRemove : list of SVs to remove [Table]
---    svsToAdd    : list of SVs to add [Table]
+---Removes and adds SVs.
+---@param svsToRemove ScrollVelocity[]
+---@param svsToAdd ScrollVelocity[]
 function removeAndAddSVs(svsToRemove, svsToAdd)
     local tolerance = 0.035
     if #svsToAdd == 0 then return end

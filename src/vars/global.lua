@@ -39,7 +39,8 @@ function loadGlobalVars()
         hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST,
         customStyle = state.GetValue("global_customStyle") or {},
         dontPrintCreation = state.GetValue("global_dontPrintCreation") or false,
-        equalizeLinear = state.GetValue("global_equalizeLinear") or false
+        equalizeLinear = state.GetValue("global_equalizeLinear") or false,
+        defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
     }
 end
 

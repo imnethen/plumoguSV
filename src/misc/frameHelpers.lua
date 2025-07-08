@@ -1,6 +1,3 @@
--- Creates a button that adds frameTime objects to the list in the frames setup menu
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function addFrameTimes(settingVars)
     if not imgui.Button("Add selected notes to use for frames", ACTION_BUTTON_SIZE) then return end
 
@@ -42,9 +39,6 @@ function addFrameTimes(settingVars)
     settingVars.frameTimes = sort(settingVars.frameTimes, sortAscendingTime)
 end
 
--- Displays all existing frameTimes for the frames setup menu
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function displayFrameTimes(settingVars)
     if #settingVars.frameTimes == 0 then
         imgui.Text("Add notes to fill the selection box below")
@@ -70,10 +64,6 @@ function displayFrameTimes(settingVars)
     imgui.EndChild()
 end
 
--- Draws notes from the currently selected frame for the frames setup menu
--- Parameters
---    globalVars  : list of variables used globally across all menus [Table]
---    settingVars : list of variables used for the current menu [Table]
 function drawCurrentFrame(globalVars, settingVars)
     local mapKeyCount = map.GetKeyCount()
     local noteWidth = 200 / mapKeyCount
@@ -117,9 +107,6 @@ function drawCurrentFrame(globalVars, settingVars)
     imgui.EndChild()
 end
 
--- Adds selected note times to the noteTimes list in menuVars
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function addSelectedNoteTimesToList(menuVars)
     for _, ho in pairs(state.SelectedHitObjects) do
         table.insert(menuVars.noteTimes, ho.StartTime)

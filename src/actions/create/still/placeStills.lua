@@ -24,9 +24,6 @@ function placeStillSVsParent(globalVars, menuVars)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 
--- Places still SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function getStillSVs(menuVars, optionalStart, optionalEnd, svs, retroactiveSVRemovalTable)
     local stillType = STILL_TYPES[menuVars.stillTypeIndex]
     local noteSpacing = menuVars.noteSpacing

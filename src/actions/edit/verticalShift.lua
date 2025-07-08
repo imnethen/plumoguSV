@@ -1,6 +1,3 @@
--- Vertically shifts SVs between selected notes
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function verticalShiftSVs(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end

@@ -5,7 +5,6 @@ VIBRATO_SVS = { -- types of vibrato SVs
     "Custom##Vibrato"
 }
 
--- Creates the menu for placing special SVs
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
 function placeVibratoSVMenu(globalVars, separateWindow)

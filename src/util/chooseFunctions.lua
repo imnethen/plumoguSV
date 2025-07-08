@@ -1,7 +1,3 @@
--- Lets you choose the multipliers for adding combo SVs
--- Returns whether or not the multipliers changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseAddComboMultipliers(settingVars)
     local oldValues = vector.New(settingVars.comboMultiplier1, settingVars.comboMultiplier2)
     local _, newValues = imgui.InputFloat2("ax + by", oldValues, "%.2f")
@@ -11,30 +7,18 @@ function chooseAddComboMultipliers(settingVars)
     return oldValues ~= newValues
 end
 
--- Lets you choose the arc percent
--- Returns whether or not the arc percent changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseArcPercent(settingVars)
     local oldPercent = settingVars.arcPercent
     _, settingVars.arcPercent = imgui.SliderInt("Arc Percent", math.clamp(oldPercent, 1, 99), 1, 99, oldPercent .. "%%")
     return oldPercent ~= settingVars.arcPercent
 end
 
--- Lets you choose the average SV
--- Returns whether or not the average SV changed [Boolean]
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseAverageSV(menuVars)
     local outputValue, settingsChanged = negatableComputableInputFloat("Average SV", menuVars.avgSV, 2, "x")
     menuVars.avgSV = outputValue
     return settingsChanged
 end
 
--- Lets you choose the bezier point coordinates
--- Returns whether or not any of the coordinates changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseBezierPoints(settingVars)
     local oldFirstPoint = settingVars.p1
     local oldSecondPoint = settingVars.p2
@@ -48,10 +32,6 @@ function chooseBezierPoints(settingVars)
     return settingVars.p1 ~= oldFirstPoint or settingVars.p2 ~= oldSecondPoint
 end
 
--- Lets you choose the chinchilla SV intensity
--- Returns whether or not the intensity changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseChinchillaIntensity(settingVars)
     local oldIntensity = settingVars.chinchillaIntensity
     local _, newIntensity = imgui.SliderFloat("Intensity##chinchilla", oldIntensity, 0, 10, "%.3f")
@@ -60,19 +40,12 @@ function chooseChinchillaIntensity(settingVars)
     return oldIntensity ~= settingVars.chinchillaIntensity
 end
 
--- Lets you choose the chinchilla SV type
--- Returns whether or not the SV type changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseChinchillaType(settingVars)
     local oldIndex = settingVars.chinchillaTypeIndex
     settingVars.chinchillaTypeIndex = combo("Chinchilla Type", CHINCHILLA_TYPES, oldIndex)
     return oldIndex ~= settingVars.chinchillaTypeIndex
 end
 
--- Lets you choose the color theme of the plugin
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseColorTheme(globalVars)
     local oldColorThemeIndex = globalVars.colorThemeIndex
     globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex, COLOR_THEME_COLORS)
@@ -89,11 +62,6 @@ function chooseColorTheme(globalVars)
     chooseRGBPeriod(globalVars)
 end
 
--- Lets you choose the combo SV phase number
--- Returns whether or not the phase number changed [Boolean]
--- Parameters
---    settingVars   : list of variables used for the current menu [Table]
---    maxComboPhase : maximum value allowed for combo phase [Int]
 function chooseComboPhase(settingVars, maxComboPhase)
     local oldPhase = settingVars.comboPhase
     _, settingVars.comboPhase = imgui.InputInt("Combo Phase", oldPhase, 1, 1)
@@ -101,11 +69,6 @@ function chooseComboPhase(settingVars, maxComboPhase)
     return oldPhase ~= settingVars.comboPhase
 end
 
--- Lets you choose the combo SV combo interaction type
--- Returns whether or not the interaction type changed [Boolean]
--- Parameters
---    settingVars   : list of variables used for the current menu [Table]
---    maxComboPhase : maximum value allowed for combo phase [Int]
 function chooseComboSVOption(settingVars, maxComboPhase)
     local oldIndex = settingVars.comboTypeIndex
     settingVars.comboTypeIndex = combo("Combo Type", COMBO_SV_TYPE, settingVars.comboTypeIndex)
@@ -120,11 +83,6 @@ function chooseComboSVOption(settingVars, maxComboPhase)
     return (oldIndex ~= settingVars.comboTypeIndex) or addTypeChanged
 end
 
--- Lets you choose a constant amount to shift SVs
--- Returns whether or not the shift amount changed [Boolean]
--- Parameters
---    settingVars  : list of variables used for the current menu [Table]
---    defaultShift : default value for the shift when reset [Int/Float]
 function chooseConstantShift(settingVars, defaultShift)
     local oldShift = settingVars.verticalShift
 
@@ -185,10 +143,6 @@ function chooseMsxVerticalShift(settingVars, defaultShift)
     return oldShift ~= settingVars.verticalShift
 end
 
--- Lets you choose whether or not to control the second SV for stutter SV
--- Returns whether or not the choice changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseControlSecondSV(settingVars)
     local oldChoice = settingVars.controlLastSV
     local stutterControlsIndex = 1
@@ -200,9 +154,6 @@ function chooseControlSecondSV(settingVars)
     return choiceChanged
 end
 
--- Lets you choose the current frame
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseCurrentFrame(settingVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Previewing frame:")
@@ -221,9 +172,6 @@ function chooseCurrentFrame(settingVars)
     imgui.PopItemWidth()
 end
 
--- Lets you choose the cursor trail of the mouse
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseCursorTrail(globalVars)
     local oldCursorTrailIndex = globalVars.cursorTrailIndex
     globalVars.cursorTrailIndex = combo("Cursor Trail", CURSOR_TRAILS, oldCursorTrailIndex)
@@ -232,9 +180,6 @@ function chooseCursorTrail(globalVars)
     end
 end
 
--- Lets you choose whether or not the cursor trail will gradually become transparent
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseCursorTrailGhost(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
@@ -248,9 +193,6 @@ function chooseCursorTrailGhost(globalVars)
     end
 end
 
--- Lets you choose the number of points for the cursor trail
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseCursorTrailPoints(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
@@ -263,9 +205,6 @@ function chooseCursorTrailPoints(globalVars)
     end
 end
 
--- Lets you choose the cursor trail shape type
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseCursorTrailShape(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
@@ -278,9 +217,6 @@ function chooseCursorTrailShape(globalVars)
     end
 end
 
--- Lets you choose the size of the cursor shapes
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseCursorShapeSize(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
@@ -294,10 +230,6 @@ function chooseCursorShapeSize(globalVars)
     end
 end
 
--- Lets you choose SV curve sharpness
--- Returns whether or not the curve sharpness changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseCurveSharpness(settingVars)
     local oldSharpness = settingVars.curveSharpness
     if imgui.Button("Reset##curveSharpness", SECONDARY_BUTTON_SIZE) then
@@ -311,10 +243,6 @@ function chooseCurveSharpness(settingVars)
     return oldSharpness ~= newSharpness
 end
 
--- Lets you choose custom multipliers for custom SV
--- Returns whether or not any custom multipliers changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseCustomMultipliers(settingVars)
     imgui.BeginChild("Custom Multipliers", vector.New(imgui.GetContentRegionAvailWidth(), 90), 1)
     for i = 1, #settingVars.svMultipliers do
@@ -331,18 +259,12 @@ function chooseCustomMultipliers(settingVars)
     return oldMultiplier ~= newMultiplier
 end
 
--- Lets you choose a distance
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
     menuVars.distance = computableInputFloat("Distance", menuVars.distance, 3, " msx")
     return oldDistance ~= menuVars.distance
 end
 
--- Lets you choose a distance
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseVaryingDistance(settingVars)
     if (not settingVars.linearlyChange) then
         settingVars.distance = computableInputFloat("Distance", settingVars.distance, 3, " msx")
@@ -377,23 +299,20 @@ function chooseVaryingDistance(settingVars)
 end
 
 function chooseEvery(menuVars)
-    _, menuVars.every = imgui.InputInt("Every __ notes", menuVars.every)
+    _, menuVars.every = imgui.InputInt("Every __ notes", math.floor(menuVars.every))
     menuVars.every = math.clamp(menuVars.every, 1, MAX_SV_POINTS)
 end
 
 function chooseOffset(menuVars)
-    _, menuVars.offset = imgui.InputInt("From note #__", menuVars.offset)
+    _, menuVars.offset = imgui.InputInt("From note #__", math.floor(menuVars.offset))
     menuVars.offset = math.clamp(menuVars.offset, 1, menuVars.every)
 end
 
 function chooseSnap(menuVars)
-    _, menuVars.snap = imgui.InputInt("Snap", menuVars.snap)
+    _, menuVars.snap = imgui.InputInt("Snap", math.floor(menuVars.snap))
     menuVars.snap = math.clamp(menuVars.snap, 1, 100)
 end
 
--- Lets you choose whether or not to draw a capybara on screen
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseDrawCapybara(globalVars)
     local oldDrawCapybara = globalVars.drawCapybara
     _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
@@ -403,9 +322,6 @@ function chooseDrawCapybara(globalVars)
     end
 end
 
--- Lets you choose whether or not to draw the second capybara on screen
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseDrawCapybara2(globalVars)
     local oldDrawCapybara2 = globalVars.drawCapybara2
     _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
@@ -415,9 +331,6 @@ function chooseDrawCapybara2(globalVars)
     end
 end
 
--- Lets you choose whether or not to draw capybara 312 on screen
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseDrawCapybara312(globalVars)
     local oldDrawCapybara312 = globalVars.drawCapybara312
     _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", oldDrawCapybara312)
@@ -427,9 +340,6 @@ function chooseDrawCapybara312(globalVars)
     helpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
 
--- Lets you choose which select tool to use
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseSelectTool(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Current Type:")
@@ -444,9 +354,6 @@ function chooseSelectTool(globalVars)
     if selectTool == "Note Type" then toolTip("Select rice/ln notes") end
 end
 
--- Lets you choose which edit tool to use
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseEditTool(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("  Current Tool:")
@@ -475,9 +382,6 @@ function chooseEditTool(globalVars)
     if svTool == "Vertical Shift" then toolTip("Adds a constant value to SVs in a range") end
 end
 
--- Lets you choose the frames per second of a plugin cursor effect
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseEffectFPS(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
@@ -490,11 +394,6 @@ function chooseEffectFPS(globalVars)
     globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
 end
 
--- Lets you choose the final SV to place at the end of SV sets
--- Returns whether or not the final SV type/value changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
---    skipFinalSV : whether or not to skip choosing the final SV [Boolean]
 function chooseFinalSV(settingVars, skipFinalSV)
     if skipFinalSV then return false end
 
@@ -519,46 +418,29 @@ function chooseFinalSV(settingVars, skipFinalSV)
     return (oldIndex ~= settingVars.finalSVIndex) or (oldCustomSV ~= settingVars.customSV)
 end
 
--- Lets you choose the flicker type
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseFlickerType(menuVars)
     menuVars.flickerTypeIndex = combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
 end
 
--- Lets you choose whether or not to reverse the frame order for the frame setup menu
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseFrameOrder(settingVars)
     local checkBoxText = "Reverse frame order when placing SVs"
     _, settingVars.reverseFrameOrder = imgui.Checkbox(checkBoxText, settingVars.reverseFrameOrder)
 end
 
--- Lets you choose the distance between frames
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseFrameSpacing(settingVars)
     _, settingVars.frameDistance = imgui.InputFloat("Frame Spacing", settingVars.frameDistance,
         0, 0, "%.0f msx")
     settingVars.frameDistance = math.clamp(settingVars.frameDistance, 2000, 100000)
 end
 
--- Lets you choose the values for the selected frameTime
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseFrameTimeData(settingVars)
     if #settingVars.frameTimes == 0 then return end
     local frameTime = settingVars.frameTimes[settingVars.selectedTimeIndex]
-    _, frameTime.frame = imgui.InputInt("Frame #", frameTime.frame)
+    _, frameTime.frame = imgui.InputInt("Frame #", math.floor(frameTime.frame))
     frameTime.frame = math.clamp(frameTime.frame, 1, settingVars.numFrames)
-    _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
+    _, frameTime.position = imgui.InputInt("Note height", math.floor(frameTime.position))
 end
 
--- Lets you choose the intensity in customizable steps (1 to 100)
--- Returns whether or not the intensity changed [Boolean]
--- Parameters:
---    settingVars : table of variables used for the current menu
---    stepSize    : number representing the increment size (e.g., 1, 5, 10)
 function chooseIntensity(settingVars)
     local userStepSize = state.GetValue("global_stepSize") or 5
     local totalSteps = math.ceil(100 / userStepSize)
@@ -581,10 +463,6 @@ function chooseIntensity(settingVars)
     return oldIntensity ~= settingVars.intensity
 end
 
--- Lets you choose the interlace
--- Returns whether or not the interlace settings changed [Boolean]
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseInterlace(menuVars)
     local oldInterlace = menuVars.interlace
     _, menuVars.interlace = imgui.Checkbox("Interlace", menuVars.interlace)
@@ -599,10 +477,6 @@ function chooseInterlace(menuVars)
     return interlaceChanged or oldRatio ~= menuVars.interlaceRatio
 end
 
--- Lets you choose whether or not to linearly change a stutter over time
--- Returns whether or not the choice changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseLinearlyChange(settingVars)
     local oldChoice = settingVars.linearlyChange
     local _, newChoice = imgui.Checkbox("Change stutter over time", oldChoice)
@@ -610,10 +484,6 @@ function chooseLinearlyChange(settingVars)
     return oldChoice ~= newChoice
 end
 
--- Lets you choose whether or not to linearly change a stutter over time
--- Returns whether or not the choice changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseLinearlyChangeDist(settingVars)
     local oldChoice = settingVars.linearlyChange
     local _, newChoice = imgui.Checkbox("Change distance over time", oldChoice)
@@ -634,9 +504,6 @@ function chooseStepSize(globalVars)
     end
 end
 
--- Lets you choose the main SV multiplier of a teleport stutter
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseMainSV(settingVars)
     local label = "Main SV"
     if settingVars.linearlyChange then label = label .. " (start)" end
@@ -650,9 +517,6 @@ function chooseMainSV(settingVars)
     _, settingVars.mainSV2 = imgui.InputFloat("Main SV (end)", settingVars.mainSV2, 0, 0, "%.2fx")
 end
 
--- Lets you choose a rounded or unrounded view of SV stats on the measure SV menu
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseMeasuredStatsView(menuVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("View values:")
@@ -666,9 +530,6 @@ function chooseMeasuredStatsView(menuVars)
     end
 end
 
--- Lets you choose the menu step # for the frames setup menu
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseMenuStep(settingVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Step # :")
@@ -687,10 +548,6 @@ function chooseMenuStep(settingVars)
     settingVars.menuStep = math.wrap(settingVars.menuStep, 1, 3)
 end
 
--- Lets you choose to not normalize values
--- Returns whether or not the setting changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseNoNormalize(settingVars)
     addPadding()
     local oldChoice = settingVars.dontNormalize
@@ -699,51 +556,32 @@ function chooseNoNormalize(settingVars)
     return oldChoice ~= newChoice
 end
 
--- Lets you choose the note skin type for the preview of the frames in the frame setup menu
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseNoteSkinType(settingVars)
     settingVars.noteSkinTypeIndex = combo("Preview skin", NOTE_SKIN_TYPES,
         settingVars.noteSkinTypeIndex)
     helpMarker("Note skin type for the preview of the frames")
 end
 
--- Lets you choose the note spacing
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseNoteSpacing(menuVars)
     _, menuVars.noteSpacing = imgui.InputFloat("Note Spacing", menuVars.noteSpacing, 0, 0, "%.2fx")
 end
 
--- Lets you choose the number of flickers
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseNumFlickers(menuVars)
     _, menuVars.numFlickers = imgui.InputInt("Flickers", menuVars.numFlickers, 1, 1)
     menuVars.numFlickers = math.clamp(menuVars.numFlickers, 1, 9999)
 end
 
--- Lets you choose the number of flickers
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseFlickerPosition(menuVars)
     _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
         math.round(menuVars.flickerPosition * 100) .. "%%")
     menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
 end
 
--- Lets you choose the number of frames
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseNumFrames(settingVars)
-    _, settingVars.numFrames = imgui.InputInt("Total # Frames", settingVars.numFrames)
+    _, settingVars.numFrames = imgui.InputInt("Total # Frames", math.floor(settingVars.numFrames))
     settingVars.numFrames = math.clamp(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
 end
 
--- Lets you choose the number of periods for a sinusoidal wave
--- Returns whether or not the number of periods changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseNumPeriods(settingVars)
     local oldPeriods = settingVars.periods
     local _, newPeriods = imgui.InputFloat("Periods/Cycles", oldPeriods, 0.25, 0.25, "%.2f")
@@ -753,10 +591,6 @@ function chooseNumPeriods(settingVars)
     return oldPeriods ~= newPeriods
 end
 
--- Lets you choose the number of periods to shift over for a sinusoidal wave
--- Returns whether or not the period shift value changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function choosePeriodShift(settingVars)
     local oldShift = settingVars.periodsShift
     local _, newShift = imgui.InputFloat("Phase Shift", oldShift, 0.25, 0.25, "%.2f")
@@ -766,9 +600,6 @@ function choosePeriodShift(settingVars)
     return oldShift ~= newShift
 end
 
--- Lets you choose the place SV type
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function choosePlaceSVType(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
@@ -778,9 +609,6 @@ function choosePlaceSVType(globalVars)
     if placeType == "Still" then toolTip("Still keeps notes normal distance/spacing apart") end
 end
 
--- Lets you choose the place SV type
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseCurrentScrollGroup(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("  Timing Group: ")
@@ -815,10 +643,6 @@ function chooseCurrentScrollGroup(globalVars)
     end
 end
 
--- Lets you choose the variability scale of randomness
--- Returns whether or not the variability value changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseRandomScale(settingVars)
     local oldScale = settingVars.randomScale
     local _, newScale = imgui.InputFloat("Random Scale", oldScale, 0, 0, "%.2fx")
@@ -826,26 +650,16 @@ function chooseRandomScale(settingVars)
     return oldScale ~= newScale
 end
 
--- Lets you choose the type of random generation
--- Returns whether or not the type of random generation changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseRandomType(settingVars)
     local oldIndex = settingVars.randomTypeIndex
     settingVars.randomTypeIndex = combo("Random Type", RANDOM_TYPES, settingVars.randomTypeIndex)
     return oldIndex ~= settingVars.randomTypeIndex
 end
 
--- Lets you choose a ratio
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseRatio(menuVars)
     _, menuVars.ratio = imgui.InputFloat("Ratio", menuVars.ratio, 0, 0, "%.3f")
 end
 
--- Lets you choose the length in seconds of one RGB color cycle
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseRGBPeriod(globalVars)
     local oldRGBPeriod = globalVars.rgbPeriod
     _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", oldRGBPeriod, 0, 0,
@@ -857,16 +671,10 @@ function chooseRGBPeriod(globalVars)
     end
 end
 
--- Lets you choose the spot to displace when adding scaling SVs
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseScaleDisplaceSpot(menuVars)
     menuVars.scaleSpotIndex = combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
 end
 
--- Lets you choose how to scale SVs
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseScaleType(menuVars)
     local label = "Scale Type"
     menuVars.scaleTypeIndex = combo(label, SCALE_TYPES, menuVars.scaleTypeIndex)
@@ -877,9 +685,6 @@ function chooseScaleType(menuVars)
     if scaleType == "Relative Ratio" then chooseRatio(menuVars) end
 end
 
--- Lets you choose the "spring constant" for the snake
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseSnakeSpringConstant(globalVars)
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
@@ -893,34 +698,22 @@ function chooseSnakeSpringConstant(globalVars)
     end
 end
 
--- Lets you choose the special SV type
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseSpecialSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
 end
 
--- Lets you choose the vibrato SV type
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseVibratoSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #VIBRATO_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
 end
 
--- Lets you choose the vibrato SV type
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseVibratoMode(menuVars)
     menuVars.vibratoMode = combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
 end
 
--- Lets you choose the vibrato SV quality
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseVibratoQuality(menuVars)
     menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
     toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
@@ -955,11 +748,6 @@ function chooseCurvatureCoefficient(settingVars)
         tostring(VIBRATO_CURVATURES[settingVars.curvatureIndex]))
 end
 
--- Lets you choose the standard SV type
--- Returns whether or not the SV type changed [Boolean]
--- Parameters
---    menuVars     : list of variables used for the current menu [Table]
---    excludeCombo : whether or not to exclude the combo option from SV types [Boolean]
 function chooseStandardSVType(menuVars, excludeCombo)
     local oldIndex = menuVars.svTypeIndex
     local label = " " .. EMOTICONS[oldIndex]
@@ -969,10 +757,6 @@ function chooseStandardSVType(menuVars, excludeCombo)
     return oldIndex ~= menuVars.svTypeIndex
 end
 
--- Lets you choose the standard SV types
--- Returns whether or not any of the SV types changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseStandardSVTypes(settingVars)
     local oldIndex1 = settingVars.svType1Index
     local oldIndex2 = settingVars.svType2Index
@@ -981,10 +765,6 @@ function chooseStandardSVTypes(settingVars)
     return (oldIndex2 ~= settingVars.svType2Index) or (oldIndex1 ~= settingVars.svType1Index)
 end
 
--- Lets you choose a start and an end SV
--- Returns whether or not the start or end SVs changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseStartEndSVs(settingVars)
     if settingVars.linearlyChange == false then
         local oldValue = settingVars.startSV
@@ -994,9 +774,6 @@ function chooseStartEndSVs(settingVars)
     return swappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
 end
 
--- Lets you choose a start SV percent
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseStartSVPercent(settingVars)
     local label1 = "Start SV %"
     if settingVars.linearlyChange then label1 = label1 .. " (start)" end
@@ -1011,9 +788,6 @@ function chooseStartSVPercent(settingVars)
     _, settingVars.svPercent2 = imgui.InputFloat(label2, settingVars.svPercent2, 1, 1, "%.2f%%")
 end
 
--- Lets you choose the still type
--- Parameters
---    menuVars : list of variables used for the current menu [Table]
 function chooseStillType(menuVars)
     local stillType = STILL_TYPES[menuVars.stillTypeIndex]
     local dontChooseDistance = stillType == "No" or
@@ -1048,10 +822,6 @@ function chooseStillBehavior(menuVars)
     menuVars.stillBehavior = combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
 end
 
--- Lets you choose the duration of a stutter SV
--- Returns whether or not the duration changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseStutterDuration(settingVars)
     local oldDuration = settingVars.stutterDuration
     if settingVars.controlLastSV then oldDuration = 100 - oldDuration end
@@ -1063,10 +833,6 @@ function chooseStutterDuration(settingVars)
     return durationChanged
 end
 
--- Lets you choose the number of stutters per section
--- Returns whether or not the number of stutters changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseStuttersPerSection(settingVars)
     local oldNumber = settingVars.stuttersPerSection
     local _, newNumber = imgui.InputInt("Stutters", oldNumber, 1, 1)
@@ -1076,9 +842,6 @@ function chooseStuttersPerSection(settingVars)
     return oldNumber ~= newNumber
 end
 
--- Lets you choose the style theme of the plugin
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseStyleTheme(globalVars)
     local oldStyleTheme = globalVars.styleThemeIndex
     globalVars.styleThemeIndex = combo("Style Theme", STYLE_THEMES, oldStyleTheme)
@@ -1087,10 +850,6 @@ function chooseStyleTheme(globalVars)
     end
 end
 
--- Lets you choose the behavior of SVs
--- Returns whether or not the behavior changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseSVBehavior(settingVars)
     local swapButtonPressed = imgui.Button("Swap", SECONDARY_BUTTON_SIZE)
     toolTip("Switch between slow down/speed up")
@@ -1106,10 +865,6 @@ function chooseSVBehavior(settingVars)
     return oldBehaviorIndex ~= settingVars.behaviorIndex
 end
 
--- Lets you choose the number of SV points per quarter period of a sinusoidal wave
--- Returns whether or not the number of SV points changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseSVPerQuarterPeriod(settingVars)
     local oldPoints = settingVars.svsPerQuarterPeriod
     local _, newPoints = imgui.InputInt("SV Points##perQuarter", oldPoints, 1, 1)
@@ -1120,11 +875,6 @@ function chooseSVPerQuarterPeriod(settingVars)
     return oldPoints ~= newPoints
 end
 
--- Lets you choose the number of SV points
--- Returns whether or not the number of SV points changed [Boolean]
--- Parameters
---    settingVars  : list of variables used for the current menu [Table]
---   svPointsForce : number of SV points to force [Int or nil]
 function chooseSVPoints(settingVars, svPointsForce)
     if svPointsForce then
         settingVars.svPoints = svPointsForce
@@ -1137,9 +887,6 @@ function chooseSVPoints(settingVars, svPointsForce)
     return oldPoints ~= settingVars.svPoints
 end
 
--- Lets you choose whether or not the plugin will do things upscroll
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function chooseUpscroll(globalVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Scroll Direction:")
@@ -1158,17 +905,11 @@ function chooseUpscroll(globalVars)
     end
 end
 
--- Lets you choose whether to use distance or not
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseUseDistance(settingVars)
     local label = "Use distance for start SV"
     _, settingVars.useDistance = imgui.Checkbox(label, settingVars.useDistance)
 end
 
--- Lets you choose whether to use distance or not
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function chooseHand(settingVars)
     local label = "Add teleport before note"
     _, settingVars.teleportBeforeHand = imgui.Checkbox(label, settingVars.teleportBeforeHand)
@@ -1240,10 +981,6 @@ function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
     return newValue, oldValue ~= newValue
 end
 
--- sum shit idk
--- Returns whether or not the start or end SVs changed [Boolean]
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
     digits = digits or 2
     suffix = suffix or "x"

@@ -1,4 +1,3 @@
--- Creates the reverse scroll menu
 function reverseScrollMenu()
     local menuVars = getMenuVars("reverseScroll")
     chooseDistance(menuVars)

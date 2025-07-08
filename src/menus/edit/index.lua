@@ -20,9 +20,7 @@ EDIT_SV_TOOLS = { -- tools for editing SVs
     "Vertical Shift"
 }
 
--- Creates the "Edit SVs" tab
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
+
 function editSVTab(globalVars)
     if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
     chooseEditTool(globalVars)

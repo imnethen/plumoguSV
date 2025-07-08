@@ -1,8 +1,3 @@
--- Creates the export button for Place SV settings
--- Parameters
---    globalVars  : list of variables used globally across all menus [Table]
---    menuVars    : list of setting variables for the current menu [Table]
---    settingVars : list of setting variables for the current sv type [Table]
 function exportPlaceSVButton(globalVars, menuVars, settingVars)
     local buttonText = "Export current settings for current menu"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
@@ -176,10 +171,6 @@ function exportPlaceSVButton(globalVars, menuVars, settingVars)
     globalVars.exportData = table.concat(exportList, "|")
 end
 
--- Creates the export button for exporting as custom SVs
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
---    menuVars   : list of setting variables for the current menu [Table]
 function exportCustomSVButton(globalVars, menuVars)
     local buttonText = "Export current SVs as custom SV data"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
@@ -189,9 +180,6 @@ function exportCustomSVButton(globalVars, menuVars)
     globalVars.exportCustomSVData = table.concat(multipliersCopy, " ")
 end
 
--- Creates the import button for Place SV settings
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function importPlaceSVButton(globalVars)
     local buttonText = "Import settings from pasted data"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
