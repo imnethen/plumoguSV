@@ -141,10 +141,11 @@ DEFAULT_STARTING_MENU_VARS = {
 ---Gets the current menu's variables.
 ---@param menuType string The menu type.
 ---@return table
-function getMenuVars(menuType)
+function getMenuVars(menuType, optionalLabel)
+    optionalLabel = optionalLabel or ""
     local menuVars = DEFAULT_STARTING_MENU_VARS[menuType]
 
-    local labelText = menuType .. "Menu"
+    local labelText = menuType .. optionalLabel .. "Menu"
     getVariables(labelText, menuVars)
     return menuVars
 end

@@ -54,7 +54,7 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Flicker duration option~~
 * ~~Fix align timing lines bug~~
 * ~~Finish snap editor~~
-* Customizable default page settings
+* ~~Customizable default page settings~~
 * Preset menu
 * ~~Refactor custom theme settings~~
 * ~~Add import/export custom theme~~

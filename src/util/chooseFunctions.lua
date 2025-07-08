@@ -1035,3 +1035,35 @@ function colorInput(customStyle, parameterName, label, tooltipText)
     if (tooltipText) then toolTip(tooltipText) end
     return oldCode ~= customStyle[parameterName]
 end
+
+function chooseVibratoSides(menuVars)
+    imgui.AlignTextToFramePadding()
+    imgui.Dummy(vector.New(27, 0))
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.Text("Sides:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("1", menuVars.sides == 1) then
+        menuVars.sides = 1
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("2", menuVars.sides == 2) then
+        menuVars.sides = 2
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("3", menuVars.sides == 3) then
+        menuVars.sides = 3
+    end
+end
+
+function chooseConvertSVSSFDirection(menuVars)
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Direction:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("SSF -> SV", not menuVars.conversionDirection) then
+        menuVars.conversionDirection = false
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("SV -> SSF", menuVars.conversionDirection) then
+        menuVars.conversionDirection = true
+    end
+end
