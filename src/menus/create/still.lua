@@ -1,7 +1,7 @@
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function placeStillSVMenu(globalVars)
-    exportImportSettingsButton(globalVars)
+function placeStillSVMenu()
+    exportImportSettingsButton()
     local menuVars = getMenuVars("placeStill")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
@@ -11,7 +11,7 @@ function placeStillSVMenu(globalVars)
     local settingVars = getSettingVars(currentSVType, "Still")
     if globalVars.showExportImportMenu then
         --saveVariables("placeStillMenu", menuVars)
-        exportImportSettingsMenu(globalVars, menuVars, settingVars)
+        exportImportSettingsMenu(menuVars, settingVars)
         return
     end
     imgui.Text("Still Settings:")
@@ -24,7 +24,7 @@ function placeStillSVMenu(globalVars)
 
     addSeparator()
     needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
-    if needSVUpdate then updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false) end
+    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, false) end
 
     startNextWindowNotCollapsed("svInfoAutoOpen")
     makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
@@ -32,7 +32,7 @@ function placeStillSVMenu(globalVars)
 
     addSeparator()
     menuVars.settingVars = settingVars
-    simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, globalVars, menuVars)
+    simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, menuVars)
 
     saveVariables(currentSVType .. "StillSettings", settingVars)
     saveVariables("placeStillMenu", menuVars)

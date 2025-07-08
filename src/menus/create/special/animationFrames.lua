@@ -1,7 +1,7 @@
 -- Parameters
 --    globalVars  : list of variables used globally across all menus [Table]
 --    settingVars : list of variables used for the current menu [Table]
-function animationFramesSetupMenu(globalVars, settingVars)
+function animationFramesSetupMenu(settingVars)
     chooseMenuStep(settingVars)
     if settingVars.menuStep == 1 then
         imgui.SameLine(0, SAMELINE_SPACING)
@@ -26,7 +26,7 @@ function animationFramesSetupMenu(globalVars, settingVars)
         chooseFrameTimeData(settingVars)
         imgui.NextColumn()
         chooseCurrentFrame(settingVars)
-        drawCurrentFrame(globalVars, settingVars)
+        drawCurrentFrame(settingVars)
         imgui.Columns(1)
         local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.x + 1.5 * SAMELINE_SPACING), 1 }
         imgui.invisibleButton("sv isnt a real skill", invisibleButtonSize)

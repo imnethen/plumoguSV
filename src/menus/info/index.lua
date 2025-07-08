@@ -1,4 +1,4 @@
-function infoTab(globalVars)
+function infoTab()
     imgui.SeparatorText("Welcome to plumoguSV!")
     imgui.TextWrapped("This plugin is your one-stop shop for all of \nyour SV needs. Using it is quick and easy:")
     addPadding()
@@ -26,7 +26,7 @@ function infoTab(globalVars)
         imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
     end
     if (state.GetValue("showSettingsWindow")) then
-        showPluginSettingsWindow(globalVars)
+        showPluginSettingsWindow()
     end
     if (imgui.Button("Click Here To Get Map Stats", ACTION_BUTTON_SIZE)) then
         local currentTg = state.SelectedScrollGroupId

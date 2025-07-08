@@ -1,8 +1,7 @@
 ---Calculates distance vs. time values of a note, given a set of SV values.
----@param globalVars table A list of variables used globally across all menus.
 ---@param svValues number[]
 ---@return number[]
-function calculateDistanceVsTime(globalVars, svValues)
+function calculateDistanceVsTime(svValues)
     local distance = 0
     local multiplier = 1
     if globalVars.upscroll then multiplier = -1 end

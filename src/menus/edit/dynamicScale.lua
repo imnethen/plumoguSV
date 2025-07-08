@@ -1,4 +1,4 @@
-function dynamicScaleMenu(globalVars)
+function dynamicScaleMenu()
     local menuVars = getMenuVars("dynamicScale")
     local numNoteTimes = #menuVars.noteTimes
     imgui.Text(#menuVars.noteTimes .. " note times assigned to scale SVs between")
@@ -34,7 +34,7 @@ function dynamicScaleMenu(globalVars)
 
     local settingVars = getSettingVars(currentSVType, "DynamicScale")
     needSVUpdate = showSettingsMenu(currentSVType, settingVars, true, numSVPoints) or needSVUpdate
-    if needSVUpdate then updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, true) end
+    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, true) end
 
     startNextWindowNotCollapsed("svInfoAutoOpen")
     makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,

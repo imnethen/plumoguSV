@@ -6,8 +6,8 @@ SELECT_TOOLS = {
     "Bookmark",
 }
 
-function selectTab(globalVars)
-    chooseSelectTool(globalVars)
+function selectTab()
+    chooseSelectTool()
     addSeparator()
     local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
     if toolName == "Alternating" then selectAlternatingMenu() end

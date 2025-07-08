@@ -6,12 +6,12 @@ CREATE_TYPES = { -- general categories of SVs to place
 }
 
 
-function createSVTab(globalVars)
-    if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
-    choosePlaceSVType(globalVars)
+function createSVTab()
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
+    choosePlaceSVType()
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
-    if placeType == "Standard" then placeStandardSVMenu(globalVars) end
-    if placeType == "Special" then placeSpecialSVMenu(globalVars) end
-    if placeType == "Still" then placeStillSVMenu(globalVars) end
-    if placeType == "Vibrato" then placeVibratoSVMenu(globalVars, false) end
+    if placeType == "Standard" then placeStandardSVMenu() end
+    if placeType == "Special" then placeSpecialSVMenu() end
+    if placeType == "Still" then placeStillSVMenu() end
+    if placeType == "Vibrato" then placeVibratoSVMenu(false) end
 end

@@ -5,16 +5,8 @@
 --    func       : function to execute once button is pressed [Function]
 --    globalVars : list of variables used globally across all menus [Table]
 --    menuVars   : list of variables used for the current menu [Table]
-function button(text, size, func, globalVars, menuVars)
+function button(text, size, func, menuVars)
     if not imgui.Button(text, size) then return end
-    if globalVars and menuVars then
-        func(globalVars, menuVars)
-        return
-    end
-    if globalVars then
-        func(globalVars)
-        return
-    end
     if menuVars then
         func(menuVars)
         return

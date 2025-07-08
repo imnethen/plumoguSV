@@ -9,7 +9,7 @@ function provideBezierWebsiteLink(settingVars)
         local regex = "(-?%d*%.?%d+)"
         local values = {}
         for value, _ in string.gmatch(bezierText, regex) do
-            table.insert(values, tonumber(value))
+            table.insert(values, math.toNumber(value))
         end
         if #values >= 4 then
             settingVars.p1 = vector.New(values[1], values[2])

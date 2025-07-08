@@ -1,4 +1,4 @@
-function saveSettingPropertiesButton(globalVars, settingVars, label)
+function saveSettingPropertiesButton(settingVars, label)
     local saveButtonClicked = imgui.Button("Save##setting" .. label)
     imgui.Separator()
     if (not saveButtonClicked) then return end
@@ -7,13 +7,13 @@ function saveSettingPropertiesButton(globalVars, settingVars, label)
     if (not globalVars.defaultProperties.settings) then globalVars.defaultProperties.settings = {} end
     globalVars.defaultProperties.settings[label] = settingVars
     loadDefaultProperties(globalVars.defaultProperties)
-    saveAndSyncGlobals(globalVars)
+    write()
 
     print("i!",
         "Default setting properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
 end
 
-function saveMenuPropertiesButton(globalVars, menuVars, label)
+function saveMenuPropertiesButton(menuVars, label)
     local saveButtonClicked = imgui.Button("Save##menu" .. label)
     imgui.Separator()
     if (not saveButtonClicked) then return end
@@ -22,13 +22,13 @@ function saveMenuPropertiesButton(globalVars, menuVars, label)
     if (not globalVars.defaultProperties.menu) then globalVars.defaultProperties.menu = {} end
     globalVars.defaultProperties.menu[label] = menuVars
     loadDefaultProperties(globalVars.defaultProperties)
-    saveAndSyncGlobals(globalVars)
+    write()
 
     print("i!",
         "Default menu properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
 end
 
-function showDefaultPropertiesSettings(globalVars)
+function showDefaultPropertiesSettings()
     imgui.SeparatorText("Create Tab Settings")
 
     if (imgui.CollapsingHeader("General Standard Settings")) then
@@ -38,7 +38,7 @@ function showDefaultPropertiesSettings(globalVars)
         addSeparator()
         chooseInterlace(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "placeStandard")
+        saveMenuPropertiesButton(menuVars, "placeStandard")
         saveVariables("placeStandardPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("General Special Settings")) then
@@ -46,7 +46,7 @@ function showDefaultPropertiesSettings(globalVars)
 
         chooseSpecialSVType(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "placeSpecial")
+        saveMenuPropertiesButton(menuVars, "placeSpecial")
         saveVariables("placeSpecialPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("General Still Settings")) then
@@ -59,7 +59,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseStillType(menuVars)
         chooseInterlace(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "placeStill")
+        saveMenuPropertiesButton(menuVars, "placeStill")
         saveVariables("placeStillPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("General Vibrato Settings")) then
@@ -74,7 +74,7 @@ function showDefaultPropertiesSettings(globalVars)
             chooseVibratoSides(menuVars)
         end
 
-        saveMenuPropertiesButton(globalVars, menuVars, "placeVibrato")
+        saveMenuPropertiesButton(menuVars, "placeVibrato")
         saveVariables("placeVibratoPropertyMenu", menuVars)
     end
 
@@ -86,7 +86,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseDistance(menuVars)
         chooseHand(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "addTeleport")
+        saveMenuPropertiesButton(menuVars, "addTeleport")
         saveVariables("addTeleportPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Change Group Settings")) then
@@ -96,7 +96,7 @@ function showDefaultPropertiesSettings(globalVars)
         imgui.SameLine(0, SAMELINE_SPACING)
         _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "changeGroup")
+        saveMenuPropertiesButton(menuVars, "changeGroup")
         saveVariables("changeGroupPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Convert SV <-> SSF Settings")) then
@@ -104,7 +104,7 @@ function showDefaultPropertiesSettings(globalVars)
 
         chooseConvertSVSSFDirection(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "convertSVSSF")
+        saveMenuPropertiesButton(menuVars, "convertSVSSF")
         saveVariables("convertSVSSFPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Copy Settings")) then
@@ -117,7 +117,7 @@ function showDefaultPropertiesSettings(globalVars)
         imgui.SameLine(0, SAMELINE_SPACING + 3.5)
         _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
 
-        saveMenuPropertiesButton(globalVars, menuVars, "copy")
+        saveMenuPropertiesButton(menuVars, "copy")
         saveVariables("copyPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Displace Note Settings")) then
@@ -126,7 +126,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseVaryingDistance(menuVars)
         chooseLinearlyChangeDist(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "displaceNote")
+        saveMenuPropertiesButton(menuVars, "displaceNote")
         saveVariables("displaceNotePropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Displace View Settings")) then
@@ -134,7 +134,7 @@ function showDefaultPropertiesSettings(globalVars)
 
         chooseDistance(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "displaceView")
+        saveMenuPropertiesButton(menuVars, "displaceView")
         saveVariables("displaceViewPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Flicker Settings")) then
@@ -146,7 +146,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseNumFlickers(menuVars)
         if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
 
-        saveMenuPropertiesButton(globalVars, menuVars, "flicker")
+        saveMenuPropertiesButton(menuVars, "flicker")
         saveVariables("flickerPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Reverse Scroll Settings")) then
@@ -155,7 +155,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseDistance(menuVars)
         helpMarker("Height at which reverse scroll notes are hit")
 
-        saveMenuPropertiesButton(globalVars, menuVars, "reverseScroll")
+        saveMenuPropertiesButton(menuVars, "reverseScroll")
         saveVariables("reverseScrollPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Scale (Displace) Settings")) then
@@ -164,7 +164,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseScaleDisplaceSpot(menuVars)
         chooseScaleType(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "scaleDisplace")
+        saveMenuPropertiesButton(menuVars, "scaleDisplace")
         saveVariables("scaleDisplacePropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Scale (Multiply) Settings")) then
@@ -172,7 +172,7 @@ function showDefaultPropertiesSettings(globalVars)
 
         chooseScaleType(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "scaleMultiply")
+        saveMenuPropertiesButton(menuVars, "scaleMultiply")
         saveVariables("scaleMultiplyPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Vertical Shift Settings")) then
@@ -180,7 +180,7 @@ function showDefaultPropertiesSettings(globalVars)
 
         chooseConstantShift(menuVars, 0)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "verticalShift")
+        saveMenuPropertiesButton(menuVars, "verticalShift")
         saveVariables("verticalShiftPropertyMenu", menuVars)
     end
 
@@ -196,7 +196,7 @@ function showDefaultPropertiesSettings(globalVars)
         imgui.SameLine(0, SAMELINE_SPACING + 3.5)
         _, menuVars.deleteTable[4] = imgui.Checkbox("Delete Bookmarks", menuVars.deleteTable[4])
 
-        saveMenuPropertiesButton(globalVars, menuVars, "delete")
+        saveMenuPropertiesButton(menuVars, "delete")
         saveVariables("deletePropertyMenu", menuVars)
     end
 
@@ -208,7 +208,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseEvery(menuVars)
         chooseOffset(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "selectAlternating")
+        saveMenuPropertiesButton(menuVars, "selectAlternating")
         saveVariables("selectAlternatingPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Select By Snap Settings")) then
@@ -216,7 +216,7 @@ function showDefaultPropertiesSettings(globalVars)
 
         chooseSnap(menuVars)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "selectBySnap")
+        saveMenuPropertiesButton(menuVars, "selectBySnap")
         saveVariables("selectBySnapPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Select Chord Size Settings")) then
@@ -229,7 +229,7 @@ function showDefaultPropertiesSettings(globalVars)
         imgui.SameLine(0, SAMELINE_SPACING)
         _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "selectChordSize")
+        saveMenuPropertiesButton(menuVars, "selectChordSize")
         saveVariables("selectChordSizePropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Select Note Type Settings")) then
@@ -239,7 +239,7 @@ function showDefaultPropertiesSettings(globalVars)
         imgui.SameLine(0, SAMELINE_SPACING)
         _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
 
-        saveMenuPropertiesButton(globalVars, menuVars, "selectNoteType")
+        saveMenuPropertiesButton(menuVars, "selectNoteType")
         saveVariables("selectNoteTypePropertyMenu", menuVars)
     end
 
@@ -252,7 +252,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Linear")
+        saveSettingPropertiesButton(settingVars, "Linear")
         saveVariables("LinearPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Exponential Settings")) then
@@ -276,7 +276,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Exponential")
+        saveSettingPropertiesButton(settingVars, "Exponential")
         saveVariables("ExponentialPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Bezier Settings")) then
@@ -289,7 +289,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Bezier")
+        saveSettingPropertiesButton(settingVars, "Bezier")
         saveVariables("BezierPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Hermite Settings")) then
@@ -301,7 +301,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Hermite")
+        saveSettingPropertiesButton(settingVars, "Hermite")
         saveVariables("HermitePropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Sinusoidal Settings")) then
@@ -316,7 +316,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseSVPerQuarterPeriod(settingVars)
         chooseFinalSV(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Sinusoidal")
+        saveSettingPropertiesButton(settingVars, "Sinusoidal")
         saveVariables("SinusoidalPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Circular Settings")) then
@@ -330,7 +330,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseFinalSV(settingVars)
         chooseNoNormalize(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Circular")
+        saveSettingPropertiesButton(settingVars, "Circular")
         saveVariables("CircularPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Random Settings")) then
@@ -347,7 +347,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseFinalSV(settingVars)
         chooseNoNormalize(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Random")
+        saveSettingPropertiesButton(settingVars, "Random")
         saveVariables("RandomPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Chinchilla Settings")) then
@@ -361,7 +361,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Chinchilla")
+        saveSettingPropertiesButton(settingVars, "Chinchilla")
         saveVariables("ChinchillaPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Code Settings")) then
@@ -372,7 +372,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Code")
+        saveSettingPropertiesButton(settingVars, "Code")
         saveVariables("CodePropertySettings", settingVars)
     end
 
@@ -391,7 +391,7 @@ function showDefaultPropertiesSettings(globalVars)
         settingsChanged = chooseAverageSV(settingVars) or settingsChanged
         settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Stutter")
+        saveSettingPropertiesButton(settingVars, "Stutter")
         saveVariables("StutterPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Teleport Stutter Settings")) then
@@ -409,7 +409,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseUseDistance(settingVars)
         chooseLinearlyChange(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "TeleportStutter")
+        saveSettingPropertiesButton(settingVars, "TeleportStutter")
         saveVariables("TeleportStutterPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Automate Settings")) then
@@ -427,7 +427,7 @@ function showDefaultPropertiesSettings(globalVars)
             imgui.PopItemWidth()
         end
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Automate")
+        saveSettingPropertiesButton(settingVars, "Automate")
         saveVariables("AutomatePropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Penis Settings")) then
@@ -441,7 +441,7 @@ function showDefaultPropertiesSettings(globalVars)
         _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
             settingVars.bCurvature .. "%%")
 
-        saveSettingPropertiesButton(globalVars, settingVars, "Penis")
+        saveSettingPropertiesButton(settingVars, "Penis")
         saveVariables("PenisPropertySettings", settingVars)
     end
 
@@ -452,7 +452,7 @@ function showDefaultPropertiesSettings(globalVars)
 
         swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "LinearVibratoSV")
+        saveSettingPropertiesButton(settingVars, "LinearVibratoSV")
         saveVariables("LinearVibratoSVPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Exponential Vibrato SV Settings")) then
@@ -461,7 +461,7 @@ function showDefaultPropertiesSettings(globalVars)
         swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseCurvatureCoefficient(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "ExponentialVibratoSV")
+        saveSettingPropertiesButton(settingVars, "ExponentialVibratoSV")
         saveVariables("ExponentialVibratoSVPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Sinusoidal Vibrato SV Settings")) then
@@ -472,7 +472,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "SinusoidalVibratoSV")
+        saveSettingPropertiesButton(settingVars, "SinusoidalVibratoSV")
         saveVariables("SinusoidalVibratoSVPropertySettings", settingVars)
     end
 
@@ -484,7 +484,7 @@ function showDefaultPropertiesSettings(globalVars)
         swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
 
-        saveSettingPropertiesButton(globalVars, settingVars, "LinearVibratoSSF")
+        saveSettingPropertiesButton(settingVars, "LinearVibratoSSF")
         saveVariables("LinearVibratoSSFPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Exponential Vibrato SSF Settings")) then
@@ -494,7 +494,7 @@ function showDefaultPropertiesSettings(globalVars)
         swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
         chooseCurvatureCoefficient(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "ExponentialVibratoSSF")
+        saveSettingPropertiesButton(settingVars, "ExponentialVibratoSSF")
         saveVariables("ExponentialVibratoSSFPropertySettings", settingVars)
     end
     if (imgui.CollapsingHeader("Sinusoidal Vibrato SSF Settings")) then
@@ -506,7 +506,7 @@ function showDefaultPropertiesSettings(globalVars)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
 
-        saveSettingPropertiesButton(globalVars, settingVars, "SinusoidalVibratoSSF")
+        saveSettingPropertiesButton(settingVars, "SinusoidalVibratoSSF")
         saveVariables("SinusoidalVibratoSSFPropertySettings", settingVars)
     end
 end

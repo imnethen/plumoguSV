@@ -1,52 +1,43 @@
----Returns the current global variables, as set in state.
----@return table globalVars
-function loadGlobalVars()
-    return {
-        stepSize = state.GetValue("global_stepSize") or 5,
-        dontReplaceSV = state.GetValue("global_dontReplaceSV") or false,
-        upscroll = state.GetValue("global_upscroll") or false,
-        colorThemeIndex = state.GetValue("global_colorThemeIndex") or 9,
-        styleThemeIndex = state.GetValue("global_styleThemeIndex") or 1,
-        effectFPS = state.GetValue("global_effectFPS") or 90,
-        cursorTrailIndex = state.GetValue("global_cursorTrailIndex") or 1,
-        cursorTrailShapeIndex = state.GetValue("global_cursorTrailShapeIndex") or 1,
-        cursorTrailPoints = state.GetValue("global_cursorTrailPoints") or 10,
-        cursorTrailSize = state.GetValue("global_cursorTrailSize") or 5,
-        snakeSpringConstant = state.GetValue("global_snakeSpringConstant") or 1,
-        cursorTrailGhost = state.GetValue("global_cursorTrailGhost") or false,
-        rgbPeriod = state.GetValue("global_rgbPeriod") or 2,
-        drawCapybara = state.GetValue("global_drawCapybara") or false,
-        drawCapybara2 = state.GetValue("global_drawCapybara2") or false,
-        drawCapybara312 = state.GetValue("global_drawCapybara312") or false,
-        selectTypeIndex = 1,
-        placeTypeIndex = 1,
-        editToolIndex = 1,
-        showExportImportMenu = false,
-        importData = "",
-        exportCustomSVData = "",
-        exportData = "",
-        scrollGroupIndex = 1,
-        hideSVInfo = state.GetValue("global_hideSVInfo") or false,
-        showVibratoWidget = state.GetValue("global_showVibratoWidget") or false,
-        showNoteDataWidget = state.GetValue("global_showNoteDataWidget") or false,
-        showMeasureDataWidget = state.GetValue("global_showMeasureDataWidget") or false,
-        ignoreNotesOutsideTg = state.GetValue("global_ignoreNotes") or false,
-        advancedMode = state.GetValue("global_advancedMode") or false,
-        hideAutomatic = state.GetValue("global_hideAutomatic") or false,
-        pulseCoefficient = state.GetValue("global_pulseCoefficient") or 0,
-        pulseColor = state.GetValue("global_pulseColor") or vector4(1),
-        useCustomPulseColor = state.GetValue("global_useCustomPulseColor") or false,
-        hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST,
-        customStyle = state.GetValue("global_customStyle") or {},
-        dontPrintCreation = state.GetValue("global_dontPrintCreation") or false,
-        equalizeLinear = state.GetValue("global_equalizeLinear") or false,
-        defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
-    }
-end
+globalVars = {
+    stepSize = 5,
+    dontReplaceSV = false,
+    upscroll = false,
+    colorThemeIndex = 9,
+    styleThemeIndex = 1,
+    effectFPS = 90,
+    cursorTrailIndex = 1,
+    cursorTrailShapeIndex = 1,
+    cursorTrailPoints = 10,
+    cursorTrailSize = 5,
+    snakeSpringConstant = 1,
+    cursorTrailGhost = false,
+    rgbPeriod = 2,
+    drawCapybara = false,
+    drawCapybara2 = false,
+    drawCapybara312 = false,
+    selectTypeIndex = 1,
+    placeTypeIndex = 1,
+    editToolIndex = 1,
+    showExportImportMenu = false,
+    importData = "",
+    exportCustomSVData = "",
+    exportData = "",
+    scrollGroupIndex = 1,
+    hideSVInfo = false,
+    showVibratoWidget = false,
+    showNoteDataWidget = false,
+    showMeasureDataWidget = false,
+    ignoreNotesOutsideTg = false,
+    advancedMode = false,
+    hideAutomatic = false,
+    pulseCoefficient = 0,
+    pulseColor = {},
+    useCustomPulseColor = false,
+    hotkeyList = {},
+    customStyle = {},
+    dontPrintCreation = false,
+    equalizeLinear = false,
+    defaultProperties = { settings = {}, menu = {} }
+}
 
----Sets the state of all global variables, and saves them to the `config.yaml` file.
----@param globalVars table
-function saveAndSyncGlobals(globalVars)
-    write(globalVars)
-    syncGlobalVarsState(globalVars)
-end
+DEFAULT_GLOBAL_VARS = table.duplicate(globalVars)

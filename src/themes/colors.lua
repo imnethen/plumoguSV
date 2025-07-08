@@ -626,7 +626,7 @@ function setInvertedIncognitoColors()
 end
 
 -- Sets plugin colors to the "Classic" theme
-function setCustomColors(globalVars)
+function setCustomColors()
     local borderColor = vector.New(0.81, 0.88, 1.00, 0.30)
     if (globalVars.customStyle == nil) then
         return setClassicColors()

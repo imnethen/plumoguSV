@@ -4,14 +4,11 @@ function draw()
     state.SetValue("computableInputFloatIndex", 1)
     state.IsWindowHovered = imgui.IsWindowHovered()
 
-    local globalVars = loadGlobalVars()
-    getVariables("globalVars", globalVars)
-
-    drawCapybara(globalVars)
-    drawCapybara2(globalVars)
-    drawCapybara312(globalVars)
-    drawCursorTrail(globalVars)
-    setPluginAppearance(globalVars)
+    drawCapybara()
+    drawCapybara2()
+    drawCapybara312()
+    drawCursorTrail()
+    setPluginAppearance()
 
     startNextWindowNotCollapsed("plumoguSVAutoOpen")
     imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
@@ -19,14 +16,14 @@ function draw()
 
     imgui.BeginTabBar("SV tabs")
     for i = 1, #TAB_MENUS do
-        createMenuTab(globalVars, TAB_MENUS[i])
+        createMenuTab(TAB_MENUS[i])
     end
     imgui.EndTabBar()
 
     if (globalVars.showVibratoWidget) then
         imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
         imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-        placeVibratoSVMenu(globalVars, true)
+        placeVibratoSVMenu(true)
         imgui.End()
     end
     if (globalVars.showNoteDataWidget) then
@@ -38,8 +35,7 @@ function draw()
 
     imgui.End()
 
-    saveVariables("globalVars", globalVars)
-    pulseController(globalVars)
+    pulseController()
 
     if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
         local tgId = state.SelectedHitObjects[1].TimingGroup
@@ -107,7 +103,7 @@ function renderMeasureDataWidget()
     state.SetValue("oldEndOffset", endOffset)
 end
 
-function pulseController(globalVars)
+function pulseController()
     local prevVal = state.GetValue("prevVal", 0)
     local colStatus = state.GetValue("colStatus", 0)
 
@@ -133,7 +129,7 @@ function pulseController(globalVars)
 
     colStatus = colStatus * (globalVars.pulseCoefficient or 0)
 
-    local borderColor = state.GetValue("global_baseBorderColor") or vector4(1)
+    local borderColor = state.GetValue("baseBorderColor") or vector4(1)
     local negatedBorderColor = vector4(1) - borderColor
 
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor

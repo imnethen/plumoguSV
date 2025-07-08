@@ -7,19 +7,18 @@ TAB_MENUS = { -- names of the tab menus
 }
 
 ---Creates a menu tab.
----@param globalVars table
 ---@param tabName string
-function createMenuTab(globalVars, tabName)
+function createMenuTab(tabName)
     if not imgui.BeginTabItem(tabName) then return end
     addPadding()
     if tabName == "Info" then
-        infoTab(globalVars)
+        infoTab()
     else
         state.SetValue("showSettingsWindow", false)
     end
-    if tabName == "Select" then selectTab(globalVars) end
-    if tabName == "Create" then createSVTab(globalVars) end
-    if tabName == "Edit" then editSVTab(globalVars) end
-    if tabName == "Delete" then deleteTab(globalVars) end
+    if tabName == "Select" then selectTab() end
+    if tabName == "Create" then createSVTab() end
+    if tabName == "Edit" then editSVTab() end
+    if tabName == "Delete" then deleteTab() end
     imgui.EndTabItem()
 end

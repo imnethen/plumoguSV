@@ -58,7 +58,7 @@ function clearCopiedItems(menuVars)
     menuVars.copiedBMs = {}
 end
 
-function pasteItems(globalVars, menuVars)
+function pasteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end
     local startOffset = offsets[1]

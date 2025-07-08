@@ -1,3 +1,527 @@
+function math.cubicBezier(p2, p3, t)
+    return 3 * t * (1 - t) ^ 2 * p2 + 3 * t ^ 2 * (1 - t) * p3 + t ^ 3
+end
+function math.quadraticBezier(p2, t)
+    return 2 * t * (1 - t) * p2 + t ^ 2
+end
+---Returns n choose r, or nCr.
+---@param n integer
+---@param r integer
+---@return integer
+function math.binom(n, r)
+    return math.factorial(n) / (math.factorial(r)) * math.factorial(n - r)
+end
+---Restricts a number to be within a chosen bound.
+---@param number number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.clamp(number, lowerBound, upperBound)
+    if number < lowerBound then return lowerBound end
+    if number > upperBound then return upperBound end
+    return number
+end
+---Returns the factorial of an integer.
+---@param n integer
+---@return integer
+function math.factorial(n)
+    local product = 1
+    for i = 2, n do
+        product = product * i
+    end
+    return product
+end
+---Forces a number to have a quarterly decimal part.
+---@param number number
+---@return number
+function math.quarter(number)
+    return math.round(number * 4) / 4
+end
+---Evaluates a simplified one-dimensional hermite related (?) spline for SV purposes
+---@param m1 number
+---@param m2 number
+---@param y2 number
+---@param t number
+---@return number
+function math.hermite(m1, m2, y2, t)
+    local a = m1 + m2 - 2 * y2
+    local b = 3 * y2 - 2 * m1 - m2
+    local c = m1
+    return a * t ^ 3 + b * t ^ 2 + c * t
+end
+---Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+function math.interpolateCircle(p1, p2, p3)
+    local mtrx = {
+        vector.Table(2 * (p2 - p1)),
+        vector.Table(2 * (p3 - p1))
+    }
+    local vctr = {
+        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
+        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
+    }
+    h, k = matrix.solve(mtrx, vctr)
+    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
+    return table.unpack({ h, k, r })
+end
+---Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+function math.interpolateQuadratic(p1, p2, p3)
+    local mtrx = {
+        (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
+        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
+    }
+    local vctr = {
+        (p2 - p1).y,
+        (p3 - p1).y
+    }
+    a, b = matrix.solve(mtrx, vctr)
+    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
+    return table.unpack({ a, b, c })
+end
+---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
+---@param weight number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.lerp(weight, lowerBound, upperBound)
+    return upperBound * weight + lowerBound * (1 - weight)
+end
+---Returns the weight of a number between `lowerBound` and `upperBound`.
+---@param num number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.inverseLerp(num, lowerBound, upperBound)
+    return (num - lowerBound) / (upperBound - lowerBound)
+end
+function matrix.findZeroRow(mtrx)
+    for idx, row in pairs(mtrx) do
+        local zeroRow = true
+        for _, num in pairs(row) do
+            if (num ~= 0) then
+                zeroRow = false
+                goto continue
+            end
+        end
+        ::continue::
+        if (zeroRow) then return idx end
+    end
+    return -1
+end
+function matrix.rowLinComb(mtrx, rowIdx1, rowIdx2, row2Factor)
+    for k, v in pairs(mtrx[rowIdx1]) do
+        mtrx[rowIdx1][k] = v + mtrx[rowIdx2][k] * row2Factor
+    end
+end
+function matrix.scaleRow(mtrx, rowIdx, factor)
+    for k, v in pairs(mtrx[rowIdx]) do
+        mtrx[rowIdx][k] = v * factor
+    end
+end
+---Given a square matrix A and equally-sized vector B, returns a vector x such that Ax=B.
+---@param mtrx number[][]
+---@param vctr number[]
+function matrix.solve(mtrx, vctr)
+    if (#vctr ~= #mtrx) then return end
+    local augMtrx = table.duplicate(mtrx)
+    for i, n in pairs(vctr) do
+        table.insert(augMtrx[i], n)
+    end
+    for i = 1, #mtrx do
+        matrix.scaleRow(augMtrx, i, 1 / augMtrx[i][i])
+        for j = i + 1, #mtrx do
+            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i]) -- Triangular Downward Sweep
+            if (matrix.findZeroRow(augMtrx) ~= -1) then
+                return augMtrx[matrix.findZeroRow(augMtrx)][#mtrx + 1] == 0 and 1 / 0 or 0
+            end
+        end
+    end
+    for i = #mtrx, 2, -1 do
+        for j = i - 1, 1, -1 do
+            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i]) -- Triangular Upward Sweep
+        end
+    end
+    return table.unpack(table.property(augMtrx, #mtrx + 1))
+end
+function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
+    local temp = mtrx[rowIdx1]
+    mtrx[rowIdx1] = mtrx[rowIdx2]
+    mtrx[rowIdx2] = temp
+end
+---Rounds a number to a given amount of decimal places.
+---@param number number
+---@param decimalPlaces? integer
+---@return number
+function math.round(number, decimalPlaces)
+    if (not decimalPlaces) then decimalPlaces = 0 end
+    local multiplier = 10 ^ decimalPlaces
+    return math.floor(multiplier * number + 0.5) / multiplier
+end
+---Returns the sign of a number: `1` if the number is non-negative, `-1` if negative.
+---@param number number
+---@return 1|-1
+function math.sign(number)
+    if number >= 0 then return 1 end
+    return -1
+end
+---Restricts a number to be within a closed ring.
+---@param number number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.wrap(number, lowerBound, upperBound)
+    if number < lowerBound then return upperBound end
+    if number > upperBound then return lowerBound end
+    return number
+end
+CONSONANTS = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z" }
+---Very rudimentary function that returns a string depending on whether or not it should be plural.
+---@param str string The inital string, which should be a noun (e.g. `bookmark`)
+---@param val number The value, or count, of the noun, which will determine if it should be plural.
+---@return string pluralizedStr A new string that is pluralized if `val ~= 1`.
+function pluralize(str, val, pos)
+    if (pos) then
+        strEnding = str:sub(pos + 1, -1)
+        str = str:sub(1, pos)
+    end
+    local finalStr = str .. "s"
+    if (val == 1) then return str .. (strEnding or "") end
+    local lastLetter = str:sub(-1):upper()
+    local secondToLastLetter = str:sub(-2, -2):upper()
+    if (lastLetter == "Y" and table.contains(CONSONANTS, secondToLastLetter)) then
+        finalStr = str:sub(1, -2) .. "ies"
+    end
+    if (str:sub(-3):lower() == "quy") then
+        finalStr = str:sub(1, -2) .. "ies"
+    end
+    if (table.contains({ "J", "S", "X", "Z" }, lastLetter) or table.contains({ "SH", "CH" }, str:sub(-2))) then
+        finalStr = str .. "es"
+    end
+    return finalStr .. (strEnding or "")
+end
+---Returns the average value of an array.
+---@param values number[] The list of numbers.
+---@param includeLastValue? boolean Whether or not to include the last value in the table.
+---@return number avg The arithmetic mean of the table.
+function table.average(values, includeLastValue)
+    if #values == 0 then return 0 end
+    local sum = 0
+    for _, value in pairs(values) do
+        sum = sum + value
+    end
+    if not includeLastValue then
+        sum = sum - values[#values]
+        return sum / (#values - 1)
+    end
+    return sum / #values
+end
+---Concatenates two arrays together.
+---@param t1 any[] The first table.
+---@param t2 any[] The second table.
+---@return any[] tbl The resultant table.
+function table.combine(t1, t2)
+    local newTbl = table.duplicate(t1)
+    for i = 1, #t2 do
+        table.insert(newTbl, t2[i])
+    end
+    return newTbl
+end
+---Creates a new array with a custom metatable, allowing for `:` syntactic sugar.
+---@param ... any entries to put into the table.
+---@return table tbl A table with the given entries.
+function table.construct(...)
+    local tbl = {}
+    for _, v in ipairs({ ... }) do
+        table.insert(tbl, v)
+    end
+    setmetatable(tbl, { __index = table })
+    return tbl
+end
+---Creates a new array with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
+---@generic T
+---@param item T The entry to use.
+---@param num integer The number of entries to put into the table.
+---@return T[] tbl A table with the given entries.
+function table.constructRepeating(item, num)
+    local tbl = table.construct()
+    for _ = 1, num do
+        tbl:insert(item)
+    end
+    return tbl
+end
+---Returns a boolean value corresponding to whether or not an element exists within a table.
+---@param tbl table The table to search in.
+---@param item any The item to search for.
+---@return boolean contains Whether or not the item given is within the table.
+function table.contains(tbl, item)
+    for _, v in pairs(tbl) do
+        if (v == item) then return true end
+    end
+    return false
+end
+table.includes = table.contains
+---Removes duplicate values from a table.
+---@param tbl table The original table.
+---@return table tbl A new table with no duplicates.
+function table.dedupe(tbl)
+    local hash = {}
+    local newTbl = {}
+    for _, value in ipairs(tbl) do
+        if (not hash[value]) then
+            newTbl[#newTbl + 1] = value
+            hash[value] = true
+        end
+    end
+    return newTbl
+end
+---Returns a deep copy of a table.
+---@generic T : table
+---@param tbl T The original table.
+---@return T tbl The new table.
+function table.duplicate(tbl)
+    local dupeTbl = {}
+    if (tbl[1]) then
+        for _, value in ipairs(tbl) do
+            table.insert(dupeTbl, type(value) == "table" and table.duplicate(value) or value)
+        end
+    else
+        for _, key in pairs(table.keys(tbl)) do
+            local value = tbl[key]
+            dupeTbl[key] = type(value) == "table" and table.duplicate(value) or value
+        end
+    end
+    return dupeTbl
+end
+---Returns a 1-indexed value corresponding to the location of an element within a table.
+---@param tbl table The table to search in.
+---@param item any The item to search for.
+---@return integer idx The index of the item. If the item doesn't exist, returns -1 instead.
+function table.indexOf(tbl, item)
+  for i, v in pairs(tbl) do
+    if (v == item) then return i end
+  end
+  return -1
+end
+---Returns a table of keys from a table.
+---@param tbl { [string]: any } The table to search in.
+---@return string[] keys A list of keys.
+function table.keys(tbl)
+    local resultsTbl = {}
+    for k, _ in pairs(tbl) do
+        if (not table.contains(resultsTbl, k)) then
+            table.insert(resultsTbl, k)
+        end
+    end
+    return resultsTbl
+end
+---Normalizes a table of numbers to achieve a target average (NOT PURE)
+---@param values number[] The table to normalize.
+---@param targetAverage number The desired average value.
+---@param includeLastValueInAverage boolean Whether or not to include the last value in the average.
+function table.normalize(values, targetAverage, includeLastValueInAverage)
+    local avgValue = table.average(values, includeLastValueInAverage)
+    if avgValue == 0 then return end
+    for i = 1, #values do
+        values[i] = (values[i] * targetAverage) / avgValue
+    end
+end
+---Converts a string (generated from [table.stringify](lua://table.stringify)) into a table.
+---@param str string
+---@return any
+function table.parse(str)
+    if (str == "FALSE" or str == "TRUE") then return str == "TRUE" end
+    if (str:sub(1, 1) == '"') then return str:sub(2, -2) end
+    if (str:match("^[%d%.]+$")) then return tonumber(str) end
+    if (not table.contains({ "{", "[" }, str:sub(1, 1))) then return str end
+    local tableType = str:sub(1, 1) == "[" and "arr" or "dict"
+    local tbl = {}
+    local terms = {}
+    while true do
+        local nestedTableFactor = table.contains({ "[", "{" }, str:sub(2, 2)) and 1 or 0
+        local depth = nestedTableFactor
+        local searchIdx = 2 + nestedTableFactor
+        local inQuotes = false
+        while (searchIdx < str:len()) do
+            if (str:sub(searchIdx, searchIdx) == '"') then
+                inQuotes = not inQuotes
+            end
+            if (table.contains({ "]", "}" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
+                depth = depth - 1
+            end
+            if (table.contains({ "[", "{" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
+                depth = depth + 1
+            end
+            if ((str:sub(searchIdx, searchIdx) == "," or nestedTableFactor == 1) and not inQuotes and depth == 0) then break end
+            searchIdx = searchIdx + 1
+        end
+        table.insert(terms, str:sub(2, searchIdx + nestedTableFactor - 1))
+        str = str:sub(searchIdx + nestedTableFactor)
+        if (str:len() <= 1) then break end
+    end
+    if (tableType == "arr") then
+        for _, v in pairs(terms) do
+            table.insert(tbl, table.parse(v))
+        end
+    else
+        for _, v in pairs(terms) do
+            local idx = v:find("=")
+            tbl[v:sub(1, idx - 1)] = table.parse(v:sub(idx + 1))
+        end
+    end
+    return tbl
+end
+---In a nested table `tbl`, returns a table of property values with key `property`.
+---@param tbl table The table to search in.
+---@param property string | integer The property name.
+---@return table properties The resultant table.
+function table.property(tbl, property)
+    local resultsTbl = {}
+    for _, v in pairs(tbl) do
+        table.insert(resultsTbl, v[property])
+    end
+    return resultsTbl
+end
+---Reverses the order of an array.
+---@param tbl table The original table.
+---@return table tbl The original table, reversed.
+function table.reverse(tbl)
+    local reverseTbl = {}
+    for i = 1, #tbl do
+        table.insert(reverseTbl, tbl[#tbl + 1 - i])
+    end
+    return reverseTbl
+end
+function sortAscending(a, b) return a < b end
+function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
+function sortAscendingTime(a, b) return a.time < b.time end
+---Sorts a table given a sorting function.
+---@generic T
+---@param tbl T[] The table to sort.
+---@param compFn fun(a: T, b: T): boolean A comparison function. Given two elements `a` and `b`, how should they be sorted?
+---@return T[] sortedTbl A sorted table.
+function sort(tbl, compFn)
+    newTbl = table.duplicate(tbl)
+    table.sort(newTbl, compFn)
+    return newTbl
+end
+---Converts a table (or any other primitive values) to a string.
+---@param var any
+---@return string
+function table.stringify(var)
+    if (type(var) == "boolean") then return var and "TRUE" or "FALSE" end
+    if (type(var) == "string") then return '"' .. var .. '"' end
+    if (type(var) == "number") then return var end
+    if (type(var) ~= "table") then return "UNKNOWN" end
+    if (var[1] == nil) then
+        local str = "["
+        for _, v in pairs(var) do
+            str = str .. table.stringify(v) .. ","
+        end
+        return str:sub(1, -2) .. "]"
+    end
+    local str = "{"
+    for k, v in pairs(var) do
+        str = str .. k .. "=" .. table.stringify(v) .. ","
+    end
+    return str:sub(1, -2) .. "}"
+end
+---Returns a table of keys from a table.
+---@param tbl { [string]: any } The table to search in.
+---@return string[] keys A list of keys.
+function table.values(tbl)
+    local resultsTbl = {}
+    for _, v in pairs(tbl) do
+        if (not table.contains(resultsTbl, v)) then
+            table.insert(resultsTbl, v)
+        end
+    end
+    return resultsTbl
+end
+---@diagnostic disable: return-type-mismatch
+---The above is made because we want the functions to be identity functions when passing in vectors instead of tables.
+---Converts a table of length 4 into a [`Vector4`](lua://Vector4).
+---@param tbl number[] The table to convert.
+---@return Vector4 vctr The output vector.
+function table.vectorize4(tbl)
+    if (not tbl) then return vector4(0) end
+    if (type(tbl) == "userdata") then return tbl end
+    return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
+end
+---Converts a table of length 3 into a [`Vector3`](lua://Vector3).
+---@param tbl number[] The table to convert.
+---@return Vector3 vctr The output vector.
+function table.vectorize3(tbl)
+    if (not tbl) then return vector3(0) end
+    if (type(tbl) == "userdata") then return tbl end
+    return vector.New(tbl[1], tbl[2], tbl[3])
+end
+---Converts a table of length 2 into a [`Vector2`](lua://Vector2).
+---@param tbl number[] The table to convert.
+---@return Vector2 vctr The output vector.
+function table.vectorize2(tbl)
+    if (not tbl) then return vector2(0) end
+    if (type(tbl) == "userdata") then return tbl end
+    return vector.New(tbl[1], tbl[2])
+end
+function expect(expr)
+    return {
+        toBe = function(x) return x == expr end
+    }
+end
+---Prints a message if creation messages are enabled.
+---@param type "e!"|"w!"|"i!"|"s!"
+---@param msg string
+function toggleablePrint(type, msg)
+    local creationMsg = msg:find("Create") and true or false
+    if (creationMsg and state.GetValue("global_dontPrintCreation")) then return end
+    print(type, msg)
+end
+---Returns `true` if given a string called "true", given a number greater than 0, given a table with an element, or is given `true`. Otherwise, returns `false`.
+---@param param any The parameter to truthify.
+---@return boolean truthy The truthy value of the parameter.
+function truthy(param)
+    local t = type(param)
+    if (t == "string") then
+        return param:lower() == "true" and true or false
+    else
+        if t == "number" then
+            return param > 0 and true or false
+        else
+            if t == "table" or t == "userdata" then
+                return #param > 0 and true or false
+            else
+                if t == "boolean" then
+                    return param
+                else
+                    return false
+                end
+            end
+        end
+    end
+end
+---Creates a new [`Vector4`](lua://Vector4) with all elements being the given number.
+---@param n number The number to use as the entries.
+---@return Vector4 vctr The resultant vector of style `<n, n, n, n>`.
+function vector4(n)
+    return vector.New(n, n, n, n)
+end
+---Creates a new [`Vector3`](lua://Vector4) with all elements being the given number.
+---@param n number The number to use as the entries.
+---@return Vector3 vctr The resultant vector of style `<n, n, n>`.
+function vector3(n)
+    return vector.New(n, n, n)
+end
+---Creates a new [`Vector2`](lua://Vector2) with all elements being the given number.
+---@param n number The number to use as the entries.
+---@return Vector2 vctr The resultant vector of style `<n, n>`.
+function vector2(n)
+    return vector.New(n, n)
+end
 function displaceNotesForAnimationFrames(settingVars)
     local frameDistance = settingVars.frameDistance
     local initialDistance = settingVars.distance
@@ -823,11 +1347,11 @@ function pasteItems(globalVars, menuVars)
     local lastCopiedSV = menuVars.copiedSVs[#menuVars.copiedSVs]
     local lastCopiedSSF = menuVars.copiedSSFs[#menuVars.copiedSSFs]
     local lastCopiedBM = menuVars.copiedBMs[#menuVars.copiedBMs]
-    local lastCopiedValue= lastCopiedSV
+    local lastCopiedValue = lastCopiedSV
     if (lastCopiedValue == nil) then
         lastCopiedValue = lastCopiedSSF
-lastCopiedValue = lastCopiedLine
-lastCopiedValue = lastCopiedBM
+        lastCopiedValue = lastCopiedLine
+        lastCopiedValue = lastCopiedBM
     end
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128
     local linesToRemove = menuVars.copyTable[1] and getLinesBetweenOffsets(startOffset, endRemoveOffset) or {}
@@ -1968,6 +2492,7 @@ function awake()
     local tempGlobalVars = read()
     if (not tempGlobalVars) then tempGlobalVars = table.construct() end
     syncGlobalVarsState(tempGlobalVars)
+    loadDefaultProperties(tempGlobalVars.defaultProperties)
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 end
 function syncGlobalVarsState(tempGlobalVars)
@@ -2366,7 +2891,6 @@ GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
     "Execute Vibrato Separately", "Use TG of Selected Note" }
-matrix = {}
 function copiableBox(text, label, content)
     imgui.TextWrapped(text)
     imgui.PushItemWidth(imgui.GetContentRegionAvailWidth())
@@ -2628,7 +3152,6 @@ SPECIAL_SVS = {
     "Teleport Stutter",
     "Frames Setup",
     "Automate",
-    "Animation Palette",
     "Penis",
 }
 function placeSpecialSVMenu(globalVars)
@@ -2648,15 +3171,14 @@ function placeSpecialSVMenu(globalVars)
         animationFramesSetupMenu(globalVars, settingVars)
     end
     if currentSVType == "Automate" then automateSVMenu(settingVars) end
-    if currentSVType == "Animation Palette" then animationPaletteMenu(settingVars) end
     if currentSVType == "Penis" then penisMenu(settingVars) end
     local labelText = currentSVType .. "Special"
     saveVariables(labelText .. "Settings", settingVars)
     saveVariables("placeSpecialMenu", menuVars)
 end
 function penisMenu(settingVars)
-    _, settingVars.bWidth = imgui.InputInt("Ball Width", settingVars.bWidth)
-    _, settingVars.sWidth = imgui.InputInt("Shaft Width", settingVars.sWidth)
+    _, settingVars.bWidth = imgui.InputInt("Ball Width", math.floor(settingVars.bWidth))
+    _, settingVars.sWidth = imgui.InputInt("Shaft Width", math.floor(settingVars.sWidth))
     _, settingVars.sCurvature = imgui.SliderInt("S Curvature", settingVars.sCurvature, 1, 100,
         settingVars.sCurvature .. "%%")
     _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
@@ -2863,22 +3385,7 @@ function placeVibratoSVMenu(globalVars, separateWindow)
     chooseVibratoMode(menuVars)
     chooseVibratoQuality(menuVars)
     if (menuVars.vibratoMode ~= 2) then
-        imgui.AlignTextToFramePadding()
-        imgui.Dummy(vector.New(27, 0))
-        imgui.SameLine(0, SAMELINE_SPACING)
-        imgui.Text("Sides:")
-        imgui.SameLine(0, RADIO_BUTTON_SPACING)
-        if imgui.RadioButton("1", menuVars.sides == 1) then
-            menuVars.sides = 1
-        end
-        imgui.SameLine(0, RADIO_BUTTON_SPACING)
-        if imgui.RadioButton("2", menuVars.sides == 2) then
-            menuVars.sides = 2
-        end
-        imgui.SameLine(0, RADIO_BUTTON_SPACING)
-        if imgui.RadioButton("3", menuVars.sides == 3) then
-            menuVars.sides = 3
-        end
+        chooseVibratoSides(menuVars)
     end
     local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF"), "Vibrato")
@@ -3017,16 +3524,7 @@ function changeGroupsMenu()
 end
 function convertSVSSFMenu()
     local menuVars = getMenuVars("convertSVSSF")
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Direction:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("SSF -> SV", not menuVars.conversionDirection) then
-        menuVars.conversionDirection = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("SV -> SSF", menuVars.conversionDirection) then
-        menuVars.conversionDirection = true
-    end
+    chooseConvertSVSSFDirection(menuVars)
     saveVariables("convertSVSSFMenu", menuVars)
     simpleActionMenu(menuVars.conversionDirection and "Convert SVs -> SSFs" or "Convert SSFs -> SVs", 2, convertSVSSF,
         nil, menuVars, false, false)
@@ -3205,7 +3703,8 @@ function dynamicScaleMenu(globalVars)
     simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, nil, menuVars)
 end
 function fixLNEndsMenu()
-    imgui.TextWrapped("If there is a negative SV at an LN end, the LN end will be flipped. This is noticable especially for arrow skins and is jarring. This tool will fix that.")
+    imgui.TextWrapped(
+    "If there is a negative SV at an LN end, the LN end will be flipped. This is noticable especially for arrow skins and is jarring. This tool will fix that.")
     addSeparator()
     simpleActionMenu("Fix flipped LN ends", 0, fixFlippedLNEnds, nil, nil)
 end
@@ -3365,6 +3864,9 @@ TAB_MENUS = {
     "Edit",
     "Delete"
 }
+---Creates a menu tab.
+---@param globalVars table
+---@param tabName string
 function createMenuTab(globalVars, tabName)
     if not imgui.BeginTabItem(tabName) then return end
     addPadding()
@@ -3607,6 +4109,7 @@ function showCustomThemeSettings(globalVars)
   if (imgui.Button("Export")) then
     local str = stringifyCustomStyle(globalVars.customStyle)
     imgui.SetClipboardText(str)
+    print("i!", "Exported custom theme to your clipboard.")
   end
   if (state.GetValue("importingCustomTheme")) then
     local input = state.GetValue("importingCustomThemeInput", "")
@@ -3708,7 +4211,418 @@ function setCustomStyleString(globalVars, str)
   end
   globalVars.customStyle = table.duplicate(customStyle)
 end
+function saveSettingPropertiesButton(globalVars, settingVars, label)
+    local saveButtonClicked = imgui.Button("Save##setting" .. label)
+    imgui.Separator()
+    if (not saveButtonClicked) then return end
+    label = label:sub(1, 1):lower() .. label:sub(2)
+    if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
+    if (not globalVars.defaultProperties.settings) then globalVars.defaultProperties.settings = {} end
+    globalVars.defaultProperties.settings[label] = settingVars
+    loadDefaultProperties(globalVars.defaultProperties)
+    saveAndSyncGlobals(globalVars)
+    print("i!",
+        "Default setting properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
+end
+function saveMenuPropertiesButton(globalVars, menuVars, label)
+    local saveButtonClicked = imgui.Button("Save##menu" .. label)
+    imgui.Separator()
+    if (not saveButtonClicked) then return end
+    label = label:sub(1, 1):lower() .. label:sub(2)
+    if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
+    if (not globalVars.defaultProperties.menu) then globalVars.defaultProperties.menu = {} end
+    globalVars.defaultProperties.menu[label] = menuVars
+    loadDefaultProperties(globalVars.defaultProperties)
+    saveAndSyncGlobals(globalVars)
+    print("i!",
+        "Default menu properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
+end
 function showDefaultPropertiesSettings(globalVars)
+    imgui.SeparatorText("Create Tab Settings")
+    if (imgui.CollapsingHeader("General Standard Settings")) then
+        local menuVars = getMenuVars("placeStandard", "Property")
+        chooseStandardSVType(menuVars, false)
+        addSeparator()
+        chooseInterlace(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "placeStandard")
+        saveVariables("placeStandardPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("General Special Settings")) then
+        local menuVars = getMenuVars("placeSpecial", "Property")
+        chooseSpecialSVType(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "placeSpecial")
+        saveVariables("placeSpecialPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("General Still Settings")) then
+        local menuVars = getMenuVars("placeStill", "Property")
+        chooseStandardSVType(menuVars, false)
+        addSeparator()
+        chooseNoteSpacing(menuVars)
+        chooseStillBehavior(menuVars)
+        chooseStillType(menuVars)
+        chooseInterlace(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "placeStill")
+        saveVariables("placeStillPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("General Vibrato Settings")) then
+        local menuVars = getMenuVars("placeVibrato", "Property")
+        chooseVibratoSVType(menuVars)
+        addSeparator()
+        imgui.Text("Vibrato Settings:")
+        chooseVibratoMode(menuVars)
+        chooseVibratoQuality(menuVars)
+        if (menuVars.vibratoMode ~= 2) then
+            chooseVibratoSides(menuVars)
+        end
+        saveMenuPropertiesButton(globalVars, menuVars, "placeVibrato")
+        saveVariables("placeVibratoPropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Edit Tab Settings")
+    if (imgui.CollapsingHeader("Add Teleport Settings")) then
+        local menuVars = getMenuVars("addTeleport", "Property")
+        chooseDistance(menuVars)
+        chooseHand(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "addTeleport")
+        saveVariables("addTeleportPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Change Group Settings")) then
+        local menuVars = getMenuVars("changeGroup", "Property")
+        _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
+        imgui.SameLine(0, SAMELINE_SPACING)
+        _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
+        saveMenuPropertiesButton(globalVars, menuVars, "changeGroup")
+        saveVariables("changeGroupPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Convert SV <-> SSF Settings")) then
+        local menuVars = getMenuVars("convertSVSSF", "Property")
+        chooseConvertSVSSFDirection(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "convertSVSSF")
+        saveVariables("convertSVSSFPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Copy Settings")) then
+        local menuVars = getMenuVars("copy", "Property")
+        _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
+        imgui.SameLine(0, SAMELINE_SPACING)
+        _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
+        _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
+        imgui.SameLine(0, SAMELINE_SPACING + 3.5)
+        _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
+        saveMenuPropertiesButton(globalVars, menuVars, "copy")
+        saveVariables("copyPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Displace Note Settings")) then
+        local menuVars = getMenuVars("displaceNote", "Property")
+        chooseVaryingDistance(menuVars)
+        chooseLinearlyChangeDist(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "displaceNote")
+        saveVariables("displaceNotePropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Displace View Settings")) then
+        local menuVars = getMenuVars("displaceView", "Property")
+        chooseDistance(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "displaceView")
+        saveVariables("displaceViewPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Flicker Settings")) then
+        local menuVars = getMenuVars("flicker", "Property")
+        chooseFlickerType(menuVars)
+        chooseVaryingDistance(menuVars)
+        chooseLinearlyChangeDist(menuVars)
+        chooseNumFlickers(menuVars)
+        if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
+        saveMenuPropertiesButton(globalVars, menuVars, "flicker")
+        saveVariables("flickerPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Reverse Scroll Settings")) then
+        local menuVars = getMenuVars("reverseScroll", "Property")
+        chooseDistance(menuVars)
+        helpMarker("Height at which reverse scroll notes are hit")
+        saveMenuPropertiesButton(globalVars, menuVars, "reverseScroll")
+        saveVariables("reverseScrollPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Scale (Displace) Settings")) then
+        local menuVars = getMenuVars("scaleDisplace", "Property")
+        chooseScaleDisplaceSpot(menuVars)
+        chooseScaleType(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "scaleDisplace")
+        saveVariables("scaleDisplacePropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Scale (Multiply) Settings")) then
+        local menuVars = getMenuVars("scaleMultiply", "Property")
+        chooseScaleType(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "scaleMultiply")
+        saveVariables("scaleMultiplyPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Vertical Shift Settings")) then
+        local menuVars = getMenuVars("verticalShift", "Property")
+        chooseConstantShift(menuVars, 0)
+        saveMenuPropertiesButton(globalVars, menuVars, "verticalShift")
+        saveVariables("verticalShiftPropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Delete Tab Settings")
+    if (imgui.CollapsingHeader("Delete Menu Settings")) then
+        local menuVars = getMenuVars("delete", "Property")
+        _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
+        imgui.SameLine(0, SAMELINE_SPACING)
+        _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])
+        _, menuVars.deleteTable[3] = imgui.Checkbox("Delete SSFs", menuVars.deleteTable[3])
+        imgui.SameLine(0, SAMELINE_SPACING + 3.5)
+        _, menuVars.deleteTable[4] = imgui.Checkbox("Delete Bookmarks", menuVars.deleteTable[4])
+        saveMenuPropertiesButton(globalVars, menuVars, "delete")
+        saveVariables("deletePropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Select Tab Settings")
+    if (imgui.CollapsingHeader("Select Alternating Settings")) then
+        local menuVars = getMenuVars("selectAlternating", "Property")
+        chooseEvery(menuVars)
+        chooseOffset(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "selectAlternating")
+        saveVariables("selectAlternatingPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Select By Snap Settings")) then
+        local menuVars = getMenuVars("selectBySnap", "Property")
+        chooseSnap(menuVars)
+        saveMenuPropertiesButton(globalVars, menuVars, "selectBySnap")
+        saveVariables("selectBySnapPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Select Chord Size Settings")) then
+        local menuVars = getMenuVars("selectChordSize", "Property")
+        _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
+        imgui.SameLine(0, SAMELINE_SPACING)
+        _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
+        _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
+        imgui.SameLine(0, SAMELINE_SPACING)
+        _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
+        saveMenuPropertiesButton(globalVars, menuVars, "selectChordSize")
+        saveVariables("selectChordSizePropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Select Note Type Settings")) then
+        local menuVars = getMenuVars("selectNoteType", "Property")
+        _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
+        imgui.SameLine(0, SAMELINE_SPACING)
+        _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
+        saveMenuPropertiesButton(globalVars, menuVars, "selectNoteType")
+        saveVariables("selectNoteTypePropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Standard/Still Settings")
+    if (imgui.CollapsingHeader("Linear Settings")) then
+        local settingVars = getSettingVars("Linear", "Property")
+        chooseStartEndSVs(settingVars)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Linear")
+        saveVariables("LinearPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Exponential Settings")) then
+        local settingVars = getSettingVars("Exponential", "Property")
+        chooseSVBehavior(settingVars)
+        chooseIntensity(settingVars)
+        if (globalVars.advancedMode) then
+            chooseDistanceMode(settingVars)
+        end
+        if (settingVars.distanceMode ~= 3) then
+            chooseConstantShift(settingVars, 0)
+        end
+        if (settingVars.distanceMode == 1) then
+            chooseAverageSV(settingVars)
+        elseif (settingVars.distanceMode == 2) then
+            chooseDistance(settingVars)
+        else
+            chooseStartEndSVs(settingVars)
+        end
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Exponential")
+        saveVariables("ExponentialPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Bezier Settings")) then
+        local settingVars = getSettingVars("Bezier", "Property")
+        provideBezierWebsiteLink(settingVars)
+        chooseBezierPoints(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseAverageSV(settingVars)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Bezier")
+        saveVariables("BezierPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Hermite Settings")) then
+        local settingVars = getSettingVars("Hermite", "Property")
+        chooseStartEndSVs(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseAverageSV(settingVars)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Hermite")
+        saveVariables("HermitePropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sinusoidal Settings")) then
+        local settingVars = getSettingVars("Sinusoidal", "Property")
+        imgui.Text("Amplitude:")
+        chooseStartEndSVs(settingVars)
+        chooseCurveSharpness(settingVars)
+        chooseConstantShift(settingVars, 1)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        chooseSVPerQuarterPeriod(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Sinusoidal")
+        saveVariables("SinusoidalPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Circular Settings")) then
+        local settingVars = getSettingVars("Circular", "Property")
+        chooseSVBehavior(settingVars)
+        chooseArcPercent(settingVars)
+        chooseAverageSV(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        chooseNoNormalize(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Circular")
+        saveVariables("CircularPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Random Settings")) then
+        local settingVars = getSettingVars("Random", "Property")
+        chooseRandomType(settingVars)
+        chooseRandomScale(settingVars)
+        chooseSVPoints(settingVars)
+        addSeparator()
+        chooseConstantShift(settingVars, 0)
+        if not settingVars.dontNormalize then
+            chooseAverageSV(settingVars)
+        end
+        chooseFinalSV(settingVars)
+        chooseNoNormalize(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Random")
+        saveVariables("RandomPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Chinchilla Settings")) then
+        local settingVars = getSettingVars("Chinchilla", "Property")
+        chooseSVBehavior(settingVars)
+        chooseChinchillaType(settingVars)
+        chooseChinchillaIntensity(settingVars)
+        chooseAverageSV(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Chinchilla")
+        saveVariables("ChinchillaPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Code Settings")) then
+        local settingVars = getSettingVars("Code", "Property")
+        codeInput(settingVars, "code", "##code")
+        imgui.Separator()
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "Code")
+        saveVariables("CodePropertySettings", settingVars)
+    end
+    imgui.SeparatorText("Special Settings")
+    if (imgui.CollapsingHeader("Stutter Settings")) then
+        local settingVars = getSettingVars("Stutter", "Property")
+        settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
+        settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
+        settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
+        settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+        addSeparator()
+        settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+        settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
+        saveSettingPropertiesButton(globalVars, settingVars, "Stutter")
+        saveVariables("StutterPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Teleport Stutter Settings")) then
+        local settingVars = getSettingVars("TeleportStutter", "Property")
+        if settingVars.useDistance then
+            chooseDistance(settingVars)
+            helpMarker("Start SV teleport distance")
+        else
+            chooseStartSVPercent(settingVars)
+        end
+        chooseMainSV(settingVars)
+        chooseAverageSV(settingVars)
+        chooseFinalSV(settingVars, false)
+        chooseUseDistance(settingVars)
+        chooseLinearlyChange(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "TeleportStutter")
+        saveVariables("TeleportStutterPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Automate Settings")) then
+        local settingVars = getSettingVars("Automate", "Property")
+        settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
+        _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
+        imgui.SameLine(0, SAMELINE_SPACING)
+        _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
+        _, settingVars.maintainMs = imgui.Checkbox("Static Time?", settingVars.maintainMs)
+        if (settingVars.maintainMs) then
+            imgui.SameLine(0, SAMELINE_SPACING)
+            imgui.PushItemWidth(71)
+            settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
+            imgui.PopItemWidth()
+        end
+        saveSettingPropertiesButton(globalVars, settingVars, "Automate")
+        saveVariables("AutomatePropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Penis Settings")) then
+        local settingVars = getSettingVars("Penis", "Property")
+        _, settingVars.bWidth = imgui.InputInt("Ball Width", math.floor(settingVars.bWidth))
+        _, settingVars.sWidth = imgui.InputInt("Shaft Width", math.floor(settingVars.sWidth))
+        _, settingVars.sCurvature = imgui.SliderInt("S Curvature", settingVars.sCurvature, 1, 100,
+            settingVars.sCurvature .. "%%")
+        _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
+            settingVars.bCurvature .. "%%")
+        saveSettingPropertiesButton(globalVars, settingVars, "Penis")
+        saveVariables("PenisPropertySettings", settingVars)
+    end
+    imgui.SeparatorText("SV Vibrato Settings")
+    if (imgui.CollapsingHeader("Linear Vibrato SV Settings")) then
+        local settingVars = getSettingVars("LinearVibratoSV", "Property")
+        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        saveSettingPropertiesButton(globalVars, settingVars, "LinearVibratoSV")
+        saveVariables("LinearVibratoSVPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Exponential Vibrato SV Settings")) then
+        local settingVars = getSettingVars("ExponentialVibratoSV", "Property")
+        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseCurvatureCoefficient(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "ExponentialVibratoSV")
+        saveVariables("ExponentialVibratoSVPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sinusoidal Vibrato SV Settings")) then
+        local settingVars = getSettingVars("SinusoidalVibratoSV", "Property")
+        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseMsxVerticalShift(settingVars, 0)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "SinusoidalVibratoSV")
+        saveVariables("SinusoidalVibratoSVPropertySettings", settingVars)
+    end
+    imgui.SeparatorText("SSF Vibrato Settings")
+    if (imgui.CollapsingHeader("Linear Vibrato SSF Settings")) then
+        local settingVars = getSettingVars("LinearVibratoSSF", "Property")
+        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        saveSettingPropertiesButton(globalVars, settingVars, "LinearVibratoSSF")
+        saveVariables("LinearVibratoSSFPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Exponential Vibrato SSF Settings")) then
+        local settingVars = getSettingVars("ExponentialVibratoSSF", "Property")
+        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseCurvatureCoefficient(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "ExponentialVibratoSSF")
+        saveVariables("ExponentialVibratoSSFPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sinusoidal Vibrato SSF Settings")) then
+        local settingVars = getSettingVars("SinusoidalVibratoSSF", "Property")
+        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseConstantShift(settingVars)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        saveSettingPropertiesButton(globalVars, settingVars, "SinusoidalVibratoSSF")
+        saveVariables("SinusoidalVibratoSSFPropertySettings", settingVars)
+    end
 end
 function showGeneralSettings(globalVars)
   globalCheckbox(globalVars, "advancedMode", "Enable Advanced Mode",
@@ -3751,7 +4665,7 @@ function showPluginSettingsWindow(globalVars)
     imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
     imgui.PushStyleColor(imgui_col.Border, vector4(1))
     imgui.SetNextWindowCollapsed(false)
-    _, settingsOpened = imgui.Begin("plumoguSV Settings", true, 34)
+    _, settingsOpened = imgui.Begin("plumoguSV Settings", true, 42)
     imgui.SetWindowSize("plumoguSV Settings", vector.New(433, 400))
     local typeIndex = state.GetValue("settings_typeIndex", 1)
     imgui.Columns(2, "settings_columnList", true)
@@ -5551,15 +6465,15 @@ function chooseVaryingDistance(settingVars)
         oldValues ~= newValues
 end
 function chooseEvery(menuVars)
-    _, menuVars.every = imgui.InputInt("Every __ notes", menuVars.every)
+    _, menuVars.every = imgui.InputInt("Every __ notes", math.floor(menuVars.every))
     menuVars.every = math.clamp(menuVars.every, 1, MAX_SV_POINTS)
 end
 function chooseOffset(menuVars)
-    _, menuVars.offset = imgui.InputInt("From note #__", menuVars.offset)
+    _, menuVars.offset = imgui.InputInt("From note #__", math.floor(menuVars.offset))
     menuVars.offset = math.clamp(menuVars.offset, 1, menuVars.every)
 end
 function chooseSnap(menuVars)
-    _, menuVars.snap = imgui.InputInt("Snap", menuVars.snap)
+    _, menuVars.snap = imgui.InputInt("Snap", math.floor(menuVars.snap))
     menuVars.snap = math.clamp(menuVars.snap, 1, 100)
 end
 function chooseDrawCapybara(globalVars)
@@ -5672,9 +6586,9 @@ end
 function chooseFrameTimeData(settingVars)
     if #settingVars.frameTimes == 0 then return end
     local frameTime = settingVars.frameTimes[settingVars.selectedTimeIndex]
-    _, frameTime.frame = imgui.InputInt("Frame #", frameTime.frame)
+    _, frameTime.frame = imgui.InputInt("Frame #", math.floor(frameTime.frame))
     frameTime.frame = math.clamp(frameTime.frame, 1, settingVars.numFrames)
-    _, frameTime.position = imgui.InputInt("Note height", frameTime.position)
+    _, frameTime.position = imgui.InputInt("Note height", math.floor(frameTime.position))
 end
 function chooseIntensity(settingVars)
     local userStepSize = state.GetValue("global_stepSize") or 5
@@ -5793,7 +6707,7 @@ function chooseFlickerPosition(menuVars)
     menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
 end
 function chooseNumFrames(settingVars)
-    _, settingVars.numFrames = imgui.InputInt("Total # Frames", settingVars.numFrames)
+    _, settingVars.numFrames = imgui.InputInt("Total # Frames", math.floor(settingVars.numFrames))
     settingVars.numFrames = math.clamp(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
 end
 function chooseNumPeriods(settingVars)
@@ -6201,6 +7115,36 @@ function colorInput(customStyle, parameterName, label, tooltipText)
     _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or DEFAULT_STYLE[parameterName])
     if (tooltipText) then toolTip(tooltipText) end
     return oldCode ~= customStyle[parameterName]
+end
+function chooseVibratoSides(menuVars)
+    imgui.AlignTextToFramePadding()
+    imgui.Dummy(vector.New(27, 0))
+    imgui.SameLine(0, SAMELINE_SPACING)
+    imgui.Text("Sides:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("1", menuVars.sides == 1) then
+        menuVars.sides = 1
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("2", menuVars.sides == 2) then
+        menuVars.sides = 2
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("3", menuVars.sides == 3) then
+        menuVars.sides = 3
+    end
+end
+function chooseConvertSVSSFDirection(menuVars)
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Direction:")
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("SSF -> SV", not menuVars.conversionDirection) then
+        menuVars.conversionDirection = false
+    end
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    if imgui.RadioButton("SV -> SSF", menuVars.conversionDirection) then
+        menuVars.conversionDirection = true
+    end
 end
 HEXADECIMAL = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" }
 function rgbaToUint(r, g, b, a) return a * 16 ^ 6 + b * 16 ^ 4 + g * 16 ^ 2 + r end
@@ -7023,7 +7967,7 @@ function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     noteOffsetsBetween = sort(noteOffsetsBetween, sortAscending)
     return noteOffsetsBetween
 end
---- Finds and returns a list of all unique offsets of notes between selected notes [Table]
+---Finds and returns a list of all unique offsets of notes between selected notes [Table]
 ---@param includeLN? boolean
 ---@return number[]
 function uniqueNoteOffsetsBetweenSelected(includeLN)
@@ -7118,187 +8062,6 @@ function updateStutterMenuSVs(settingVars)
     updateGraphStats(settingVars.svGraph2Stats, settingVars.svMultipliers2,
         settingVars.svDistances2)
 end
-function math.cubicBezier(p2, p3, t)
-    return 3 * t * (1 - t) ^ 2 * p2 + 3 * t ^ 2 * (1 - t) * p3 + t ^ 3
-end
-function math.quadraticBezier(p2, t)
-    return 2 * t * (1 - t) * p2 + t ^ 2
-end
----Returns n choose r, or nCr.
----@param n integer
----@param r integer
----@return integer
-function math.binom(n, r)
-    return math.factorial(n) / (math.factorial(r)) * math.factorial(n - r)
-end
----Restricts a number to be within a chosen bound.
----@param number number
----@param lowerBound number
----@param upperBound number
----@return number
-function math.clamp(number, lowerBound, upperBound)
-    if number < lowerBound then return lowerBound end
-    if number > upperBound then return upperBound end
-    return number
-end
----Returns the factorial of an integer.
----@param n integer
----@return integer
-function math.factorial(n)
-    local product = 1
-    for i = 2, n do
-        product = product * i
-    end
-    return product
-end
----Forces a number to have a quarterly decimal part.
----@param number number
----@return number
-function math.quarter(number)
-    return math.round(number * 4) / 4
-end
----Evaluates a simplified one-dimensional hermite related (?) spline for SV purposes
----@param m1 number
----@param m2 number
----@param y2 number
----@param t number
----@return number
-function math.hermite(m1, m2, y2, t)
-    local a = m1 + m2 - 2 * y2
-    local b = 3 * y2 - 2 * m1 - m2
-    local c = m1
-    return a * t ^ 3 + b * t ^ 2 + c * t
-end
----Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
----@param p1 Vector2
----@param p2 Vector2
----@param p3 Vector2
-function math.interpolateCircle(p1, p2, p3)
-    local mtrx = {
-        vector.Table(2 * (p2 - p1)),
-        vector.Table(2 * (p3 - p1))
-    }
-    local vctr = {
-        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
-        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
-    }
-    h, k = matrix.solve(mtrx, vctr)
-    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
-    return table.unpack({ h, k, r })
-end
----Interpolates quadraticBezier parameters of the form y=ax^2+bx+c with three, non-colinear points.
----@param p1 Vector2
----@param p2 Vector2
----@param p3 Vector2
-function math.interpolateQuadratic(p1, p2, p3)
-    local mtrx = {
-        (p2.x) ^ 2 - (p2.x) ^ 2, (p2 - p1).x,
-        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
-    }
-    local vctr = {
-        (p2 - p1).y,
-        (p3 - p1).y
-    }
-    a, b = matrix.solve(mtrx, vctr)
-    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
-    return table.unpack({ a, b, c })
-end
----Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
----@param weight number
----@param lowerBound number
----@param upperBound number
----@return number
-function math.lerp(weight, lowerBound, upperBound)
-    return upperBound * weight + lowerBound * (1 - weight)
-end
----Returns the weight of a number between `lowerBound` and `upperBound`.
----@param num number
----@param lowerBound number
----@param upperBound number
----@return number
-function math.inverseLerp(num, lowerBound, upperBound)
-    return (num - lowerBound) / (upperBound - lowerBound)
-end
-function matrix.findZeroRow(mtrx)
-    for idx, row in pairs(mtrx) do
-        local zeroRow = true
-        for _, num in pairs(row) do
-            if (num ~= 0) then
-                zeroRow = false
-                goto continue
-            end
-        end
-        ::continue::
-        if (zeroRow) then return idx end
-    end
-    return -1
-end
-function matrix.rowLinComb(mtrx, rowIdx1, rowIdx2, row2Factor)
-    for k, v in pairs(mtrx[rowIdx1]) do
-        mtrx[rowIdx1][k] = v + mtrx[rowIdx2][k] * row2Factor
-    end
-end
-function matrix.scaleRow(mtrx, rowIdx, factor)
-    for k, v in pairs(mtrx[rowIdx]) do
-        mtrx[rowIdx][k] = v * factor
-    end
-end
----Given a square matrix A and equally-sized vector B, returns a vector x such that Ax=B.
----@param mtrx number[][]
----@param vctr number[]
-function matrix.solve(mtrx, vctr)
-    if (#vctr ~= #mtrx) then return end
-    local augMtrx = table.duplicate(mtrx)
-    for i, n in pairs(vctr) do
-        table.insert(augMtrx[i], n)
-    end
-    for i = 1, #mtrx do
-        matrix.scaleRow(augMtrx, i, 1 / augMtrx[i][i])
-        for j = i + 1, #mtrx do
-            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i]) -- Triangular Downward Sweep
-            if (matrix.findZeroRow(augMtrx) ~= -1) then
-                return augMtrx[matrix.findZeroRow(augMtrx)][#mtrx + 1] == 0 and 1 / 0 or 0
-            end
-        end
-    end
-    for i = #mtrx, 2, -1 do
-        for j = i - 1, 1, -1 do
-            matrix.rowLinComb(augMtrx, j, i, -augMtrx[j][i]) -- Triangular Upward Sweep
-        end
-    end
-    return table.unpack(table.property(augMtrx, #mtrx + 1))
-end
-function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
-    local temp = mtrx[rowIdx1]
-    mtrx[rowIdx1] = mtrx[rowIdx2]
-    mtrx[rowIdx2] = temp
-end
----Rounds a number to a given amount of decimal places.
----@param number number
----@param decimalPlaces? integer
----@return number
-function math.round(number, decimalPlaces)
-    if (not decimalPlaces) then decimalPlaces = 0 end
-    local multiplier = 10 ^ decimalPlaces
-    return math.floor(multiplier * number + 0.5) / multiplier
-end
----Returns the sign of a number: `1` if the number is non-negative, `-1` if negative.
----@param number number
----@return 1|-1
-function math.sign(number)
-    if number >= 0 then return 1 end
-    return -1
-end
----Restricts a number to be within a closed ring.
----@param number number
----@param lowerBound number
----@param upperBound number
----@return number
-function math.wrap(number, lowerBound, upperBound)
-    if number < lowerBound then return upperBound end
-    if number > upperBound then return lowerBound end
-    return number
-end
 function addFinalSV(svsToAdd, endOffset, svMultiplier, force)
     local sv = map.GetScrollVelocityAt(endOffset)
     local svExistsAtEndOffset = sv and (sv.StartTime == endOffset)
@@ -7356,6 +8119,9 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
         end
     end
 end
+---Removes and adds SVs.
+---@param svsToRemove ScrollVelocity[]
+---@param svsToAdd ScrollVelocity[]
 function removeAndAddSVs(svsToRemove, svsToAdd)
     local tolerance = 0.035
     if #svsToAdd == 0 then return end
@@ -7701,293 +8467,88 @@ function saveVariables(listName, variables)
         state.SetValue(listName .. key, value)
     end
 end
----Sets the state of all global variables, and saves them to the `config.yaml` file.
----@param globalVars table
-function saveAndSyncGlobals(globalVars)
-    write(globalVars)
-    syncGlobalVarsState(globalVars)
-end
----Returns the average value of an array.
----@param values number[] The list of numbers.
----@param includeLastValue? boolean Whether or not to include the last value in the table.
----@return number avg The arithmetic mean of the table.
-function table.average(values, includeLastValue)
-    if #values == 0 then return 0 end
-    local sum = 0
-    for _, value in pairs(values) do
-        sum = sum + value
-    end
-    if not includeLastValue then
-        sum = sum - values[#values]
-        return sum / (#values - 1)
-    end
-    return sum / #values
-end
----Concatenates two arrays together.
----@param t1 any[] The first table.
----@param t2 any[] The second table.
----@return any[] tbl The resultant table.
-function table.combine(t1, t2)
-    local newTbl = table.duplicate(t1)
-    for i = 1, #t2 do
-        table.insert(newTbl, t2[i])
-    end
-    return newTbl
-end
----Creates a new array with a custom metatable, allowing for `:` syntactic sugar.
----@param ... any entries to put into the table.
----@return table tbl A table with the given entries.
-function table.construct(...)
-    local tbl = {}
-    for _, v in ipairs({ ... }) do
-        table.insert(tbl, v)
-    end
-    setmetatable(tbl, { __index = table })
-    return tbl
-end
----Creates a new array with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
----@generic T
----@param item T The entry to use.
----@param num integer The number of entries to put into the table.
----@return T[] tbl A table with the given entries.
-function table.constructRepeating(item, num)
-    local tbl = table.construct()
-    for _ = 1, num do
-        tbl:insert(item)
-    end
-    return tbl
-end
----Returns a boolean value corresponding to whether or not an element exists within a table.
----@param tbl table The table to search in.
----@param item any The item to search for.
----@return boolean contains Whether or not the item given is within the table.
-function table.contains(tbl, item)
-    for _, v in pairs(tbl) do
-        if (v == item) then return true end
-    end
-    return false
-end
-table.includes = table.contains
----Removes duplicate values from a table.
----@param tbl table The original table.
----@return table tbl A new table with no duplicates.
-function table.dedupe(tbl)
-    local hash = {}
-    local newTbl = {}
-    for _, value in ipairs(tbl) do
-        if (not hash[value]) then
-            newTbl[#newTbl + 1] = value
-            hash[value] = true
-        end
-    end
-    return newTbl
-end
----Returns a deep copy of a table.
----@param tbl table The original table.
----@return table tbl The new table.
-function table.duplicate(tbl)
-    local dupeTbl = {}
-    if (tbl[1]) then
-        for _, value in ipairs(tbl) do
-            table.insert(dupeTbl, type(value) == "table" and table.duplicate(value) or value)
-        end
-    else
-        for _, key in pairs(table.keys(tbl)) do
-            local value = tbl[key]
-            dupeTbl[key] = type(value) == "table" and table.duplicate(value) or value
-        end
-    end
-    return dupeTbl
-end
----Returns a 1-indexed value corresponding to the location of an element within a table.
----@param tbl table The table to search in.
----@param item any The item to search for.
----@return integer idx The index of the item. If the item doesn't exist, returns -1 instead.
-function table.indexOf(tbl, item)
-  for i, v in pairs(tbl) do
-    if (v == item) then return i end
-  end
-  return -1
-end
----Returns a table of keys from a table.
----@param tbl { [string]: any } The table to search in.
----@return string[] keys A list of keys.
-function table.keys(tbl)
-    local resultsTbl = {}
-    for k, _ in pairs(tbl) do
-        if (not table.contains(resultsTbl, k)) then
-            table.insert(resultsTbl, k)
-        end
-    end
-    return resultsTbl
-end
----Normalizes a table of numbers to achieve a target average (NOT PURE)
----@param values number[] The table to normalize.
----@param targetAverage number The desired average value.
----@param includeLastValueInAverage boolean Whether or not to include the last value in the average.
-function table.normalize(values, targetAverage, includeLastValueInAverage)
-    local avgValue = table.average(values, includeLastValueInAverage)
-    if avgValue == 0 then return end
-    for i = 1, #values do
-        values[i] = (values[i] * targetAverage) / avgValue
-    end
-end
----Converts a string (generated from [table.stringify](lua://table.stringify)) into a table.
----@param str string
----@return any
-function table.parse(str)
-    if (str == "FALSE" or str == "TRUE") then return str == "TRUE" end
-    if (str:sub(1, 1) == '"') then return str:sub(2, -2) end
-    if (str:match("^[%d%.]+$")) then return tonumber(str) end
-    if (not table.contains({ "{", "[" }, str:sub(1, 1))) then return str end
-    local tableType = str:sub(1, 1) == "[" and "arr" or "dict"
-    local tbl = {}
-    local terms = {}
-    while true do
-        local nestedTableFactor = table.contains({ "[", "{" }, str:sub(2, 2)) and 1 or 0
-        local depth = nestedTableFactor
-        local searchIdx = 2 + nestedTableFactor
-        local inQuotes = false
-        while (searchIdx < str:len()) do
-            if (str:sub(searchIdx, searchIdx) == '"') then
-                inQuotes = not inQuotes
+function loadDefaultProperties(defaultProperties)
+    if (not defaultProperties) then return end
+    if (not defaultProperties.menu) then goto skipMenu end
+    for label, tbl in pairs(defaultProperties.menu) do
+        for settingName, settingValue in pairs(tbl) do
+            local defaultTable = DEFAULT_STARTING_MENU_VARS[label]
+            if (not defaultTable) then break end
+            local defaultSetting = defaultTable[settingName]
+            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+                goto skipSetting
             end
-            if (table.contains({ "]", "}" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
-                depth = depth - 1
+            if (type(defaultSetting) == "number") then
+                settingValue = tonumber(settingValue)
             end
-            if (table.contains({ "[", "{" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
-                depth = depth + 1
+            if (type(defaultSetting) == "boolean") then
+                settingValue = truthy(settingValue)
             end
-            if ((str:sub(searchIdx, searchIdx) == "," or nestedTableFactor == 1) and not inQuotes and depth == 0) then break end
-            searchIdx = searchIdx + 1
-        end
-        table.insert(terms, str:sub(2, searchIdx + nestedTableFactor - 1))
-        str = str:sub(searchIdx + nestedTableFactor)
-        if (str:len() <= 1) then break end
-    end
-    if (tableType == "arr") then
-        for _, v in pairs(terms) do
-            table.insert(tbl, table.parse(v))
-        end
-    else
-        for _, v in pairs(terms) do
-            local idx = v:find("=")
-            tbl[v:sub(1, idx - 1)] = table.parse(v:sub(idx + 1))
+            DEFAULT_STARTING_MENU_VARS[label][settingName] = settingValue
+            ::skipSetting::
         end
     end
-    return tbl
-end
----In a nested table `tbl`, returns a table of property values with key `property`.
----@param tbl table The table to search in.
----@param property string | integer The property name.
----@return table properties The resultant table.
-function table.property(tbl, property)
-    local resultsTbl = {}
-    for _, v in pairs(tbl) do
-        table.insert(resultsTbl, v[property])
-    end
-    return resultsTbl
-end
----Reverses the order of an array.
----@param tbl table The original table.
----@return table tbl The original table, reversed.
-function table.reverse(tbl)
-    local reverseTbl = {}
-    for i = 1, #tbl do
-        table.insert(reverseTbl, tbl[#tbl + 1 - i])
-    end
-    return reverseTbl
-end
-function sortAscending(a, b) return a < b end
-function sortAscendingStartTime(a, b) return a.StartTime < b.StartTime end
-function sortAscendingTime(a, b) return a.time < b.time end
----Sorts a table given a sorting function.
----@generic T
----@param tbl T[] The table to sort.
----@param compFn fun(a: T, b: T): boolean A comparison function. Given two elements `a` and `b`, how should they be sorted?
----@return T[] sortedTbl A sorted table.
-function sort(tbl, compFn)
-    newTbl = table.duplicate(tbl)
-    table.sort(newTbl, compFn)
-    return newTbl
-end
----Converts a table (or any other primitive values) to a string.
----@param var any
----@return string
-function table.stringify(var)
-    if (type(var) == "boolean") then return var and "TRUE" or "FALSE" end
-    if (type(var) == "string") then return '"' .. var .. '"' end
-    if (type(var) == "number") then return var end
-    if (type(var) ~= "table") then return "UNKNOWN" end
-    if (var[1] == nil) then
-        local str = "["
-        for _, v in pairs(var) do
-            str = str .. table.stringify(v) .. ","
-        end
-        return str:sub(1, -2) .. "]"
-    end
-    local str = "{"
-    for k, v in pairs(var) do
-        str = str .. k .. "=" .. table.stringify(v) .. ","
-    end
-    return str:sub(1, -2) .. "}"
-end
----Returns a table of keys from a table.
----@param tbl { [string]: any } The table to search in.
----@return string[] keys A list of keys.
-function table.values(tbl)
-    local resultsTbl = {}
-    for _, v in pairs(tbl) do
-        if (not table.contains(resultsTbl, v)) then
-            table.insert(resultsTbl, v)
+    ::skipMenu::
+    for label, tbl in pairs(defaultProperties.settings) do
+        for settingName, settingValue in pairs(tbl) do
+            local defaultTable = DEFAULT_STARTING_SETTING_VARS[label]
+            if (not defaultTable) then break end
+            local defaultSetting = defaultTable[settingName]
+            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+                goto skipSetting
+            end
+            if (type(defaultSetting) == "number") then
+                settingValue = tonumber(settingValue)
+            end
+            if (type(defaultSetting) == "boolean") then
+                settingValue = truthy(settingValue)
+            end
+            DEFAULT_STARTING_SETTING_VARS[label][settingName] = settingValue
+            ::skipSetting::
         end
     end
-    return resultsTbl
 end
----@diagnostic disable: return-type-mismatch
----The above is made because we want the functions to be identity functions when passing in vectors instead of tables.
----Converts a table of length 4 into a [`Vector4`](lua://Vector4).
----@param tbl number[] The table to convert.
----@return Vector4 vctr The output vector.
-function table.vectorize4(tbl)
-    if (not tbl) then return vector4(0) end
-    if (type(tbl) == "userdata") then return tbl end
-    return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
-end
----Converts a table of length 3 into a [`Vector3`](lua://Vector3).
----@param tbl number[] The table to convert.
----@return Vector3 vctr The output vector.
-function table.vectorize3(tbl)
-    if (not tbl) then return vector3(0) end
-    if (type(tbl) == "userdata") then return tbl end
-    return vector.New(tbl[1], tbl[2], tbl[3])
-end
----Converts a table of length 2 into a [`Vector2`](lua://Vector2).
----@param tbl number[] The table to convert.
----@return Vector2 vctr The output vector.
-function table.vectorize2(tbl)
-    if (not tbl) then return vector2(0) end
-    if (type(tbl) == "userdata") then return tbl end
-    return vector.New(tbl[1], tbl[2])
-end
----Creates a new [`Vector4`](lua://Vector4) with all elements being the given number.
----@param n number The number to use as the entries.
----@return Vector4 vctr The resultant vector of style `<n, n, n, n>`.
-function vector4(n)
-    return vector.New(n, n, n, n)
-end
----Creates a new [`Vector3`](lua://Vector4) with all elements being the given number.
----@param n number The number to use as the entries.
----@return Vector3 vctr The resultant vector of style `<n, n, n>`.
-function vector3(n)
-    return vector.New(n, n, n)
-end
----Creates a new [`Vector2`](lua://Vector2) with all elements being the given number.
----@param n number The number to use as the entries.
----@return Vector2 vctr The resultant vector of style `<n, n>`.
-function vector2(n)
-    return vector.New(n, n)
-end
+globalVars = {
+    stepSize = 5,
+    dontReplaceSV = false,
+    upscroll = false,
+    colorThemeIndex = 9,
+    styleThemeIndex = 1,
+    effectFPS = 90,
+    cursorTrailIndex = 1,
+    cursorTrailShapeIndex = 1,
+    cursorTrailPoints = 10,
+    cursorTrailSize = 5,
+    snakeSpringConstant = 1,
+    cursorTrailGhost = false,
+    rgbPeriod = 2,
+    drawCapybara = false,
+    drawCapybara2 = false,
+    drawCapybara312 = false,
+    selectTypeIndex = 1,
+    placeTypeIndex = 1,
+    editToolIndex = 1,
+    showExportImportMenu = false,
+    importData = "",
+    exportCustomSVData = "",
+    exportData = "",
+    scrollGroupIndex = 1,
+    hideSVInfo = false,
+    showVibratoWidget = false,
+    showNoteDataWidget = false,
+    showMeasureDataWidget = false,
+    ignoreNotesOutsideTg = false,
+    advancedMode = false,
+    hideAutomatic = false,
+    pulseCoefficient = 0,
+    pulseColor = vector4(1),
+    useCustomPulseColor = false,
+    hotkeyList = DEFAULT_HOTKEY_LIST,
+    customStyle = {},
+    dontPrintCreation = false,
+    equalizeLinear = false,
+    defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
+}
 ---Returns the current global variables, as set in state.
 ---@return table globalVars
 function loadGlobalVars()
@@ -8029,8 +8590,15 @@ function loadGlobalVars()
         hotkeyList = state.GetValue("global_hotkeyList") or DEFAULT_HOTKEY_LIST,
         customStyle = state.GetValue("global_customStyle") or {},
         dontPrintCreation = state.GetValue("global_dontPrintCreation") or false,
-        equalizeLinear = state.GetValue("global_equalizeLinear") or false
+        equalizeLinear = state.GetValue("global_equalizeLinear") or false,
+        defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
     }
+end
+---Sets the state of all global variables, and saves them to the `config.yaml` file.
+---@param globalVars table
+function saveAndSyncGlobals(globalVars)
+    write(globalVars)
+    syncGlobalVarsState(globalVars)
 end
 DEFAULT_STARTING_MENU_VARS = {
     placeStandard = {
@@ -8174,9 +8742,10 @@ DEFAULT_STARTING_MENU_VARS = {
 ---Gets the current menu's variables.
 ---@param menuType string The menu type.
 ---@return table
-function getMenuVars(menuType)
+function getMenuVars(menuType, optionalLabel)
+    optionalLabel = optionalLabel or ""
     local menuVars = DEFAULT_STARTING_MENU_VARS[menuType]
-    local labelText = menuType .. "Menu"
+    local labelText = menuType .. optionalLabel .. "Menu"
     getVariables(labelText, menuVars)
     return menuVars
 end
@@ -8414,60 +8983,4 @@ function getSettingVars(svType, label)
     local labelText = svType .. label .. "Settings"
     getVariables(labelText, settingVars)
     return settingVars
-end
-CONSONANTS = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Z" }
----Very rudimentary function that returns a string depending on whether or not it should be plural.
----@param str string The inital string, which should be a noun (e.g. `bookmark`)
----@param val number The value, or count, of the noun, which will determine if it should be plural.
----@return string pluralizedStr A new string that is pluralized if `val ~= 1`.
-function pluralize(str, val, pos)
-    if (pos) then
-        strEnding = str:sub(pos + 1, -1)
-        str = str:sub(1, pos)
-    end
-    local finalStr = str .. "s"
-    if (val == 1) then return str .. (strEnding or "") end
-    local lastLetter = str:sub(-1):upper()
-    local secondToLastLetter = str:sub(-2, -2):upper()
-    if (lastLetter == "Y" and table.contains(CONSONANTS, secondToLastLetter)) then
-        finalStr = str:sub(1, -2) .. "ies"
-    end
-    if (str:sub(-3):lower() == "quy") then
-        finalStr = str:sub(1, -2) .. "ies"
-    end
-    if (table.contains({ "J", "S", "X", "Z" }, lastLetter) or table.contains({ "SH", "CH" }, str:sub(-2))) then
-        finalStr = str .. "es"
-    end
-    return finalStr .. (strEnding or "")
-end
----Prints a message if creation messages are enabled.
----@param type "e!"|"w!"|"i!"|"s!"
----@param msg string
-function toggleablePrint(type, msg)
-    local creationMsg = msg:find("Create") and true or false
-    if (creationMsg and state.GetValue("global_dontPrintCreation")) then return end
-    print(type, msg)
-end
----Returns `true` if given a string called "true", given a number greater than 0, given a table with an element, or is given `true`. Otherwise, returns `false`.
----@param param any The parameter to truthify.
----@return boolean truthy The truthy value of the parameter.
-function truthy(param)
-    local t = type(param)
-    if (t == "string") then
-        return param:lower() == "true" and true or false
-    else
-        if t == "number" then
-            return param > 0 and true or false
-        else
-            if t == "table" or t == "userdata" then
-                return #param > 0 and true or false
-            else
-                if t == "boolean" then
-                    return param
-                else
-                    return false
-                end
-            end
-        end
-    end
 end

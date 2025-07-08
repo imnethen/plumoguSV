@@ -64,7 +64,7 @@ function displayFrameTimes(settingVars)
     imgui.EndChild()
 end
 
-function drawCurrentFrame(globalVars, settingVars)
+function drawCurrentFrame(settingVars)
     local mapKeyCount = map.GetKeyCount()
     local noteWidth = 200 / mapKeyCount
     local noteSpacing = 5

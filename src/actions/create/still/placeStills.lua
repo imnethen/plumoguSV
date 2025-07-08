@@ -1,11 +1,11 @@
-function placeStillSVsParent(globalVars, menuVars)
+function placeStillSVsParent(menuVars)
     local svsToRemove = {}
     local svsToAdd = {}
     if (menuVars.stillBehavior == 1) then
         if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
-            placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
+            placeSVs(menuVars, nil, nil, nil, menuVars.settingVars.distance)
         else
-            placeSVs(globalVars, menuVars)
+            placeSVs(menuVars)
         end
         return
     end
@@ -13,9 +13,9 @@ function placeStillSVsParent(globalVars, menuVars)
     if (not truthy(offsets)) then return end
     for i = 1, (#offsets - 1) do
         if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and menuVars.settingVars.distanceMode == 2) then
-            tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
+            tbl = placeSVs(menuVars, false, offsets[i], offsets[i + 1], menuVars.settingVars.distance)
         else
-            tbl = placeSVs(globalVars, menuVars, false, offsets[i], offsets[i + 1])
+            tbl = placeSVs(menuVars, false, offsets[i], offsets[i + 1])
         end
         svsToRemove = table.combine(svsToRemove, tbl.svsToRemove)
         svsToAdd = table.combine(svsToAdd, tbl.svsToAdd)

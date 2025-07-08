@@ -22,7 +22,7 @@
 4. Create an identical path through `actions` where your menu will interact with the map upon execution of a `simpleAction`.
 
 ## Creating a new global variable
-1. Update `loadGlobalVars` to include your new value and the default value.
+1. Update `vars/global.lua` to include your new value and the default value.
 2. Update `syncGlobalVarsState` to whitelist your global variable into the database.
 
 ## Creating a new category

@@ -67,4 +67,5 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~automate optimizations~~
 * ~~Use sliderint instead of clamped dragint as much as possible~~
 * ~~Fix automate TGs being hidden breaking stuff~~
-* Make globalVars.... actually global so i don't have to fucking pass it down everywhere (v2.1)
+* ~~Make globalVars.... actually global so i don't have to fucking pass it down everywhere~~
+* Remove passing globalVars to children

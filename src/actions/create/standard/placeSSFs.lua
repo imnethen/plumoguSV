@@ -1,4 +1,4 @@
-function placeSSFs(globalVars, menuVars)
+function placeSSFs(menuVars)
     local numMultipliers = #menuVars.svMultipliers
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end

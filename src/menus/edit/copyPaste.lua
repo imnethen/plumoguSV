@@ -1,4 +1,4 @@
-function copyNPasteMenu(globalVars)
+function copyNPasteMenu()
     local menuVars = getMenuVars("copy")
 
     _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
@@ -15,7 +15,7 @@ function copyNPasteMenu(globalVars)
     if (copiedItemCount == 0) then
         simpleActionMenu("Copy items between selected notes", 2, copyItems, nil, menuVars)
     else
-        button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, nil, menuVars)
+        button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
     end
 
     saveVariables("copyMenu", menuVars)
@@ -23,5 +23,5 @@ function copyNPasteMenu(globalVars)
     if copiedItemCount == 0 then return end
 
     addSeparator()
-    simpleActionMenu("Paste items at selected notes", 1, pasteItems, globalVars, menuVars)
+    simpleActionMenu("Paste items at selected notes", 1, pasteItems, menuVars)
 end

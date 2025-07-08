@@ -1,9 +1,9 @@
-function setPluginAppearance(globalVars)
+function setPluginAppearance()
     local colorTheme = COLOR_THEMES[globalVars.colorThemeIndex]
     local styleTheme = STYLE_THEMES[globalVars.styleThemeIndex]
 
     setPluginAppearanceStyles(styleTheme)
-    setPluginAppearanceColors(colorTheme, globalVars)
+    setPluginAppearanceColors(colorTheme)
 end
 
 -- Configures the plugin GUI styles
@@ -40,7 +40,7 @@ end
 -- Parameters
 --    colorTheme : currently selected color theme [String]
 --    rgbPeriod  : length in seconds of one RGB color cycle [Int/Float]
-function setPluginAppearanceColors(colorTheme, globalVars)
+function setPluginAppearanceColors(colorTheme)
     local borderColor = vector4(1)
 
     if colorTheme == "Classic" then borderColor = setClassicColors() end
@@ -58,7 +58,7 @@ function setPluginAppearanceColors(colorTheme, globalVars)
     if colorTheme == "edom remag BGR" then borderColor = setInvertedRGBGamerColors(globalVars.rgbPeriod) end
     if colorTheme == "BGR + otingocnI" then borderColor = setInvertedIncognitoRGBColors(globalVars.rgbPeriod) end
     if colorTheme == "otingocnI" then borderColor = setInvertedIncognitoColors() end
-    if colorTheme == "CUSTOM" then borderColor = setCustomColors(globalVars) end
+    if colorTheme == "CUSTOM" then borderColor = setCustomColors() end
 
-    state.SetValue("global_baseBorderColor", borderColor)
+    state.SetValue("baseBorderColor", borderColor)
 end

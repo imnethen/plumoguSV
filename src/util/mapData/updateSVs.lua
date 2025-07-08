@@ -5,13 +5,13 @@
 --    menuVars      : list of variables used for the place SV menu [Table]
 --    settingVars   : list of variables used for the current menu [Table]
 --    skipFinalSV   : whether or not to skip the final SV for updating menu SVs [Boolean]
-function updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, skipFinalSV)
+function updateMenuSVs(currentSVType, menuVars, settingVars, skipFinalSV)
     local interlaceMultiplier = nil
     if menuVars.interlace then interlaceMultiplier = menuVars.interlaceRatio end
     menuVars.svMultipliers = generateSVMultipliers(currentSVType, settingVars, interlaceMultiplier)
     local svMultipliersNoEndSV = table.duplicate(menuVars.svMultipliers)
     table.remove(svMultipliersNoEndSV)
-    menuVars.svDistances = calculateDistanceVsTime(globalVars, svMultipliersNoEndSV)
+    menuVars.svDistances = calculateDistanceVsTime(svMultipliersNoEndSV)
 
     updateFinalSV(settingVars.finalSVIndex, menuVars.svMultipliers, settingVars.customSV,
         skipFinalSV)

@@ -5,7 +5,7 @@ end
 
 function addNoteTimesToDynamicScaleButton(menuVars)
     local buttonText = "Assign selected note times"
-    button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, nil, menuVars)
+    button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
 end
 
 function removeSelectedFrameTimeButton(settingVars)
@@ -16,7 +16,7 @@ function removeSelectedFrameTimeButton(settingVars)
     settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
 end
 
-function exportImportSettingsButton(globalVars)
+function exportImportSettingsButton()
     local buttonText = ": )"
     if globalVars.showExportImportMenu then buttonText = "X" end
     local buttonPressed = imgui.Button(buttonText, EXPORT_BUTTON_SIZE)

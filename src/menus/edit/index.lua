@@ -21,20 +21,20 @@ EDIT_SV_TOOLS = { -- tools for editing SVs
 }
 
 
-function editSVTab(globalVars)
-    if (globalVars.advancedMode) then chooseCurrentScrollGroup(globalVars) end
-    chooseEditTool(globalVars)
+function editSVTab()
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
+    chooseEditTool()
     addSeparator()
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
     if toolName == "Change Groups" then changeGroupsMenu() end
     if toolName == "Convert SV <-> SSF" then convertSVSSFMenu() end
-    if toolName == "Copy & Paste" then copyNPasteMenu(globalVars) end
+    if toolName == "Copy & Paste" then copyNPasteMenu() end
     if toolName == "Direct SV" then directSVMenu() end
     if toolName == "Displace Note" then displaceNoteMenu() end
     if toolName == "Displace View" then displaceViewMenu() end
-    if toolName == "Dynamic Scale" then dynamicScaleMenu(globalVars) end
+    if toolName == "Dynamic Scale" then dynamicScaleMenu() end
     if toolName == "Fix LN Ends" then fixLNEndsMenu() end
     if toolName == "Flicker" then flickerMenu() end
     if toolName == "Layer Snaps" then layerSnapMenu() end

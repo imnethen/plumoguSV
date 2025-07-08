@@ -8,7 +8,7 @@ function importCustomSVs(settingVars)
         local regex = "(-?%d*%.?%d+)"
         local values = {}
         for value, _ in string.gmatch(customSVText, regex) do
-            table.insert(values, tonumber(value))
+            table.insert(values, math.toNumber(value))
         end
         if #values >= 1 then
             settingVars.svMultipliers = values

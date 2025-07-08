@@ -46,12 +46,12 @@ function chooseChinchillaType(settingVars)
     return oldIndex ~= settingVars.chinchillaTypeIndex
 end
 
-function chooseColorTheme(globalVars)
+function chooseColorTheme()
     local oldColorThemeIndex = globalVars.colorThemeIndex
     globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex, COLOR_THEME_COLORS)
 
     if (oldColorThemeIndex ~= globalVars.colorThemeIndex) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 
     local currentTheme = COLOR_THEMES[globalVars.colorThemeIndex]
@@ -59,7 +59,7 @@ function chooseColorTheme(globalVars)
 
     if not isRGBColorTheme then return end
 
-    chooseRGBPeriod(globalVars)
+    chooseRGBPeriod()
 end
 
 function chooseComboPhase(settingVars, maxComboPhase)
@@ -172,15 +172,15 @@ function chooseCurrentFrame(settingVars)
     imgui.PopItemWidth()
 end
 
-function chooseCursorTrail(globalVars)
+function chooseCursorTrail()
     local oldCursorTrailIndex = globalVars.cursorTrailIndex
     globalVars.cursorTrailIndex = combo("Cursor Trail", CURSOR_TRAILS, oldCursorTrailIndex)
     if (oldCursorTrailIndex ~= globalVars.cursorTrailIndex) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
-function chooseCursorTrailGhost(globalVars)
+function chooseCursorTrailGhost()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
@@ -189,11 +189,11 @@ function chooseCursorTrailGhost(globalVars)
     _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", oldCursorTrailGhost)
 
     if (oldCursorTrailGhost ~= globalVars.cursorTrailGhost) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
-function chooseCursorTrailPoints(globalVars)
+function chooseCursorTrailPoints()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
@@ -201,11 +201,11 @@ function chooseCursorTrailPoints(globalVars)
     local oldCursorTrailPoints = globalVars.cursorTrailPoints
     _, globalVars.cursorTrailPoints = imgui.InputInt(label, oldCursorTrailPoints, 1, 1)
     if (oldCursorTrailPoints ~= globalVars.cursorTrailPoints) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
-function chooseCursorTrailShape(globalVars)
+function chooseCursorTrailShape()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
@@ -213,11 +213,11 @@ function chooseCursorTrailShape(globalVars)
     local oldTrailShapeIndex = globalVars.cursorTrailShapeIndex
     globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, oldTrailShapeIndex)
     if (oldTrailShapeIndex ~= globalVars.cursorTrailShapeIndex) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
-function chooseCursorShapeSize(globalVars)
+function chooseCursorShapeSize()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
@@ -226,7 +226,7 @@ function chooseCursorShapeSize(globalVars)
     local oldCursorTrailSize = globalVars.cursorTrailSize
     _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
     if (oldCursorTrailSize ~= globalVars.cursorTrailSize) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
@@ -313,34 +313,34 @@ function chooseSnap(menuVars)
     menuVars.snap = math.clamp(menuVars.snap, 1, 100)
 end
 
-function chooseDrawCapybara(globalVars)
+function chooseDrawCapybara()
     local oldDrawCapybara = globalVars.drawCapybara
     _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
     helpMarker("Draws a capybara at the bottom right of the screen")
     if (oldDrawCapybara ~= globalVars.drawCapybara) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
-function chooseDrawCapybara2(globalVars)
+function chooseDrawCapybara2()
     local oldDrawCapybara2 = globalVars.drawCapybara2
     _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
     helpMarker("Draws a capybara at the bottom left of the screen")
     if (oldDrawCapybara2 ~= globalVars.drawCapybara2) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
-function chooseDrawCapybara312(globalVars)
+function chooseDrawCapybara312()
     local oldDrawCapybara312 = globalVars.drawCapybara312
     _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", oldDrawCapybara312)
     if (oldDrawCapybara312 ~= globalVars.drawCapybara312) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
     helpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
 
-function chooseSelectTool(globalVars)
+function chooseSelectTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("Current Type:")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -354,7 +354,7 @@ function chooseSelectTool(globalVars)
     if selectTool == "Note Type" then toolTip("Select rice/ln notes") end
 end
 
-function chooseEditTool(globalVars)
+function chooseEditTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Current Tool:")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -382,13 +382,13 @@ function chooseEditTool(globalVars)
     if svTool == "Vertical Shift" then toolTip("Adds a constant value to SVs in a range") end
 end
 
-function chooseEffectFPS(globalVars)
+function chooseEffectFPS()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
     local oldEffectFPS = globalVars.effectFPS
     _, globalVars.effectFPS = imgui.InputInt("Effect FPS", oldEffectFPS, 1, 1)
     if (oldEffectFPS ~= globalVars.effectFPS) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
     helpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
     globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
@@ -442,7 +442,7 @@ function chooseFrameTimeData(settingVars)
 end
 
 function chooseIntensity(settingVars)
-    local userStepSize = state.GetValue("global_stepSize") or 5
+    local userStepSize = globalVars.stepSize or 5
     local totalSteps = math.ceil(100 / userStepSize)
 
     local oldIntensity = settingVars.intensity
@@ -492,15 +492,14 @@ function chooseLinearlyChangeDist(settingVars)
 end
 
 -- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
-function chooseStepSize(globalVars)
+function chooseStepSize()
     imgui.PushItemWidth(40)
     local oldStepSize = globalVars.stepSize
     local _, tempStepSize = imgui.InputFloat("Exponential Intensity Step Size", oldStepSize, 0, 0, "%.0f%%")
     globalVars.stepSize = math.clamp(tempStepSize, 1, 100)
     imgui.PopItemWidth()
     if (oldStepSize ~= globalVars.stepSize) then
-        saveAndSyncGlobals(globalVars)
-        state.SetValue("global_stepSize", globalVars.stepSize)
+        write()
     end
 end
 
@@ -600,7 +599,7 @@ function choosePeriodShift(settingVars)
     return oldShift ~= newShift
 end
 
-function choosePlaceSVType(globalVars)
+function choosePlaceSVType()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -609,7 +608,7 @@ function choosePlaceSVType(globalVars)
     if placeType == "Still" then toolTip("Still keeps notes normal distance/spacing apart") end
 end
 
-function chooseCurrentScrollGroup(globalVars)
+function chooseCurrentScrollGroup()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Timing Group: ")
     imgui.SameLine(0, SAMELINE_SPACING)
@@ -660,14 +659,14 @@ function chooseRatio(menuVars)
     _, menuVars.ratio = imgui.InputFloat("Ratio", menuVars.ratio, 0, 0, "%.3f")
 end
 
-function chooseRGBPeriod(globalVars)
+function chooseRGBPeriod()
     local oldRGBPeriod = globalVars.rgbPeriod
     _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", oldRGBPeriod, 0, 0,
         "%.0f seconds")
     globalVars.rgbPeriod = math.clamp(globalVars.rgbPeriod, MIN_RGB_CYCLE_TIME,
         MAX_RGB_CYCLE_TIME)
     if (oldRGBPeriod ~= globalVars.rgbPeriod) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
@@ -685,7 +684,7 @@ function chooseScaleType(menuVars)
     if scaleType == "Relative Ratio" then chooseRatio(menuVars) end
 end
 
-function chooseSnakeSpringConstant(globalVars)
+function chooseSnakeSpringConstant()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
@@ -694,7 +693,7 @@ function chooseSnakeSpringConstant(globalVars)
     helpMarker("Pick any number from 0.01 to 1")
     globalVars.snakeSpringConstant = math.clamp(globalVars.snakeSpringConstant, 0.01, 1)
     if (globalVars.snakeSpringConstant ~= oldValue) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
@@ -842,11 +841,11 @@ function chooseStuttersPerSection(settingVars)
     return oldNumber ~= newNumber
 end
 
-function chooseStyleTheme(globalVars)
+function chooseStyleTheme()
     local oldStyleTheme = globalVars.styleThemeIndex
     globalVars.styleThemeIndex = combo("Style Theme", STYLE_THEMES, oldStyleTheme)
     if (oldStyleTheme ~= globalVars.styleThemeIndex) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
@@ -887,7 +886,7 @@ function chooseSVPoints(settingVars, svPointsForce)
     return oldPoints ~= settingVars.svPoints
 end
 
-function chooseUpscroll(globalVars)
+function chooseUpscroll()
     imgui.AlignTextToFramePadding()
     imgui.Text("Scroll Direction:")
     toolTip("Orientation for distance graphs and visuals")
@@ -901,7 +900,7 @@ function chooseUpscroll(globalVars)
         globalVars.upscroll = true
     end
     if (oldUpscroll ~= globalVars.upscroll) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
@@ -921,23 +920,23 @@ function chooseDistanceMode(menuVars)
     return oldMode ~= menuVars.distanceMode
 end
 
-function choosePulseCoefficient(globalVars)
+function choosePulseCoefficient()
     local oldCoefficient = globalVars.pulseCoefficient
     _, globalVars.pulseCoefficient = imgui.SliderFloat("Pulse Strength", oldCoefficient, 0, 1,
         math.round(globalVars.pulseCoefficient * 100) .. "%%")
     globalVars.pulseCoefficient = math.clamp(globalVars.pulseCoefficient, 0, 1)
     if (oldCoefficient ~= globalVars.pulseCoefficient) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
 end
 
-function choosePulseColor(globalVars)
+function choosePulseColor()
     _, colorPickerOpened = imgui.Begin("plumoguSV Pulse Color Picker", true,
         imgui_window_flags.AlwaysAutoResize)
     local oldColor = globalVars.pulseColor
     _, globalVars.pulseColor = imgui.ColorPicker4("Pulse Color", globalVars.pulseColor)
     if (oldColor ~= globalVars.pulseColor) then
-        saveAndSyncGlobals(globalVars)
+        write()
     end
     if (not colorPickerOpened) then
         state.SetValue("showColorPicker", false)
@@ -951,7 +950,7 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
 
     _, var = imgui.InputText(label,
         string.format("%." .. decimalPlaces .. "f" .. suffix,
-            tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or tostring(var):match("%d*[%-]?%d+") or 0),
+            math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+")) or tostring(var):match("%d*[%-]?%d+") or 0),
         4096,
         imgui_input_text_flags.AutoSelectAll)
     if (not imgui.IsItemActive() and state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex, false)) then
@@ -961,7 +960,7 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
     state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())
     state.SetValue("computableInputFloatIndex", computableStateIndex + 1)
 
-    return tonumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")),
+    return math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")),
         previousValue ~= var
 end
 
@@ -1013,11 +1012,11 @@ function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label
         oldValues ~= newValues
 end
 
-function globalCheckbox(globalVars, parameterName, label, tooltipText)
+function globalCheckbox(parameterName, label, tooltipText)
     local oldValue = globalVars[parameterName]
     _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
     if (tooltipText) then toolTip(tooltipText) end
-    if (oldValue ~= globalVars[parameterName]) then saveAndSyncGlobals(globalVars) end
+    if (oldValue ~= globalVars[parameterName]) then write() end
 end
 
 function codeInput(settingVars, parameterName, label, tooltipText)

@@ -4,7 +4,7 @@
 function table.parse(str)
     if (str == "FALSE" or str == "TRUE") then return str == "TRUE" end
     if (str:sub(1, 1) == '"') then return str:sub(2, -2) end
-    if (str:match("^[%d%.]+$")) then return tonumber(str) end
+    if (str:match("^[%d%.]+$")) then return math.toNumber(str) end
     if (not table.contains({ "{", "[" }, str:sub(1, 1))) then return str end
     local tableType = str:sub(1, 1) == "[" and "arr" or "dict"
     local tbl = {}

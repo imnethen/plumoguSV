@@ -1,5 +1,5 @@
-function placeExponentialSpecialSVs(globalVars, menuVars)
+function placeExponentialSpecialSVs(menuVars)
     if (menuVars.settingVars.distanceMode == 2) then
-        placeSVs(globalVars, menuVars, nil, nil, nil, menuVars.settingVars.distance)
+        placeSVs(menuVars, nil, nil, nil, menuVars.settingVars.distance)
     end
 end

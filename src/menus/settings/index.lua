@@ -6,7 +6,7 @@ DEFAULT_SETTING_TYPES = {
     "Keybinds",
 }
 
-function showPluginSettingsWindow(globalVars)
+function showPluginSettingsWindow()
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
     SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)
 
@@ -43,8 +43,8 @@ function showPluginSettingsWindow(globalVars)
     end
     addSeparator()
     if (imgui.Button("Reset Settings")) then
-        saveAndSyncGlobals({})
-        globalVars = loadGlobalVars()
+        write({})
+        globalVars = DEFAULT_GLOBAL_VARS
         toggleablePrint("e!", "Settings have been reset.")
     end
     if (imgui.Button("Crash The Game")) then
@@ -58,22 +58,22 @@ function showPluginSettingsWindow(globalVars)
 
     imgui.BeginChild(69)
     if (SETTING_TYPES[typeIndex] == "General") then
-        showGeneralSettings(globalVars)
+        showGeneralSettings()
     end
     if (SETTING_TYPES[typeIndex] == "Default Properties") then
-        showDefaultPropertiesSettings(globalVars)
+        showDefaultPropertiesSettings()
     end
     if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
-        showWindowSettings(globalVars)
+        showWindowSettings()
     end
     if (SETTING_TYPES[typeIndex] == "Appearance") then
-        showAppearanceSettings(globalVars)
+        showAppearanceSettings()
     end
     if (SETTING_TYPES[typeIndex] == "Custom Theme") then
-        showCustomThemeSettings(globalVars)
+        showCustomThemeSettings()
     end
     if (SETTING_TYPES[typeIndex] == "Keybinds") then
-        showKeybindSettings(globalVars)
+        showKeybindSettings()
     end
     imgui.EndChild()
     imgui.Columns(1)
@@ -83,7 +83,7 @@ function showPluginSettingsWindow(globalVars)
         state.SetValue("settings_typeIndex", 1)
     end
     imgui.PopStyleColor(41)
-    setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex], globalVars)
+    setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex])
     setPluginAppearanceStyles(STYLE_THEMES[globalVars.styleThemeIndex])
     imgui.End()
 end

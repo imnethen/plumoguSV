@@ -8,8 +8,8 @@ SPECIAL_SVS = { -- types of special SVs
 
 -- Parameters
 --    globalVars : list of variables used globally across all menus [Table]
-function placeSpecialSVMenu(globalVars)
-    exportImportSettingsButton(globalVars)
+function placeSpecialSVMenu()
+    exportImportSettingsButton()
     local menuVars = getMenuVars("placeSpecial")
     chooseSpecialSVType(menuVars)
 
@@ -18,14 +18,14 @@ function placeSpecialSVMenu(globalVars)
     local settingVars = getSettingVars(currentSVType, "Special")
     if globalVars.showExportImportMenu then
         --saveVariables("placeSpecialMenu", menuVars)
-        exportImportSettingsMenu(globalVars, menuVars, settingVars)
+        exportImportSettingsMenu(menuVars, settingVars)
         return
     end
 
     if currentSVType == "Stutter" then stutterMenu(settingVars) end
     if currentSVType == "Teleport Stutter" then teleportStutterMenu(settingVars) end
     if currentSVType == "Frames Setup" then
-        animationFramesSetupMenu(globalVars, settingVars)
+        animationFramesSetupMenu(settingVars)
     end
     if currentSVType == "Automate" then automateSVMenu(settingVars) end
     if currentSVType == "Penis" then penisMenu(settingVars) end

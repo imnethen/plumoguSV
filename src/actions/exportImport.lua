@@ -1,4 +1,4 @@
-function exportPlaceSVButton(globalVars, menuVars, settingVars)
+function exportPlaceSVButton(menuVars, settingVars)
     local buttonText = "Export current settings for current menu"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
 
@@ -171,7 +171,7 @@ function exportPlaceSVButton(globalVars, menuVars, settingVars)
     globalVars.exportData = table.concat(exportList, "|")
 end
 
-function exportCustomSVButton(globalVars, menuVars)
+function exportCustomSVButton(menuVars)
     local buttonText = "Export current SVs as custom SV data"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
 
@@ -180,7 +180,7 @@ function exportCustomSVButton(globalVars, menuVars)
     globalVars.exportCustomSVData = table.concat(multipliersCopy, " ")
 end
 
-function importPlaceSVButton(globalVars)
+function importPlaceSVButton()
     local buttonText = "Import settings from pasted data"
     if not imgui.Button(buttonText, ACTION_BUTTON_SIZE) then return end
 
@@ -189,7 +189,7 @@ function importPlaceSVButton(globalVars)
     --    lua-table-tostringtablename-and-table-fromstringstringtable-functions
     local settingsTable = {}
     for str in string.gmatch(globalVars.importData, "([^|]+)") do
-        local num = tonumber(str)
+        local num = math.toNumber(str)
         if num ~= nil then
             table.insert(settingsTable, num)
         elseif str == "false" then
@@ -377,13 +377,13 @@ function importPlaceSVButton(globalVars)
             for str in string.gmatch(splitscrollLayerString, "([^:]+)") do
                 table.insert(layerDataStringTable, str)
             end
-            local layerNumber = tonumber(layerDataStringTable[1])
+            local layerNumber = math.toNumber(layerDataStringTable[1])
             local layerSVs = {}
             local svDataString = layerDataStringTable[2]
             for str in string.gmatch(svDataString, "([^%s]+)") do
                 local svDataTable = {}
                 for svData in string.gmatch(str, "([^%+]+)") do
-                    table.insert(svDataTable, tonumber(svData))
+                    table.insert(svDataTable, math.toNumber(svData))
                 end
                 local svStartTime = svDataTable[1]
                 local svMultiplier = svDataTable[2]
@@ -394,7 +394,7 @@ function importPlaceSVButton(globalVars)
             for str in string.gmatch(noteDataString, "([^%s]+)") do
                 local noteDataTable = {}
                 for noteData in string.gmatch(str, "([^%+]+)") do
-                    table.insert(noteDataTable, tonumber(noteData))
+                    table.insert(noteDataTable, math.toNumber(noteData))
                 end
                 local noteStartTime = noteDataTable[1]
                 local noteLane = noteDataTable[2]
@@ -409,11 +409,11 @@ function importPlaceSVButton(globalVars)
         end
     end
     if standardPlaceType then
-        updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false)
+        updateMenuSVs(currentSVType, menuVars, settingVars, false)
         local labelText = currentSVType .. "Standard"
         saveVariables(labelText .. "Settings", settingVars)
     elseif stillPlaceType then
-        updateMenuSVs(currentSVType, globalVars, menuVars, settingVars, false)
+        updateMenuSVs(currentSVType, menuVars, settingVars, false)
         local labelText = currentSVType .. "Still"
         saveVariables(labelText .. "Settings", settingVars)
     elseif stutterSVType then

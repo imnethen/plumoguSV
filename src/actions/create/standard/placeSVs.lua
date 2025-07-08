@@ -1,4 +1,4 @@
-function placeSVs(globalVars, menuVars, place, optionalStart, optionalEnd, optionalDistance)
+function placeSVs(menuVars, place, optionalStart, optionalEnd, optionalDistance)
     local finalSVType = FINAL_SV_TYPES[menuVars.settingVars.finalSVIndex]
     local placingStillSVs = menuVars.noteSpacing ~= nil
     local numMultipliers = #menuVars.svMultipliers

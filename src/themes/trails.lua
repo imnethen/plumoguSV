@@ -1,4 +1,4 @@
-function drawCursorTrail(globalVars)
+function drawCursorTrail()
     local o = imgui.GetOverlayDrawList()
     local m = getCurrentMousePosition()
     local t = imgui.GetTime()
@@ -8,16 +8,16 @@ function drawCursorTrail(globalVars)
     if cursorTrail ~= "Sparkle" then state.SetValue("initializeSparkleParticles", false) end
 
     if cursorTrail == "None" then return end
-    if cursorTrail == "Snake" then drawSnakeTrail(globalVars, o, m, t, sz) end
-    if cursorTrail == "Dust" then drawDustTrail(globalVars, o, m, t, sz) end
-    if cursorTrail == "Sparkle" then drawSparkleTrail(globalVars, o, m, t, sz) end
+    if cursorTrail == "Snake" then drawSnakeTrail(o, m, t, sz) end
+    if cursorTrail == "Dust" then drawDustTrail(o, m, t, sz) end
+    if cursorTrail == "Sparkle" then drawSparkleTrail(o, m, t, sz) end
 end
 
 --    o          : [imgui overlay drawlist]
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
 --    sz         : dimensions of the window for Quaver [Table]
-function drawSnakeTrail(globalVars, o, m, t, _)
+function drawSnakeTrail(o, m, t, _)
     local trailPoints = globalVars.cursorTrailPoints
     local snakeTrailPoints = {}
     initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
@@ -123,7 +123,7 @@ end
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
 --    sz         : dimensions of the window for Quaver [Table]
-function drawDustTrail(globalVars, o, m, t, sz)
+function drawDustTrail(o, m, t, sz)
     local dustSize = math.floor(sz[2] / 120)
     local dustDuration = 0.4
     local numDustParticles = 20

@@ -6,7 +6,7 @@ function automateSVMenu(settingVars)
         return
     end
 
-    button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, nil, settingVars)
+    button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, settingVars)
     addSeparator()
     settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
     _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)

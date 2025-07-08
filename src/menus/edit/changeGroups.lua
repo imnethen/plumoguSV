@@ -10,7 +10,7 @@ function changeGroupsMenu()
     local hiddenGroups = {}
     for tgId, tg in pairs(map.TimingGroups) do
         if string.find(tgId, "%$") then goto cont end
-        if (state.GetValue("global_hideAutomatic") and string.find(tgId, "automate_")) then
+        if (globalVars.hideAutomatic and string.find(tgId, "automate_")) then
             table.insert(hiddenGroups,
                 tgId)
         end

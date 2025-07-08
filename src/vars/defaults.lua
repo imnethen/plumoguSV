@@ -10,7 +10,7 @@ function loadDefaultProperties(defaultProperties)
                 goto skipSetting
             end
             if (type(defaultSetting) == "number") then
-                settingValue = tonumber(settingValue)
+                settingValue = math.toNumber(settingValue)
             end
             if (type(defaultSetting) == "boolean") then
                 settingValue = truthy(settingValue)
@@ -29,7 +29,7 @@ function loadDefaultProperties(defaultProperties)
                 goto skipSetting
             end
             if (type(defaultSetting) == "number") then
-                settingValue = tonumber(settingValue)
+                settingValue = math.toNumber(settingValue)
             end
             if (type(defaultSetting) == "boolean") then
                 settingValue = truthy(settingValue)
@@ -38,4 +38,5 @@ function loadDefaultProperties(defaultProperties)
             ::skipSetting::
         end
     end
+    globalVars.defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
 end
