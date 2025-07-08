@@ -6,5 +6,5 @@ function reverseScrollMenu()
 
     addSeparator()
     local buttonText = "Reverse scroll between selected notes"
-    simpleActionMenu(buttonText, 2, reverseScrollSVs, nil, menuVars)
+    simpleActionMenu(buttonText, 2, reverseScrollSVs, menuVars)
 end

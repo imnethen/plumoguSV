@@ -6,5 +6,5 @@ function convertSVSSFMenu()
     saveVariables("convertSVSSFMenu", menuVars)
 
     simpleActionMenu(menuVars.conversionDirection and "Convert SVs -> SSFs" or "Convert SSFs -> SVs", 2, convertSVSSF,
-        nil, menuVars, false, false)
+        menuVars, false, false)
 end

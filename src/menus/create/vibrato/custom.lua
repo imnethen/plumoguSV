@@ -12,7 +12,7 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
 
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
         codeInput(settingVars, "code1", "##code1")
         if imgui.IsItemActive() then
@@ -32,6 +32,6 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
 
         simpleActionMenu("Vibrate", 2, function(v)
             ssfVibrato(v, func1, func2)
-        end, nil, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end

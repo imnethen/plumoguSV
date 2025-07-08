@@ -13,7 +13,7 @@ function copyNPasteMenu()
     local copiedItemCount = #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs + #menuVars.copiedBMs
 
     if (copiedItemCount == 0) then
-        simpleActionMenu("Copy items between selected notes", 2, copyItems, nil, menuVars)
+        simpleActionMenu("Copy items between selected notes", 2, copyItems, menuVars)
     else
         button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
     end

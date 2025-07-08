@@ -8,7 +8,7 @@ function selectChordSizeMenu()
     imgui.SameLine(0, SAMELINE_SPACING)
     _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
 
-    simpleActionMenu("Select chords within region", 2, selectByChordSizes, nil, menuVars)
+    simpleActionMenu("Select chords within region", 2, selectByChordSizes, menuVars)
 
     saveVariables("selectChordSizeMenu", menuVars)
 end

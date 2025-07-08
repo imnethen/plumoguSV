@@ -14,6 +14,6 @@ function teleportStutterMenu(settingVars)
     chooseLinearlyChange(settingVars)
 
     addSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, nil, settingVars)
-    simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, nil, settingVars, true)
+    simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, settingVars, true)
 end

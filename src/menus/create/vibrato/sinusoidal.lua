@@ -13,7 +13,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
 
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, nil, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
         swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
         swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
@@ -37,7 +37,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
         end
         addSeparator()
 
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, nil, menuVars, false, false,
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
             separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end

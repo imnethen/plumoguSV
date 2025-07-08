@@ -5,5 +5,5 @@ function addTeleportMenu()
     saveVariables("addTeleportMenu", menuVars)
 
     addSeparator()
-    simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, nil, menuVars)
+    simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, menuVars)
 end

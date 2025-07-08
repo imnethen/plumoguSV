@@ -15,6 +15,6 @@ function stutterMenu(settingVars)
     displayStutterSVWindows(settingVars)
 
     addSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, nil, settingVars)
-    simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, nil, settingVars, true)
+    simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, settingVars, true)
 end

@@ -4,5 +4,5 @@ function displaceViewMenu()
     saveVariables("displaceViewMenu", menuVars)
 
     addSeparator()
-    simpleActionMenu("Displace view between selected notes", 2, displaceViewSVs, nil, menuVars)
+    simpleActionMenu("Displace view between selected notes", 2, displaceViewSVs, menuVars)
 end

@@ -7,7 +7,7 @@ function scaleDisplaceMenu()
 
     addSeparator()
     local buttonText = "Scale SVs between selected notes##displace"
-    simpleActionMenu(buttonText, 2, scaleDisplaceSVs, nil, menuVars)
+    simpleActionMenu(buttonText, 2, scaleDisplaceSVs, menuVars)
 end
 
 -- Creates the scale (multiply) menu
@@ -18,5 +18,5 @@ function scaleMultiplyMenu()
 
     addSeparator()
     local buttonText = "Scale SVs between selected notes##multiply"
-    simpleActionMenu(buttonText, 2, scaleMultiplySVs, nil, menuVars)
+    simpleActionMenu(buttonText, 2, scaleMultiplySVs, menuVars)
 end

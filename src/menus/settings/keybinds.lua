@@ -21,7 +21,7 @@ function showKeybindSettings()
         globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
         write()
         awaitingIndex = 0
-    end, nil, nil, true, true)
+    end, nil, true, true)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
     if (awaitingIndex == 0) then return end
     local prefixes, key = listenForAnyKeyPressed()

@@ -2,7 +2,7 @@ function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
 
     if (copiedSVCount == 0) then
-        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, nil, settingVars)
+        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, settingVars)
         return
     end
 
@@ -20,5 +20,5 @@ function automateSVMenu(settingVars)
         imgui.PopItemWidth()
     end
     addSeparator()
-    simpleActionMenu("Automate SVs for selected notes", 2, automateSVs, nil, settingVars)
+    simpleActionMenu("Automate SVs for selected notes", 2, automateSVs, settingVars)
 end

@@ -7,5 +7,5 @@ function penisMenu(settingVars)
     _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
         settingVars.bCurvature .. "%%")
 
-    simpleActionMenu("Place SVs", 1, placePenisSV, nil, settingVars)
+    simpleActionMenu("Place SVs", 1, placePenisSV, settingVars)
 end

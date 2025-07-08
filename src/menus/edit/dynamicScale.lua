@@ -45,5 +45,5 @@ function dynamicScaleMenu()
     saveVariables("dynamicScaleMenu", menuVars)
 
     addSeparator()
-    simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, nil, menuVars)
+    simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, menuVars)
 end

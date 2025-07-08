@@ -8,5 +8,5 @@ function flickerMenu()
     saveVariables("flickerMenu", menuVars)
 
     addSeparator()
-    simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, nil, menuVars)
+    simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, menuVars)
 end

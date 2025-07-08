@@ -5,7 +5,7 @@ function selectNoteTypeMenu()
     imgui.SameLine(0, SAMELINE_SPACING)
     _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
 
-    simpleActionMenu("Select notes within region", 2, selectByNoteType, nil, menuVars)
+    simpleActionMenu("Select notes within region", 2, selectByNoteType, menuVars)
 
     saveVariables("selectNoteTypeMenu", menuVars)
 end

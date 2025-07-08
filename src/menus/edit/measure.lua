@@ -13,7 +13,7 @@ function measureMenu()
     toolTip("Measured values might not be 100%% accurate & may not work on older maps")
 
     addSeparator()
-    simpleActionMenu("Measure SVs between selected notes", 2, measureSVs, nil, menuVars)
+    simpleActionMenu("Measure SVs between selected notes", 2, measureSVs, menuVars)
     saveVariables("measureMenu", menuVars)
 end
 

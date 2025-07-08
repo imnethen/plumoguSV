@@ -7,5 +7,5 @@ function selectBySnapMenu()
     simpleActionMenu(
         "Select notes with 1/" .. menuVars.snap .. " snap",
         2,
-        selectBySnap, nil, menuVars)
+        selectBySnap, menuVars)
 end

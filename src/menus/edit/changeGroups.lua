@@ -32,5 +32,5 @@ function changeGroupsMenu()
 
     addSeparator()
 
-    simpleActionMenu("Move items to " .. menuVars.designatedTimingGroup, 2, changeGroups, nil, menuVars)
+    simpleActionMenu("Move items to " .. menuVars.designatedTimingGroup, 2, changeGroups, menuVars)
 end

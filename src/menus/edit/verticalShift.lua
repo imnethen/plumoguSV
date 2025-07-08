@@ -5,5 +5,5 @@ function verticalShiftMenu()
 
     addSeparator()
     local buttonText = "Vertically shift SVs between selected notes"
-    simpleActionMenu(buttonText, 2, verticalShiftSVs, nil, menuVars)
+    simpleActionMenu(buttonText, 2, verticalShiftSVs, menuVars)
 end

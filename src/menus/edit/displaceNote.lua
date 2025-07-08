@@ -5,5 +5,5 @@ function displaceNoteMenu()
     saveVariables("displaceNoteMenu", menuVars)
 
     addSeparator()
-    simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, nil, menuVars)
+    simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, menuVars)
 end

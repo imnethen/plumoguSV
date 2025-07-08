@@ -45,6 +45,6 @@ function animationFramesSetupMenu(settingVars)
         helpMarker("Note: frame positions and viewing them will break if SV distances change")
         addSeparator()
         local label = "Setup frames after selected note"
-        simpleActionMenu(label, 1, displaceNotesForAnimationFrames, nil, settingVars)
+        simpleActionMenu(label, 1, displaceNotesForAnimationFrames, settingVars)
     end
 end
