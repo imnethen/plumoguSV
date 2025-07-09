@@ -10,10 +10,6 @@ function prepareDisplacingSV(svsToAdd, svTimeIsAdded, svTime, displacement, disp
     local currentSVMultiplier = getSVMultiplierAt(svTime)
     if (hypothetical == true) then
         currentSVMultiplier = getHypotheticalSVMultiplierAt(svs, svTime)
-        -- local quantumSVMultiplier = getSVMultiplierAt(svTime) or {StartTime = -1}
-        -- if (quantumSVMultiplier.StartTime > getHypotheticalSVTimeAt(svs, svTime)) then
-        --     currentSVMultiplier = quantumSVMultiplier.Multiplier
-        -- end
     end
     local newSVMultiplier = displacementMultiplier * displacement + currentSVMultiplier
     addSVToList(svsToAdd, svTime, newSVMultiplier, true)
