@@ -29,7 +29,7 @@ function animationFramesSetupMenu(settingVars)
         drawCurrentFrame(settingVars)
         imgui.Columns(1)
         local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.x + 1.5 * SAMELINE_SPACING), 1 }
-        imgui.invisibleButton("sv isnt a real skill", invisibleButtonSize)
+        imgui.InvisibleButton("sv isnt a real skill", invisibleButtonSize)
     else
         imgui.SameLine(0, SAMELINE_SPACING)
         imgui.Text("Place SVs")

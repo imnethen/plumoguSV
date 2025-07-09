@@ -760,7 +760,7 @@ state.IsWindowHovered          = false ---@type boolean MUST BE SET MANUALLY - I
 state.Scale                    = 1 ---@type number
 --- ##### (READ-ONLY)
 --- #### The size of the Quaver window.
-state.WindowSize               = { 69, 69 } ---@type [number, number]
+state.WindowSize               = { 69, 69 } ---@type [number, number] | Vector2
 
 --- ##### (READ-ONLY)
 --- #### Stores a value that can be retrieved by [`state.GetValue`](lua://state.GetValue). Mainly used to persist data between hot-reloads.
@@ -934,7 +934,7 @@ map.GlobalScrollGroup     = {} ---@type ScrollGroup
 --- #### A table of all [hit objects](lua://HitObject) in the map.
 map.HitObjects            = {} ---@type HitObject[]
 --- ##### (READ-ONLY)
---- #### A table of all [timing point](lua://TimingPoint)s in the map.
+--- #### A table of all [timing points](lua://TimingPoint) in the map.
 map.TimingPoints          = {} ---@type TimingPoint[]
 --- ##### (READ-ONLY)
 --- #### A table of all [editor layers](lua://EditorLayer) in the map.

@@ -53,6 +53,7 @@ end
 ---@param p1 Vector2
 ---@param p2 Vector2
 ---@param p3 Vector2
+---@return number, number, number
 function math.interpolateCircle(p1, p2, p3)
     local mtrx = {
         vector.Table(2 * (p2 - p1)),
@@ -64,12 +65,14 @@ function math.interpolateCircle(p1, p2, p3)
     }
     h, k = matrix.solve(mtrx, vctr)
     r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
-    return table.unpack({ h, k, r })
+    ---@type number, number, number
+    return h, k, r
 end
 ---Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
 ---@param p1 Vector2
 ---@param p2 Vector2
 ---@param p3 Vector2
+---@return number, number, number
 function math.interpolateQuadratic(p1, p2, p3)
     local mtrx = {
         (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
@@ -81,7 +84,8 @@ function math.interpolateQuadratic(p1, p2, p3)
     }
     a, b = matrix.solve(mtrx, vctr)
     c = p1.y - p1.x * b - (p1.x) ^ 2 * a
-    return table.unpack({ a, b, c })
+    ---@type number, number, number
+    return a, b, c
 end
 ---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
 ---@param weight number
@@ -384,9 +388,10 @@ function table.parse(str)
     return tbl
 end
 ---In a nested table `tbl`, returns a table of property values with key `property`.
----@param tbl table The table to search in.
+---@generic T
+---@param tbl T[][] | { [string]: T[] } The table to search in.
 ---@param property string | integer The property name.
----@return table properties The resultant table.
+---@return T[] properties The resultant table.
 function table.property(tbl, property)
     local resultsTbl = {}
     for _, v in pairs(tbl) do
@@ -3100,7 +3105,7 @@ function animationFramesSetupMenu(settingVars)
         drawCurrentFrame(settingVars)
         imgui.Columns(1)
         local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.x + 1.5 * SAMELINE_SPACING), 1 }
-        imgui.invisibleButton("sv isnt a real skill", invisibleButtonSize)
+        imgui.InvisibleButton("sv isnt a real skill", invisibleButtonSize)
     else
         imgui.SameLine(0, SAMELINE_SPACING)
         imgui.Text("Place SVs")
@@ -8363,7 +8368,7 @@ end
 ---@param buttonText string The text that should be rendered on the button.
 ---@param minimumNotes integer The minimum number of notes that are required to select berfore the button appears.
 ---@param actionfunc fun(...): any The function to run on button press.
----@param menuVars? {[string]: any} Optional menu variable parameter.
+---@param menuVars? { [string]: any } Optional menu variable parameter.
 ---@param hideNoteReq? boolean Whether or not to hide the textual placeholder if the selected note requirement isn't met.
 ---@param disableKeyInput? boolean Whether or not to disallow keyboard inputs as a substitution to pressing the button.
 ---@param optionalKeyOverride? string (Assumes `disableKeyInput` is false) Optional string to change the activation keybind.
@@ -8393,7 +8398,7 @@ end
 ---Runs a function with the given parameters if the given `condition` is true.
 ---@param condition boolean The condition that is used.
 ---@param func fun(...): nil The function to run if the condition is true.
----@param menuVars? {[string]: any} Optional menu variable parameter.
+---@param menuVars? { [string]: any } Optional menu variable parameter.
 function executeFunctionIfTrue(condition, func, menuVars)
     if not condition then return end
     if menuVars then
@@ -8440,7 +8445,7 @@ end
 ---#### (NOTE: This function is impure and has no return value. This should be changed eventually.)
 ---Gets a list of variables.
 ---@param listName string An identifier to avoid statee collisions.
----@param variables {[string]: any} The key-value table to get data for.
+---@param variables { [string]: any } The key-value table to get data for.
 function getVariables(listName, variables)
     for key, _ in pairs(variables) do
         if (state.GetValue(listName .. key) ~= nil) then
@@ -8450,7 +8455,7 @@ function getVariables(listName, variables)
 end
 ---Saves a table in state, independently.
 ---@param listName string An identifier to avoid state collisions.
----@param variables {[string]: any} A key-value table to save.
+---@param variables { [string]: any } A key-value table to save.
 function saveVariables(listName, variables)
     for key, value in pairs(variables) do
         state.SetValue(listName .. key, value)
