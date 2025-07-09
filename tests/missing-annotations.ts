@@ -39,9 +39,9 @@ export default function checkMissingAnnotations(file: string[]) {
         }
         if (!returnAnnotated && returningValue) {
             console.log(
-                `The function ${chalk.red(
-                    functionName
-                )} does not have an annotated return value.`
+                `The function ${chalk.red(functionName)} ${chalk.magenta(
+                    'does not have an annotated return value.'
+                )}`
             );
             failedTests++;
         }
