@@ -13,8 +13,9 @@ export default function checkDuplicatedLines(plugin: string[]) {
         if (/^[a-zA-Z0-9_]+ = [-a-zA-Z0-9_\.\[\(\)\{\}]+,?$/.test(line)) return
         let testStr = line
         for (let i = 1; i < blockLength; i++) {
-            testStr = `${testStr}\n${plugin[idx + i]}`
+            testStr = `${testStr}\n${plugin[idx + i].trim()}`
         }
+        testStr = `${testStr}\n\n\n`
         if (!hashmap[testStr]) hashmap[testStr] = 0
         hashmap[testStr]++
     })
