@@ -6,12 +6,18 @@
 function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     local noteOffsetsBetween = {}
     for _, ho in pairs(map.HitObjects) do
-        if ho.StartTime >= startOffset and ho.StartTime <= endOffset and ((state.SelectedScrollGroupId == ho.TimingGroup) or not globalVars.ignoreNotesOutsideTg) then
+        if ho.StartTime >= startOffset and ho.StartTime <= endOffset then
+            local skipNote = false
+            if (state.SelectedScrollGroupId ~= ho.TimingGroup and globalVars.ignoreNotesOutsideTg) then skipNote = true end
+            if (ho.StartTime == startOffset or ho.StartTime == endOffset) then skipNote = false end
+
+            if (skipNote) then goto skip end
             table.insert(noteOffsetsBetween, ho.StartTime)
             if (ho.EndTime ~= 0 and ho.EndTime <= endOffset and includeLN) then
                 table.insert(noteOffsetsBetween,
                     ho.EndTime)
             end
+            ::skip::
         end
     end
     noteOffsetsBetween = table.dedupe(noteOffsetsBetween)
