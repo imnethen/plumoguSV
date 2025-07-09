@@ -1,5 +1,5 @@
 # plumoguSV v1.1.2
-<img src="./logo.png" alt="plumoguSV Logo">
+<img src="./assets/logo.png" alt="plumoguSV Logo">
 
 > "The ultimate community-driven and open-source competitive SV plugin. Remastered with many new features."
 

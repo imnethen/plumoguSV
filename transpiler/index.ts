@@ -8,7 +8,7 @@ import {
 import { getFilesRecursively } from "./getFilesRecursively.js";
 import * as chalk from "chalk";
 
-const brainrotInit = readFileSync("./brainrot.csv", "utf-8").split("\n")
+const brainrotInit = readFileSync("./assets/brainrot.csv", "utf-8").split("\n")
 const brainrotList = []
 
 const alphabetArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
@@ -24,6 +24,7 @@ export default async function transpiler(devMode = false, fuckify = false) {
     let output = "";
 
     const files = getFilesRecursively("./packages");
+    files.push(...getFilesRecursively("./intellisense"));
     files.push(...getFilesRecursively("./src"));
 
     const ignoredFiles = ["classes.lua", "intellisense.lua"];
