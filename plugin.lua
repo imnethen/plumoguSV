@@ -3635,7 +3635,7 @@ function directSVMenu()
         imgui.Selectable(tostring(math.round(v.StartTime, 2)), menuVars.selectableIndex == idx,
             imgui_selectable_flags.SpanAllColumns)
         if (imgui.IsItemClicked()) then
-            menuVars.selectableIndex = idx
+            menuVars.selectableIndex = idx + 10 * (menuVars.pageNumber - 1)
         end
         imgui.TableSetColumnIndex(1)
         imgui.SetCursorPosX(150)
