@@ -52,6 +52,8 @@ DEFAULT_STARTING_MENU_VARS = {
         copiedSVs = {},
         copiedSSFs = {},
         copiedBMs = {},
+        tryAlign = true,
+        alignWindow = 3,
     },
     directSV = {
         selectableIndex = 1,

@@ -18,10 +18,15 @@ function copyNPasteMenu()
         button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
     end
 
-    saveVariables("copyMenu", menuVars)
-
-    if copiedItemCount == 0 then return end
+    if copiedItemCount == 0 then
+        saveVariables("copyMenu", menuVars)
+        return
+    end
 
     addSeparator()
+
+    _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
+    saveVariables("copyMenu", menuVars)
+
     simpleActionMenu("Paste items at selected notes", 1, pasteItems, menuVars)
 end
