@@ -90,7 +90,7 @@ function pasteItems(menuVars)
     local svsToAdd = {}
     local ssfsToAdd = {}
     local bmsToAdd = {}
-    local hitObjects = map.HitObjects
+    local hitObjectTimes = table.property(map.HitObjects, "StartTime")
     for i = 1, #offsets do
         local pasteOffset = offsets[i]
         local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
@@ -109,7 +109,7 @@ function pasteItems(menuVars)
                 goto skip2
             end
             if menuVars.tryAlign then
-                timeToPasteSV = tryAlignToHitObjects(timeToPasteSV, hitObjects, menuVars.alignWindow)
+                timeToPasteSV = tryAlignToHitObjects(timeToPasteSV, hitObjectTimes, menuVars.alignWindow)
             end
             table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
             ::skip2::
@@ -171,12 +171,12 @@ function pasteItems(menuVars)
     end
 end
 
-function tryAlignToHitObjects(time, hitObjects, alignWindow)
-    if not truthy(#hitObjects) then
+function tryAlignToHitObjects(time, hitObjectTimes, alignWindow)
+    if not truthy(#hitObjectTimes) then
         return time
     end
 
-    local closestTime = table.searchClosest(table.property(hitObjects, "StartTime"), time)
+    local closestTime = table.searchClosest(hitObjectTimes, time)
 
     if math.abs(closestTime - time) > alignWindow then
         return time
