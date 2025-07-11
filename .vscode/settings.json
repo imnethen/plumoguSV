@@ -2,5 +2,6 @@
   "Lua.diagnostics.disable": [
     "lowercase-global",
     "duplicate-set-field",
+    "duplicate-doc-alias"
 ],
 }

@@ -725,6 +725,7 @@ state.SongTime                 = 0.0 ---@type number
 
 ---##### (READ-ONLY)
 ---#### A list of all [hit objects](lua://HitObject) within the current selection.
+---#### If multiple [hit objects](lua://HitObject) are selected at once, the table will be in order of their `StartTime`. If they were selected one at a time using <kbd>Ctrl-Click</kbd>, then the table will be in order of their selection order.
 state.SelectedHitObjects       = {} ---@type HitObject[]
 
 ---#### The `id`, or name, of the current selected [scroll group](lua://ScrollGroup).
@@ -3169,6 +3170,10 @@ function imgui.GetItemRectMin() end
 ---##### (READ-ONLY)
 ---@return Vector2
 function imgui.GetItemRectSize() end
+
+---##### (READ-ONLY) (QUAVER-ALIAS FOR [`imgui.GetForegroundDrawList`](lua://imgui.GetForegroundDrawList))
+---@return ImDrawListPtr
+function imgui.GetOverlayDrawList() end
 
 ---##### (READ-ONLY)
 ---@param key ImGuiKey|0|154|512|513|514|515|516|517|518|519|520|521|522|523|524|525|526|527|528|529|530|531|532|533|534|535|536|537|538|539|540|541|542|543|544|545|546|547|548|549|550|551|552|553|554|555|556|557|558|559|560|561|562|563|564|565|566|567|568|569|570|571|572|573|574|575|576|577|578|579|580|581|582|583|584|585|586|587|588|589|590|591|592|593|594|595|596|597|598|599|600|601|602|603|604|605|606|607|608|609|610|611|612|613|614|615|616|617|618|619|620|621|622|623|624|625|626|627|628|629|630|631|632|633|634|635|636|637|638|639|640|641|642|643|644|645|646|647|648|649|650|651|652|653|654|655|656|657|658|659|660|661|662|663|664|665|666|4096|8192|16384|32768|61440|"None"|"ModNone"|"NamedKey_COUNT"|"KeysData_SIZE"|"NamedKey_BEGIN"|"KeysData_OFFSET"|"Tab"|"LeftArrow"|"RightArrow"|"UpArrow"|"DownArrow"|"PageUp"|"PageDown"|"Home"|"End"|"Insert"|"Delete"|"Backspace"|"Space"|"Enter"|"Escape"|"LeftCtrl"|"LeftShift"|"LeftAlt"|"LeftSuper"|"RightCtrl"|"RightShift"|"RightAlt"|"RightSuper"|"Menu"|"_0"|"_1"|"_2"|"_3"|"_4"|"_5"|"_6"|"_7"|"_8"|"_9"|"A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z"|"F1"|"F2"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F20"|"F21"|"F22"|"F23"|"F24"|"Apostrophe"|"Comma"|"Minus"|"Period"|"Slash"|"Semicolon"|"Equal"|"LeftBracket"|"Backslash"|"RightBracket"|"GraveAccent"|"CapsLock"|"ScrollLock"|"NumLock"|"PrintScreen"|"Pause"|"Keypad0"|"Keypad1"|"Keypad2"|"Keypad3"|"Keypad4"|"Keypad5"|"Keypad6"|"Keypad7"|"Keypad8"|"Keypad9"|"KeypadDecimal"|"KeypadDivide"|"KeypadMultiply"|"KeypadSubtract"|"KeypadAdd"|"KeypadEnter"|"KeypadEqual"|"AppBack"|"AppForward"|"GamepadStart"|"GamepadBack"|"GamepadFaceLeft"|"GamepadFaceRight"|"GamepadFaceUp"|"GamepadFaceDown"|"GamepadDpadLeft"|"GamepadDpadRight"|"GamepadDpadUp"|"GamepadDpadDown"|"GamepadL1"|"GamepadR1"|"GamepadL2"|"GamepadR2"|"GamepadL3"|"GamepadR3"|"GamepadLStickLeft"|"GamepadLStickRight"|"GamepadLStickUp"|"GamepadLStickDown"|"GamepadRStickLeft"|"GamepadRStickRight"|"GamepadRStickUp"|"GamepadRStickDown"|"MouseLeft"|"MouseRight"|"MouseMiddle"|"MouseX1"|"MouseX2"|"MouseWheelX"|"MouseWheelY"|"ReservedForModCtrl"|"ReservedForModShift"|"ReservedForModAlt"|"ReservedForModSuper"|"COUNT"|"NamedKey_END"|"ModCtrl"|"ModShift"|"ModAlt"|"ModSuper"|"ModMask"

@@ -46,6 +46,12 @@ end
 function math.quarter(number)
     return math.round(number * 4) / 4
 end
+---Returns the fractional portion of a number (e.g. in 5.4, returns 0.4).
+---@param n number
+---@return number
+function math.frac(n)
+    return n - math.floor(n)
+end
 ---Evaluates a simplified one-dimensional hermite related (?) spline for SV purposes
 ---@param m1 number
 ---@param m2 number
@@ -423,6 +429,29 @@ function table.reverse(tbl)
         table.insert(reverseTbl, tbl[#tbl + 1 - i])
     end
     return reverseTbl
+end
+---In an array of numbers, searches for the closest number to `item`.
+---@param tbl number[] The array of numbers to search in.
+---@param item number The number to search for.
+---@return number num, integer index The number that is the closest to the given item, and the index of that number in the given table.
+function table.searchClosest(tbl, item)
+    local leftIdx = 1
+    local rightIdx = #tbl
+    while rightIdx - leftIdx > 1 do
+        local middleIdx = math.floor((leftIdx + rightIdx) / 2)
+        if (item >= tbl[middleIdx]) then
+            leftIdx = middleIdx
+        else
+            rightIdx = middleIdx
+        end
+    end
+    local leftDifference = item - tbl[leftIdx]
+    local rightDifference = tbl[rightIdx] - item
+    if (leftDifference < rightDifference) then
+        return tbl[leftIdx], leftIdx
+    else
+        return tbl[rightIdx], rightIdx
+    end
 end
 ---Sorting function for sorting objects by their numerical value. Should be passed into [`table.sort`](lua://table.sort).
 ---@param a number
@@ -1508,25 +1537,12 @@ function tryAlignToHitObjects(time, hitObjects, alignWindow)
     if not truthy(#hitObjects) then
         return time
     end
-    local l, r = 1, #hitObjects + 1
-    while l + 1 < r do
-        local m = math.floor((l + r) / 2)
-        if hitObjects[m].StartTime <= time then
-            l = m
-        else
-            r = m
-        end
-    end
-    local closestTime = hitObjects[l].StartTime
-    if l + 1 <= #hitObjects and math.abs(hitObjects[l + 1].StartTime - time) < math.abs(closestTime - time) then
-        closestTime = hitObjects[l + 1].StartTime
-    end
+    local closestTime = table.searchClosest(table.property(hitObjects, "StartTime"), time)
     if math.abs(closestTime - time) > alignWindow then
         return time
     end
-    local timeFract = time - math.floor(time)
-    time = timeFract + closestTime - 1
-    if math.abs(closestTime - time) > math.abs(closestTime - (time + 1)) then
+    time = math.frac(time) + closestTime - 1
+    if math.abs(closestTime - (time + 1)) < math.abs(closestTime - time) then
         time = time + 1
     end
     return time
@@ -4606,34 +4622,34 @@ function drawCurrentFrame(settingVars)
     local childHeight = 250
     imgui.BeginChild("Current Frame", vector.New(255, childHeight), 1)
     for _, frameTime in pairs(settingVars.frameTimes) do
-        if frameTime.frame == settingVars.currentFrame then
-            for _, lane in pairs(frameTime.lanes) do
-                if noteSkinType == "Bar" then
-                    local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
-                    local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
-                    local x2 = x1 + noteWidth
-                    local y2 = y1 - barNoteHeight
-                    if globalVars.upscroll then
-                        y1 = childHeight - y1
-                        y2 = y1 + barNoteHeight
-                    end
-                    local p1 = coordsRelativeToWindow(x1, y1)
-                    local p2 = coordsRelativeToWindow(x2, y2)
-                    drawlist.AddRectFilled(p1, p2, noteColor)
-                elseif noteSkinType == "Circle" then
-                    local circleRadius = noteWidth / 2
-                    local leftBlankSpace = 2 * noteSpacing + circleRadius
-                    local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
-                    local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
-                    local y1 = childHeight - yBlankSpace
-                    if globalVars.upscroll then
-                        y1 = childHeight - y1
-                    end
-                    local p1 = coordsRelativeToWindow(x1, y1)
-                    drawlist.AddCircleFilled(p1, circleRadius, noteColor, 20)
+        if not frameTime.frame == settingVars.currentFrame then goto continue end
+        for _, lane in pairs(frameTime.lanes) do
+            if noteSkinType == "Bar" then
+                local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
+                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
+                local x2 = x1 + noteWidth
+                local y2 = y1 - barNoteHeight
+                if globalVars.upscroll then
+                    y1 = childHeight - y1
+                    y2 = y1 + barNoteHeight
                 end
+                local p1 = coordsRelativeToWindow(x1, y1)
+                local p2 = coordsRelativeToWindow(x2, y2)
+                drawlist.AddRectFilled(p1, p2, noteColor)
+            elseif noteSkinType == "Circle" then
+                local circleRadius = noteWidth / 2
+                local leftBlankSpace = 2 * noteSpacing + circleRadius
+                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
+                local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
+                local y1 = childHeight - yBlankSpace
+                if globalVars.upscroll then
+                    y1 = childHeight - y1
+                end
+                local p1 = coordsRelativeToWindow(x1, y1)
+                drawlist.AddCircleFilled(p1, circleRadius, noteColor, 20)
             end
         end
+        ::continue::
     end
     imgui.EndChild()
 end
@@ -4786,8 +4802,10 @@ function drawCapybara()
     drawHorizontalPillShape(o, headCoords1, headCoords2, headRadius, bodyColor, 12)
     drawHorizontalPillShape(o, eyeCoords1, eyeCoords2, eyeRadius, eyeColor, 12)
     o.AddRectFilled(sz, headCoords1, bodyColor)
-    o.AddRectFilled(vector.New(stemCoords[1], stemCoords[2]), { stemCoords[1] + 10, stemCoords[2] + 20 }, stemColor)
-    o.AddRectFilled({ stemCoords[1] - 10, stemCoords[2] }, { stemCoords[1] + 20, stemCoords[2] - 5 }, stemColor)
+    o.AddRectFilled(vector.New(stemCoords[1], stemCoords[2]), vector.New(stemCoords[1] + 10, stemCoords[2] + 20),
+        stemColor)
+    o.AddRectFilled(vector.New(stemCoords[1] - 10, stemCoords[2]), vector.New(stemCoords[1] + 20, stemCoords[2] - 5),
+        stemColor)
 end
 function drawCapybara2()
     if not globalVars.drawCapybara2 then return end
@@ -7787,13 +7805,12 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
             if svIsRemovable then table.insert(svsToRemove, sv) end
         end
     end
-    if (retroactiveSVRemovalTable) then
-        for idx, sv in pairs(retroactiveSVRemovalTable) do
-            local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
-            if svIsInRange then
-                local svIsRemovable = svTimeIsAdded[sv.StartTime]
-                if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
-            end
+    if (not retroactiveSVRemovalTable) then return end
+    for idx, sv in pairs(retroactiveSVRemovalTable) do
+        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
+        if svIsInRange then
+            local svIsRemovable = svTimeIsAdded[sv.StartTime]
+            if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
         end
     end
 end
@@ -8043,14 +8060,7 @@ function getSnapFromTime(time)
     local foundCorrectSnap = false
     for i = 1, math.ceil(16 / absoluteSnap) do
         local currentSnap = absoluteSnap * i
-        local guessIndex = 1
-        while (SPECIAL_SNAPS[guessIndex] < currentSnap and guessIndex < #SPECIAL_SNAPS) do
-            guessIndex = guessIndex + 1
-        end
-        if (currentSnap > 17) then break end
-        guessedSnap = math.abs(SPECIAL_SNAPS[guessIndex] - currentSnap) <
-            math.abs(SPECIAL_SNAPS[math.max(guessIndex - 1, 1)] - currentSnap) and
-            SPECIAL_SNAPS[guessIndex] or SPECIAL_SNAPS[math.max(guessIndex - 1, 1)]
+        guessedSnap = table.searchClosest(SPECIAL_SNAPS, currentSnap)
         local approximateError = math.abs(guessedSnap - currentSnap) / currentSnap
         if (approximateError < 0.05) then
             if (approximateError > 0.03) then
