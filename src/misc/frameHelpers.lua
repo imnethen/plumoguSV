@@ -75,34 +75,34 @@ function drawCurrentFrame(settingVars)
     local childHeight = 250
     imgui.BeginChild("Current Frame", vector.New(255, childHeight), 1)
     for _, frameTime in pairs(settingVars.frameTimes) do
-        if frameTime.frame == settingVars.currentFrame then
-            for _, lane in pairs(frameTime.lanes) do
-                if noteSkinType == "Bar" then
-                    local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
-                    local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
-                    local x2 = x1 + noteWidth
-                    local y2 = y1 - barNoteHeight
-                    if globalVars.upscroll then
-                        y1 = childHeight - y1
-                        y2 = y1 + barNoteHeight
-                    end
-                    local p1 = coordsRelativeToWindow(x1, y1)
-                    local p2 = coordsRelativeToWindow(x2, y2)
-                    drawlist.AddRectFilled(p1, p2, noteColor)
-                elseif noteSkinType == "Circle" then
-                    local circleRadius = noteWidth / 2
-                    local leftBlankSpace = 2 * noteSpacing + circleRadius
-                    local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
-                    local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
-                    local y1 = childHeight - yBlankSpace
-                    if globalVars.upscroll then
-                        y1 = childHeight - y1
-                    end
-                    local p1 = coordsRelativeToWindow(x1, y1)
-                    drawlist.AddCircleFilled(p1, circleRadius, noteColor, 20)
+        if not frameTime.frame == settingVars.currentFrame then goto continue end
+        for _, lane in pairs(frameTime.lanes) do
+            if noteSkinType == "Bar" then
+                local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
+                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
+                local x2 = x1 + noteWidth
+                local y2 = y1 - barNoteHeight
+                if globalVars.upscroll then
+                    y1 = childHeight - y1
+                    y2 = y1 + barNoteHeight
                 end
+                local p1 = coordsRelativeToWindow(x1, y1)
+                local p2 = coordsRelativeToWindow(x2, y2)
+                drawlist.AddRectFilled(p1, p2, noteColor)
+            elseif noteSkinType == "Circle" then
+                local circleRadius = noteWidth / 2
+                local leftBlankSpace = 2 * noteSpacing + circleRadius
+                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
+                local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
+                local y1 = childHeight - yBlankSpace
+                if globalVars.upscroll then
+                    y1 = childHeight - y1
+                end
+                local p1 = coordsRelativeToWindow(x1, y1)
+                drawlist.AddCircleFilled(p1, circleRadius, noteColor, 20)
             end
         end
+        ::continue::
     end
     imgui.EndChild()
 end

@@ -12,13 +12,13 @@ function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, ret
             if svIsRemovable then table.insert(svsToRemove, sv) end
         end
     end
-    if (retroactiveSVRemovalTable) then
-        for idx, sv in pairs(retroactiveSVRemovalTable) do
-            local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
-            if svIsInRange then
-                local svIsRemovable = svTimeIsAdded[sv.StartTime]
-                if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
-            end
-        end
+    if (not retroactiveSVRemovalTable) then return end
+    for idx, sv in pairs(retroactiveSVRemovalTable) do
+        local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
+        if not svIsInRange then goto continue end
+
+        local svIsRemovable = svTimeIsAdded[sv.StartTime]
+        if svIsRemovable then table.remove(retroactiveSVRemovalTable, idx) end
+        ::continue::
     end
 end

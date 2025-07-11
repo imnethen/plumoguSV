@@ -176,28 +176,14 @@ function tryAlignToHitObjects(time, hitObjects, alignWindow)
         return time
     end
 
-    local l, r = 1, #hitObjects + 1
-    while l + 1 < r do
-        local m = math.floor((l + r) / 2)
-        if hitObjects[m].StartTime <= time then
-            l = m
-        else
-            r = m
-        end
-    end
-
-    local closestTime = hitObjects[l].StartTime
-    if l + 1 <= #hitObjects and math.abs(hitObjects[l + 1].StartTime - time) < math.abs(closestTime - time) then
-        closestTime = hitObjects[l + 1].StartTime
-    end
+    local closestTime = table.searchClosest(table.property(hitObjects, "StartTime"), time)
 
     if math.abs(closestTime - time) > alignWindow then
         return time
     end
 
-    local timeFract = time - math.floor(time)
-    time = timeFract + closestTime - 1
-    if math.abs(closestTime - time) > math.abs(closestTime - (time + 1)) then
+    time = math.frac(time) + closestTime - 1
+    if math.abs(closestTime - (time + 1)) < math.abs(closestTime - time) then
         time = time + 1
     end
 
