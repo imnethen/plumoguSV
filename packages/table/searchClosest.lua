@@ -6,7 +6,7 @@ function table.searchClosest(tbl, item)
     local leftIdx = 1
     local rightIdx = #tbl
 
-    while highIdx - lowIdx > 1 do
+    while rightIdx - leftIdx > 1 do
         local middleIdx = math.floor((lowIndex + highIndex) / 2)
         if (item >= tbl[middleIndex]) then
             leftIdx = middleIdx
