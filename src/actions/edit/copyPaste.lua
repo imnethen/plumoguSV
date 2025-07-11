@@ -90,6 +90,7 @@ function pasteItems(menuVars)
     local svsToAdd = {}
     local ssfsToAdd = {}
     local bmsToAdd = {}
+    local hitObjects = map.HitObjects
     for i = 1, #offsets do
         local pasteOffset = offsets[i]
         local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
@@ -106,6 +107,9 @@ function pasteItems(menuVars)
             local timeToPasteSV = pasteOffset + sv.relativeOffset
             if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip2
+            end
+            if menuVars.tryAlign then
+                timeToPasteSV = tryAlignToHitObjects(timeToPasteSV, hitObjects, menuVars.alignWindow)
             end
             table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
             ::skip2::
@@ -165,4 +169,37 @@ function pasteItems(menuVars)
     if (truthy(#bmsToAdd)) then
         toggleablePrint("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
     end
+end
+
+function tryAlignToHitObjects(time, hitObjects, alignWindow)
+    if not truthy(#hitObjects) then
+        return time
+    end
+
+    local l, r = 1, #hitObjects + 1
+    while l + 1 < r do
+        local m = math.floor((l + r) / 2)
+        if hitObjects[m].StartTime <= time then
+            l = m
+        else
+            r = m
+        end
+    end
+
+    local closestTime = hitObjects[l].StartTime
+    if l + 1 <= #hitObjects and math.abs(hitObjects[l + 1].StartTime - time) < math.abs(closestTime - time) then
+        closestTime = hitObjects[l + 1].StartTime
+    end
+
+    if math.abs(closestTime - time) > alignWindow then
+        return time
+    end
+
+    local timeFract = time - math.floor(time)
+    time = timeFract + closestTime - 1
+    if math.abs(closestTime - time) > math.abs(closestTime - (time + 1)) then
+        time = time + 1
+    end
+
+    return time
 end

@@ -117,6 +117,11 @@ function showDefaultPropertiesSettings()
         imgui.SameLine(0, SAMELINE_SPACING + 3.5)
         _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
 
+        _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
+        imgui.PushItemWidth(100)
+        _, menuVars.alignWindow = imgui.SliderInt("Alignment window (ms)", menuVars.alignWindow, 1, 10)
+        imgui.PopItemWidth()
+
         saveMenuPropertiesButton(menuVars, "copy")
         saveVariables("copyPropertyMenu", menuVars)
     end
