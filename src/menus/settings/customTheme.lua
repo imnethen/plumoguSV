@@ -8,6 +8,7 @@ function showCustomThemeSettings()
     if (imgui.Button("Import")) then
         state.SetValue("importingCustomTheme", true)
     end
+    imgui.SameLine(0, SAMELINE_SPACING)
     if (imgui.Button("Export")) then
         local str = stringifyCustomStyle(globalVars.customStyle)
         imgui.SetClipboardText(str)
@@ -71,15 +72,15 @@ function showCustomThemeSettings()
     settingsChanged = colorInput(globalVars.customStyle, "plotHistogramHovered", "Plot Histogram\n(Hovered)") or
         settingsChanged
     if (settingsChanged) then
-        write()
+        write(globalVars)
     end
 end
 
 function convertStrToShort(str)
     if (str:lower() == str) then
-        return str:sub(1, 1) .. str:sub(-1)
+        return str:charAt(1) .. str:sub(-1)
     else
-        local newStr = str:sub(1, 1)
+        local newStr = str:charAt(1)
         for char in str:gmatch("%u") do
             newStr = newStr .. char
         end

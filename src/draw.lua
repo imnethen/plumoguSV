@@ -73,8 +73,9 @@ function renderMeasureDataWidget()
         end
         if (#uniqueDict > 2) then return end
     end
+    uniqueDict = table.sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
     local startOffset = uniqueDict[1]
-    local endOffset = uniqueDict[2]
+    local endOffset = uniqueDict[2] or uniqueDict[1]
     if (endOffset == startOffset) then return end
     if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69)) then
         svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)

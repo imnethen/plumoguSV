@@ -1,5 +1,3 @@
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function stutterMenu(settingVars)
     local settingsChanged = #settingVars.svMultipliers == 0
     settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged

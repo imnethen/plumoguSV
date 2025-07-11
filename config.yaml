@@ -11,8 +11,8 @@ cursorTrailSize: 100
 snakeSpringConstant: 0.80000001192092896
 cursorTrailGhost: false
 rgbPeriod: 1
-drawCapybara: false
-drawCapybara2: false
+drawCapybara: true
+drawCapybara2: true
 drawCapybara312: false
 selectTypeIndex: 1
 placeTypeIndex: 1
@@ -26,7 +26,7 @@ hideSVInfo: true
 showVibratoWidget: true
 showNoteDataWidget: true
 showMeasureDataWidget: true
-ignoreNotesOutsideTg: true
+ignoreNotesOutsideTg: false
 advancedMode: true
 hideAutomatic: true
 pulseCoefficient: 1
@@ -198,7 +198,7 @@ customStyle:
   - 0.69999998807907104
   - 1
 dontPrintCreation: false
-equalizeLinear: false
+equalizeLinear: true
 defaultProperties:
   settings:
     linearVibratoSV:
@@ -421,7 +421,7 @@ defaultProperties:
       instructions: ''
   menu:
     placeStandard:
-      svTypeIndex: 2
+      svTypeIndex: 1
       svMultipliers:
       - 
       svDistances:
@@ -577,3 +577,4 @@ defaultProperties:
       ln: false
     selectBySnap:
       snap: 1
+ignoreNotes: false

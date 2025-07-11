@@ -230,7 +230,7 @@ end]],
 ---@return table
 function getSettingVars(svType, label)
     searchTerm = svType:gsub("[%s%(%)#]+", "")
-    searchTerm = searchTerm:sub(1, 1):lower() .. searchTerm:sub(2)
+    searchTerm = searchTerm:charAt(1):lower() .. searchTerm:sub(2)
     local settingVars = table.duplicate(DEFAULT_STARTING_SETTING_VARS[searchTerm])
 
     local labelText = svType .. label .. "Settings"

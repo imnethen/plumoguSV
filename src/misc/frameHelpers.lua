@@ -8,7 +8,7 @@ function addFrameTimes(settingVars)
     local frameTimeToIndex = {}
     local totalTimes = #settingVars.frameTimes
     for i = 1, totalTimes do
-        local frameTime = settingVars.frameTimes[i]
+        local frameTime = settingVars.frameTimes[i] ---@cast frameTime { time: number, lanes: number[] }
         local time = frameTime.time
         local lanes = frameTime.lanes
         frameTimeToIndex[time] = i
@@ -24,7 +24,7 @@ function addFrameTimes(settingVars)
             hasAlreadyAddedLaneTime[lane][time] = true
             if frameTimeToIndex[time] then
                 local index = frameTimeToIndex[time]
-                local frameTime = settingVars.frameTimes[index]
+                local frameTime = settingVars.frameTimes[index] ---@cast frameTime { time: number, lanes: number[] }
                 table.insert(frameTime.lanes, lane)
                 frameTime.lanes = sort(frameTime.lanes, sortAscending)
             else

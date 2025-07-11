@@ -3,6 +3,7 @@
 ---@param tbl T The original table.
 ---@return T tbl The new table.
 function table.duplicate(tbl)
+    if not tbl then return {} end
     local dupeTbl = {}
     if (tbl[1]) then
         for _, value in ipairs(tbl) do

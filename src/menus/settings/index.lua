@@ -11,7 +11,7 @@ function showPluginSettingsWindow()
     SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)
 
     if (COLOR_THEMES[globalVars.colorThemeIndex] == "CUSTOM") then
-        table.insert(SETTING_TYPES, 3, "Custom Theme")
+        table.insert(SETTING_TYPES, 4, "Custom Theme")
     end
 
     imgui.PopStyleColor(20)

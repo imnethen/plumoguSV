@@ -1,6 +1,6 @@
 function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
     if (menuVars.vibratoMode == 1) then
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 0.875)
         chooseMsxVerticalShift(settingVars, 0)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
@@ -15,8 +15,8 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
             svVibrato(v, func)
         end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
+        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
         chooseConstantShift(settingVars)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)

@@ -19,7 +19,7 @@ function showKeybindSettings()
     addSeparator()
     simpleActionMenu("Reset Hotkey Settings", 0, function()
         globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
-        write()
+        write(globalVars)
         awaitingIndex = 0
     end, nil, true, true)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
@@ -30,6 +30,6 @@ function showKeybindSettings()
     awaitingIndex = 0
     globalVars.hotkeyList = hotkeyList
     GLOBAL_HOTKEY_LIST = hotkeyList
-    write()
+    write(globalVars)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
 end

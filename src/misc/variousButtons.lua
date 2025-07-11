@@ -1,21 +1,3 @@
-function clearNoteTimesButton(menuVars)
-    if not imgui.Button("Clear all assigned note times", BEEG_BUTTON_SIZE) then return end
-    menuVars.noteTimes = {}
-end
-
-function addNoteTimesToDynamicScaleButton(menuVars)
-    local buttonText = "Assign selected note times"
-    button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
-end
-
-function removeSelectedFrameTimeButton(settingVars)
-    if #settingVars.frameTimes == 0 then return end
-    if not imgui.Button("Removed currently selected time", BEEG_BUTTON_SIZE) then return end
-    table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
-    local maxIndex = math.max(1, #settingVars.frameTimes)
-    settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
-end
-
 function exportImportSettingsButton()
     local buttonText = ": )"
     if globalVars.showExportImportMenu then buttonText = "X" end

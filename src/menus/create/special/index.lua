@@ -6,8 +6,6 @@ SPECIAL_SVS = { -- types of special SVs
     "Penis",
 }
 
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function placeSpecialSVMenu()
     exportImportSettingsButton()
     local menuVars = getMenuVars("placeSpecial")
@@ -17,7 +15,6 @@ function placeSpecialSVMenu()
     local currentSVType = SPECIAL_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Special")
     if globalVars.showExportImportMenu then
-        --saveVariables("placeSpecialMenu", menuVars)
         exportImportSettingsMenu(menuVars, settingVars)
         return
     end

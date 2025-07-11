@@ -17,10 +17,20 @@ export default function checkMissingAnnotations(file: string[]) {
     indices.forEach((index) => {
         const originalIndex = index;
         let fnLine = file[index--];
+        const functionName = fnLine.split('(')[0].slice(9);
         const annotatedParamList = [];
         let returnAnnotated = false;
-        if (index < 0) return;
-        while (file[index].includes('---')) {
+        if (index < 0) {
+            console.log(
+                `The function ${chalk.red(functionName)} ${chalk.magenta(
+                    'does not have an annotated return value.'
+                )}`
+            );
+            failedTests++;
+            fnDict[fnLine] = [];
+            return
+        };
+        while (file[index].includes('---') && index > 0) {
             const line = file[index];
             if (line.includes('@return')) returnAnnotated = true;
             if (line.includes('@param'))
@@ -30,7 +40,6 @@ export default function checkMissingAnnotations(file: string[]) {
         if (specialIndices.includes(originalIndex + 1)) {
             fnLine = `${fnLine} ${file[originalIndex + 1].trim()}`;
         }
-        const functionName = fnLine.split('(')[0].slice(9);
         index = originalIndex;
         let returningValue = false;
         while (file[index] !== 'end') {
@@ -55,7 +64,7 @@ export default function checkMissingAnnotations(file: string[]) {
             .split(')')[0]
             .replaceAll(' ', '')
             .split(',');
-        if (parameters.some((param) => !annoParams.includes(param))) {
+        if (parameters.some((param) => !annoParams.includes(param)) && parameters.map((s) => (s.trim())).filter((s) => s).length) {
             const missingParams = parameters.filter(
                 (param) => !annoParams.includes(param)
             );

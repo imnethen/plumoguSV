@@ -1,4 +1,4 @@
-STANDARD_SVS = { -- types of standard SVs
+STANDARD_SVS = {
     "Linear",
     "Exponential",
     "Bezier",
@@ -12,8 +12,6 @@ STANDARD_SVS = { -- types of standard SVs
     "Code"
 }
 
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function placeStandardSVMenu()
     exportImportSettingsButton()
     local menuVars = getMenuVars("placeStandard")
@@ -24,7 +22,6 @@ function placeStandardSVMenu()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Standard")
     if globalVars.showExportImportMenu then
-        --saveVariables("placeStandardMenu", menuVars)
         exportImportSettingsMenu(menuVars, settingVars)
         return
     end

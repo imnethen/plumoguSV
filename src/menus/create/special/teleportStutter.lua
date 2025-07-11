@@ -1,5 +1,3 @@
--- Parameters
---    settingVars : list of variables used for the current menu [Table]
 function teleportStutterMenu(settingVars)
     if settingVars.useDistance then
         chooseDistance(settingVars)

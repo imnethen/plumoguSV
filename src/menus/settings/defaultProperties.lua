@@ -2,12 +2,12 @@ function saveSettingPropertiesButton(settingVars, label)
     local saveButtonClicked = imgui.Button("Save##setting" .. label)
     imgui.Separator()
     if (not saveButtonClicked) then return end
-    label = label:sub(1, 1):lower() .. label:sub(2)
+    label = label:charAt(1):lower() .. label:sub(2)
     if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
     if (not globalVars.defaultProperties.settings) then globalVars.defaultProperties.settings = {} end
     globalVars.defaultProperties.settings[label] = settingVars
     loadDefaultProperties(globalVars.defaultProperties)
-    write()
+    write(globalVars)
 
     print("i!",
         "Default setting properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
@@ -17,12 +17,12 @@ function saveMenuPropertiesButton(menuVars, label)
     local saveButtonClicked = imgui.Button("Save##menu" .. label)
     imgui.Separator()
     if (not saveButtonClicked) then return end
-    label = label:sub(1, 1):lower() .. label:sub(2)
+    label = label:charAt(1):lower() .. label:sub(2)
     if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
     if (not globalVars.defaultProperties.menu) then globalVars.defaultProperties.menu = {} end
     globalVars.defaultProperties.menu[label] = menuVars
     loadDefaultProperties(globalVars.defaultProperties)
-    write()
+    write(globalVars)
 
     print("i!",
         "Default menu properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")

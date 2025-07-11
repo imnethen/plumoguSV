@@ -1,7 +1,6 @@
 -- Updates SVs and SV info stored in the menu
 -- Parameters
 --    currentSVType : current type of SV being updated [String]
---    globalVars    : list of variables used globally across all menus [Table]
 --    menuVars      : list of variables used for the place SV menu [Table]
 --    settingVars   : list of variables used for the current menu [Table]
 --    skipFinalSV   : whether or not to skip the final SV for updating menu SVs [Boolean]

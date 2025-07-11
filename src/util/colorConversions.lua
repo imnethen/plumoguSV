@@ -14,7 +14,7 @@ function hexaToRgba(hexa)
     local rgbaTable = {}
     for i = 1, 8, 2 do
         table.insert(rgbaTable,
-            table.indexOf(HEXADECIMAL, hexa:sub(i, i)) * 16 + table.indexOf(HEXADECIMAL, hexa:sub(i + 1, i + 1)) - 17)
+            table.indexOf(HEXADECIMAL, hexa:charAt(i)) * 16 + table.indexOf(HEXADECIMAL, hexa:charAt(i + 1)) - 17)
     end
     return table.vectorize4(rgbaTable)
 end

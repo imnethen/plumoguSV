@@ -36,8 +36,8 @@ function syncGlobalVarsState(tempGlobalVars)
     globalVars.advancedMode = truthy(tempGlobalVars.advancedMode)
     globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
     globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
-    globalVars.hotkeyList = tempGlobalVars.hotkeyList
-    GLOBAL_HOTKEY_LIST = tempGlobalVars.hotkeyList
+    globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
+    GLOBAL_HOTKEY_LIST = (tempGlobalVars.hotkeyList and truthy(#tempGlobalVars.hotkeyList)) and tempGlobalVars.hotkeyList or table.duplicate(DEFAULT_HOTKEY_LIST)
     globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
     globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
 end

@@ -12,7 +12,7 @@ function pluralize(str, val, pos)
     local finalStr = str .. "s"
     if (val == 1) then return str .. (strEnding or "") end
     local lastLetter = str:sub(-1):upper()
-    local secondToLastLetter = str:sub(-2, -2):upper()
+    local secondToLastLetter = str:charAt(-2):upper()
     if (lastLetter == "Y" and table.contains(CONSONANTS, secondToLastLetter)) then
         finalStr = str:sub(1, -2) .. "ies"
     end

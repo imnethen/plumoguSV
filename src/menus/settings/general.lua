@@ -8,9 +8,9 @@ function showGeneralSettings()
     addSeparator()
     chooseUpscroll()
     addSeparator()
-    globalCheckbox("dontReplaceSV", "Don't Replace SVs When Placing Regular SVs",
-        "Self-explanatory. Highly recommended to keep this setting disabled.")
-    globalCheckbox("ignoreNotesOutsideTg", "Ignore Notes Outside Current Timing Group",
+    globalCheckbox("dontReplaceSV", "Don't Replace Existing SVs",
+        "Self-explanatory, but applies only to base SVs made with Standard, Special, or Still. Highly recommended to keep this setting disabled.")
+    globalCheckbox("ignoreNotesOutsideTg", "Ignore Notes Not In Current Timing Group",
         "Notes that are in a timing group outside of the current one will be ignored by stills, selection checks, etc.")
     chooseStepSize()
     globalCheckbox("dontPrintCreation", "Don't Print SV Creation Messages",

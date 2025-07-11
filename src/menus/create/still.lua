@@ -1,5 +1,3 @@
--- Parameters
---    globalVars : list of variables used globally across all menus [Table]
 function placeStillSVMenu()
     exportImportSettingsButton()
     local menuVars = getMenuVars("placeStill")
@@ -10,7 +8,6 @@ function placeStillSVMenu()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Still")
     if globalVars.showExportImportMenu then
-        --saveVariables("placeStillMenu", menuVars)
         exportImportSettingsMenu(menuVars, settingVars)
         return
     end

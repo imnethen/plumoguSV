@@ -3,28 +3,28 @@
 ---@return any
 function table.parse(str)
     if (str == "FALSE" or str == "TRUE") then return str == "TRUE" end
-    if (str:sub(1, 1) == '"') then return str:sub(2, -2) end
+    if (str:charAt(1) == '"') then return str:sub(2, -2) end
     if (str:match("^[%d%.]+$")) then return math.toNumber(str) end
-    if (not table.contains({ "{", "[" }, str:sub(1, 1))) then return str end
-    local tableType = str:sub(1, 1) == "[" and "arr" or "dict"
+    if (not table.contains({ "{", "[" }, str:charAt(1))) then return str end
+    local tableType = str:charAt(1) == "[" and "arr" or "dict"
     local tbl = {}
     local terms = {}
     while true do
-        local nestedTableFactor = table.contains({ "[", "{" }, str:sub(2, 2)) and 1 or 0
+        local nestedTableFactor = table.contains({ "[", "{" }, str:charAt(2)) and 1 or 0
         local depth = nestedTableFactor
         local searchIdx = 2 + nestedTableFactor
         local inQuotes = false
         while (searchIdx < str:len()) do
-            if (str:sub(searchIdx, searchIdx) == '"') then
+            if (str:charAt(searchIdx) == '"') then
                 inQuotes = not inQuotes
             end
-            if (table.contains({ "]", "}" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
+            if (table.contains({ "]", "}" }, str:charAt(searchIdx)) and not inQuotes) then
                 depth = depth - 1
             end
-            if (table.contains({ "[", "{" }, str:sub(searchIdx, searchIdx)) and not inQuotes) then
+            if (table.contains({ "[", "{" }, str:charAt(searchIdx)) and not inQuotes) then
                 depth = depth + 1
             end
-            if ((str:sub(searchIdx, searchIdx) == "," or nestedTableFactor == 1) and not inQuotes and depth == 0) then break end
+            if ((str:charAt(searchIdx) == "," or nestedTableFactor == 1) and not inQuotes and depth == 0) then break end
             searchIdx = searchIdx + 1
         end
         table.insert(terms, str:sub(2, searchIdx + nestedTableFactor - 1))

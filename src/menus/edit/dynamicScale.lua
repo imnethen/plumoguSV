@@ -47,3 +47,13 @@ function dynamicScaleMenu()
     addSeparator()
     simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, menuVars)
 end
+
+function clearNoteTimesButton(menuVars)
+    if not imgui.Button("Clear all assigned note times", BEEG_BUTTON_SIZE) then return end
+    menuVars.noteTimes = {}
+end
+
+function addNoteTimesToDynamicScaleButton(menuVars)
+    local buttonText = "Assign selected note times"
+    button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
+end

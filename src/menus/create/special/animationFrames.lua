@@ -1,6 +1,3 @@
--- Parameters
---    globalVars  : list of variables used globally across all menus [Table]
---    settingVars : list of variables used for the current menu [Table]
 function animationFramesSetupMenu(settingVars)
     chooseMenuStep(settingVars)
     if settingVars.menuStep == 1 then
@@ -47,4 +44,12 @@ function animationFramesSetupMenu(settingVars)
         local label = "Setup frames after selected note"
         simpleActionMenu(label, 1, displaceNotesForAnimationFrames, settingVars)
     end
+end
+
+function removeSelectedFrameTimeButton(settingVars)
+    if #settingVars.frameTimes == 0 then return end
+    if not imgui.Button("Removed currently selected time", BEEG_BUTTON_SIZE) then return end
+    table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
+    local maxIndex = math.max(1, #settingVars.frameTimes)
+    settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
 end

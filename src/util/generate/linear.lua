@@ -9,7 +9,7 @@ function generateLinearSet(startValue, endValue, numValues, placingSV)
 
     if (globalVars.equalizeLinear and placingSV) then
         endValue = endValue +
-            (endValue - startValue) / (numValues - 1)
+            (endValue - startValue) / (numValues - 2)
     end
 
     local increment = (endValue - startValue) / (numValues - 1)
