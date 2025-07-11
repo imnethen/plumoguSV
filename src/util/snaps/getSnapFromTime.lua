@@ -18,7 +18,7 @@ function getSnapFromTime(time)
     for i = 1, math.ceil(16 / absoluteSnap) do
         local currentSnap = absoluteSnap * i
 
-        local guessedSnap = table.searchClosest(SPECIAL_SNAPS, currentSnap)
+        guessedSnap = table.searchClosest(SPECIAL_SNAPS, currentSnap)
 
         local approximateError = math.abs(guessedSnap - currentSnap) / currentSnap
 
