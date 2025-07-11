@@ -342,11 +342,9 @@ end
 function table.keys(tbl)
     local resultsTbl = {}
     for k, _ in pairs(tbl) do
-        if (not table.contains(resultsTbl, k)) then
-            table.insert(resultsTbl, k)
-        end
+        table.insert(resultsTbl, k)
     end
-    return resultsTbl
+    return table.dedupe(resultsTbl)
 end
 ---Normalizes a table of numbers to achieve a target average (NOT PURE)
 ---@param values number[] The table to normalize.
@@ -470,15 +468,13 @@ function table.stringify(var)
     end
     return str:sub(1, -2) .. "}"
 end
----Returns a table of keys from a table.
+---Returns a table of values from a table.
 ---@param tbl { [string]: any } The table to search in.
----@return string[] keys A list of keys.
+---@return string[] values A list of values.
 function table.values(tbl)
     local resultsTbl = {}
     for _, v in pairs(tbl) do
-        if (not table.contains(resultsTbl, v)) then
-            table.insert(resultsTbl, v)
-        end
+        table.insert(resultsTbl, v)
     end
     return resultsTbl
 end
@@ -508,9 +504,33 @@ function table.vectorize2(tbl)
     if (type(tbl) == "userdata") then return tbl end
     return vector.New(tbl[1], tbl[2])
 end
+function __toBeFunction(obtainedValue, expectedValue)
+    return obtainedValue == expectedValue
+end
 function expect(expr)
     return {
-        toBe = function(x) return x == expr end
+        toBe = function(x) return __toBeFunction(x, expr) end
+    }
+end
+function expect(func)
+    return {
+        of = function(expr)
+            if (type(expr) == "table") then
+                return {
+                    toBe = function(tbl)
+                        if (#tbl ~= #expr) then return false end
+                        for i = 1, #tbl do
+                            if (not __toBeFunction(tbl[i], func(expr[i]))) then return false end
+                        end
+                        return true
+                    end
+                }
+            else
+                return {
+                    toBe = function(x) return __toBeFunction(x, expr) end
+                }
+            end
+        end
     }
 end
 ---Prints a message if creation messages are enabled.
@@ -528,21 +548,17 @@ function truthy(param)
     local t = type(param)
     if (t == "string") then
         return param:lower() == "true" and true or false
-    else
-        if t == "number" then
-            return param > 0 and true or false
-        else
-            if t == "table" or t == "userdata" then
-                return #param > 0 and true or false
-            else
-                if t == "boolean" then
-                    return param
-                else
-                    return false
-                end
-            end
-        end
     end
+    if t == "number" then
+        return param > 0 and true or false
+    end
+    if t == "table" or t == "userdata" then
+        return #param > 0 and true or false
+    end
+    if t == "boolean" then
+        return param
+    end
+    return false
 end
 ---Creates a new [`Vector4`](lua://Vector4) with all elements being the given number.
 ---@param n number The number to use as the entries.
@@ -1408,6 +1424,7 @@ function pasteItems(menuVars)
     local svsToAdd = {}
     local ssfsToAdd = {}
     local bmsToAdd = {}
+    local hitObjects = map.HitObjects
     for i = 1, #offsets do
         local pasteOffset = offsets[i]
         local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
@@ -1424,6 +1441,9 @@ function pasteItems(menuVars)
             local timeToPasteSV = pasteOffset + sv.relativeOffset
             if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip2
+            end
+            if menuVars.tryAlign then
+                timeToPasteSV = tryAlignToHitObjects(timeToPasteSV, hitObjects, menuVars.alignWindow)
             end
             table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
             ::skip2::
@@ -1483,6 +1503,33 @@ function pasteItems(menuVars)
     if (truthy(#bmsToAdd)) then
         toggleablePrint("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
     end
+end
+function tryAlignToHitObjects(time, hitObjects, alignWindow)
+    if not truthy(#hitObjects) then
+        return time
+    end
+    local l, r = 1, #hitObjects + 1
+    while l + 1 < r do
+        local m = math.floor((l + r) / 2)
+        if hitObjects[m].StartTime <= time then
+            l = m
+        else
+            r = m
+        end
+    end
+    local closestTime = hitObjects[l].StartTime
+    if l + 1 <= #hitObjects and math.abs(hitObjects[l + 1].StartTime - time) < math.abs(closestTime - time) then
+        closestTime = hitObjects[l + 1].StartTime
+    end
+    if math.abs(closestTime - time) > alignWindow then
+        return time
+    end
+    local timeFract = time - math.floor(time)
+    time = timeFract + closestTime - 1
+    if math.abs(closestTime - time) > math.abs(closestTime - (time + 1)) then
+        time = time + 1
+    end
+    return time
 end
 function displaceNoteSVsParent(menuVars)
     if (not menuVars.linearlyChange) then
@@ -3170,9 +3217,13 @@ function copyNPasteMenu()
     else
         button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
     end
-    saveVariables("copyMenu", menuVars)
-    if copiedItemCount == 0 then return end
+    if copiedItemCount == 0 then
+        saveVariables("copyMenu", menuVars)
+        return
+    end
     addSeparator()
+    _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
+    saveVariables("copyMenu", menuVars)
     simpleActionMenu("Paste items at selected notes", 1, pasteItems, menuVars)
 end
 function updateDirectEdit()
@@ -3941,6 +3992,10 @@ function showDefaultPropertiesSettings()
         _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
         imgui.SameLine(0, SAMELINE_SPACING + 3.5)
         _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
+        _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
+        imgui.PushItemWidth(100)
+        _, menuVars.alignWindow = imgui.SliderInt("Alignment window (ms)", menuVars.alignWindow, 1, 10)
+        imgui.PopItemWidth()
         saveMenuPropertiesButton(menuVars, "copy")
         saveVariables("copyPropertyMenu", menuVars)
     end
@@ -8167,6 +8222,8 @@ DEFAULT_STARTING_MENU_VARS = {
         copiedSVs = {},
         copiedSSFs = {},
         copiedBMs = {},
+        tryAlign = true,
+        alignWindow = 3,
     },
     directSV = {
         selectableIndex = 1,

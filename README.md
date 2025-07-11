@@ -69,7 +69,3 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Fix automate TGs being hidden breaking stuff~~
 * ~~Make globalVars.... actually global so i don't have to fucking pass it down everywhere~~
 * ~~Remove passing globalVars to children~~
-
-fix computableinputfloat being unable to register two or more nonzero digits
-fix write not having globalvars
-fix vibrato not properly saving settings to state
