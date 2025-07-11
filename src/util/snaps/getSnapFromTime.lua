@@ -17,15 +17,8 @@ function getSnapFromTime(time)
     local foundCorrectSnap = false
     for i = 1, math.ceil(16 / absoluteSnap) do
         local currentSnap = absoluteSnap * i
-        local guessIndex = 1
-        while (SPECIAL_SNAPS[guessIndex] < currentSnap and guessIndex < #SPECIAL_SNAPS) do
-            guessIndex = guessIndex + 1
-        end
-        if (currentSnap > 17) then break end
 
-        guessedSnap = math.abs(SPECIAL_SNAPS[guessIndex] - currentSnap) <
-            math.abs(SPECIAL_SNAPS[math.max(guessIndex - 1, 1)] - currentSnap) and
-            SPECIAL_SNAPS[guessIndex] or SPECIAL_SNAPS[math.max(guessIndex - 1, 1)]
+        local guessedSnap = table.searchClosest(SPECIAL_SNAPS, currentSnap)
 
         local approximateError = math.abs(guessedSnap - currentSnap) / currentSnap
 
