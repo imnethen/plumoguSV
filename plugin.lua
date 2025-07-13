@@ -3908,7 +3908,7 @@ function setCustomStyleString(str)
         local keyId = kvPair:match("[a-zA-Z]+:"):sub(1, -2)
         local hexa = kvPair:match(":[a-f0-9]+"):sub(2)
         local key = table.indexOf(keyIdDict, keyId)
-        customStyle[key] = hexaToRgba(hexa) / 255
+        if (key ~= -1) then customStyle[key] = hexaToRgba(hexa) / 255 end
     end
     globalVars.customStyle = table.duplicate(customStyle)
 end
