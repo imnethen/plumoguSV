@@ -11,7 +11,7 @@ function table.construct(...)
 end
 
 ---Creates a new array with a custom metatable, allowing for `:` syntactic sugar. All elements will be the given item.
----@generic T
+---@generic T: string | number | boolean
 ---@param item T The entry to use.
 ---@param num integer The number of entries to put into the table.
 ---@return T[] tbl A table with the given entries.

@@ -25,7 +25,7 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
         circularSet[i] = (endY - startY) * (numValues - 1)
     end
     if not increaseValues then circularSet = table.reverse(circularSet) end
-    if not dontNormalize then table.normalize(circularSet, avgValue, true) end
+    if not dontNormalize then circularSet = table.normalize(circularSet, avgValue, true) end
     for i = 1, #circularSet do
         circularSet[i] = circularSet[i] + verticalShift
     end

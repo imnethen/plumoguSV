@@ -36,7 +36,7 @@ function generateBezierSet(p1, p2, avgValue, numValues, verticalShift)
         local slope = (yPositions[i + 1] - yPositions[i]) * numValues
         table.insert(bezierSet, slope)
     end
-    table.normalize(bezierSet, avgValue, false)
+    bezierSet = table.normalize(bezierSet, avgValue, false)
     for i = 1, #bezierSet do
         bezierSet[i] = bezierSet[i] + verticalShift
     end

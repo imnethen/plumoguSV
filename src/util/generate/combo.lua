@@ -79,7 +79,7 @@ function generateComboSet(values1, values2, comboPhase, comboType, comboMultipli
     end
     avgValue = avgValue - verticalShift
     if not dontNormalize then
-        table.normalize(comboValues, avgValue, false)
+        comboValues = table.normalize(comboValues, avgValue, false)
     end
     for i = 1, #comboValues do
         comboValues[i] = comboValues[i] + verticalShift

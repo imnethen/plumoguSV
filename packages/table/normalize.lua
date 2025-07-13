@@ -1,11 +1,15 @@
----Normalizes a table of numbers to achieve a target average (NOT PURE)
+---Normalizes a table of numbers to achieve a target average.
 ---@param values number[] The table to normalize.
 ---@param targetAverage number The desired average value.
----@param includeLastValueInAverage boolean Whether or not to include the last value in the average.
-function table.normalize(values, targetAverage, includeLastValueInAverage)
-    local avgValue = table.average(values, includeLastValueInAverage)
-    if avgValue == 0 then return end
+---@param includeLastValue boolean Whether or not to include the last value in the average.
+---@return number[]
+function table.normalize(values, targetAverage, includeLastValue)
+    local avgValue = table.average(values, includeLastValue)
+    if avgValue == 0 then return table.constructRepeating(0, #values) end
+    local newValues = table.construct()
     for i = 1, #values do
-        values[i] = (values[i] * targetAverage) / avgValue
+        newValues:insert((values[i] * targetAverage) / avgValue)
     end
+
+    return newValues
 end

@@ -16,7 +16,7 @@ function generateChinchillaSet(settingVars)
         local slope = distance * numValues
         chinchillaSet[i] = slope
     end
-    table.normalize(chinchillaSet, avgValue, true)
+    chinchillaSet = table.normalize(chinchillaSet, avgValue, true)
     for i = 1, #chinchillaSet do
         chinchillaSet[i] = chinchillaSet[i] + settingVars.verticalShift
     end

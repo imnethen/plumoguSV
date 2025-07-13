@@ -21,7 +21,7 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
         local y = math.exp(x - 1) / intensity
         table.insert(exponentialSet, y)
     end
-    table.normalize(exponentialSet, avgValue, false)
+    exponentialSet = table.normalize(exponentialSet, avgValue, false)
     for i = 1, #exponentialSet do
         exponentialSet[i] = exponentialSet[i] + verticalShift
     end

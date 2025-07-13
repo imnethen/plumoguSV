@@ -18,7 +18,6 @@ function generateHermiteSet(startValue, endValue, verticalShift, avgValue, numVa
         local endY = yCoords[i + 1]
         hermiteSet[i] = (endY - startY) * (numValues - 1)
     end
-    --table.normalize(hermiteSet, avgValue, false)
     for i = 1, #hermiteSet do
         hermiteSet[i] = hermiteSet[i] + verticalShift
     end
