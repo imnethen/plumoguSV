@@ -13,7 +13,7 @@ STANDARD_SVS = {
 }
 
 function placeStandardSVMenu()
-    exportImportSettingsButton()
+    presetButton()
     local menuVars = getMenuVars("placeStandard")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
@@ -21,8 +21,8 @@ function placeStandardSVMenu()
     addSeparator()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Standard")
-    if globalVars.showExportImportMenu then
-        exportImportSettingsMenu(menuVars, settingVars)
+    if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
         return
     end
 

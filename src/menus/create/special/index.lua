@@ -7,15 +7,15 @@ SPECIAL_SVS = { -- types of special SVs
 }
 
 function placeSpecialSVMenu()
-    exportImportSettingsButton()
+    presetButton()
     local menuVars = getMenuVars("placeSpecial")
     chooseSpecialSVType(menuVars)
 
     addSeparator()
     local currentSVType = SPECIAL_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Special")
-    if globalVars.showExportImportMenu then
-        exportImportSettingsMenu(menuVars, settingVars)
+    if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
         return
     end
 

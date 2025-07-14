@@ -1,5 +1,5 @@
 function placeStillSVMenu()
-    exportImportSettingsButton()
+    presetButton()
     local menuVars = getMenuVars("placeStill")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
@@ -7,8 +7,8 @@ function placeStillSVMenu()
     addSeparator()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Still")
-    if globalVars.showExportImportMenu then
-        exportImportSettingsMenu(menuVars, settingVars)
+    if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
         return
     end
     imgui.Text("Still Settings:")

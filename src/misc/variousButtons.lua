@@ -1,10 +1,10 @@
-function exportImportSettingsButton()
+function presetButton()
     local buttonText = ": )"
-    if globalVars.showExportImportMenu then buttonText = "X" end
+    if globalVars.showPresetMenu then buttonText = "X" end
     local buttonPressed = imgui.Button(buttonText, EXPORT_BUTTON_SIZE)
-    toolTip("Export and import menu settings")
+    toolTip("View presets and export/import them.")
     imgui.SameLine(0, SAMELINE_SPACING)
     if not buttonPressed then return end
 
-    globalVars.showExportImportMenu = not globalVars.showExportImportMenu
+    globalVars.showPresetMenu = not globalVars.showPresetMenu
 end
