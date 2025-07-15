@@ -517,16 +517,7 @@ function chooseMainSV(settingVars)
 end
 
 function chooseMeasuredStatsView(menuVars)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("View values:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Rounded", not menuVars.unrounded) then
-        menuVars.unrounded = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Unrounded", menuVars.unrounded) then
-        menuVars.unrounded = true
-    end
+    menuVars.unrounded = radioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
 end
 
 function chooseMenuStep(settingVars)
@@ -887,18 +878,9 @@ function chooseSVPoints(settingVars, svPointsForce)
 end
 
 function chooseUpscroll()
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Scroll Direction:")
-    toolTip("Orientation for distance graphs and visuals")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
     local oldUpscroll = globalVars.upscroll
-    if imgui.RadioButton("Down", not globalVars.upscroll) then
-        globalVars.upscroll = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Up         ", globalVars.upscroll) then
-        globalVars.upscroll = true
-    end
+    globalVars.upscroll = radioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
+        "Orientation for distance graphs and visuals")
     if (oldUpscroll ~= globalVars.upscroll) then
         write(globalVars)
     end
@@ -1037,40 +1019,20 @@ function colorInput(customStyle, parameterName, label, tooltipText)
 end
 
 function chooseVibratoSides(menuVars)
-    imgui.AlignTextToFramePadding()
     imgui.Dummy(vector.New(27, 0))
     keepSameLine()
-    imgui.Text("Sides:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("1", menuVars.sides == 1) then
-        menuVars.sides = 1
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("2", menuVars.sides == 2) then
-        menuVars.sides = 2
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("3", menuVars.sides == 3) then
-        menuVars.sides = 3
-    end
+    menuVars.sides = radioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
 end
 
 function chooseConvertSVSSFDirection(menuVars)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Direction:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("SSF -> SV", not menuVars.conversionDirection) then
-        menuVars.conversionDirection = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("SV -> SSF", menuVars.conversionDirection) then
-        menuVars.conversionDirection = true
-    end
+    menuVars.conversionDirection = radioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
+        { false, true })
 end
 
-function radioButtons(label, value, options, optionValues)
+function radioButtons(label, value, options, optionValues, tooltip)
     imgui.AlignTextToFramePadding()
     imgui.Text(label)
+    if (tooltip) then toolTip(tooltip) end
     for idx, option in pairs(options) do
         imgui.SameLine(0, RADIO_BUTTON_SPACING)
         if imgui.RadioButton(option, value == optionValues[idx]) then
