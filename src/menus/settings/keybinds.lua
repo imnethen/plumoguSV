@@ -12,7 +12,7 @@ function showKeybindSettings()
                 awaitingIndex = hotkeyIndex
             end
         end
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         imgui.SetCursorPosX(95)
         imgui.Text("" .. HOTKEY_LABELS[hotkeyIndex])
     end

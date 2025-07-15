@@ -69,38 +69,40 @@ function directSVMenu()
     state.SetValue("savedMultiplier", menuVars.multiplier)
     imgui.Separator()
 
-    if (imgui.Button("<##DirectSV")) then
+    if (imgui.ArrowButton("##DirectSVLeft", imgui_dir.Left)) then
         menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs / 10))
     end
 
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.Text("Page ")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.SetNextItemWidth(100)
     _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs / 10)), 0)
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.Text(" of " .. math.ceil(#svs / 10))
-    imgui.SameLine(0, SAMELINE_SPACING)
-    if (imgui.Button(">##DirectSV")) then
+    keepSameLine()
+    if (imgui.ArrowButton("##DirectSVRight", imgui_dir.Right)) then
         menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
     end
 
     imgui.Separator()
     imgui.Text("Start Time")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.SetCursorPosX(150)
     imgui.Text("Multiplier")
     imgui.Separator()
 
+    local startingPoint = 10 * menuVars.pageNumber - 10
+
     imgui.BeginTable("Test", 2)
-    for idx, v in pairs({ table.unpack(svs, 1 + 10 * (menuVars.pageNumber - 1), 10 * menuVars.pageNumber) }) do
+    for idx, v in pairs({ table.unpack(svs, startingPoint + 1, startingPoint + 10) }) do
         imgui.PushID(idx)
         imgui.TableNextRow()
         imgui.TableSetColumnIndex(0)
         imgui.Selectable(tostring(math.round(v.StartTime, 2)), menuVars.selectableIndex == idx,
             imgui_selectable_flags.SpanAllColumns)
         if (imgui.IsItemClicked()) then
-            menuVars.selectableIndex = idx + 10 * (menuVars.pageNumber - 1)
+            menuVars.selectableIndex = idx + startingPoint
         end
         imgui.TableSetColumnIndex(1)
         imgui.SetCursorPosX(150)

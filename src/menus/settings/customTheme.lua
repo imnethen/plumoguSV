@@ -4,11 +4,11 @@ function showCustomThemeSettings()
         globalVars.customStyle = table.duplicate(DEFAULT_STYLE)
         write()
     end
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     if (imgui.Button("Import")) then
         state.SetValue("importingCustomTheme", true)
     end
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     if (imgui.Button("Export")) then
         local str = stringifyCustomStyle(globalVars.customStyle)
         imgui.SetClipboardText(str)
@@ -18,12 +18,12 @@ function showCustomThemeSettings()
         local input = state.GetValue("importingCustomThemeInput", "")
         _, input = imgui.InputText("##customThemeStr", input, 69420)
         state.SetValue("importingCustomThemeInput", input)
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         if (imgui.Button("Send")) then
             setCustomStyleString(input)
             state.SetValue("importingCustomTheme", false)
         end
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         if (imgui.Button("X")) then
             state.SetValue("importingCustomTheme", false)
         end

@@ -20,7 +20,7 @@ function showAppearanceSettings()
     choosePulseCoefficient()
     _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
     if (not globalVars.useCustomPulseColor) then imgui.BeginDisabled() end
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     if (imgui.Button("Edit Color")) then
         state.SetValue("showColorPicker", true)
     end

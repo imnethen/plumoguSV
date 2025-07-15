@@ -14,7 +14,7 @@ end
 -- Parameters
 --    text : text to show in the tooltip box [String]
 function helpMarker(text)
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.TextDisabled("(?)")
     toolTip(text)
 end

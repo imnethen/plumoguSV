@@ -15,7 +15,7 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
     elseif currentSVType == "Hermite" then
         return hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Sinusoidal" then
-        return sinusoidalSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+        return sinusoidalSettingsMenu(settingVars, skipFinalSV)
     elseif currentSVType == "Circular" then
         return circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Random" then

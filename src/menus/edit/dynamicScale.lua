@@ -21,7 +21,7 @@ function dynamicScaleMenu()
     local needSVUpdate = #menuVars.svMultipliers == 0 or (#menuVars.svMultipliers ~= numSVPoints)
     imgui.AlignTextToFramePadding()
     imgui.Text("Shape:")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     needSVUpdate = chooseStandardSVType(menuVars, true) or needSVUpdate
 
     addSeparator()

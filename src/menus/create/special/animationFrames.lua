@@ -1,7 +1,7 @@
 function animationFramesSetupMenu(settingVars)
     chooseMenuStep(settingVars)
     if settingVars.menuStep == 1 then
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         imgui.Text("Choose Frame Settings")
         addSeparator()
         chooseNumFrames(settingVars)
@@ -12,7 +12,7 @@ function animationFramesSetupMenu(settingVars)
         addSeparator()
         chooseNoteSkinType(settingVars)
     elseif settingVars.menuStep == 2 then
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         imgui.Text("Adjust Notes/Frames")
         addSeparator()
         imgui.Columns(2, "Notes and Frames", false)
@@ -28,7 +28,7 @@ function animationFramesSetupMenu(settingVars)
         local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.x + 1.5 * SAMELINE_SPACING), 1 }
         imgui.InvisibleButton("sv isnt a real skill", invisibleButtonSize)
     else
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         imgui.Text("Place SVs")
         addSeparator()
         if #settingVars.frameTimes == 0 then

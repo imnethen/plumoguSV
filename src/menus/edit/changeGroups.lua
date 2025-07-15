@@ -2,7 +2,7 @@ function changeGroupsMenu()
     local menuVars = getMenuVars("changeGroups")
     imgui.AlignTextToFramePadding()
     imgui.Text("  Move to: ")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
 
     local groups = { "$Default", "$Global" }
     local cols = { map.TimingGroups["$Default"].ColorRgb or "86,253,110", map.TimingGroups["$Global"].ColorRgb or
@@ -27,7 +27,7 @@ function changeGroupsMenu()
     menuVars.designatedTimingGroup = groups[newIndex]
 
     _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
 
     addSeparator()

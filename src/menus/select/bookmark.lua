@@ -12,7 +12,7 @@ function selectBookmarkMenu()
         imgui.PushItemWidth(70)
 
         _, searchTerm = imgui.InputText("Search", searchTerm, 4096)
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         _, filterTerm = imgui.InputText("Ignore", filterTerm, 4096)
 
         imgui.Columns(3)
@@ -29,18 +29,18 @@ function selectBookmarkMenu()
         local skippedBookmarks = 0
         local skippedIndices = 0
 
-        for idx, v in pairs(bookmarks) do
-            if (v.StartTime < 0) then
+        for idx, bm in pairs(bookmarks) do
+            if (bm.StartTime < 0) then
                 skippedBookmarks = skippedBookmarks + 1
                 skippedIndices = skippedIndices + 1
                 goto continue
             end
 
-            if (searchTerm:len() > 0) and (not v.Note:find(searchTerm)) then
+            if (searchTerm:len() > 0) and (not bm.Note:find(searchTerm)) then
                 skippedBookmarks = skippedBookmarks + 1
                 goto continue
             end
-            if (filterTerm:len() > 0) and (v.Note:find(filterTerm)) then
+            if (filterTerm:len() > 0) and (bm.Note:find(filterTerm)) then
                 skippedBookmarks = skippedBookmarks + 1
                 goto continue
             end
@@ -49,25 +49,18 @@ function selectBookmarkMenu()
 
             imgui.SetCursorPosY(vPos)
 
-            table.insert(times, v.StartTime)
-            imgui.Text(v.StartTime)
+            table.insert(times, bm.StartTime)
+            imgui.Text(bm.StartTime)
             imgui.NextColumn()
 
             imgui.SetCursorPosY(vPos)
 
-            if (imgui.CalcTextSize(v.Note).x > 110) then
-                local note = v.Note
-                while (imgui.CalcTextSize(note).x > 85) do
-                    note = note:sub(1, #note - 1)
-                end
-                imgui.Text(note .. "...")
-            else
-                imgui.Text(v.Note)
-            end
+            bm.Note = bm.Note:fixToSize(110)
+
             imgui.NextColumn()
 
             if (imgui.Button("Go to #" .. idx - skippedIndices, vector.New(65, 24))) then
-                actions.GoToObjects(v.StartTime)
+                actions.GoToObjects(bm.StartTime)
             end
             imgui.NextColumn()
 

@@ -3,7 +3,7 @@ function importCustomSVs(settingVars)
     local customSVText = state.GetValue("customSVText") or "Import SV values here"
     local imguiFlag = imgui_input_text_flags.AutoSelectAll
     _, customSVText = imgui.InputText("##customSVs", customSVText, 99999, imguiFlag)
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     if imgui.Button("Parse##customSVs", SECONDARY_BUTTON_SIZE) then
         local regex = "(-?%d*%.?%d+)"
         local values = {}

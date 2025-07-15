@@ -1,4 +1,4 @@
-function sinusoidalSettingsMenu(settingVars, skipFinalSV, _)
+function sinusoidalSettingsMenu(settingVars, skipFinalSV)
     local settingsChanged = false
     imgui.Text("Amplitude:")
     settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged

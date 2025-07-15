@@ -92,7 +92,7 @@ function chooseConstantShift(settingVars, defaultShift)
         settingVars.verticalShift = defaultShift
     end
     toolTip("Reset vertical shift to initial values")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
@@ -102,7 +102,7 @@ function chooseConstantShift(settingVars, defaultShift)
     end
     toolTip("Negate vertical shift")
 
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
 
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
@@ -122,7 +122,7 @@ function chooseMsxVerticalShift(settingVars, defaultShift)
         settingVars.verticalShift = defaultShift or 0
     end
     toolTip("Reset vertical shift to initial values")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
@@ -132,7 +132,7 @@ function chooseMsxVerticalShift(settingVars, defaultShift)
     end
     toolTip("Negate vertical shift")
 
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
 
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
@@ -157,14 +157,14 @@ end
 function chooseCurrentFrame(settingVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Previewing frame:")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushItemWidth(35)
     if imgui.ArrowButton("##leftFrame", imgui_dir.Left) then
         settingVars.currentFrame = settingVars.currentFrame - 1
     end
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     _, settingVars.currentFrame = imgui.InputInt("##currentFrame", settingVars.currentFrame, 0, 0)
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     if imgui.ArrowButton("##rightFrame", imgui_dir.Right) then
         settingVars.currentFrame = settingVars.currentFrame + 1
     end
@@ -235,7 +235,7 @@ function chooseCurveSharpness(settingVars)
     if imgui.Button("Reset##curveSharpness", SECONDARY_BUTTON_SIZE) then
         settingVars.curveSharpness = 50
     end
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local _, newSharpness = imgui.SliderInt("Curve Sharpness", settingVars.curveSharpness, 1, 100, "%d%%")
     imgui.PopItemWidth()
@@ -274,11 +274,11 @@ function chooseVaryingDistance(settingVars)
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end SV values")
     local oldValues = vector.New(settingVars.distance1, settingVars.distance2)
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end SV values")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.98 - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2("Dist.", oldValues, "%.2f msx")
@@ -343,7 +343,7 @@ end
 function chooseSelectTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("Current Type:")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     globalVars.selectTypeIndex = combo("##selecttool", SELECT_TOOLS, globalVars.selectTypeIndex)
 
     local selectTool = SELECT_TOOLS[globalVars.selectTypeIndex]
@@ -357,7 +357,7 @@ end
 function chooseEditTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Current Tool:")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     globalVars.editToolIndex = combo("##edittool", EDIT_SV_TOOLS, globalVars.editToolIndex)
 
     local svTool = EDIT_SV_TOOLS[globalVars.editToolIndex]
@@ -403,7 +403,7 @@ function chooseFinalSV(settingVars, skipFinalSV)
     if finalSVType ~= "Normal" then
         imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.35)
         _, settingVars.customSV = imgui.InputFloat("SV", settingVars.customSV, 0, 0, "%.2fx")
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         imgui.PopItemWidth()
     else
         imgui.Indent(DEFAULT_WIDGET_WIDTH * 0.35 + 25)
@@ -468,7 +468,7 @@ function chooseInterlace(menuVars)
     _, menuVars.interlace = imgui.Checkbox("Interlace", menuVars.interlace)
     local interlaceChanged = oldInterlace ~= menuVars.interlace
     if not menuVars.interlace then return interlaceChanged end
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.5)
     local oldRatio = menuVars.interlaceRatio
     _, menuVars.interlaceRatio = imgui.InputFloat("Ratio##interlace", menuVars.interlaceRatio,
@@ -532,14 +532,14 @@ end
 function chooseMenuStep(settingVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Step # :")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushItemWidth(24)
     if imgui.ArrowButton("##leftMenuStep", imgui_dir.Left) then
         settingVars.menuStep = settingVars.menuStep - 1
     end
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     _, settingVars.menuStep = imgui.InputInt("##currentMenuStep", settingVars.menuStep, 0, 0)
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     if imgui.ArrowButton("##rightMenuStep", imgui_dir.Right) then
         settingVars.menuStep = settingVars.menuStep + 1
     end
@@ -602,7 +602,7 @@ end
 function choosePlaceSVType()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     globalVars.placeTypeIndex = combo("##placeType", CREATE_TYPES, globalVars.placeTypeIndex)
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Still" then toolTip("Still keeps notes normal distance/spacing apart") end
@@ -611,7 +611,7 @@ end
 function chooseCurrentScrollGroup()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Timing Group: ")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     local groups = { "$Default", "$Global" }
     local cols = { map.TimingGroups["$Default"].ColorRgb or "86,253,110", map.TimingGroups["$Global"].ColorRgb or
     "255,255,255" }
@@ -799,7 +799,7 @@ function chooseStillType(menuVars)
         imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.6 - 5)
         _, menuVars.stillDistance = imgui.InputFloat("##still", menuVars.stillDistance, 0, 0,
             "%.2f msx")
-        imgui.SameLine(0, SAMELINE_SPACING)
+        keepSameLine()
         imgui.PopItemWidth()
     end
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.4)
@@ -852,7 +852,7 @@ end
 function chooseSVBehavior(settingVars)
     local swapButtonPressed = imgui.Button("Swap", SECONDARY_BUTTON_SIZE)
     toolTip("Switch between slow down/speed up")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local oldBehaviorIndex = settingVars.behaviorIndex
@@ -969,7 +969,7 @@ function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
     toolTip("Negate SV value")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local newValue = computableInputFloat(label, var, decimalPlaces, suffix)
@@ -988,11 +988,11 @@ function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label
     local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
     toolTip("Swap start/end values")
     local oldValues = vector.New(settingVars[lowerName], settingVars[higherName])
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
     toolTip("Negate start/end values")
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
@@ -1039,7 +1039,7 @@ end
 function chooseVibratoSides(menuVars)
     imgui.AlignTextToFramePadding()
     imgui.Dummy(vector.New(27, 0))
-    imgui.SameLine(0, SAMELINE_SPACING)
+    keepSameLine()
     imgui.Text("Sides:")
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
     if imgui.RadioButton("1", menuVars.sides == 1) then
@@ -1066,4 +1066,16 @@ function chooseConvertSVSSFDirection(menuVars)
     if imgui.RadioButton("SV -> SSF", menuVars.conversionDirection) then
         menuVars.conversionDirection = true
     end
+end
+
+function radioButtons(label, value, options, optionValues)
+    imgui.AlignTextToFramePadding()
+    imgui.Text(label)
+    for idx, option in pairs(options) do
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton(option, value == optionValues[idx]) then
+            value = optionValues[idx]
+        end
+    end
+    return value
 end

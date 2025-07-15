@@ -8,7 +8,7 @@ function drawCursorTrail()
     if cursorTrail ~= "Sparkle" then state.SetValue("initializeSparkleParticles", false) end
 
     if cursorTrail == "None" then return end
-    if cursorTrail == "Snake" then drawSnakeTrail(o, m, t, sz) end
+    if cursorTrail == "Snake" then drawSnakeTrail(o, m, t) end
     if cursorTrail == "Dust" then drawDustTrail(o, m, t, sz) end
     if cursorTrail == "Sparkle" then drawSparkleTrail(o, m, t, sz) end
 end
@@ -16,8 +16,7 @@ end
 --    o          : [imgui overlay drawlist]
 --    m          : current (x, y) mouse position [Table]
 --    t          : current in-game plugin time [Int/Float]
---    sz         : dimensions of the window for Quaver [Table]
-function drawSnakeTrail(o, m, t, _)
+function drawSnakeTrail(o, m, t)
     local trailPoints = globalVars.cursorTrailPoints
     local snakeTrailPoints = {}
     initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
