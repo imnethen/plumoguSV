@@ -23,7 +23,6 @@ REVERSE_COLOR_MAP = {
     Green = 16
 }
 
-
 function layerSnaps()
     local layerDict = {}
     local layerNames = table.property(map.EditorLayers, "Name")

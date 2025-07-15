@@ -20,7 +20,6 @@ EDIT_SV_TOOLS = { -- tools for editing SVs
     "Vertical Shift"
 }
 
-
 function editSVTab()
     if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
     chooseEditTool()

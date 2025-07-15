@@ -5,7 +5,6 @@ CREATE_TYPES = { -- general categories of SVs to place
     "Vibrato",
 }
 
-
 function createSVTab()
     if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
     choosePlaceSVType()
