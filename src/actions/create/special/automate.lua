@@ -54,9 +54,7 @@ function automateSVs(settingVars)
                     local scalingFactor =
                         (ho.StartTime - selected[1].StartTime) / (selected[2].StartTime - selected[1].StartTime)
                     if (not settingVars.maintainMs) then scalingFactor = 1 / scalingFactor end
-                    svMultiplier = sv.multiplier * scalingFactor
-                else
-                    svMultiplier = sv.multiplier
+                    sv.multiplier = sv.multiplier * scalingFactor
                 end
 
                 if (settingVars.maintainMs) then
@@ -64,7 +62,7 @@ function automateSVs(settingVars)
                 else
                     svTime = ho.StartTime - progress * (ho.StartTime - selected[1].StartTime)
                 end
-                table.insert(neededIds[idName].svs, utils.CreateScrollVelocity(svTime, svMultiplier))
+                table.insert(neededIds[idName].svs, createSV(svTime, sv.multiplier))
             end
         end
         ::continue::

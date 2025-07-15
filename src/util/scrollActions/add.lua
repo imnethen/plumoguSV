@@ -44,7 +44,7 @@ end
 --    multiplier : multiplier for the new SV [Int/Float]
 --    endOfList  : whether or not to add the SV to the end of the list (else, the front) [Boolean]
 function addSVToList(svList, offset, multiplier, endOfList)
-    local newSV = utils.CreateScrollVelocity(offset, multiplier)
+    local newSV = createSV(offset, multiplier)
     if endOfList then
         table.insert(svList, newSV)
         return
@@ -53,7 +53,7 @@ function addSVToList(svList, offset, multiplier, endOfList)
 end
 
 function addSSFToList(ssfList, offset, multiplier, endOfList)
-    local newSSF = utils.CreateScrollSpeedFactor(offset, multiplier)
+    local newSSF = createSSF(offset, multiplier)
     if endOfList then
         table.insert(ssfList, newSSF)
         return

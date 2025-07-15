@@ -111,7 +111,7 @@ function pasteItems(menuVars)
             if menuVars.tryAlign then
                 timeToPasteSV = tryAlignToHitObjects(timeToPasteSV, hitObjectTimes, menuVars.alignWindow)
             end
-            table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+            table.insert(svsToAdd, createSV(timeToPasteSV, sv.multiplier))
             ::skip2::
         end
         for _, ssf in ipairs(menuVars.copiedSSFs) do
@@ -119,7 +119,7 @@ function pasteItems(menuVars)
             if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip3
             end
-            table.insert(ssfsToAdd, utils.CreateScrollSpeedFactor(timeToPasteSSF, ssf.multiplier))
+            table.insert(ssfsToAdd, createSSF(timeToPasteSSF, ssf.multiplier))
             ::skip3::
         end
         for _, bm in ipairs(menuVars.copiedBMs) do

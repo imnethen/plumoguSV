@@ -9,7 +9,7 @@ function placePenisSV(settingVars)
             local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
             local trueVal = settingVars.bCurvature / 100 * circVal + (1 - settingVars.bCurvature / 100)
 
-            table.insert(svs, utils.CreateScrollVelocity(time, trueVal))
+            table.insert(svs, createSV(time, trueVal))
         end
     end
 
@@ -19,7 +19,7 @@ function placePenisSV(settingVars)
         local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
         local trueVal = settingVars.sCurvature / 100 * circVal + (3.75 - settingVars.sCurvature / 100)
 
-        table.insert(svs, utils.CreateScrollVelocity(time, trueVal))
+        table.insert(svs, createSV(time, trueVal))
     end
 
     removeAndAddSVs(getSVsBetweenOffsets(startTime, startTime + settingVars.sWidth + settingVars.bWidth * 2), svs)

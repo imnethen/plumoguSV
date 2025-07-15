@@ -16,10 +16,10 @@ function changeGroups(menuVars)
     local oldGroup = state.SelectedScrollGroupId
 
     for _, sv in pairs(svsToRemove) do
-        table.insert(svsToAdd, utils.CreateScrollVelocity(sv.StartTime, sv.Multiplier))
+        table.insert(svsToAdd, createSV(sv.StartTime, sv.Multiplier))
     end
     for _, ssf in pairs(ssfsToRemove) do
-        table.insert(ssfsToAdd, utils.CreateScrollSpeedFactor(ssf.StartTime, ssf.Multiplier))
+        table.insert(ssfsToAdd, createSSF(ssf.StartTime, ssf.Multiplier))
     end
 
     local actionList = {}

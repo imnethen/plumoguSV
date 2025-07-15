@@ -21,10 +21,10 @@ function convertSVSSF(menuVars)
     local createTable = table.construct()
     for _, obj in pairs(objects) do
         if (menuVars.conversionDirection) then
-            createTable:insert(utils.CreateScrollSpeedFactor(obj.StartTime,
+            createTable:insert(createSSF(obj.StartTime,
                 obj.Multiplier))
         else
-            createTable:insert(utils.CreateScrollVelocity(obj.StartTime, obj.Multiplier))
+            createTable:insert(createSV(obj.StartTime, obj.Multiplier))
         end
     end
     if (menuVars.conversionDirection) then

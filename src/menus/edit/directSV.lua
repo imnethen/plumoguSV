@@ -44,7 +44,7 @@ function directSVMenu()
     else
         if (not primeStartTime) then goto continue1 end
         primeStartTime = false
-        local newSV = utils.CreateScrollVelocity(state.GetValue("savedStartTime") or 0, menuVars.multiplier)
+        local newSV = createSV(state.GetValue("savedStartTime") or 0, menuVars.multiplier)
         actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
             utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
     end
@@ -56,7 +56,7 @@ function directSVMenu()
     else
         if (not primeMultiplier) then goto continue2 end
         primeMultiplier = false
-        local newSV = utils.CreateScrollVelocity(menuVars.startTime, state.GetValue("savedMultiplier") or 1)
+        local newSV = createSV(menuVars.startTime, state.GetValue("savedMultiplier") or 1)
         actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
             utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
     end
