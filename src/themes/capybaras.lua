@@ -1,6 +1,6 @@
 function drawCapybara()
     if not globalVars.drawCapybara then return end
-    local o = imgui.GetOverlayDrawList()
+    local o = imgui.GetForegroundDrawList()
     local sz = state.WindowSize
     local headWidth = 50
     local headRadius = 20
@@ -35,7 +35,7 @@ end
 
 function drawCapybara2()
     if not globalVars.drawCapybara2 then return end
-    local o = imgui.GetOverlayDrawList()
+    local o = imgui.GetForegroundDrawList()
     local sz = state.WindowSize
 
     local topLeftCapyPoint = { 0, sz[2] - 165 }
@@ -213,7 +213,7 @@ end
 
 function drawCapybara312()
     if not globalVars.drawCapybara312 then return end
-    local o = imgui.GetOverlayDrawList()
+    local o = imgui.GetForegroundDrawList()
     --local sz = state.WindowSize
     local rgbColors = getCurrentRGBColors(globalVars.rgbPeriod)
     local redRounded = math.round(255 * rgbColors.red, 0)

@@ -1,5 +1,5 @@
 function drawCursorTrail()
-    local o = imgui.GetOverlayDrawList()
+    local o = imgui.GetForegroundDrawList()
     local m = imgui.GetMousePos()
     local t = imgui.GetTime()
     local sz = state.WindowSize

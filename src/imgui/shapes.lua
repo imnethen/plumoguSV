@@ -1,6 +1,6 @@
 -- Draws an equilateral triangle
 -- Parameters
---    o           : imgui overlay drawlist [imgui.GetOverlayDrawList()]
+--    o           : imgui overlay drawlist [imgui.GetForegroundDrawList()]
 --    centerPoint : center point of the triangle [Table]
 --    size        : radius from triangle center to tip [Int/Float]
 --    angle       : rotation angle of the triangle [Int/Float]
@@ -52,7 +52,7 @@ end
 
 -- Draws a horizontal pill shape
 -- Parameters
---    o              : imgui overlay drawlist [imgui.GetOverlayDrawList()]
+--    o              : imgui overlay drawlist [imgui.GetForegroundDrawList()]
 --    point1         : (x, y) coordiates of the center of the pill's first circle [Table]
 --    point2         : (x, y) coordiates of the center of the pill's second circle [Table]
 --    radius         : radius of the circle of the pill [Int/Float]
