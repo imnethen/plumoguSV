@@ -25,7 +25,7 @@ function comboSettingsMenu(settingVars)
     settingsChanged = chooseStandardSVTypes(settingVars) or settingsChanged
     settingsChanged = chooseComboSVOption(settingVars, maxComboPhase) or settingsChanged
 
-    addSeparator()
+    AddSeparator()
     settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
     if not settingVars.dontNormalize then
         settingsChanged = chooseAverageSV(settingVars) or settingsChanged

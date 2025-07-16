@@ -4,7 +4,7 @@
 --    label     : label for the combo [String]
 --    list      : list for the combo to use [Table]
 --    listIndex : current index of the item from the list being selected in the combo [Int]
-function combo(label, list, listIndex, colorList, hiddenGroups)
+function Combo(label, list, listIndex, colorList, hiddenGroups)
     local newListIndex = math.clamp(listIndex, 1, #list)
     local currentComboItem = list[listIndex]
     local comboFlag = imgui_combo_flags.HeightLarge

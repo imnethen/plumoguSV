@@ -23,8 +23,3 @@ function checkIfMouseMoved(currentMousePosition)
     saveVariables("oldMousePosition", oldMousePosition)
     return mousePositionChanged
 end
-
--- Returns the current (x, y) coordinates of the mouse [Table]
-function getCurrentMousePosition()
-    return imgui.GetMousePos()
-end

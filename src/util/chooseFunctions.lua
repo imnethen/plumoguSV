@@ -1,7 +1,7 @@
 function chooseAddComboMultipliers(settingVars)
     local oldValues = vector.New(settingVars.comboMultiplier1, settingVars.comboMultiplier2)
     local _, newValues = imgui.InputFloat2("ax + by", oldValues, "%.2f")
-    helpMarker("a = multiplier for SV Type 1, b = multiplier for SV Type 2")
+    HelpMarker("a = multiplier for SV Type 1, b = multiplier for SV Type 2")
     settingVars.comboMultiplier1 = newValues.x
     settingVars.comboMultiplier2 = newValues.y
     return oldValues ~= newValues
@@ -23,9 +23,9 @@ function chooseBezierPoints(settingVars)
     local oldFirstPoint = settingVars.p1
     local oldSecondPoint = settingVars.p2
     local _, newFirstPoint = imgui.SliderFloat2("(x1, y1)", oldFirstPoint, 0, 1, "%.2f")
-    helpMarker("Coordinates of the first point of the cubic bezier")
+    HelpMarker("Coordinates of the first point of the cubic bezier")
     local _, newSecondPoint = imgui.SliderFloat2("(x2, y2)", oldSecondPoint, 0, 1, "%.2f")
-    helpMarker("Coordinates of the second point of the cubic bezier")
+    HelpMarker("Coordinates of the second point of the cubic bezier")
     settingVars.p1 = newFirstPoint
     settingVars.p2 = newSecondPoint
 
@@ -35,20 +35,20 @@ end
 function chooseChinchillaIntensity(settingVars)
     local oldIntensity = settingVars.chinchillaIntensity
     local _, newIntensity = imgui.SliderFloat("Intensity##chinchilla", oldIntensity, 0, 10, "%.3f")
-    helpMarker("Ctrl + click slider to input a specific number")
+    HelpMarker("Ctrl + click slider to input a specific number")
     settingVars.chinchillaIntensity = math.clamp(newIntensity, 0, 727)
     return oldIntensity ~= settingVars.chinchillaIntensity
 end
 
 function chooseChinchillaType(settingVars)
     local oldIndex = settingVars.chinchillaTypeIndex
-    settingVars.chinchillaTypeIndex = combo("Chinchilla Type", CHINCHILLA_TYPES, oldIndex)
+    settingVars.chinchillaTypeIndex = Combo("Chinchilla Type", CHINCHILLA_TYPES, oldIndex)
     return oldIndex ~= settingVars.chinchillaTypeIndex
 end
 
 function chooseColorTheme()
     local oldColorThemeIndex = globalVars.colorThemeIndex
-    globalVars.colorThemeIndex = combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex, COLOR_THEME_COLORS)
+    globalVars.colorThemeIndex = Combo("Color Theme", COLOR_THEMES, globalVars.colorThemeIndex, COLOR_THEME_COLORS)
 
     if (oldColorThemeIndex ~= globalVars.colorThemeIndex) then
         write(globalVars)
@@ -71,7 +71,7 @@ end
 
 function chooseComboSVOption(settingVars, maxComboPhase)
     local oldIndex = settingVars.comboTypeIndex
-    settingVars.comboTypeIndex = combo("Combo Type", COMBO_SV_TYPE, settingVars.comboTypeIndex)
+    settingVars.comboTypeIndex = Combo("Combo Type", COMBO_SV_TYPE, settingVars.comboTypeIndex)
     local currentComboType = COMBO_SV_TYPE[settingVars.comboTypeIndex]
     local addTypeChanged = false
     if currentComboType ~= "SV Type 1 Only" and currentComboType ~= "SV Type 2 Only" then
@@ -91,8 +91,8 @@ function chooseConstantShift(settingVars, defaultShift)
     if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
         settingVars.verticalShift = defaultShift
     end
-    toolTip("Reset vertical shift to initial values")
-    keepSameLine()
+    ToolTip("Reset vertical shift to initial values")
+    KeepSameLine()
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
@@ -100,9 +100,9 @@ function chooseConstantShift(settingVars, defaultShift)
     if negateButtonPressed and settingVars.verticalShift ~= 0 then
         settingVars.verticalShift = -settingVars.verticalShift
     end
-    toolTip("Negate vertical shift")
+    ToolTip("Negate vertical shift")
 
-    keepSameLine()
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
 
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
@@ -121,8 +121,8 @@ function chooseMsxVerticalShift(settingVars, defaultShift)
     if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
         settingVars.verticalShift = defaultShift or 0
     end
-    toolTip("Reset vertical shift to initial values")
-    keepSameLine()
+    ToolTip("Reset vertical shift to initial values")
+    KeepSameLine()
 
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
@@ -130,9 +130,9 @@ function chooseMsxVerticalShift(settingVars, defaultShift)
     if negateButtonPressed and settingVars.verticalShift ~= 0 then
         settingVars.verticalShift = -settingVars.verticalShift
     end
-    toolTip("Negate vertical shift")
+    ToolTip("Negate vertical shift")
 
-    keepSameLine()
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
 
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
@@ -147,7 +147,7 @@ function chooseControlSecondSV(settingVars)
     local oldChoice = settingVars.controlLastSV
     local stutterControlsIndex = 1
     if oldChoice then stutterControlsIndex = 2 end
-    local newStutterControlsIndex = combo("Control SV", STUTTER_CONTROLS, stutterControlsIndex)
+    local newStutterControlsIndex = Combo("Control SV", STUTTER_CONTROLS, stutterControlsIndex)
     settingVars.controlLastSV = newStutterControlsIndex == 2
     local choiceChanged = oldChoice ~= settingVars.controlLastSV
     if choiceChanged then settingVars.stutterDuration = 100 - settingVars.stutterDuration end
@@ -157,14 +157,14 @@ end
 function chooseCurrentFrame(settingVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Previewing frame:")
-    keepSameLine()
+    KeepSameLine()
     imgui.PushItemWidth(35)
     if imgui.ArrowButton("##leftFrame", imgui_dir.Left) then
         settingVars.currentFrame = settingVars.currentFrame - 1
     end
-    keepSameLine()
+    KeepSameLine()
     _, settingVars.currentFrame = imgui.InputInt("##currentFrame", settingVars.currentFrame, 0, 0)
-    keepSameLine()
+    KeepSameLine()
     if imgui.ArrowButton("##rightFrame", imgui_dir.Right) then
         settingVars.currentFrame = settingVars.currentFrame + 1
     end
@@ -174,7 +174,7 @@ end
 
 function chooseCursorTrail()
     local oldCursorTrailIndex = globalVars.cursorTrailIndex
-    globalVars.cursorTrailIndex = combo("Cursor Trail", CURSOR_TRAILS, oldCursorTrailIndex)
+    globalVars.cursorTrailIndex = Combo("Cursor Trail", CURSOR_TRAILS, oldCursorTrailIndex)
     if (oldCursorTrailIndex ~= globalVars.cursorTrailIndex) then
         write(globalVars)
     end
@@ -211,7 +211,7 @@ function chooseCursorTrailShape()
 
     local label = "Trail Shape"
     local oldTrailShapeIndex = globalVars.cursorTrailShapeIndex
-    globalVars.cursorTrailShapeIndex = combo(label, TRAIL_SHAPES, oldTrailShapeIndex)
+    globalVars.cursorTrailShapeIndex = Combo(label, TRAIL_SHAPES, oldTrailShapeIndex)
     if (oldTrailShapeIndex ~= globalVars.cursorTrailShapeIndex) then
         write(globalVars)
     end
@@ -235,7 +235,7 @@ function chooseCurveSharpness(settingVars)
     if imgui.Button("Reset##curveSharpness", SECONDARY_BUTTON_SIZE) then
         settingVars.curveSharpness = 50
     end
-    keepSameLine()
+    KeepSameLine()
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local _, newSharpness = imgui.SliderInt("Curve Sharpness", settingVars.curveSharpness, 1, 100, "%d%%")
     imgui.PopItemWidth()
@@ -272,13 +272,13 @@ function chooseVaryingDistance(settingVars)
     end
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
-    toolTip("Swap start/end SV values")
+    ToolTip("Swap start/end SV values")
     local oldValues = vector.New(settingVars.distance1, settingVars.distance2)
-    keepSameLine()
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
-    toolTip("Negate start/end SV values")
-    keepSameLine()
+    ToolTip("Negate start/end SV values")
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.98 - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2("Dist.", oldValues, "%.2f msx")
@@ -316,7 +316,7 @@ end
 function chooseDrawCapybara()
     local oldDrawCapybara = globalVars.drawCapybara
     _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
-    helpMarker("Draws a capybara at the bottom right of the screen")
+    HelpMarker("Draws a capybara at the bottom right of the screen")
     if (oldDrawCapybara ~= globalVars.drawCapybara) then
         write(globalVars)
     end
@@ -325,7 +325,7 @@ end
 function chooseDrawCapybara2()
     local oldDrawCapybara2 = globalVars.drawCapybara2
     _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
-    helpMarker("Draws a capybara at the bottom left of the screen")
+    HelpMarker("Draws a capybara at the bottom left of the screen")
     if (oldDrawCapybara2 ~= globalVars.drawCapybara2) then
         write(globalVars)
     end
@@ -337,49 +337,49 @@ function chooseDrawCapybara312()
     if (oldDrawCapybara312 ~= globalVars.drawCapybara312) then
         write(globalVars)
     end
-    helpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
+    HelpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
 
 function chooseSelectTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("Current Type:")
-    keepSameLine()
-    globalVars.selectTypeIndex = combo("##selecttool", SELECT_TOOLS, globalVars.selectTypeIndex)
+    KeepSameLine()
+    globalVars.selectTypeIndex = Combo("##selecttool", SELECT_TOOLS, globalVars.selectTypeIndex)
 
     local selectTool = SELECT_TOOLS[globalVars.selectTypeIndex]
-    if selectTool == "Alternating" then toolTip("Skip over notes then select one, and repeat") end
-    if selectTool == "By Snap" then toolTip("Select all notes with a certain snap color") end
-    if selectTool == "Bookmark" then toolTip("Jump to a bookmark") end
-    if selectTool == "Chord Size" then toolTip("Select all notes with a certain chord size") end
-    if selectTool == "Note Type" then toolTip("Select rice/ln notes") end
+    if selectTool == "Alternating" then ToolTip("Skip over notes then select one, and repeat") end
+    if selectTool == "By Snap" then ToolTip("Select all notes with a certain snap color") end
+    if selectTool == "Bookmark" then ToolTip("Jump to a bookmark") end
+    if selectTool == "Chord Size" then ToolTip("Select all notes with a certain chord size") end
+    if selectTool == "Note Type" then ToolTip("Select rice/ln notes") end
 end
 
 function chooseEditTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Current Tool:")
-    keepSameLine()
-    globalVars.editToolIndex = combo("##edittool", EDIT_SV_TOOLS, globalVars.editToolIndex)
+    KeepSameLine()
+    globalVars.editToolIndex = Combo("##edittool", EDIT_SV_TOOLS, globalVars.editToolIndex)
 
     local svTool = EDIT_SV_TOOLS[globalVars.editToolIndex]
-    if svTool == "Add Teleport" then toolTip("Add a large teleport SV to move far away") end
-    if svTool == "Align Timing Lines" then toolTip("Create timing lines at notes to avoid desync") end
-    if svTool == "Change Timing Group" then toolTip("Moves SVs and SSFs to a designated timing group.") end
-    if svTool == "Convert SV <-> SSF" then toolTip("Convert multipliers between SV/SSF") end
-    if svTool == "Copy & Paste" then toolTip("Copy SVs and SSFs and paste them somewhere else") end
-    if svTool == "Direct SV" then toolTip("Directly update SVs within your selection") end
-    if svTool == "Displace Note" then toolTip("Move where notes are hit on the screen") end
-    if svTool == "Displace View" then toolTip("Temporarily displace the playfield view") end
-    if svTool == "Dynamic Scale" then toolTip("Dynamically scale SVs across notes") end
-    if svTool == "Fix LN Ends" then toolTip("Fix flipped LN ends") end
-    if svTool == "Flicker" then toolTip("Flash notes on and off the screen") end
-    if svTool == "Layer Snaps" then toolTip("Transfer snap colors into layers, to be loaded later") end
-    if svTool == "Measure" then toolTip("Get stats about SVs in a section") end
-    if svTool == "Merge" then toolTip("Combine SVs that overlap") end
-    if svTool == "Reverse Scroll" then toolTip("Reverse the scroll direction using SVs") end
-    if svTool == "Scale (Multiply)" then toolTip("Scale SV values by multiplying") end
-    if svTool == "Scale (Displace)" then toolTip("Scale SV values by adding teleport SVs") end
-    if svTool == "Swap Notes" then toolTip("Swap positions of notes using SVs") end
-    if svTool == "Vertical Shift" then toolTip("Adds a constant value to SVs in a range") end
+    if svTool == "Add Teleport" then ToolTip("Add a large teleport SV to move far away") end
+    if svTool == "Align Timing Lines" then ToolTip("Create timing lines at notes to avoid desync") end
+    if svTool == "Change Timing Group" then ToolTip("Moves SVs and SSFs to a designated timing group.") end
+    if svTool == "Convert SV <-> SSF" then ToolTip("Convert multipliers between SV/SSF") end
+    if svTool == "Copy & Paste" then ToolTip("Copy SVs and SSFs and paste them somewhere else") end
+    if svTool == "Direct SV" then ToolTip("Directly update SVs within your selection") end
+    if svTool == "Displace Note" then ToolTip("Move where notes are hit on the screen") end
+    if svTool == "Displace View" then ToolTip("Temporarily displace the playfield view") end
+    if svTool == "Dynamic Scale" then ToolTip("Dynamically scale SVs across notes") end
+    if svTool == "Fix LN Ends" then ToolTip("Fix flipped LN ends") end
+    if svTool == "Flicker" then ToolTip("Flash notes on and off the screen") end
+    if svTool == "Layer Snaps" then ToolTip("Transfer snap colors into layers, to be loaded later") end
+    if svTool == "Measure" then ToolTip("Get stats about SVs in a section") end
+    if svTool == "Merge" then ToolTip("Combine SVs that overlap") end
+    if svTool == "Reverse Scroll" then ToolTip("Reverse the scroll direction using SVs") end
+    if svTool == "Scale (Multiply)" then ToolTip("Scale SV values by multiplying") end
+    if svTool == "Scale (Displace)" then ToolTip("Scale SV values by adding teleport SVs") end
+    if svTool == "Swap Notes" then ToolTip("Swap positions of notes using SVs") end
+    if svTool == "Vertical Shift" then ToolTip("Adds a constant value to SVs in a range") end
 end
 
 function chooseEffectFPS()
@@ -390,7 +390,7 @@ function chooseEffectFPS()
     if (oldEffectFPS ~= globalVars.effectFPS) then
         write(globalVars)
     end
-    helpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
+    HelpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
     globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
 end
 
@@ -403,14 +403,14 @@ function chooseFinalSV(settingVars, skipFinalSV)
     if finalSVType ~= "Normal" then
         imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.35)
         _, settingVars.customSV = imgui.InputFloat("SV", settingVars.customSV, 0, 0, "%.2fx")
-        keepSameLine()
+        KeepSameLine()
         imgui.PopItemWidth()
     else
         imgui.Indent(DEFAULT_WIDGET_WIDTH * 0.35 + 25)
     end
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.5)
-    settingVars.finalSVIndex = combo("Final SV", FINAL_SV_TYPES, settingVars.finalSVIndex)
-    helpMarker("Final SV won't be placed if there's already an SV at the end time")
+    settingVars.finalSVIndex = Combo("Final SV", FINAL_SV_TYPES, settingVars.finalSVIndex)
+    HelpMarker("Final SV won't be placed if there's already an SV at the end time")
     if finalSVType == "Normal" then
         imgui.Unindent(DEFAULT_WIDGET_WIDTH * 0.35 + 25)
     end
@@ -419,7 +419,7 @@ function chooseFinalSV(settingVars, skipFinalSV)
 end
 
 function chooseFlickerType(menuVars)
-    menuVars.flickerTypeIndex = combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
+    menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
 end
 
 function chooseFrameOrder(settingVars)
@@ -468,7 +468,7 @@ function chooseInterlace(menuVars)
     _, menuVars.interlace = imgui.Checkbox("Interlace", menuVars.interlace)
     local interlaceChanged = oldInterlace ~= menuVars.interlace
     if not menuVars.interlace then return interlaceChanged end
-    keepSameLine()
+    KeepSameLine()
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.5)
     local oldRatio = menuVars.interlaceRatio
     _, menuVars.interlaceRatio = imgui.InputFloat("Ratio##interlace", menuVars.interlaceRatio,
@@ -507,9 +507,9 @@ function chooseMainSV(settingVars)
     local label = "Main SV"
     if settingVars.linearlyChange then label = label .. " (start)" end
     _, settingVars.mainSV = imgui.InputFloat(label, settingVars.mainSV, 0, 0, "%.2fx")
-    local helpMarkerText = "This SV will last ~99.99%% of the stutter"
+    local HelpMarkerText = "This SV will last ~99.99%% of the stutter"
     if not settingVars.linearlyChange then
-        helpMarker(helpMarkerText)
+        HelpMarker(HelpMarkerText)
         return
     end
 
@@ -523,14 +523,14 @@ end
 function chooseMenuStep(settingVars)
     imgui.AlignTextToFramePadding()
     imgui.Text("Step # :")
-    keepSameLine()
+    KeepSameLine()
     imgui.PushItemWidth(24)
     if imgui.ArrowButton("##leftMenuStep", imgui_dir.Left) then
         settingVars.menuStep = settingVars.menuStep - 1
     end
-    keepSameLine()
+    KeepSameLine()
     _, settingVars.menuStep = imgui.InputInt("##currentMenuStep", settingVars.menuStep, 0, 0)
-    keepSameLine()
+    KeepSameLine()
     if imgui.ArrowButton("##rightMenuStep", imgui_dir.Right) then
         settingVars.menuStep = settingVars.menuStep + 1
     end
@@ -539,7 +539,7 @@ function chooseMenuStep(settingVars)
 end
 
 function chooseNoNormalize(settingVars)
-    addPadding()
+    AddPadding()
     local oldChoice = settingVars.dontNormalize
     local _, newChoice = imgui.Checkbox("Don't normalize to average SV", oldChoice)
     settingVars.dontNormalize = newChoice
@@ -547,9 +547,9 @@ function chooseNoNormalize(settingVars)
 end
 
 function chooseNoteSkinType(settingVars)
-    settingVars.noteSkinTypeIndex = combo("Preview skin", NOTE_SKIN_TYPES,
+    settingVars.noteSkinTypeIndex = Combo("Preview skin", NOTE_SKIN_TYPES,
         settingVars.noteSkinTypeIndex)
-    helpMarker("Note skin type for the preview of the frames")
+    HelpMarker("Note skin type for the preview of the frames")
 end
 
 function chooseNoteSpacing(menuVars)
@@ -593,16 +593,16 @@ end
 function choosePlaceSVType()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
-    keepSameLine()
-    globalVars.placeTypeIndex = combo("##placeType", CREATE_TYPES, globalVars.placeTypeIndex)
+    KeepSameLine()
+    globalVars.placeTypeIndex = Combo("##placeType", CREATE_TYPES, globalVars.placeTypeIndex)
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
-    if placeType == "Still" then toolTip("Still keeps notes normal distance/spacing apart") end
+    if placeType == "Still" then ToolTip("Still keeps notes normal distance/spacing apart") end
 end
 
 function chooseCurrentScrollGroup()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Timing Group: ")
-    keepSameLine()
+    KeepSameLine()
     local groups = { "$Default", "$Global" }
     local cols = { map.TimingGroups["$Default"].ColorRgb or "86,253,110", map.TimingGroups["$Global"].ColorRgb or
     "255,255,255" }
@@ -616,7 +616,7 @@ function chooseCurrentScrollGroup()
     end
     local prevIndex = globalVars.scrollGroupIndex
     imgui.PushItemWidth(155)
-    globalVars.scrollGroupIndex = combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols, hiddenGroups)
+    globalVars.scrollGroupIndex = Combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols, hiddenGroups)
     imgui.PopItemWidth()
     if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[6])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex - 1, 1, #groups)
@@ -624,7 +624,7 @@ function chooseCurrentScrollGroup()
     if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[7])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex + 1, 1, #groups)
     end
-    addSeparator()
+    AddSeparator()
     if (prevIndex ~= globalVars.scrollGroupIndex) then
         state.SelectedScrollGroupId = groups[globalVars.scrollGroupIndex]
     end
@@ -642,7 +642,7 @@ end
 
 function chooseRandomType(settingVars)
     local oldIndex = settingVars.randomTypeIndex
-    settingVars.randomTypeIndex = combo("Random Type", RANDOM_TYPES, settingVars.randomTypeIndex)
+    settingVars.randomTypeIndex = Combo("Random Type", RANDOM_TYPES, settingVars.randomTypeIndex)
     return oldIndex ~= settingVars.randomTypeIndex
 end
 
@@ -662,12 +662,12 @@ function chooseRGBPeriod()
 end
 
 function chooseScaleDisplaceSpot(menuVars)
-    menuVars.scaleSpotIndex = combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
+    menuVars.scaleSpotIndex = Combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
 end
 
 function chooseScaleType(menuVars)
     local label = "Scale Type"
-    menuVars.scaleTypeIndex = combo(label, SCALE_TYPES, menuVars.scaleTypeIndex)
+    menuVars.scaleTypeIndex = Combo(label, SCALE_TYPES, menuVars.scaleTypeIndex)
 
     local scaleType = SCALE_TYPES[menuVars.scaleTypeIndex]
     if scaleType == "Average SV" then chooseAverageSV(menuVars) end
@@ -681,7 +681,7 @@ function chooseSnakeSpringConstant()
 
     local oldValue = globalVars.snakeSpringConstant
     _, globalVars.snakeSpringConstant = imgui.InputFloat("Reactiveness##snake", oldValue, 0, 0, "%.2f")
-    helpMarker("Pick any number from 0.01 to 1")
+    HelpMarker("Pick any number from 0.01 to 1")
     globalVars.snakeSpringConstant = math.clamp(globalVars.snakeSpringConstant, 0.01, 1)
     if (globalVars.snakeSpringConstant ~= oldValue) then
         write(globalVars)
@@ -691,22 +691,22 @@ end
 function chooseSpecialSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #STANDARD_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
-    menuVars.svTypeIndex = combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
+    menuVars.svTypeIndex = Combo(label, SPECIAL_SVS, menuVars.svTypeIndex)
 end
 
 function chooseVibratoSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #VIBRATO_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
-    menuVars.svTypeIndex = combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
+    menuVars.svTypeIndex = Combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
 end
 
 function chooseVibratoMode(menuVars)
-    menuVars.vibratoMode = combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
+    menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
 end
 
 function chooseVibratoQuality(menuVars)
-    menuVars.vibratoQuality = combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
-    toolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
+    menuVars.vibratoQuality = Combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
+    ToolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 
 function chooseCurvatureCoefficient(settingVars)
@@ -743,15 +743,15 @@ function chooseStandardSVType(menuVars, excludeCombo)
     local label = " " .. EMOTICONS[oldIndex]
     local svTypeList = STANDARD_SVS
     if excludeCombo then svTypeList = STANDARD_SVS_NO_COMBO end
-    menuVars.svTypeIndex = combo(label, svTypeList, menuVars.svTypeIndex)
+    menuVars.svTypeIndex = Combo(label, svTypeList, menuVars.svTypeIndex)
     return oldIndex ~= menuVars.svTypeIndex
 end
 
 function chooseStandardSVTypes(settingVars)
     local oldIndex1 = settingVars.svType1Index
     local oldIndex2 = settingVars.svType2Index
-    settingVars.svType1Index = combo("SV Type 1", STANDARD_SVS_NO_COMBO, settingVars.svType1Index)
-    settingVars.svType2Index = combo("SV Type 2", STANDARD_SVS_NO_COMBO, settingVars.svType2Index)
+    settingVars.svType1Index = Combo("SV Type 1", STANDARD_SVS_NO_COMBO, settingVars.svType1Index)
+    settingVars.svType2Index = Combo("SV Type 2", STANDARD_SVS_NO_COMBO, settingVars.svType2Index)
     return (oldIndex2 ~= settingVars.svType2Index) or (oldIndex1 ~= settingVars.svType1Index)
 end
 
@@ -768,9 +768,9 @@ function chooseStartSVPercent(settingVars)
     local label1 = "Start SV %"
     if settingVars.linearlyChange then label1 = label1 .. " (start)" end
     _, settingVars.svPercent = imgui.InputFloat(label1, settingVars.svPercent, 1, 1, "%.2f%%")
-    local helpMarkerText = "%% distance between notes"
+    local HelpMarkerText = "%% distance between notes"
     if not settingVars.linearlyChange then
-        helpMarker(helpMarkerText)
+        HelpMarker(HelpMarkerText)
         return
     end
 
@@ -790,17 +790,17 @@ function chooseStillType(menuVars)
         imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.6 - 5)
         _, menuVars.stillDistance = imgui.InputFloat("##still", menuVars.stillDistance, 0, 0,
             "%.2f msx")
-        keepSameLine()
+        KeepSameLine()
         imgui.PopItemWidth()
     end
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.4)
-    menuVars.stillTypeIndex = combo("Displacement", STILL_TYPES, menuVars.stillTypeIndex)
+    menuVars.stillTypeIndex = Combo("Displacement", STILL_TYPES, menuVars.stillTypeIndex)
 
-    if stillType == "No" then toolTip("Don't use an initial or end displacement") end
-    if stillType == "Start" then toolTip("Use an initial starting displacement for the still") end
-    if stillType == "End" then toolTip("Have a displacement to end at for the still") end
-    if stillType == "Auto" then toolTip("Use last displacement of the previous still to start") end
-    if stillType == "Otua" then toolTip("Use next displacement of the next still to end at") end
+    if stillType == "No" then ToolTip("Don't use an initial or end displacement") end
+    if stillType == "Start" then ToolTip("Use an initial starting displacement for the still") end
+    if stillType == "End" then ToolTip("Have a displacement to end at for the still") end
+    if stillType == "Auto" then ToolTip("Use last displacement of the previous still to start") end
+    if stillType == "Otua" then ToolTip("Use next displacement of the next still to end at") end
 
     if dontChooseDistance then
         imgui.Unindent(indentWidth)
@@ -809,7 +809,7 @@ function chooseStillType(menuVars)
 end
 
 function chooseStillBehavior(menuVars)
-    menuVars.stillBehavior = combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
+    menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
 end
 
 function chooseStutterDuration(settingVars)
@@ -826,7 +826,7 @@ end
 function chooseStuttersPerSection(settingVars)
     local oldNumber = settingVars.stuttersPerSection
     local _, newNumber = imgui.InputInt("Stutters", oldNumber, 1, 1)
-    helpMarker("Number of stutters per section")
+    HelpMarker("Number of stutters per section")
     newNumber = math.clamp(newNumber, 1, 1000)
     settingVars.stuttersPerSection = newNumber
     return oldNumber ~= newNumber
@@ -834,7 +834,7 @@ end
 
 function chooseStyleTheme()
     local oldStyleTheme = globalVars.styleThemeIndex
-    globalVars.styleThemeIndex = combo("Style Theme", STYLE_THEMES, oldStyleTheme)
+    globalVars.styleThemeIndex = Combo("Style Theme", STYLE_THEMES, oldStyleTheme)
     if (oldStyleTheme ~= globalVars.styleThemeIndex) then
         write(globalVars)
     end
@@ -842,12 +842,12 @@ end
 
 function chooseSVBehavior(settingVars)
     local swapButtonPressed = imgui.Button("Swap", SECONDARY_BUTTON_SIZE)
-    toolTip("Switch between slow down/speed up")
-    keepSameLine()
+    ToolTip("Switch between slow down/speed up")
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local oldBehaviorIndex = settingVars.behaviorIndex
-    settingVars.behaviorIndex = combo("Behavior", SV_BEHAVIORS, oldBehaviorIndex)
+    settingVars.behaviorIndex = Combo("Behavior", SV_BEHAVIORS, oldBehaviorIndex)
     imgui.PopItemWidth()
     if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
         settingVars.behaviorIndex = oldBehaviorIndex == 1 and 2 or 1
@@ -858,7 +858,7 @@ end
 function chooseSVPerQuarterPeriod(settingVars)
     local oldPoints = settingVars.svsPerQuarterPeriod
     local _, newPoints = imgui.InputInt("SV Points##perQuarter", oldPoints, 1, 1)
-    helpMarker("Number of SV points per 0.25 period/cycle")
+    HelpMarker("Number of SV points per 0.25 period/cycle")
     local maxSVsPerQuarterPeriod = MAX_SV_POINTS / (4 * settingVars.periods)
     newPoints = math.clamp(newPoints, 1, maxSVsPerQuarterPeriod)
     settingVars.svsPerQuarterPeriod = newPoints
@@ -898,7 +898,7 @@ end
 
 function chooseDistanceMode(menuVars)
     local oldMode = menuVars.distanceMode
-    menuVars.distanceMode = combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
+    menuVars.distanceMode = Combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
     return oldMode ~= menuVars.distanceMode
 end
 
@@ -950,8 +950,8 @@ function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
     local oldValue = var
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
-    toolTip("Negate SV value")
-    keepSameLine()
+    ToolTip("Negate SV value")
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local newValue = computableInputFloat(label, var, decimalPlaces, suffix)
@@ -968,13 +968,13 @@ function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label
     widthFactor = widthFactor or 0.7
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
-    toolTip("Swap start/end values")
+    ToolTip("Swap start/end values")
     local oldValues = vector.New(settingVars[lowerName], settingVars[higherName])
-    keepSameLine()
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
-    toolTip("Negate start/end values")
-    keepSameLine()
+    ToolTip("Negate start/end values")
+    KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
@@ -998,7 +998,7 @@ function globalCheckbox(parameterName, label, tooltipText)
     local oldValue = globalVars[parameterName]
     ---@cast oldValue boolean
     _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
-    if (tooltipText) then toolTip(tooltipText) end
+    if (tooltipText) then ToolTip(tooltipText) end
     if (oldValue ~= globalVars[parameterName]) then write(globalVars) end
 end
 
@@ -1006,21 +1006,21 @@ function codeInput(settingVars, parameterName, label, tooltipText)
     local oldCode = settingVars[parameterName]
     _, settingVars[parameterName] = imgui.InputTextMultiline(label, settingVars[parameterName], 16384,
         vector.New(240, 120))
-    if (tooltipText) then toolTip(tooltipText) end
+    if (tooltipText) then ToolTip(tooltipText) end
     return oldCode ~= settingVars[parameterName]
 end
 
 function colorInput(customStyle, parameterName, label, tooltipText)
-    addSeparator()
+    AddSeparator()
     local oldCode = customStyle[parameterName]
     _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or DEFAULT_STYLE[parameterName])
-    if (tooltipText) then toolTip(tooltipText) end
+    if (tooltipText) then ToolTip(tooltipText) end
     return oldCode ~= customStyle[parameterName]
 end
 
 function chooseVibratoSides(menuVars)
     imgui.Dummy(vector.New(27, 0))
-    keepSameLine()
+    KeepSameLine()
     menuVars.sides = radioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
 end
 
@@ -1032,7 +1032,7 @@ end
 function radioButtons(label, value, options, optionValues, tooltip)
     imgui.AlignTextToFramePadding()
     imgui.Text(label)
-    if (tooltip) then toolTip(tooltip) end
+    if (tooltip) then ToolTip(tooltip) end
     for idx, option in pairs(options) do
         imgui.SameLine(0, RADIO_BUTTON_SPACING)
         if imgui.RadioButton(option, value == optionValues[idx]) then

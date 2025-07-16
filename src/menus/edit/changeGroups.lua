@@ -2,7 +2,7 @@ function changeGroupsMenu()
     local menuVars = getMenuVars("changeGroups")
     imgui.AlignTextToFramePadding()
     imgui.Text("  Move to: ")
-    keepSameLine()
+    KeepSameLine()
 
     local groups = { "$Default", "$Global" }
     local cols = { map.TimingGroups["$Default"].ColorRgb or "86,253,110", map.TimingGroups["$Global"].ColorRgb or
@@ -20,17 +20,17 @@ function changeGroupsMenu()
     end
     local prevIndex = table.indexOf(groups, menuVars.designatedTimingGroup)
     imgui.PushItemWidth(155)
-    local newIndex = combo("##changingScrollGroup", groups, prevIndex, cols, hiddenGroups)
+    local newIndex = Combo("##changingScrollGroup", groups, prevIndex, cols, hiddenGroups)
     imgui.PopItemWidth()
     imgui.Dummy(vector.New(0, 2))
 
     menuVars.designatedTimingGroup = groups[newIndex]
 
     _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
-    keepSameLine()
+    KeepSameLine()
     _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
 
-    addSeparator()
+    AddSeparator()
 
     simpleActionMenu("Move items to " .. menuVars.designatedTimingGroup, 2, changeGroups, menuVars)
 end

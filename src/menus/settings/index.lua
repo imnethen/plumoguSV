@@ -41,7 +41,7 @@ function showPluginSettingsWindow()
             typeIndex = idx
         end
     end
-    addSeparator()
+    AddSeparator()
     if (imgui.Button("Reset Settings")) then
         write({})
         globalVars = DEFAULT_GLOBAL_VARS

@@ -7,6 +7,6 @@ function flickerMenu()
     if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
     saveVariables("flickerMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, menuVars)
 end

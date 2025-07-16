@@ -1,7 +1,7 @@
 function teleportStutterMenu(settingVars)
     if settingVars.useDistance then
         chooseDistance(settingVars)
-        helpMarker("Start SV teleport distance")
+        HelpMarker("Start SV teleport distance")
     else
         chooseStartSVPercent(settingVars)
     end
@@ -11,7 +11,7 @@ function teleportStutterMenu(settingVars)
     chooseUseDistance(settingVars)
     chooseLinearlyChange(settingVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, settingVars)
     simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, settingVars, true)
 end

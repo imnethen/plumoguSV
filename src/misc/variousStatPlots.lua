@@ -37,7 +37,7 @@ function makeSVInfoWindow(windowText, svGraphStats, svStats, svDistances, svMult
     imgui.Begin(windowText, imgui_window_flags.AlwaysAutoResize)
     if not skipDistGraph then
         imgui.Text("Projected Note Motion:")
-        helpMarker("Distance vs Time graph of notes")
+        HelpMarker("Distance vs Time graph of notes")
         plotSVMotion(svDistances, svGraphStats.distMinScale, svGraphStats.distMaxScale)
         if imgui.CollapsingHeader("New All -w-") then
             for i = 1, #svDistances do
@@ -91,7 +91,7 @@ function displaySVStats(svStats)
     imgui.Text(svStats.maxSV .. "x")
     imgui.Text(svStats.minSV .. "x")
     imgui.Text(svStats.avgSV .. "x")
-    helpMarker("Rounded to 3 decimal places")
+    HelpMarker("Rounded to 3 decimal places")
     imgui.Columns(1)
 end
 

@@ -18,7 +18,7 @@ function placeStandardSVMenu()
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
 
-    addSeparator()
+    AddSeparator()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Standard")
     if globalVars.showPresetMenu then
@@ -27,7 +27,7 @@ function placeStandardSVMenu()
     end
 
     needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
-    addSeparator()
+    AddSeparator()
 
     needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
     if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, false) end
@@ -37,7 +37,7 @@ function placeStandardSVMenu()
         menuVars.svMultipliers, nil, false)
 
     menuVars.settingVars = settingVars
-    addSeparator()
+    AddSeparator()
     if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
         simpleActionMenu("Place SVs between selected notes##Exponential", 2, placeExponentialSpecialSVs, menuVars)
     else

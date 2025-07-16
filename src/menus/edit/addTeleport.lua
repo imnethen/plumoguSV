@@ -4,6 +4,6 @@ function addTeleportMenu()
     chooseHand(menuVars)
     saveVariables("addTeleportMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, menuVars)
 end

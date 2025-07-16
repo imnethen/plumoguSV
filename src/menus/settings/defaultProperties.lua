@@ -35,7 +35,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("placeStandard", "Property")
 
         chooseStandardSVType(menuVars, false)
-        addSeparator()
+        AddSeparator()
         chooseInterlace(menuVars)
 
         saveMenuPropertiesButton(menuVars, "placeStandard")
@@ -53,7 +53,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("placeStill", "Property")
 
         chooseStandardSVType(menuVars, false)
-        addSeparator()
+        AddSeparator()
         chooseNoteSpacing(menuVars)
         chooseStillBehavior(menuVars)
         chooseStillType(menuVars)
@@ -66,7 +66,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("placeVibrato", "Property")
 
         chooseVibratoSVType(menuVars)
-        addSeparator()
+        AddSeparator()
         imgui.Text("Vibrato Settings:")
         chooseVibratoMode(menuVars)
         chooseVibratoQuality(menuVars)
@@ -93,7 +93,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("changeGroup", "Property")
 
         _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
-        keepSameLine()
+        KeepSameLine()
         _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
 
         saveMenuPropertiesButton(menuVars, "changeGroup")
@@ -111,7 +111,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("copy", "Property")
 
         _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
-        keepSameLine()
+        KeepSameLine()
         _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
         _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
         imgui.SameLine(0, SAMELINE_SPACING + 3.5)
@@ -158,7 +158,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("reverseScroll", "Property")
 
         chooseDistance(menuVars)
-        helpMarker("Height at which reverse scroll notes are hit")
+        HelpMarker("Height at which reverse scroll notes are hit")
 
         saveMenuPropertiesButton(menuVars, "reverseScroll")
         saveVariables("reverseScrollPropertyMenu", menuVars)
@@ -195,7 +195,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("delete", "Property")
 
         _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
-        keepSameLine()
+        KeepSameLine()
         _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])
         _, menuVars.deleteTable[3] = imgui.Checkbox("Delete SSFs", menuVars.deleteTable[3])
         imgui.SameLine(0, SAMELINE_SPACING + 3.5)
@@ -228,10 +228,10 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("selectChordSize", "Property")
 
         _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
-        keepSameLine()
+        KeepSameLine()
         _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
         _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
-        keepSameLine()
+        KeepSameLine()
         _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
 
         saveMenuPropertiesButton(menuVars, "selectChordSize")
@@ -241,7 +241,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("selectNoteType", "Property")
 
         _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
-        keepSameLine()
+        KeepSameLine()
         _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
 
         saveMenuPropertiesButton(menuVars, "selectNoteType")
@@ -344,7 +344,7 @@ function showDefaultPropertiesSettings()
         chooseRandomType(settingVars)
         chooseRandomScale(settingVars)
         chooseSVPoints(settingVars)
-        addSeparator()
+        AddSeparator()
         chooseConstantShift(settingVars, 0)
         if not settingVars.dontNormalize then
             chooseAverageSV(settingVars)
@@ -391,7 +391,7 @@ function showDefaultPropertiesSettings()
         settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
         settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
 
-        addSeparator()
+        AddSeparator()
         settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
         settingsChanged = chooseAverageSV(settingVars) or settingsChanged
         settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
@@ -404,7 +404,7 @@ function showDefaultPropertiesSettings()
 
         if settingVars.useDistance then
             chooseDistance(settingVars)
-            helpMarker("Start SV teleport distance")
+            HelpMarker("Start SV teleport distance")
         else
             chooseStartSVPercent(settingVars)
         end
@@ -422,11 +422,11 @@ function showDefaultPropertiesSettings()
 
         settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
         _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
-        keepSameLine()
+        KeepSameLine()
         _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
         _, settingVars.maintainMs = imgui.Checkbox("Static Time?", settingVars.maintainMs)
         if (settingVars.maintainMs) then
-            keepSameLine()
+            KeepSameLine()
             imgui.PushItemWidth(71)
             settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
             imgui.PopItemWidth()

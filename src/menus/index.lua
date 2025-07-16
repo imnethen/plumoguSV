@@ -10,7 +10,7 @@ TAB_MENUS = { -- names of the tab menus
 ---@param tabName string
 function createMenuTab(tabName)
     if not imgui.BeginTabItem(tabName) then return end
-    addPadding()
+    AddPadding()
     if tabName == "Info" then
         infoTab()
     else

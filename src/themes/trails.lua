@@ -1,6 +1,6 @@
 function drawCursorTrail()
     local o = imgui.GetOverlayDrawList()
-    local m = getCurrentMousePosition()
+    local m = imgui.GetMousePos()
     local t = imgui.GetTime()
     local sz = state.WindowSize
     local cursorTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
@@ -172,7 +172,7 @@ function updateDustParticles(t, m, dustParticles, dustDuration, dustSize)
         local timeLeft = dustParticle.endTime - t
         if timeLeft < 0 then
             local endTime = t + dustDuration
-            local showParticle = checkIfMouseMoved(getCurrentMousePosition())
+            local showParticle = checkIfMouseMoved(imgui.GetMousePos())
             dustParticles[i] = generateParticle(m.x, m.y, xRange, yRange, endTime, showParticle)
         end
     end
@@ -258,7 +258,7 @@ function updateSparkleParticles(t, m, sparkleParticles, sparkleDuration, sparkle
         local timeLeft = sparkleParticle.endTime - t
         if timeLeft < 0 then
             local endTime = t + sparkleDuration
-            local showParticle = checkIfMouseMoved(getCurrentMousePosition())
+            local showParticle = checkIfMouseMoved(imgui.GetMousePos())
             local randomX = m.x + sparkleSize * 3 * (math.random() - 0.5)
             local randomY = m.y + sparkleSize * 3 * (math.random() - 0.5)
             local yRange = 6 * sparkleSize

@@ -9,7 +9,7 @@ function randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
         settingsChanged = true
     end
 
-    addSeparator()
+    AddSeparator()
     settingsChanged = chooseConstantShift(settingVars, 0) or settingsChanged
     if not settingVars.dontNormalize then
         settingsChanged = chooseAverageSV(settingVars) or settingsChanged

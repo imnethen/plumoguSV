@@ -10,7 +10,7 @@ function dynamicScaleMenu()
         clearNoteTimesButton(menuVars)
     end
 
-    addSeparator()
+    AddSeparator()
     if #menuVars.noteTimes < 3 then
         imgui.Text("Not enough note times assigned")
         imgui.Text("Assign 3 or more note times instead")
@@ -21,10 +21,10 @@ function dynamicScaleMenu()
     local needSVUpdate = #menuVars.svMultipliers == 0 or (#menuVars.svMultipliers ~= numSVPoints)
     imgui.AlignTextToFramePadding()
     imgui.Text("Shape:")
-    keepSameLine()
+    KeepSameLine()
     needSVUpdate = chooseStandardSVType(menuVars, true) or needSVUpdate
 
-    addSeparator()
+    AddSeparator()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     if currentSVType == "Sinusoidal" then
         imgui.Text("Import sinusoidal values using 'Custom' instead")
@@ -44,7 +44,7 @@ function dynamicScaleMenu()
     saveVariables(labelText .. "Settings", settingVars)
     saveVariables("dynamicScaleMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, menuVars)
 end
 
@@ -55,5 +55,5 @@ end
 
 function addNoteTimesToDynamicScaleButton(menuVars)
     local buttonText = "Assign selected note times"
-    button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
+    Button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
 end

@@ -4,7 +4,7 @@
 --    size       : dimensions of the button [Table]
 --    func       : function to execute once button is pressed [Function]
 --    menuVars   : list of variables used for the current menu [Table]
-function button(text, size, func, menuVars)
+function Button(text, size, func, menuVars)
     if not imgui.Button(text, size) then return end
     if menuVars then
         func(menuVars)

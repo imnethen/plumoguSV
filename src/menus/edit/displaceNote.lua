@@ -4,6 +4,6 @@ function displaceNoteMenu()
     chooseLinearlyChangeDist(menuVars)
     saveVariables("displaceNoteMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, menuVars)
 end

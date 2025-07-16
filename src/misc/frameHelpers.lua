@@ -45,8 +45,8 @@ function displayFrameTimes(settingVars)
     else
         imgui.Text("time | lanes | frame # | position")
     end
-    helpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
-    addPadding()
+    HelpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
+    AddPadding()
     local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.x, 120 }
     imgui.BeginChild("FrameTimes", frameTimeSelectionArea, 1)
     for i = 1, #settingVars.frameTimes do

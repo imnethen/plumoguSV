@@ -4,7 +4,7 @@ function placeStillSVMenu()
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
 
-    addSeparator()
+    AddSeparator()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Still")
     if globalVars.showPresetMenu then
@@ -16,10 +16,10 @@ function placeStillSVMenu()
     chooseStillBehavior(menuVars)
     chooseStillType(menuVars)
 
-    addSeparator()
+    AddSeparator()
     needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
 
-    addSeparator()
+    AddSeparator()
     needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
     if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, false) end
 
@@ -27,7 +27,7 @@ function placeStillSVMenu()
     makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
         menuVars.svMultipliers, nil, false)
 
-    addSeparator()
+    AddSeparator()
     menuVars.settingVars = settingVars
     simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, menuVars)
 

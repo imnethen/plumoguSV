@@ -3,7 +3,7 @@ function selectBySnapMenu()
     chooseSnap(menuVars)
     saveVariables("selectBySnapMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu(
         "Select notes with 1/" .. menuVars.snap .. " snap",
         2,

@@ -12,7 +12,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.endMsx * t +
                 settingVars.startMsx * (1 - t)
         end
-        addSeparator()
+        AddSeparator()
 
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
@@ -39,7 +39,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
             end
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
-        addSeparator()
+        AddSeparator()
 
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
             separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)

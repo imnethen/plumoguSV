@@ -10,7 +10,7 @@ function placeVibratoSVMenu(separateWindow)
     local menuVars = getMenuVars("placeVibrato")
     chooseVibratoSVType(menuVars)
 
-    addSeparator()
+    AddSeparator()
     imgui.Text("Vibrato Settings:")
     chooseVibratoMode(menuVars)
     chooseVibratoQuality(menuVars)
@@ -24,7 +24,7 @@ function placeVibratoSVMenu(separateWindow)
         return
     end
 
-    addSeparator()
+    AddSeparator()
 
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars, separateWindow) end

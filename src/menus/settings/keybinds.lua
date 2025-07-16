@@ -12,11 +12,11 @@ function showKeybindSettings()
                 awaitingIndex = hotkeyIndex
             end
         end
-        keepSameLine()
+        KeepSameLine()
         imgui.SetCursorPosX(95)
         imgui.Text("" .. HOTKEY_LABELS[hotkeyIndex])
     end
-    addSeparator()
+    AddSeparator()
     simpleActionMenu("Reset Hotkey Settings", 0, function()
         globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
         write(globalVars)

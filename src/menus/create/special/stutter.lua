@@ -5,14 +5,14 @@ function stutterMenu(settingVars)
     settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
     settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
 
-    addSeparator()
+    AddSeparator()
     settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
     settingsChanged = chooseAverageSV(settingVars) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
     if settingsChanged then updateStutterMenuSVs(settingVars) end
     displayStutterSVWindows(settingVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, settingVars)
     simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, settingVars, true)
 end

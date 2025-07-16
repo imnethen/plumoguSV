@@ -8,7 +8,7 @@ SELECT_TOOLS = {
 
 function selectTab()
     chooseSelectTool()
-    addSeparator()
+    AddSeparator()
     local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
     if toolName == "Alternating" then selectAlternatingMenu() end
     if toolName == "By Snap" then selectBySnapMenu() end

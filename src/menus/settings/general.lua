@@ -5,9 +5,9 @@ function showGeneralSettings()
     globalCheckbox("hideAutomatic", "Hide Automatically Placed TGs",
         'Timing groups placed by the "Automatic" feature will not be shown in the plumoguSV timing group selector.')
     if (not globalVars.advancedMode) then imgui.EndDisabled() end
-    addSeparator()
+    AddSeparator()
     chooseUpscroll()
-    addSeparator()
+    AddSeparator()
     globalCheckbox("dontReplaceSV", "Don't Replace Existing SVs",
         "Self-explanatory, but applies only to base SVs made with Standard, Special, or Still. Highly recommended to keep this setting disabled.")
     globalCheckbox("ignoreNotesOutsideTg", "Ignore Notes Not In Current Timing Group",

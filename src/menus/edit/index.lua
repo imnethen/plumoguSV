@@ -23,7 +23,7 @@ EDIT_SV_TOOLS = { -- tools for editing SVs
 function editSVTab()
     if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
     chooseEditTool()
-    addSeparator()
+    AddSeparator()
     local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
     if toolName == "Add Teleport" then addTeleportMenu() end
     if toolName == "Align Timing Lines" then alignTimingLinesMenu() end

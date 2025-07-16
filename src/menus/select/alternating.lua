@@ -4,7 +4,7 @@ function selectAlternatingMenu()
     chooseOffset(menuVars)
     saveVariables("selectAlternatingMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     simpleActionMenu(
         "Select a note every " ..
         menuVars.every .. pluralize(" note, from note #", menuVars.every, 5) .. menuVars.offset,

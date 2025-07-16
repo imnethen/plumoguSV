@@ -5,7 +5,7 @@ function scaleDisplaceMenu()
     chooseScaleType(menuVars)
     saveVariables("scaleDisplaceMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     local buttonText = "Scale SVs between selected notes##displace"
     simpleActionMenu(buttonText, 2, scaleDisplaceSVs, menuVars)
 end
@@ -16,7 +16,7 @@ function scaleMultiplyMenu()
     chooseScaleType(menuVars)
     saveVariables("scaleMultiplyMenu", menuVars)
 
-    addSeparator()
+    AddSeparator()
     local buttonText = "Scale SVs between selected notes##multiply"
     simpleActionMenu(buttonText, 2, scaleMultiplySVs, menuVars)
 end

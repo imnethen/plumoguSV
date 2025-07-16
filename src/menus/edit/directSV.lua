@@ -73,21 +73,21 @@ function directSVMenu()
         menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs / 10))
     end
 
-    keepSameLine()
+    KeepSameLine()
     imgui.Text("Page ")
-    keepSameLine()
+    KeepSameLine()
     imgui.SetNextItemWidth(100)
     _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs / 10)), 0)
-    keepSameLine()
+    KeepSameLine()
     imgui.Text(" of " .. math.ceil(#svs / 10))
-    keepSameLine()
+    KeepSameLine()
     if (imgui.ArrowButton("##DirectSVRight", imgui_dir.Right)) then
         menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
     end
 
     imgui.Separator()
     imgui.Text("Start Time")
-    keepSameLine()
+    KeepSameLine()
     imgui.SetCursorPosX(150)
     imgui.Text("Multiplier")
     imgui.Separator()
