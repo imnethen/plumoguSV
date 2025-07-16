@@ -18,7 +18,7 @@ end
 ---@param r integer
 ---@return integer
 function math.binom(n, r)
-    return math.factorial(n) / (math.factorial(r)) * math.factorial(n - r)
+    return math.factorial(n) / (math.factorial(r) * math.factorial(n - r))
 end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
@@ -448,6 +448,20 @@ function table.property(tbl, property)
     end
     return resultsTbl
 end
+---Reduces an array element-wise using a given function.
+---@generic T: string | number | boolean
+---@generic V: string | number | boolean | string[] | number[] | boolean[] | { [string]: any }
+---@param tbl T[]
+---@param fn fun(accumulator: V, current: T): V
+---@param initialValue V
+---@return V
+function table.reduce(tbl, fn, initialValue)
+    local accumulator = initialValue
+    for _, v in pairs(tbl) do
+        accumulator = fn(accumulator, v)
+    end
+    return accumulator
+end
 ---Reverses the order of an array.
 ---@param tbl table The original table.
 ---@return table tbl The original table, reversed.
@@ -746,16 +760,14 @@ function automateSVs(settingVars)
                     local scalingFactor =
                         (ho.StartTime - selected[1].StartTime) / (selected[2].StartTime - selected[1].StartTime)
                     if (not settingVars.maintainMs) then scalingFactor = 1 / scalingFactor end
-                    svMultiplier = sv.multiplier * scalingFactor
-                else
-                    svMultiplier = sv.multiplier
+                    sv.multiplier = sv.multiplier * scalingFactor
                 end
                 if (settingVars.maintainMs) then
                     svTime = ho.StartTime - progress * settingVars.ms
                 else
                     svTime = ho.StartTime - progress * (ho.StartTime - selected[1].StartTime)
                 end
-                table.insert(neededIds[idName].svs, utils.CreateScrollVelocity(svTime, svMultiplier))
+                table.insert(neededIds[idName].svs, createSV(svTime, sv.multiplier))
             end
         end
         ::continue::
@@ -779,14 +791,14 @@ function placePenisSV(settingVars)
             local time = startTime + i * settingVars.bWidth / 100 + j * (settingVars.sWidth + settingVars.bWidth)
             local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
             local trueVal = settingVars.bCurvature / 100 * circVal + (1 - settingVars.bCurvature / 100)
-            table.insert(svs, utils.CreateScrollVelocity(time, trueVal))
+            table.insert(svs, createSV(time, trueVal))
         end
     end
     for i = 0, 100 do
         local time = startTime + settingVars.bWidth + i * settingVars.sWidth / 100
         local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
         local trueVal = settingVars.sCurvature / 100 * circVal + (3.75 - settingVars.sCurvature / 100)
-        table.insert(svs, utils.CreateScrollVelocity(time, trueVal))
+        table.insert(svs, createSV(time, trueVal))
     end
     removeAndAddSVs(getSVsBetweenOffsets(startTime, startTime + settingVars.sWidth + settingVars.bWidth * 2), svs)
 end
@@ -1127,20 +1139,20 @@ function ssfVibrato(menuVars, func1, func2)
     local fps = VIBRATO_FRAME_RATES[menuVars.vibratoQuality]
     local delta = 1000 / fps
     local time = startTime
-    local ssfs = { ssf(startTime - 1 / getUsableDisplacementMultiplier(startTime),
+    local ssfs = { createSSF(startTime - 1 / getUsableDisplacementMultiplier(startTime),
         getSSFMultiplierAt(time)) }
     while time < endTime do
         local x = math.inverseLerp(time, startTime, endTime)
         local y = math.inverseLerp(time + delta, startTime, endTime)
         table.insert(ssfs,
-            ssf(time - 1 / getUsableDisplacementMultiplier(time), func2(x)
+            createSSF(time - 1 / getUsableDisplacementMultiplier(time), func2(x)
             ))
-        table.insert(ssfs, ssf(time, func1(x)))
+        table.insert(ssfs, createSSF(time, func1(x)))
         table.insert(ssfs,
-            ssf(time + delta - 1 / getUsableDisplacementMultiplier(time),
+            createSSF(time + delta - 1 / getUsableDisplacementMultiplier(time),
                 func1(y)))
         table.insert(ssfs,
-            ssf(time + delta, func2(y)))
+            createSSF(time + delta, func2(y)))
         time = time + 2 * delta
     end
     actions.PerformBatch({
@@ -1341,10 +1353,10 @@ function changeGroups(menuVars)
     local ssfsToAdd = {}
     local oldGroup = state.SelectedScrollGroupId
     for _, sv in pairs(svsToRemove) do
-        table.insert(svsToAdd, utils.CreateScrollVelocity(sv.StartTime, sv.Multiplier))
+        table.insert(svsToAdd, createSV(sv.StartTime, sv.Multiplier))
     end
     for _, ssf in pairs(ssfsToRemove) do
-        table.insert(ssfsToAdd, utils.CreateScrollSpeedFactor(ssf.StartTime, ssf.Multiplier))
+        table.insert(ssfsToAdd, createSSF(ssf.StartTime, ssf.Multiplier))
     end
     local actionList = {}
     local willChangeSVs = menuVars.changeSVs and #svsToRemove ~= 0
@@ -1398,10 +1410,10 @@ function convertSVSSF(menuVars)
     local createTable = table.construct()
     for _, obj in pairs(objects) do
         if (menuVars.conversionDirection) then
-            createTable:insert(utils.CreateScrollSpeedFactor(obj.StartTime,
+            createTable:insert(createSSF(obj.StartTime,
                 obj.Multiplier))
         else
-            createTable:insert(utils.CreateScrollVelocity(obj.StartTime, obj.Multiplier))
+            createTable:insert(createSV(obj.StartTime, obj.Multiplier))
         end
     end
     if (menuVars.conversionDirection) then
@@ -1521,7 +1533,7 @@ function pasteItems(menuVars)
             if menuVars.tryAlign then
                 timeToPasteSV = tryAlignToHitObjects(timeToPasteSV, hitObjectTimes, menuVars.alignWindow)
             end
-            table.insert(svsToAdd, utils.CreateScrollVelocity(timeToPasteSV, sv.multiplier))
+            table.insert(svsToAdd, createSV(timeToPasteSV, sv.multiplier))
             ::skip2::
         end
         for _, ssf in ipairs(menuVars.copiedSSFs) do
@@ -1529,7 +1541,7 @@ function pasteItems(menuVars)
             if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip3
             end
-            table.insert(ssfsToAdd, utils.CreateScrollSpeedFactor(timeToPasteSSF, ssf.multiplier))
+            table.insert(ssfsToAdd, createSSF(timeToPasteSSF, ssf.multiplier))
             ::skip3::
         end
         for _, bm in ipairs(menuVars.copiedBMs) do
@@ -3316,7 +3328,7 @@ function directSVMenu()
     else
         if (not primeStartTime) then goto continue1 end
         primeStartTime = false
-        local newSV = utils.CreateScrollVelocity(state.GetValue("savedStartTime") or 0, menuVars.multiplier)
+        local newSV = createSV(state.GetValue("savedStartTime") or 0, menuVars.multiplier)
         actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
             utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
     end
@@ -3326,7 +3338,7 @@ function directSVMenu()
     else
         if (not primeMultiplier) then goto continue2 end
         primeMultiplier = false
-        local newSV = utils.CreateScrollVelocity(menuVars.startTime, state.GetValue("savedMultiplier") or 1)
+        local newSV = createSV(menuVars.startTime, state.GetValue("savedMultiplier") or 1)
         actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
             utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
     end
@@ -4700,7 +4712,7 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
     elseif currentSVType == "Hermite" then
         return hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Sinusoidal" then
-        return sinusoidalSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+        return sinusoidalSettingsMenu(settingVars, skipFinalSV)
     elseif currentSVType == "Circular" then
         return circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     elseif currentSVType == "Random" then
@@ -5744,11 +5756,11 @@ function drawCursorTrail()
     if cursorTrail ~= "Dust" then state.SetValue("initializeDustParticles", false) end
     if cursorTrail ~= "Sparkle" then state.SetValue("initializeSparkleParticles", false) end
     if cursorTrail == "None" then return end
-    if cursorTrail == "Snake" then drawSnakeTrail(o, m, t, sz) end
+    if cursorTrail == "Snake" then drawSnakeTrail(o, m, t) end
     if cursorTrail == "Dust" then drawDustTrail(o, m, t, sz) end
     if cursorTrail == "Sparkle" then drawSparkleTrail(o, m, t, sz) end
 end
-function drawSnakeTrail(o, m, t, _)
+function drawSnakeTrail(o, m, t)
     local trailPoints = globalVars.cursorTrailPoints
     local snakeTrailPoints = {}
     initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
@@ -6375,16 +6387,7 @@ function chooseMainSV(settingVars)
     _, settingVars.mainSV2 = imgui.InputFloat("Main SV (end)", settingVars.mainSV2, 0, 0, "%.2fx")
 end
 function chooseMeasuredStatsView(menuVars)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("View values:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Rounded", not menuVars.unrounded) then
-        menuVars.unrounded = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Unrounded", menuVars.unrounded) then
-        menuVars.unrounded = true
-    end
+    menuVars.unrounded = radioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
 end
 function chooseMenuStep(settingVars)
     imgui.AlignTextToFramePadding()
@@ -6703,18 +6706,9 @@ function chooseSVPoints(settingVars, svPointsForce)
     return oldPoints ~= settingVars.svPoints
 end
 function chooseUpscroll()
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Scroll Direction:")
-    toolTip("Orientation for distance graphs and visuals")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
     local oldUpscroll = globalVars.upscroll
-    if imgui.RadioButton("Down", not globalVars.upscroll) then
-        globalVars.upscroll = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("Up         ", globalVars.upscroll) then
-        globalVars.upscroll = true
-    end
+    globalVars.upscroll = radioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
+        "Orientation for distance graphs and visuals")
     if (oldUpscroll ~= globalVars.upscroll) then
         write(globalVars)
     end
@@ -6839,38 +6833,18 @@ function colorInput(customStyle, parameterName, label, tooltipText)
     return oldCode ~= customStyle[parameterName]
 end
 function chooseVibratoSides(menuVars)
-    imgui.AlignTextToFramePadding()
     imgui.Dummy(vector.New(27, 0))
     keepSameLine()
-    imgui.Text("Sides:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("1", menuVars.sides == 1) then
-        menuVars.sides = 1
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("2", menuVars.sides == 2) then
-        menuVars.sides = 2
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("3", menuVars.sides == 3) then
-        menuVars.sides = 3
-    end
+    menuVars.sides = radioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
 end
 function chooseConvertSVSSFDirection(menuVars)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Direction:")
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("SSF -> SV", not menuVars.conversionDirection) then
-        menuVars.conversionDirection = false
-    end
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    if imgui.RadioButton("SV -> SSF", menuVars.conversionDirection) then
-        menuVars.conversionDirection = true
-    end
+    menuVars.conversionDirection = radioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
+        { false, true })
 end
-function radioButtons(label, value, options, optionValues)
+function radioButtons(label, value, options, optionValues, tooltip)
     imgui.AlignTextToFramePadding()
     imgui.Text(label)
+    if (tooltip) then toolTip(tooltip) end
     for idx, option in pairs(options) do
         imgui.SameLine(0, RADIO_BUTTON_SPACING)
         if imgui.RadioButton(option, value == optionValues[idx]) then
@@ -7823,7 +7797,7 @@ function addStartSVIfMissing(svs, startOffset)
     addSVToList(svs, startOffset, getSVMultiplierAt(startOffset), false)
 end
 function addSVToList(svList, offset, multiplier, endOfList)
-    local newSV = utils.CreateScrollVelocity(offset, multiplier)
+    local newSV = createSV(offset, multiplier)
     if endOfList then
         table.insert(svList, newSV)
         return
@@ -7831,7 +7805,7 @@ function addSVToList(svList, offset, multiplier, endOfList)
     table.insert(svList, 1, newSV)
 end
 function addSSFToList(ssfList, offset, multiplier, endOfList)
-    local newSSF = utils.CreateScrollSpeedFactor(offset, multiplier)
+    local newSSF = createSSF(offset, multiplier)
     if endOfList then
         table.insert(ssfList, newSSF)
         return
@@ -7883,9 +7857,8 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
     actions.PerformBatch(editorActions)
     toggleablePrint("s!", "Created " .. #ssfsToAdd .. pluralize(" SSF.", #ssfsToAdd, -2))
 end
-function ssf(startTime, multiplier)
-    return utils.CreateScrollSpeedFactor(startTime, multiplier)
-end
+createSSF = utils.CreateScrollSpeedFactor
+createSV = utils.CreateScrollVelocity
 function bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = provideBezierWebsiteLink(settingVars) or settingsChanged
@@ -8031,7 +8004,7 @@ function generateRandomSetMenuSVs(settingVars)
     settingVars.svMultipliers = generateRandomSet(settingVars.svPoints + 1, randomType,
         settingVars.randomScale)
 end
-function sinusoidalSettingsMenu(settingVars, skipFinalSV, _)
+function sinusoidalSettingsMenu(settingVars, skipFinalSV)
     local settingsChanged = false
     imgui.Text("Amplitude:")
     settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged

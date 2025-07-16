@@ -7,20 +7,15 @@ import {
     copyFileSync,
 } from 'fs';
 import { getFilesRecursively } from './getFilesRecursively.js';
-import * as chalk from 'chalk';
+import fuckifyOutput from './fuckify.js';
+import getFunctionList from './getFunctionList.js';
+import getUnusedFunctions from './getUnusedFunctions.js';
 
-const brainrotInit = readFileSync('assets/brainrot.csv', 'utf-8').split('\n');
-const brainrotList = [];
-
-const alphabetArray = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-for (let i = 0; i < 5; i++) {
-    brainrotList.push(...brainrotInit.map((x) => `${x}##${i}`));
-    brainrotList.push(...alphabetArray.map((x) => `${x}##${i}`));
-    brainrotList.push(...alphabetArray.map((x) => `${x.toLowerCase()}##${i}`));
-}
-
-export default async function transpiler(devMode = false, fuckify = false) {
+export default async function transpiler(
+    devMode = false,
+    fuckify = false,
+    lint = true
+) {
     let fileCount = 0;
     let output = '';
 
@@ -54,50 +49,32 @@ export default async function transpiler(devMode = false, fuckify = false) {
         fileCount++;
     });
 
-    if (fuckify) {
-        const matchList = [];
-        const matches = [...new Set(output.match(/(["]).+?(["])/g))];
-        for (let i = 0; i < matches.length; i++) {
-            const bannedWords = [
-                'ctrl',
-                'shift',
-                'alt',
-                'string',
-                'boolean',
-                'true',
-                'false',
-                'userdata',
-                'table',
-                'number',
-            ];
-            const match = matches[i];
+    if (fuckify) output = fuckifyOutput(output);
 
-            if (
-                !/^"([ A-z0-9_\(\)':\.\+\/]|##)*"$/g.test(match) ||
-                match.length == 3 ||
-                bannedWords.some((v) => match.toLowerCase().includes(v)) ||
-                matchList.includes(match) ||
-                brainrotList.length < 1
-            )
-                continue;
-            matchList.push(match);
-            const randomWord = brainrotList.splice(
-                Math.min(
-                    Math.floor(Math.random() * brainrotList.length),
-                    brainrotList.length - 1
-                ),
-                1
-            )[0];
-            // const randomWord = brainrotList[Math.min(Math.floor(Math.random() * brainrotList.length), brainrotList.length - 1)]
-            output = output.replaceAll(match, `"${randomWord}"`);
-        }
-        console.log(chalk.red(`Fuckified ${matches.length} terms.`));
+    output = output.replaceAll('\n\n', '\n').trimStart();
+    if (lint) {
+        const splitOutput = output.split('\n');
+
+        const functions = getFunctionList(splitOutput);
+        const [_, unusedIndexes] = getUnusedFunctions(splitOutput, functions);
+
+        unusedIndexes.reverse().forEach((idx) => {
+            let startIdx = idx;
+            let endIdx = idx;
+            while (/^---/.test(splitOutput[startIdx - 1]) && startIdx > 0)
+                startIdx--;
+            while (!/^end/.test(splitOutput[endIdx])) endIdx++;
+            splitOutput.splice(startIdx, endIdx - startIdx + 1);
+        });
+
+        output = splitOutput.join('\n');
     }
 
     if (existsSync('plugin.lua')) rmSync('plugin.lua');
-    writeFileSync('temp.lua', output.replaceAll('\n\n', '\n').trimStart());
+    writeFileSync('temp.lua', output);
     renameSync('temp.lua', 'plugin.lua');
-    if (existsSync('quinsight/intellisense.lua')) copyFileSync('quinsight/intellisense.lua', 'intellisense.lua');
+    if (existsSync('quinsight/intellisense.lua'))
+        copyFileSync('quinsight/intellisense.lua', 'intellisense.lua');
 
     return fileCount;
 }

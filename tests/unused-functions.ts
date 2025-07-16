@@ -1,15 +1,8 @@
 import chalk = require('chalk');
+import getFunctionList from '../transpiler/getFunctionList';
 
 export default function checkUnusedFunctions(file: string[]) {
-    const functions = file.reduce((idxs, line) => {
-        if (
-            !line.startsWith('---') &&
-            line.includes('function ') &&
-            line.includes('(')
-        )
-            idxs.push(line.split('function ')[1].split('(')[0]);
-        return idxs;
-    }, []);
+    const functions = getFunctionList(file)[0];
 
     const globals = ['awake', 'draw'];
 

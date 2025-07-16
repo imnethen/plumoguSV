@@ -4,6 +4,9 @@ import checkDoubleNestedFiles from './double-nested-files';
 import checkDuplicatedLines from './duplicated-lines';
 import checkMissingAnnotations from './missing-annotations';
 import chalk = require('chalk');
+import transpiler from '../transpiler';
+
+transpiler(true, false, false);
 
 const plugin = fs
     .readFileSync('plugin.lua', 'utf-8')
