@@ -12,7 +12,7 @@ function renderPresetMenu(menuVars, settingVars)
 
     imgui.Separator()
     for _, preset in pairs(presets) do
-
+        
     end
 
     imgui.SetColumnWidth(0, 100)

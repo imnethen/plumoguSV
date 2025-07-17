@@ -261,7 +261,7 @@ end
 
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
-    menuVars.distance = computableInputFloat("Distance", menuVars.distance, 3, " msx")
+    menuVars.distance = negatableComputableInputFloat("Distance", menuVars.distance, 3, " msx")
     return oldDistance ~= menuVars.distance
 end
 

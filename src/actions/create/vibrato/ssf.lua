@@ -12,16 +12,18 @@ function ssfVibrato(menuVars, func1, func2)
         local x = math.inverseLerp(time, startTime, endTime)
         local y = math.inverseLerp(time + delta, startTime, endTime)
         table.insert(ssfs,
-            createSSF(time - 1 / getUsableDisplacementMultiplier(time), func2(x)
+            createSSF(time, func2(x)
             ))
-        table.insert(ssfs, createSSF(time, func1(x)))
+        table.insert(ssfs, createSSF(time + 1 / getUsableDisplacementMultiplier(time), func1(x)))
         table.insert(ssfs,
-            createSSF(time + delta - 1 / getUsableDisplacementMultiplier(time),
+            createSSF(time + delta,
                 func1(y)))
         table.insert(ssfs,
-            createSSF(time + delta, func2(y)))
+            createSSF(time + delta + 1 / getUsableDisplacementMultiplier(time), func2(y)))
         time = time + 2 * delta
     end
+
+    addFinalSSF(ssfs, endTime, map.GetScrollSpeedFactorAt(endTime, state.SelectedScrollGroupId).Multiplier)
 
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)

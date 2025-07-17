@@ -13,6 +13,13 @@ end
 function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end
+---Returns n choose r, or nCr.
+---@param n integer
+---@param r integer
+---@return integer
+function math.binom(n, r)
+    return math.factorial(n) / (math.factorial(r) * math.factorial(n - r))
+end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
 ---@param lowerBound number
@@ -58,6 +65,52 @@ function math.hermite(m1, m2, y2, t)
     return a * t ^ 3 + b * t ^ 2 + c * t
 end
 matrix = {}
+---Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateCircle(p1, p2, p3)
+    local mtrx = {
+        vector.Table(2 * (p2 - p1)),
+        vector.Table(2 * (p3 - p1))
+    }
+    local vctr = {
+        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
+        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
+    }
+    h, k = matrix.solve(mtrx, vctr)
+    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
+    ---@type number, number, number
+    return h, k, r
+end
+---Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateQuadratic(p1, p2, p3)
+    local mtrx = {
+        (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
+        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
+    }
+    local vctr = {
+        (p2 - p1).y,
+        (p3 - p1).y
+    }
+    a, b = matrix.solve(mtrx, vctr)
+    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
+    ---@type number, number, number
+    return a, b, c
+end
+---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
+---@param weight number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.lerp(weight, lowerBound, upperBound)
+    return upperBound * weight + lowerBound * (1 - weight)
+end
 ---Returns the weight of a number between `lowerBound` and `upperBound`.
 ---@param num number
 ---@param lowerBound number
@@ -114,6 +167,11 @@ function matrix.solve(mtrx, vctr)
         end
     end
     return table.unpack(table.property(augMtrx, #mtrx + 1))
+end
+function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
+    local temp = mtrx[rowIdx1]
+    mtrx[rowIdx1] = mtrx[rowIdx2]
+    mtrx[rowIdx2] = temp
 end
 ---Rounds a number to a given amount of decimal places.
 ---@param number number
@@ -173,6 +231,25 @@ function pluralize(str, val, pos)
         finalStr = str .. "es"
     end
     return finalStr .. (strEnding or "")
+end
+---Returns the `idx`th character in a string. Simply used for shorthand. Also supports negative indexes.
+---@param str string The string to search.
+---@param idx integer If positive, returns the `i`th character. If negative, returns the `i`th character from the end of the string (e.g. -1 returns the last character).
+function string.charAt(str, idx)
+    return str:sub(idx, idx)
+end
+---Changes a string to fit a certain size, with a ... at the end.
+---@param str string
+---@param targetSize integer
+---@return string dottedStr
+function string.fixToSize(str, targetSize)
+    local size = imgui.CalcTextSize(str).x
+    if (size <= targetSize) then return str end
+    while (str:len() > 3 and size > targetSize) do
+        str = str:sub(1, -2)
+        size = imgui.CalcTextSize(str .. "...").x
+    end
+    return str .. "..."
 end
 ---Returns the average value of an array.
 ---@param values number[] The list of numbers.
@@ -371,6 +448,20 @@ function table.property(tbl, property)
     end
     return resultsTbl
 end
+---Reduces an array element-wise using a given function.
+---@generic T: string | number | boolean
+---@generic V: string | number | boolean | string[] | number[] | boolean[] | { [string]: any }
+---@param tbl T[]
+---@param fn fun(accumulator: V, current: T): V
+---@param initialValue V
+---@return V
+function table.reduce(tbl, fn, initialValue)
+    local accumulator = initialValue
+    for _, v in pairs(tbl) do
+        accumulator = fn(accumulator, v)
+    end
+    return accumulator
+end
 ---Reverses the order of an array.
 ---@param tbl table The original table.
 ---@return table tbl The original table, reversed.
@@ -467,15 +558,44 @@ function table.validate(checkList, tbl, extrapolateData)
     end
     return outputTable
 end
+---Returns a table of values from a table.
+---@param tbl { [string]: any } The table to search in.
+---@return string[] values A list of values.
+function table.values(tbl)
+    local resultsTbl = table.construct()
+    for _, v in pairs(tbl) do
+        table.insert(resultsTbl, v)
+    end
+    return resultsTbl
+end
 ---@diagnostic disable: return-type-mismatch
 ---The above is made because we want the functions to be identity functions when passing in vectors instead of tables.
 ---Converts a table of length 4 into a [`Vector4`](lua://Vector4).
----@param tbl number[] The table to convert.
+---@param tbl number[] | { x: number, y: number, z: number, w: number } The table to convert.
 ---@return Vector4 vctr The output vector.
 function table.vectorize4(tbl)
     if (not tbl) then return vector4(0) end
     if (type(tbl) == "userdata") then return tbl end
-    return vector.New(tbl[1], tbl[2], tbl[3], tbl[4])
+    if (tbl[1] and tbl[2] and tbl[3] and tbl[4]) then return vector.New(tbl[1], tbl[2], tbl[3], tbl[4]) end
+    return vector.New(tbl.x, tbl.y, tbl.z, tbl.w)
+end
+---Converts a table of length 3 into a [`Vector3`](lua://Vector3).
+---@param tbl number[] | { x: number, y: number, z: number } The table to convert.
+---@return Vector3 vctr The output vector.
+function table.vectorize3(tbl)
+    if (not tbl) then return vector3(0) end
+    if (type(tbl) == "userdata") then return tbl end
+    if (tbl[1] and tbl[2] and tbl[3]) then return vector.New(tbl[1], tbl[2], tbl[3]) end
+    return vector.New(tbl.x, tbl.y, tbl.z)
+end
+---Converts a table of length 2 into a [`Vector2`](lua://Vector2).
+---@param tbl number[] | { x: number, y: number } The table to convert.
+---@return Vector2 vctr The output vector.
+function table.vectorize2(tbl)
+    if (not tbl) then return vector2(0) end
+    if (type(tbl) == "userdata") then return tbl end
+    if (tbl[1] and tbl[2]) then return vector.New(tbl[1], tbl[2]) end
+    return vector.New(tbl.x, tbl.y)
 end
 function __toBeFunction(obtainedValue, expectedValue)
     return obtainedValue == expectedValue
@@ -1028,16 +1148,17 @@ function ssfVibrato(menuVars, func1, func2)
         local x = math.inverseLerp(time, startTime, endTime)
         local y = math.inverseLerp(time + delta, startTime, endTime)
         table.insert(ssfs,
-            createSSF(time - 1 / getUsableDisplacementMultiplier(time), func2(x)
+            createSSF(time, func2(x)
             ))
-        table.insert(ssfs, createSSF(time, func1(x)))
+        table.insert(ssfs, createSSF(time + 1 / getUsableDisplacementMultiplier(time), func1(x)))
         table.insert(ssfs,
-            createSSF(time + delta - 1 / getUsableDisplacementMultiplier(time),
+            createSSF(time + delta,
                 func1(y)))
         table.insert(ssfs,
-            createSSF(time + delta, func2(y)))
+            createSSF(time + delta + 1 / getUsableDisplacementMultiplier(time), func2(y)))
         time = time + 2 * delta
     end
+    addFinalSSF(ssfs, endTime, map.GetScrollSpeedFactorAt(endTime, state.SelectedScrollGroupId).Multiplier)
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
@@ -1115,7 +1236,7 @@ function svVibrato(menuVars, heightFunc)
                 heightFunc(endPos, teleportCount), 0, nil)
         end
     end
-    getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, svsToAdd)
+    getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset)
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
 function deleteItems(menuVars)
@@ -2128,10 +2249,9 @@ function awake()
     if (not tempGlobalVars) then tempGlobalVars = table.construct() end
     setGlobalVars(tempGlobalVars)
     loadDefaultProperties(tempGlobalVars.defaultProperties)
-    setPresets(table.map(tempGlobalVars.presets, table.parse))
+    setPresets(table.map(tempGlobalVars.presets or {}, table.parse))
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 end
-devMode = true
 imgui_disable_vector_packing = true
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
@@ -2143,6 +2263,7 @@ function draw()
     setPluginAppearance()
     startNextWindowNotCollapsed("plumoguSVAutoOpen")
     imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
+    renderBackground()
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
     imgui.BeginTabBar("SV tabs")
     for i = 1, #TAB_MENUS do
@@ -2741,6 +2862,9 @@ function removeSelectedFrameTimeButton(settingVars)
     local maxIndex = math.max(1, #settingVars.frameTimes)
     settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
 end
+function animationPaletteMenu(settingVars)
+    codeInput(settingVars, "instructions", nil, "Write instructions here.")
+end
 function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
     if (copiedSVCount == 0) then
@@ -2947,6 +3071,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
         chooseCurvatureCoefficient(settingVars)
         local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local func = function(t)
+            t = math.clamp(t, 0, 1)
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else
@@ -2965,6 +3090,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
         chooseCurvatureCoefficient(settingVars)
         local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local func1 = function(t)
+            t = math.clamp(t, 0, 1)
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else
@@ -2973,6 +3099,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
         end
         local func2 = function(t)
+            t = math.clamp(t, 0, 1)
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else
@@ -4698,6 +4825,56 @@ function displayStutterSVWindows(settingVars)
             settingVars.svMultipliers, settingVars.stutterDuration, false)
     end
 end
+stars = {}
+function renderBackground()
+    local ctx = imgui.GetWindowDrawList()
+    local topLeft = imgui.GetWindowPos()
+    local dim = imgui.GetWindowSize()
+    if (not truthy(#stars)) then
+        for _ = 1, 100 do
+            table.insert(stars,
+                {
+                    pos = vector.New(math.random() * 500, math.random() * 500),
+                    speed =
+                        math.random() * 3 + 1,
+                    size = math.random(3) / 2
+                })
+        end
+    else
+        for _, star in pairs(stars) do
+            local starWrapped = false
+            while (star.pos.x > dim.x + 10) do
+                starWrapped = true
+                star.pos.x = star.pos.x - dim.x - 20
+            end
+            while (star.pos.x < -10) do
+                starWrapped = true
+                star.pos.x = star.pos.x + dim.x + 20
+            end
+            if (starWrapped) then
+                star.pos.y = math.random() * dim.y
+                star.speed = math.random() * 3 + 1
+                star.size = math.random(3) / 2
+            else
+                star.pos.x = star.pos.x + star.speed * state.DeltaTime / 20 *
+                    math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
+            end
+        end
+    end
+    for _, star in pairs(stars) do
+        local progress = star.pos.x / dim.x
+        local brightness = math.clamp(-8 * progress * (progress - 1), 0, 1)
+        ctx.AddCircleFilled(star.pos + topLeft, star.size, rgbaToUint(255, 255, 255, math.floor(255 * brightness)))
+    end
+    local colorValue = math.floor(50 * (1 + state.GetValue("borderPulseStatus", 0)))
+    local darkPurple = rgbaToUint(colorValue, 0, colorValue, 150)
+    local darkRed = rgbaToUint(colorValue, 0, 0, 150)
+    local transparent = rgbaToUint(0, 0, 0, 0)
+    ctx.AddRectFilledMultiColor(topLeft, vector.New(topLeft.x + dim.x / 5, topLeft.y + dim.y), darkPurple, transparent,
+        transparent, darkPurple)
+    ctx.AddRectFilledMultiColor(topLeft + dim - vector.New(dim.x / 5, dim.y), topLeft + dim, transparent, darkRed,
+        darkRed, transparent)
+end
 function drawCapybara()
     if not globalVars.drawCapybara then return end
     local o = imgui.GetForegroundDrawList()
@@ -6040,7 +6217,7 @@ function chooseCustomMultipliers(settingVars)
 end
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
-    menuVars.distance = computableInputFloat("Distance", menuVars.distance, 3, " msx")
+    menuVars.distance = negatableComputableInputFloat("Distance", menuVars.distance, 3, " msx")
     return oldDistance ~= menuVars.distance
 end
 function chooseVaryingDistance(settingVars)
@@ -7410,6 +7587,22 @@ function getHypotheticalSVMultiplierAt(svs, offset)
     end
     return 1
 end
+---Returns the SV time in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
+function getHypotheticalSVTimeAt(svs, offset)
+    if (#svs == 1) then return svs[1].StartTime end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index].StartTime
+        end
+    end
+    return -69
+end
 function getSVStartTimeAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.StartTime end
@@ -7718,8 +7911,12 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
     actions.PerformBatch(editorActions)
     toggleablePrint("s!", "Created " .. #ssfsToAdd .. pluralize(" SSF.", #ssfsToAdd, -2))
 end
-createSSF = utils.CreateScrollSpeedFactor
-createSV = utils.CreateScrollVelocity
+function createSSF(startTime, multiplier)
+     return utils.CreateScrollSpeedFactor(startTime, multiplier)
+end
+function createSV(startTime, multiplier)
+     return utils.CreateScrollVelocity(startTime, multiplier)
+end
 function bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
     settingsChanged = provideBezierWebsiteLink(settingVars) or settingsChanged

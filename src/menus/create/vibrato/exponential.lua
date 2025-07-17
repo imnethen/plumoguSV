@@ -4,6 +4,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
         chooseCurvatureCoefficient(settingVars)
         local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local func = function(t)
+            t = math.clamp(t, 0, 1)
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else
@@ -24,6 +25,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
         local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
 
         local func1 = function(t)
+            t = math.clamp(t, 0, 1)
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else
@@ -32,6 +34,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
         end
         local func2 = function(t)
+            t = math.clamp(t, 0, 1)
             if (curvature < 10) then
                 t = 1 - (1 - t) ^ (1 / curvature)
             else

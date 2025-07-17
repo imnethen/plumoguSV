@@ -12,8 +12,10 @@ function draw()
 
     startNextWindowNotCollapsed("plumoguSVAutoOpen")
     imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
 
+    renderBackground()
+
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
     imgui.BeginTabBar("SV tabs")
     for i = 1, #TAB_MENUS do
         createMenuTab(TAB_MENUS[i])
@@ -112,6 +114,7 @@ function pulseController()
 
     local timeSinceLastPulse = ((state.SongTime + timeOffset) - getTimingPointAt(state.SongTime).StartTime) %
         ((60000 / getTimingPointAt(state.SongTime).Bpm))
+
 
     if ((timeSinceLastPulse < prevVal)) then
         colStatus = 1
