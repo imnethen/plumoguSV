@@ -15,6 +15,11 @@ DEFAULT_STARTING_SETTING_VARS = {
         periods = 1,
         periodsShift = 0.25
     },
+    sigmoidalVibratoSV = {
+        startMsx = 100,
+        endMsx = 0,
+        curvatureIndex = 5
+    },
     customVibratoSV = {
         code = [[return function (x)
     local maxHeight = 150
@@ -36,7 +41,7 @@ end]]
         lowerEnd = 0.5,
         higherStart = 1,
         higherEnd = 1,
-        curvatureIndex = 10
+        curvatureIndex = 5
     },
     sinusoidalVibratoSSF = {
         lowerStart = 0.5,
@@ -47,6 +52,13 @@ end]]
         periods = 1,
         periodsShift = 0.25,
         applyToHigher = false,
+    },
+    sigmoidalVibratoSSF = {
+        lowerStart = 0.5,
+        lowerEnd = 0.5,
+        higherStart = 1,
+        higherEnd = 1,
+        curvatureIndex = 5
     },
     customVibratoSSF = {
         code1 = "return function (x) return 0.69 end",

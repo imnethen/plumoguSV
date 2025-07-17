@@ -71,3 +71,64 @@ function plotSVs(svVals, minScale, maxScale)
     local plotSize = PLOT_GRAPH_SIZE
     imgui.PlotHistogram("##svplot", svVals, #svVals, 0, "", minScale, maxScale, plotSize)
 end
+
+function plotExponentialCurvature(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 16
+    local values = table.construct()
+    for i = 1, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION
+        local value = t
+        if (curvature >= 1) then
+            value = t ^ curvature
+        else
+            value = (1 - (1 - t) ^ (1 / curvature))
+        end
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 1 - value
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 0.5
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+end
+
+function plotSigmoidalCurvature(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 32
+    local values = table.construct()
+    for i = 1, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION * 2
+        local value = t
+        if (curvature >= 1) then
+            if (t <= 1) then
+                value = t ^ curvature
+            else
+                value = 2 - (2 - t) ^ curvature
+            end
+        else
+            if (t <= 1) then
+                value = (1 - (1 - t) ^ (1 / curvature))
+            else
+                value = (t - 1) ^ (1 / curvature) + 1
+            end
+        end
+        value = value / 2
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 1 - value
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 0.5
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+end

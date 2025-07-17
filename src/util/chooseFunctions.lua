@@ -710,29 +710,7 @@ function chooseVibratoQuality(menuVars)
 end
 
 function chooseCurvatureCoefficient(settingVars)
-    imgui.PushItemWidth(28)
-    imgui.PushStyleColor(imgui_col.FrameBg, 0)
-    local RESOLUTION = 16
-    local values = table.construct()
-    for i = 0, RESOLUTION do
-        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
-        local t = i / RESOLUTION
-        local value = t
-        if (curvature >= 1) then
-            value = t ^ curvature
-        else
-            value = (1 - (1 - t) ^ (1 / curvature))
-        end
-        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
-            value = 1 - value
-        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
-            value = 0.5
-        end
-        values:insert(value)
-    end
-    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
-    imgui.PopStyleColor()
-    imgui.PopItemWidth()
+    plotExponentialCurvature(settingVars)
     imgui.SameLine(0, 0)
     _, settingVars.curvatureIndex = imgui.SliderInt("Curvature", settingVars.curvatureIndex, 1, #VIBRATO_CURVATURES,
         tostring(VIBRATO_CURVATURES[settingVars.curvatureIndex]))

@@ -2,6 +2,7 @@ VIBRATO_SVS = { -- types of vibrato SVs
     "Linear##Vibrato",
     "Exponential##Vibrato",
     "Sinusoidal##Vibrato",
+    "Sigmoidal##Vibrato",
     "Custom##Vibrato"
 }
 
@@ -29,6 +30,7 @@ function placeVibratoSVMenu(separateWindow)
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Sigmoidal##Vibrato" then sigmoidalVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars, separateWindow) end
 
     local labelText = currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF") .. "Vibrato"

@@ -4750,7 +4750,35 @@ function displayStutterSVWindows(settingVars)
             settingVars.svMultipliers, settingVars.stutterDuration, false)
     end
 end
+---@class Particle
+---@field pos Vector2
+---@field v Vector2
+---@field a Vector2
+---@field col Vector4
+---@field size integer
 stars = {}
+function updateStars()
+    local dim = imgui.GetWindowSize()
+    for _, star in pairs(stars) do
+        local starWrapped = false
+        while (star.pos.x > dim.x + 10) do
+            starWrapped = true
+            star.pos.x = star.pos.x - dim.x - 20
+        end
+        while (star.pos.x < -10) do
+            starWrapped = true
+            star.pos.x = star.pos.x + dim.x + 20
+        end
+        if (starWrapped) then
+            star.pos.y = math.random() * dim.y
+            star.v.x = math.random() * 3 + 1
+            star.size = math.random(3) / 2
+        else
+            star.pos = star.pos + star.v * state.DeltaTime / 20 *
+                math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
+        end
+    end
+end
 function renderBackground()
     local ctx = imgui.GetWindowDrawList()
     local topLeft = imgui.GetWindowPos()
@@ -4760,31 +4788,12 @@ function renderBackground()
             table.insert(stars,
                 {
                     pos = vector.New(math.random() * 500, math.random() * 500),
-                    speed =
-                        math.random() * 3 + 1,
+                    v = vector.New(math.random() * 3 + 1, 0),
                     size = math.random(3) / 2
                 })
         end
     else
-        for _, star in pairs(stars) do
-            local starWrapped = false
-            while (star.pos.x > dim.x + 10) do
-                starWrapped = true
-                star.pos.x = star.pos.x - dim.x - 20
-            end
-            while (star.pos.x < -10) do
-                starWrapped = true
-                star.pos.x = star.pos.x + dim.x + 20
-            end
-            if (starWrapped) then
-                star.pos.y = math.random() * dim.y
-                star.speed = math.random() * 3 + 1
-                star.size = math.random(3) / 2
-            else
-                star.pos.x = star.pos.x + star.speed * state.DeltaTime / 20 *
-                    math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
-            end
-        end
+        updateStars()
     end
     for _, star in pairs(stars) do
         local progress = star.pos.x / dim.x
@@ -6534,30 +6543,8 @@ function chooseVibratoQuality(menuVars)
     ToolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 function chooseCurvatureCoefficient(settingVars)
-    imgui.PushItemWidth(28)
-    imgui.PushStyleColor(imgui_col.FrameBg, 0)
-    local RESOLUTION = 16
-    local values = table.construct()
-    for i = 0, RESOLUTION do
-        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
-        local t = i / RESOLUTION
-        local value = t
-        if (curvature >= 1) then
-            value = t ^ curvature
-        else
-            value = (1 - (1 - t) ^ (1 / curvature))
-        end
-        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
-            value = 1 - value
-        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
-            value = 0.5
-        end
-        values:insert(value)
-    end
-    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
-    imgui.PopStyleColor()
-    imgui.PopItemWidth()
-    imgui.SameLine(0, 0)
+    plotExponentialCurvature(settingVars)
+    imgui.
     _, settingVars.curvatureIndex = imgui.SliderInt("Curvature", settingVars.curvatureIndex, 1, #VIBRATO_CURVATURES,
         tostring(VIBRATO_CURVATURES[settingVars.curvatureIndex]))
 end
@@ -7005,31 +6992,43 @@ function generateChinchillaSet(settingVars)
     table.insert(chinchillaSet, settingVars.avgSV)
     return chinchillaSet
 end
-function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numValues,
-                             dontNormalize)
-    local increaseValues = (behavior == "Speed up")
-    avgValue = avgValue - verticalShift
-    local startingAngle = math.pi * (arcPercent / 100)
-    local angles = generateLinearSet(startingAngle, 0, numValues)
-    local yCoords = {}
-    for i = 1, #angles do
-        local angle = math.round(angles[i], 8)
-        local x = math.cos(angle)
-        yCoords[i] = -avgValue * math.sqrt(1 - x ^ 2)
+function scalePercent(settingVars, percent)
+    local behaviorType = SV_BEHAVIORS[settingVars.behaviorIndex]
+    local slowDownType = behaviorType == "Slow down"
+    local workingPercent = percent
+    if slowDownType then workingPercent = 1 - percent end
+    local newPercent
+    local a = settingVars.chinchillaIntensity
+    local scaleType = CHINCHILLA_TYPES[settingVars.chinchillaTypeIndex]
+    if scaleType == "Exponential" then
+        local exponent = a * (workingPercent - 1)
+        newPercent = (workingPercent * math.exp(exponent))
+    elseif scaleType == "Polynomial" then
+        local exponent = a + 1
+        newPercent = workingPercent ^ exponent
+    elseif scaleType == "Circular" then
+        if a == 0 then return percent end
+        local b = 1 / (a ^ (a + 1))
+        local radicand = (b + 1) ^ 2 + b ^ 2 - (workingPercent + b) ^ 2
+        newPercent = b + 1 - math.sqrt(radicand)
+    elseif scaleType == "Sine Power" then
+        local exponent = math.log(a + 1)
+        local base = math.sin(math.pi * (workingPercent - 1) / 2) + 1
+        newPercent = workingPercent * (base ^ exponent)
+    elseif scaleType == "Arc Sine Power" then
+        local exponent = math.log(a + 1)
+        local base = 2 * math.asin(workingPercent) / math.pi
+        newPercent = workingPercent * (base ^ exponent)
+    elseif scaleType == "Inverse Power" then
+        local denominator = 1 + (workingPercent ^ -a)
+        newPercent = 2 * workingPercent / denominator
+    elseif "Peter Stock" then
+        if a == 0 then return percent end
+        local c = a / (1 - a)
+        newPercent = (workingPercent ^ 2) * (1 + c) / (workingPercent + c)
     end
-    local circularSet = {}
-    for i = 1, #yCoords - 1 do
-        local startY = yCoords[i]
-        local endY = yCoords[i + 1]
-        circularSet[i] = (endY - startY) * (numValues - 1)
-    end
-    if not increaseValues then circularSet = table.reverse(circularSet) end
-    if not dontNormalize then circularSet = table.normalize(circularSet, avgValue, true) end
-    for i = 1, #circularSet do
-        circularSet[i] = circularSet[i] + verticalShift
-    end
-    table.insert(circularSet, avgValue)
-    return circularSet
+    if slowDownType then newPercent = 1 - newPercent end
+    return math.clamp(newPercent, 0, 1)
 end
 function generateComboSet(values1, values2, comboPhase, comboType, comboMultiplier1,
                           comboMultiplier2, dontNormalize, avgValue, verticalShift)
@@ -7389,6 +7388,31 @@ end
 function plotSVs(svVals, minScale, maxScale)
     local plotSize = PLOT_GRAPH_SIZE
     imgui.PlotHistogram("##svplot", svVals, #svVals, 0, "", minScale, maxScale, plotSize)
+end
+function plotExponentialCurvature(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 16
+    local values = table.construct()
+    for i = 0, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION
+        local value = t
+        if (curvature >= 1) then
+            value = t ^ curvature
+        else
+            value = (1 - (1 - t) ^ (1 / curvature))
+        end
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 1 - value
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 0.5
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
 end
 function createFrameTime(thisTime, thisLanes, thisFrame, thisPosition)
     local frameTime = {
