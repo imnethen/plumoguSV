@@ -70,9 +70,7 @@ function pasteItems(menuVars)
 
     local lastCopiedValue = lastCopiedSV
     if (lastCopiedValue == nil) then
-        lastCopiedValue = lastCopiedSSF
-        lastCopiedValue = lastCopiedLine
-        lastCopiedValue = lastCopiedBM
+        lastCopiedValue = lastCopiedSSF or lastCopiedLine or lastCopiedBM or { relativeOffset = 0 }
     end
 
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128

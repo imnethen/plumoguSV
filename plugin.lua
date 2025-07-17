@@ -13,13 +13,6 @@ end
 function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end
----Returns n choose r, or nCr.
----@param n integer
----@param r integer
----@return integer
-function math.binom(n, r)
-    return math.factorial(n) / (math.factorial(r) * math.factorial(n - r))
-end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
 ---@param lowerBound number
@@ -65,52 +58,6 @@ function math.hermite(m1, m2, y2, t)
     return a * t ^ 3 + b * t ^ 2 + c * t
 end
 matrix = {}
----Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
----@param p1 Vector2
----@param p2 Vector2
----@param p3 Vector2
----@return number, number, number
-function math.interpolateCircle(p1, p2, p3)
-    local mtrx = {
-        vector.Table(2 * (p2 - p1)),
-        vector.Table(2 * (p3 - p1))
-    }
-    local vctr = {
-        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
-        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
-    }
-    h, k = matrix.solve(mtrx, vctr)
-    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
-    ---@type number, number, number
-    return h, k, r
-end
----Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
----@param p1 Vector2
----@param p2 Vector2
----@param p3 Vector2
----@return number, number, number
-function math.interpolateQuadratic(p1, p2, p3)
-    local mtrx = {
-        (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
-        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
-    }
-    local vctr = {
-        (p2 - p1).y,
-        (p3 - p1).y
-    }
-    a, b = matrix.solve(mtrx, vctr)
-    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
-    ---@type number, number, number
-    return a, b, c
-end
----Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
----@param weight number
----@param lowerBound number
----@param upperBound number
----@return number
-function math.lerp(weight, lowerBound, upperBound)
-    return upperBound * weight + lowerBound * (1 - weight)
-end
 ---Returns the weight of a number between `lowerBound` and `upperBound`.
 ---@param num number
 ---@param lowerBound number
@@ -167,11 +114,6 @@ function matrix.solve(mtrx, vctr)
         end
     end
     return table.unpack(table.property(augMtrx, #mtrx + 1))
-end
-function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
-    local temp = mtrx[rowIdx1]
-    mtrx[rowIdx1] = mtrx[rowIdx2]
-    mtrx[rowIdx2] = temp
 end
 ---Rounds a number to a given amount of decimal places.
 ---@param number number
@@ -1497,9 +1439,7 @@ function pasteItems(menuVars)
     local lastCopiedBM = menuVars.copiedBMs[#menuVars.copiedBMs]
     local lastCopiedValue = lastCopiedSV
     if (lastCopiedValue == nil) then
-        lastCopiedValue = lastCopiedSSF
-        lastCopiedValue = lastCopiedLine
-        lastCopiedValue = lastCopiedBM
+        lastCopiedValue = lastCopiedSSF or lastCopiedLine or lastCopiedBM or { relativeOffset = 0 }
     end
     local endRemoveOffset = endOffset + lastCopiedValue.relativeOffset + 1 / 128
     local linesToRemove = menuVars.copyTable[1] and getLinesBetweenOffsets(startOffset, endRemoveOffset) or {}
@@ -2252,6 +2192,7 @@ function awake()
     setPresets(table.map(tempGlobalVars.presets or {}, table.parse))
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 end
+devMode = true
 imgui_disable_vector_packing = true
 function draw()
     state.SetValue("computableInputFloatIndex", 1)
@@ -2291,22 +2232,6 @@ function draw()
         end
         state.SelectedScrollGroupId = tgId
     end
-end
-function renderNoteDataWidget()
-    if (#state.SelectedHitObjects ~= 1) then return end
-    imgui.BeginTooltip()
-    imgui.Text("Note Info:")
-    local selectedNote = state.SelectedHitObjects[1]
-    imgui.Text("StartTime = " .. selectedNote.StartTime .. " ms")
-    local noteIsNotLN = selectedNote.EndTime == 0
-    if noteIsNotLN then
-        imgui.EndTooltip()
-        return
-    end
-    local lnLength = selectedNote.EndTime - selectedNote.StartTime
-    imgui.Text("EndTime = " .. selectedNote.EndTime .. " ms")
-    imgui.Text("LN Length = " .. lnLength .. " ms")
-    imgui.EndTooltip()
 end
 function renderMeasureDataWidget()
     if #state.SelectedHitObjects < 2 then return end
@@ -7079,44 +7004,6 @@ function generateChinchillaSet(settingVars)
     end
     table.insert(chinchillaSet, settingVars.avgSV)
     return chinchillaSet
-end
-function scalePercent(settingVars, percent)
-    local behaviorType = SV_BEHAVIORS[settingVars.behaviorIndex]
-    local slowDownType = behaviorType == "Slow down"
-    local workingPercent = percent
-    if slowDownType then workingPercent = 1 - percent end
-    local newPercent
-    local a = settingVars.chinchillaIntensity
-    local scaleType = CHINCHILLA_TYPES[settingVars.chinchillaTypeIndex]
-    if scaleType == "Exponential" then
-        local exponent = a * (workingPercent - 1)
-        newPercent = (workingPercent * math.exp(exponent))
-    elseif scaleType == "Polynomial" then
-        local exponent = a + 1
-        newPercent = workingPercent ^ exponent
-    elseif scaleType == "Circular" then
-        if a == 0 then return percent end
-        local b = 1 / (a ^ (a + 1))
-        local radicand = (b + 1) ^ 2 + b ^ 2 - (workingPercent + b) ^ 2
-        newPercent = b + 1 - math.sqrt(radicand)
-    elseif scaleType == "Sine Power" then
-        local exponent = math.log(a + 1)
-        local base = math.sin(math.pi * (workingPercent - 1) / 2) + 1
-        newPercent = workingPercent * (base ^ exponent)
-    elseif scaleType == "Arc Sine Power" then
-        local exponent = math.log(a + 1)
-        local base = 2 * math.asin(workingPercent) / math.pi
-        newPercent = workingPercent * (base ^ exponent)
-    elseif scaleType == "Inverse Power" then
-        local denominator = 1 + (workingPercent ^ -a)
-        newPercent = 2 * workingPercent / denominator
-    elseif "Peter Stock" then
-        if a == 0 then return percent end
-        local c = a / (1 - a)
-        newPercent = (workingPercent ^ 2) * (1 + c) / (workingPercent + c)
-    end
-    if slowDownType then newPercent = 1 - newPercent end
-    return math.clamp(newPercent, 0, 1)
 end
 function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numValues,
                              dontNormalize)
