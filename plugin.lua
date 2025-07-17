@@ -3041,6 +3041,7 @@ VIBRATO_SVS = {
     "Linear##Vibrato",
     "Exponential##Vibrato",
     "Sinusoidal##Vibrato",
+    "Sigmoidal##Vibrato",
     "Custom##Vibrato"
 }
 function placeVibratoSVMenu(separateWindow)
@@ -3063,6 +3064,7 @@ function placeVibratoSVMenu(separateWindow)
     if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Sigmoidal##Vibrato" then sigmoidalVibratoMenu(menuVars, settingVars, separateWindow) end
     if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars, separateWindow) end
     local labelText = currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF") .. "Vibrato"
     saveVariables(labelText .. "Settings", settingVars)
@@ -3085,6 +3087,60 @@ function linearVibratoMenu(menuVars, settingVars, separateWindow)
             return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
         end
         local func2 = function(t)
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    end
+end
+function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
+    if (menuVars.vibratoMode == 1) then
+        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 7 / 8)
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local func = function(t)
+            t = math.clamp(t, 0, 1) * 2
+            if (curvature >= 1) then
+                if (t <= 1) then
+                    t = t ^ curvature
+                else
+                    t = 2 - (2 - t) ^ curvature
+                end
+            else
+                if (t <= 1) then
+                    t = (1 - (1 - t) ^ (1 / curvature))
+                else
+                    t = (t - 1) ^ (1 / curvature) + 1
+                end
+            end
+            t = t / 2
+        end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    else
+        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
+        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local func1 = function(t)
+            t = math.clamp(t, 0, 1)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
+        end
+        local func2 = function(t)
+            t = math.clamp(t, 0, 1)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
             return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
         end
         AddSeparator()
@@ -4272,6 +4328,13 @@ function showDefaultPropertiesSettings()
         choosePeriodShift(settingVars)
         saveSettingPropertiesButton(settingVars, "SinusoidalVibratoSV")
         saveVariables("SinusoidalVibratoSVPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sigmoidal Vibrato SV Settings")) then
+        local settingVars = getSettingVars("SigmoidalVibratoSV", "Property")
+        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseCurvatureCoefficient(settingVars)
+        saveSettingPropertiesButton(settingVars, "SigmoidalVibratoSV")
+        saveVariables("SigmoidalVibratoSVPropertySettings", settingVars)
     end
     imgui.SeparatorText("SSF Vibrato Settings")
     if (imgui.CollapsingHeader("Linear Vibrato SSF Settings")) then
@@ -6544,7 +6607,7 @@ function chooseVibratoQuality(menuVars)
 end
 function chooseCurvatureCoefficient(settingVars)
     plotExponentialCurvature(settingVars)
-    imgui.
+    imgui.SameLine(0, 0)
     _, settingVars.curvatureIndex = imgui.SliderInt("Curvature", settingVars.curvatureIndex, 1, #VIBRATO_CURVATURES,
         tostring(VIBRATO_CURVATURES[settingVars.curvatureIndex]))
 end
@@ -6878,23 +6941,6 @@ function calculateDisplacementsFromSVs(svs, offsets)
     table.insert(displacements, totalDisplacement)
     return displacements
 end
-function calculateStillDisplacements(stillType, stillDistance, svDisplacements, nsvDisplacements)
-    local finalDisplacements = {}
-    for i = 1, #svDisplacements do
-        local difference = nsvDisplacements[i] - svDisplacements[i]
-        table.insert(finalDisplacements, difference)
-    end
-    local extraDisplacement = stillDistance
-    if stillType == "End" or stillType == "Otua" then
-        extraDisplacement = stillDistance - finalDisplacements[#finalDisplacements]
-    end
-    if stillType ~= "No" then
-        for i = 1, #finalDisplacements do
-            finalDisplacements[i] = finalDisplacements[i] + extraDisplacement
-        end
-    end
-    return finalDisplacements
-end
 --
 --
 function getUsableDisplacementMultiplier(offset)
@@ -7030,76 +7076,31 @@ function scalePercent(settingVars, percent)
     if slowDownType then newPercent = 1 - newPercent end
     return math.clamp(newPercent, 0, 1)
 end
-function generateComboSet(values1, values2, comboPhase, comboType, comboMultiplier1,
-                          comboMultiplier2, dontNormalize, avgValue, verticalShift)
-    local comboValues = {}
-    if comboType == "SV Type 1 Only" then
-        comboValues = table.duplicate(values1)
-    elseif comboType == "SV Type 2 Only" then
-        comboValues = table.duplicate(values2)
-    else
-        local lastValue1 = table.remove(values1)
-        local lastValue2 = table.remove(values2)
-        local endIndex1 = #values1 - comboPhase
-        local startIndex1 = comboPhase + 1
-        local endIndex2 = comboPhase - #values1
-        local startIndex2 = #values1 + #values2 + 1 - comboPhase
-        for i = 1, endIndex1 do
-            table.insert(comboValues, values1[i])
-        end
-        for i = 1, endIndex2 do
-            table.insert(comboValues, values2[i])
-        end
-        if comboType ~= "Remove" then
-            local comboValues1StartIndex = endIndex1 + 1
-            local comboValues1EndIndex = startIndex2 - 1
-            local comboValues2StartIndex = endIndex2 + 1
-            local comboValues2EndIndex = startIndex1 - 1
-            local comboValues1 = {}
-            for i = comboValues1StartIndex, comboValues1EndIndex do
-                table.insert(comboValues1, values1[i])
-            end
-            local comboValues2 = {}
-            for i = comboValues2StartIndex, comboValues2EndIndex do
-                table.insert(comboValues2, values2[i])
-            end
-            for i = 1, #comboValues1 do
-                local comboValue1 = comboValues1[i]
-                local comboValue2 = comboValues2[i]
-                local finalValue
-                if comboType == "Add" then
-                    finalValue = comboMultiplier1 * comboValue1 + comboMultiplier2 * comboValue2
-                elseif comboType == "Cross Multiply" then
-                    finalValue = comboValue1 * comboValue2
-                elseif comboType == "Min" then
-                    finalValue = math.min(comboValue1, comboValue2)
-                elseif comboType == "Max" then
-                    finalValue = math.max(comboValue1, comboValue2)
-                end
-                table.insert(comboValues, finalValue)
-            end
-        end
-        for i = startIndex1, #values2 do
-            table.insert(comboValues, values2[i])
-        end
-        for i = startIndex2, #values1 do
-            table.insert(comboValues, values1[i])
-        end
-        if #comboValues == 0 then table.insert(comboValues, 1) end
-        if (comboPhase - #values2 >= 0) then
-            table.insert(comboValues, lastValue1)
-        else
-            table.insert(comboValues, lastValue2)
-        end
-    end
+function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numValues,
+                             dontNormalize)
+    local increaseValues = (behavior == "Speed up")
     avgValue = avgValue - verticalShift
-    if not dontNormalize then
-        comboValues = table.normalize(comboValues, avgValue, false)
+    local startingAngle = math.pi * (arcPercent / 100)
+    local angles = generateLinearSet(startingAngle, 0, numValues)
+    local yCoords = {}
+    for i = 1, #angles do
+        local angle = math.round(angles[i], 8)
+        local x = math.cos(angle)
+        yCoords[i] = -avgValue * math.sqrt(1 - x ^ 2)
     end
-    for i = 1, #comboValues do
-        comboValues[i] = comboValues[i] + verticalShift
+    local circularSet = {}
+    for i = 1, #yCoords - 1 do
+        local startY = yCoords[i]
+        local endY = yCoords[i + 1]
+        circularSet[i] = (endY - startY) * (numValues - 1)
     end
-    return comboValues
+    if not increaseValues then circularSet = table.reverse(circularSet) end
+    if not dontNormalize then circularSet = table.normalize(circularSet, avgValue, true) end
+    for i = 1, #circularSet do
+        circularSet[i] = circularSet[i] + verticalShift
+    end
+    table.insert(circularSet, avgValue)
+    return circularSet
 end
 function generateCustomSet(values)
     local newValues = table.duplicate(values)
@@ -7394,7 +7395,7 @@ function plotExponentialCurvature(settingVars)
     imgui.PushStyleColor(imgui_col.FrameBg, 0)
     local RESOLUTION = 16
     local values = table.construct()
-    for i = 0, RESOLUTION do
+    for i = 1, RESOLUTION do
         local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local t = i / RESOLUTION
         local value = t
@@ -7403,6 +7404,40 @@ function plotExponentialCurvature(settingVars)
         else
             value = (1 - (1 - t) ^ (1 / curvature))
         end
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 1 - value
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 0.5
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+end
+function plotSigmoidalCurvature(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 32
+    local values = table.construct()
+    for i = 1, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION * 2
+        local value = t
+        if (curvature >= 1) then
+            if (t <= 1) then
+                value = t ^ curvature
+            else
+                value = 2 - (2 - t) ^ curvature
+            end
+        else
+            if (t <= 1) then
+                value = (1 - (1 - t) ^ (1 / curvature))
+            else
+                value = (t - 1) ^ (1 / curvature) + 1
+            end
+        end
+        value = value / 2
         if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 1 - value
         elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
@@ -8385,6 +8420,11 @@ DEFAULT_STARTING_SETTING_VARS = {
         periods = 1,
         periodsShift = 0.25
     },
+    sigmoidalVibratoSV = {
+        startMsx = 100,
+        endMsx = 0,
+        curvatureIndex = 5
+    },
     customVibratoSV = {
         code = [[return function (x)
     local maxHeight = 150
@@ -8405,7 +8445,7 @@ end]]
         lowerEnd = 0.5,
         higherStart = 1,
         higherEnd = 1,
-        curvatureIndex = 10
+        curvatureIndex = 5
     },
     sinusoidalVibratoSSF = {
         lowerStart = 0.5,
@@ -8416,6 +8456,13 @@ end]]
         periods = 1,
         periodsShift = 0.25,
         applyToHigher = false,
+    },
+    sigmoidalVibratoSSF = {
+        lowerStart = 0.5,
+        lowerEnd = 0.5,
+        higherStart = 1,
+        higherEnd = 1,
+        curvatureIndex = 5
     },
     customVibratoSSF = {
         code1 = "return function (x) return 0.69 end",
