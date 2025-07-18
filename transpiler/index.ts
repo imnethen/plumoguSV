@@ -84,7 +84,7 @@ export default async function transpiler(
                 .fill(' * $1')
                 .join('')}`
         );
-    }
+    } // Remove integer exponentiation and replace with repeated multiplication
 
     if (fuckify) output = fuckifyOutput(output);
 
