@@ -37,7 +37,7 @@ end
 ---@param number number
 ---@return number
 function math.quarter(number)
-    return math.round(number * 4) / 4
+    return math.round(number * 4) * 0.25
 end
 ---Returns the fractional portion of a number (e.g. in 5.4, returns 0.4).
 ---@param n number
@@ -433,7 +433,7 @@ function table.searchClosest(tbl, item)
     local leftIdx = 1
     local rightIdx = #tbl
     while rightIdx - leftIdx > 1 do
-        local middleIdx = math.floor((leftIdx + rightIdx) / 2)
+        local middleIdx = math.floor((leftIdx + rightIdx) * 0.5)
         if (item >= tbl[middleIdx]) then
             leftIdx = middleIdx
         else
@@ -1142,7 +1142,7 @@ local function svVibrato(menuVars, heightFunc)
             for tp = 1, teleportCount do
                 local x = (tp - 1) / (teleportCount)
                 local offset = next * x + start * (1 - x)
-                local height = heightFunc(((math.floor((tp - 1) / 2) * 2) / (teleportCount - 2)) * posDifference +
+                local height = heightFunc(((math.floor((tp - 1) * 0.5) * 2) / (teleportCount - 2)) * posDifference +
                     startPos, tp)
                 if (tp % 2 == 1) then
                     height = -height
@@ -2709,7 +2709,7 @@ local function drawGlare(o, coords, size, glareColor, auraColor)
     local innerPoints = {}
     local outerPoints = {}
     for i = 1, 4 do
-        local angle = math.pi * ((2 * i + 1) / 4)
+        local angle = math.pi * ((2 * i + 1) * 0.25)
         local innerX = innerRadius * math.cos(angle)
         local innerY = innerRadius * math.sin(angle)
         local outerX = outerRadius * innerX
@@ -3169,7 +3169,7 @@ local function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
                     t = (t - 1) ^ (1 / curvature) + 1
                 end
             end
-            t = t / 2
+            t = t * 0.5
         end
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
@@ -3693,8 +3693,8 @@ local function infoTab()
         state.SetValue("showSettingsWindow", true)
         local windowDim = state.WindowSize
         local pluginDim = imgui.GetWindowSize()
-        local centeringX = (windowDim[1] - pluginDim.x) / 2
-        local centeringY = (windowDim[2] - pluginDim.y) / 2
+        local centeringX = (windowDim[1] - pluginDim.x) * 0.5
+        local centeringY = (windowDim[2] - pluginDim.y) * 0.5
         local coordinatesToCenter = vector.New(centeringX, centeringY)
         imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
     end
@@ -4708,7 +4708,7 @@ local function drawCurrentFrame(settingVars)
     local mapKeyCount = map.GetKeyCount()
     local noteWidth = 200 / mapKeyCount
     local noteSpacing = 5
-    local barNoteHeight = math.round(2 * noteWidth / 5, 0)
+    local barNoteHeight = math.round(2 * noteWidth * 0.2, 0)
     local noteColor = rgbaToUint(117, 117, 117, 255)
     local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
     local drawlist = imgui.GetWindowDrawList()
@@ -4721,7 +4721,7 @@ local function drawCurrentFrame(settingVars)
             local lane = frameTime.lanes[k]
             if noteSkinType == "Bar" then
                 local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
-                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
+                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position * 0.5)
                 local x2 = x1 + noteWidth
                 local y2 = y1 - barNoteHeight
                 if globalVars.upscroll then
@@ -4732,9 +4732,9 @@ local function drawCurrentFrame(settingVars)
                 local p2 = coordsRelativeToWindow(x2, y2)
                 drawlist.AddRectFilled(p1, p2, noteColor)
             elseif noteSkinType == "Circle" then
-                local circleRadius = noteWidth / 2
+                local circleRadius = noteWidth * 0.5
                 local leftBlankSpace = 2 * noteSpacing + circleRadius
-                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
+                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position * 0.5
                 local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
                 local y1 = childHeight - yBlankSpace
                 if globalVars.upscroll then
@@ -4898,7 +4898,7 @@ local function updateStars()
         if (starWrapped) then
             star.pos.y = math.random() * dim.y
             star.v.x = math.random() * 3 + 1
-            star.size = math.random(3) / 2
+            star.size = math.random(3) * 0.5
         else
             star.pos = star.pos + star.v * state.DeltaTime / 20 *
                 math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
@@ -4915,7 +4915,7 @@ local function renderBackground()
                 {
                     pos = vector.New(math.random() * 500, math.random() * 500),
                     v = vector.New(math.random() * 3 + 1, 0),
-                    size = math.random(3) / 2
+                    size = math.random(3) * 0.5
                 })
         end
     else
@@ -4931,9 +4931,9 @@ local function renderBackground()
     local darkPurple = rgbaToUint(colorValue, 0, colorValue, 150)
     local darkRed = rgbaToUint(colorValue, 0, 0, 150)
     local transparent = rgbaToUint(0, 0, 0, 0)
-    ctx.AddRectFilledMultiColor(topLeft, vector.New(topLeft.x + dim.x / 5, topLeft.y + dim.y), darkPurple, transparent,
+    ctx.AddRectFilledMultiColor(topLeft, vector.New(topLeft.x + dim.x * 0.2, topLeft.y + dim.y), darkPurple, transparent,
         transparent, darkPurple)
-    ctx.AddRectFilledMultiColor(topLeft + dim - vector.New(dim.x / 5, dim.y), topLeft + dim, transparent, darkRed,
+    ctx.AddRectFilledMultiColor(topLeft + dim - vector.New(dim.x * 0.2, dim.y), topLeft + dim, transparent, darkRed,
         darkRed, transparent)
 end
 local function drawCapybara()
@@ -5833,7 +5833,7 @@ local function setPluginAppearanceStyles(styleTheme)
     imgui.PushStyleVar(imgui_style_var.FrameBorderSize, borderSize)
     imgui.PushStyleVar(imgui_style_var.WindowPadding, vector.New(PADDING_WIDTH, 8))
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushStyleVar(imgui_style_var.ItemSpacing, vector.New(DEFAULT_WIDGET_HEIGHT / 2 - 1, 4))
+    imgui.PushStyleVar(imgui_style_var.ItemSpacing, vector.New(DEFAULT_WIDGET_HEIGHT * 0.5 - 1, 4))
     imgui.PushStyleVar(imgui_style_var.ItemInnerSpacing, vector.New(SAMELINE_SPACING, 6))
     imgui.PushStyleVar(imgui_style_var.WindowRounding, cornerRoundnessValue)
     imgui.PushStyleVar(imgui_style_var.ChildRounding, cornerRoundnessValue)
@@ -5938,7 +5938,7 @@ local function drawTriangleTrailPoint(o, m, point, cursorTrailSize, color)
     local dx = m.x - point.x
     local dy = m.y - point.y
     if dx == 0 and dy == 0 then return end
-    local angle = math.pi / 2
+    local angle = math.pi * 0.5
     if dx ~= 0 then angle = math.atan(dy / dx) end
     if dx < 0 then angle = angle + math.pi end
     if dx == 0 and dy < 0 then angle = angle + math.pi end
@@ -6543,7 +6543,7 @@ end
 function chooseFlickerPosition(menuVars)
     _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
         math.round(menuVars.flickerPosition * 100) .. "%%")
-    menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
+    menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) * 0.5
 end
 function chooseNumFrames(settingVars)
     _, settingVars.numFrames = imgui.InputInt("Total # Frames", math.floor(settingVars.numFrames))
@@ -7123,7 +7123,7 @@ function scalePercent(settingVars, percent)
         newPercent = b + 1 - math.sqrt(radicand)
     elseif scaleType == "Sine Power" then
         local exponent = math.log(a + 1)
-        local base = math.sin(math.pi * (workingPercent - 1) / 2) + 1
+        local base = math.sin(math.pi * (workingPercent - 1) * 0.5) + 1
         newPercent = workingPercent * (base ^ exponent)
     elseif scaleType == "Arc Sine Power" then
         local exponent = math.log(a + 1)
@@ -7176,7 +7176,7 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
     avgValue = avgValue - verticalShift
     local exponentialIncrease = (behavior == "Speed up")
     local exponentialSet = {}
-    intensity = intensity / 5
+    intensity = intensity * 0.2
     for i = 0, numValues - 1 do
         local x
         if exponentialIncrease then
@@ -7195,7 +7195,7 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
 end
 function generateExponentialSet2(behavior, numValues, startValue, endValue, intensity)
     local exponentialSet = {}
-    intensity = intensity / 5
+    intensity = intensity * 0.2
     if (behavior == "Slow down" and startValue ~= endValue) then
         local temp = startValue
         startValue = endValue
@@ -7289,7 +7289,7 @@ function generateSinusoidalSet(startAmplitude, endAmplitude, periods, periodsShi
         normalizedSharpness = (curveSharpness / 50) ^ 2
     end
     for i = 0, totalValues do
-        local angle = (math.pi / 2) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
+        local angle = (math.pi * 0.5) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
         local value = amplitudes[i + 1] * (math.abs(math.sin(angle)) ^ (normalizedSharpness))
         value = value * math.sign(math.sin(angle)) + verticalShift
         sinusoidalSet[sinusoidalSet + 1] = value
@@ -7501,7 +7501,7 @@ function plotSigmoidalCurvature(settingVars)
                 value = (t - 1) ^ (1 / curvature) + 1
             end
         end
-        value = value / 2
+        value = value * 0.5
         if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 1 - value
         elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
@@ -8501,7 +8501,7 @@ DEFAULT_STARTING_SETTING_VARS = {
     customVibratoSV = {
         code = [[return function (x)
     local maxHeight = 150
-    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) / 2) / (31 - 7 * math.sqrt(17)) * 16
+    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) * 0.5) / (31 - 7 * math.sqrt(17)) * 16
     primaryCoefficient = (x^2 - x^3) * math.exp(2 * x)
     sinusoidalCoefficient = math.sin(8 * math.pi * x)
     return heightFactor * primaryCoefficient * sinusoidalCoefficient
@@ -8647,7 +8647,7 @@ end]]
     local startPeriod = 4
     local endPeriod = -1
     local height = 1.5
-    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) / 2 * x^2))
+    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) * 0.5 * x^2))
 end]],
         svPoints = 64,
         finalSVIndex = 2,

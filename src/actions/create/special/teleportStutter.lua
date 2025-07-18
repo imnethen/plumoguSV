@@ -1,10 +1,10 @@
 function placeTeleportStutterSVs(settingVars)
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
-    local svPercent = settingVars.svPercent / 100
+    local svPercent = settingVars.svPercent * 0.01
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
     if settingVars.linearlyChange then
-        lastSVPercent = settingVars.svPercent2 / 100
+        lastSVPercent = settingVars.svPercent2 * 0.01
         lastMainSV = settingVars.mainSV2
     end
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -48,11 +48,11 @@ end
 
 function placeTeleportStutterSSFs(settingVars)
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
-    local svPercent = settingVars.svPercent / 100
+    local svPercent = settingVars.svPercent * 0.01
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
     if settingVars.linearlyChange then
-        lastSVPercent = settingVars.svPercent2 / 100
+        lastSVPercent = settingVars.svPercent2 * 0.01
         lastMainSV = settingVars.mainSV2
     end
     local offsets = uniqueNoteOffsetsBetweenSelected()

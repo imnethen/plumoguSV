@@ -33,7 +33,7 @@ function drawGlare(o, coords, size, glareColor, auraColor)
     local innerPoints = {}
     local outerPoints = {}
     for i = 1, 4 do
-        local angle = math.pi * ((2 * i + 1) / 4)
+        local angle = math.pi * ((2 * i + 1) * 0.25)
         local innerX = innerRadius * math.cos(angle)
         local innerY = innerRadius * math.sin(angle)
         local outerX = outerRadius * innerX

@@ -29,7 +29,7 @@ function placeStutterSVs(settingVars)
             local stutterStart = stutterOffsets[j]
             local stutterEnd = stutterOffsets[j + 1]
             local timeInterval = stutterEnd - stutterStart
-            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration / 100
+            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration * 0.01
             addSVToList(svsToAdd, stutterStart, svMultipliers[1], true)
             addSVToList(svsToAdd, secondSVOffset, svMultipliers[2], true)
             stutterIndex = stutterIndex + 1
@@ -69,7 +69,7 @@ function placeStutterSSFs(settingVars)
             local stutterStart = stutterOffsets[j]
             local stutterEnd = stutterOffsets[j + 1]
             local timeInterval = stutterEnd - stutterStart
-            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration / 100
+            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration * 0.01
             addSSFToList(ssfsToAdd, stutterStart, ssfMultipliers[1], true)
             addSSFToList(ssfsToAdd, secondSVOffset, ssfMultipliers[2], true)
             stutterIndex = stutterIndex + 1

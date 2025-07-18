@@ -24,7 +24,7 @@ DEFAULT_STARTING_SETTING_VARS = {
         code = [[return function (x)
     local maxHeight = 150
 
-    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) / 2) / (31 - 7 * math.sqrt(17)) * 16
+    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) * 0.5) / (31 - 7 * math.sqrt(17)) * 16
     primaryCoefficient = (x^2 - x^3) * math.exp(2 * x)
     sinusoidalCoefficient = math.sin(8 * math.pi * x)
     return heightFactor * primaryCoefficient * sinusoidalCoefficient
@@ -171,7 +171,7 @@ end]]
     local endPeriod = -1
     local height = 1.5
 
-    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) / 2 * x^2))
+    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) * 0.5 * x^2))
 end]],
         svPoints = 64,
         finalSVIndex = 2,

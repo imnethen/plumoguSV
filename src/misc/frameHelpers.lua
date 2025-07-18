@@ -68,7 +68,7 @@ function drawCurrentFrame(settingVars)
     local mapKeyCount = map.GetKeyCount()
     local noteWidth = 200 / mapKeyCount
     local noteSpacing = 5
-    local barNoteHeight = math.round(2 * noteWidth / 5, 0)
+    local barNoteHeight = math.round(2 * noteWidth * 0.2, 0)
     local noteColor = rgbaToUint(117, 117, 117, 255)
     local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
     local drawlist = imgui.GetWindowDrawList()
@@ -79,7 +79,7 @@ function drawCurrentFrame(settingVars)
         for _, lane in ipairs(frameTime.lanes) do
             if noteSkinType == "Bar" then
                 local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
-                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
+                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position * 0.5)
                 local x2 = x1 + noteWidth
                 local y2 = y1 - barNoteHeight
                 if globalVars.upscroll then
@@ -90,9 +90,9 @@ function drawCurrentFrame(settingVars)
                 local p2 = coordsRelativeToWindow(x2, y2)
                 drawlist.AddRectFilled(p1, p2, noteColor)
             elseif noteSkinType == "Circle" then
-                local circleRadius = noteWidth / 2
+                local circleRadius = noteWidth * 0.5
                 local leftBlankSpace = 2 * noteSpacing + circleRadius
-                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
+                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position * 0.5
                 local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
                 local y1 = childHeight - yBlankSpace
                 if globalVars.upscroll then

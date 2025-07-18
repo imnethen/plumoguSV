@@ -564,7 +564,7 @@ end
 function chooseFlickerPosition(menuVars)
     _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
         math.round(menuVars.flickerPosition * 100) .. "%%")
-    menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
+    menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) * 0.5
 end
 
 function chooseNumFrames(settingVars)

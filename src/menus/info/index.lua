@@ -20,8 +20,8 @@ function infoTab()
         state.SetValue("showSettingsWindow", true)
         local windowDim = state.WindowSize
         local pluginDim = imgui.GetWindowSize()
-        local centeringX = (windowDim[1] - pluginDim.x) / 2
-        local centeringY = (windowDim[2] - pluginDim.y) / 2
+        local centeringX = (windowDim[1] - pluginDim.x) * 0.5
+        local centeringY = (windowDim[2] - pluginDim.y) * 0.5
         local coordinatesToCenter = vector.New(centeringX, centeringY)
         imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
     end

@@ -120,7 +120,7 @@ function plotSigmoidalCurvature(settingVars)
                 value = (t - 1) ^ (1 / curvature) + 1
             end
         end
-        value = value / 2
+        value = value * 0.5
         if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 1 - value
         elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then

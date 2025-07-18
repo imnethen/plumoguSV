@@ -18,10 +18,10 @@ function generateSinusoidalSet(startAmplitude, endAmplitude, periods, periodsShi
     if curveSharpness > 50 then
         normalizedSharpness = math.sqrt((curveSharpness - 50) * 2)
     else
-        normalizedSharpness = (curveSharpness / 50) ^ 2
+        normalizedSharpness = (curveSharpness * 0.02) ^ 2
     end
     for i = 0, totalValues do
-        local angle = (math.pi / 2) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
+        local angle = (math.pi * 0.5) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
         local value = amplitudes[i + 1] * (math.abs(math.sin(angle)) ^ (normalizedSharpness))
         value = value * math.sign(math.sin(angle)) + verticalShift
         table.insert(sinusoidalSet, value)
