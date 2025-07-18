@@ -2,7 +2,7 @@
 ---@param tbl { [string]: any } The table to search in.
 ---@return string[] keys A list of keys.
 function table.keys(tbl)
-    local resultsTbl = table.construct()
+    local resultsTbl = {}
 
     for k, _ in pairs(tbl) do
         table.insert(resultsTbl, k)

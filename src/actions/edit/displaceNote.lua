@@ -8,7 +8,7 @@ function displaceNoteSVsParent(menuVars)
     local svsToRemove = {}
     local svsToAdd = {}
 
-    for _, offset in pairs(offsets) do
+    for _, offset in ipairs(offsets) do
         local tbl = displaceNoteSVs(
             {
                 distance = (offset - offsets[1]) / (offsets[#offsets] - offsets[1]) *

@@ -92,7 +92,7 @@ function stringifyCustomStyle(customStyle)
     local keys = table.keys(customStyle)
     local resultStr = ""
 
-    for _, key in pairs(keys) do
+    for _, key in ipairs(keys) do
         local value = customStyle[key]
         keyId = convertStrToShort(key)
         local r = math.floor(value.x * 255)
@@ -108,7 +108,7 @@ end
 function setCustomStyleString(str)
     local keyIdDict = {}
 
-    for _, key in pairs(table.keys(DEFAULT_STYLE)) do
+    for _, key in ipairs(table.keys(DEFAULT_STYLE)) do
         keyIdDict[key] = convertStrToShort(key)
     end
 

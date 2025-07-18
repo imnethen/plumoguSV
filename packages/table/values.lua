@@ -2,9 +2,9 @@
 ---@param tbl { [string]: any } The table to search in.
 ---@return string[] values A list of values.
 function table.values(tbl)
-    local resultsTbl = table.construct()
+    local resultsTbl = {}
 
-    for _, v in pairs(tbl) do
+    for _, v in ipairs(tbl) do
         table.insert(resultsTbl, v)
     end
 

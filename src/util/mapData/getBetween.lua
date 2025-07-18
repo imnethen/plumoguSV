@@ -4,7 +4,7 @@
 ---@return HitObject[] objs All of the [hit objects](lua://HitObject) within the area.
 function getNotesBetweenOffsets(startOffset, endOffset)
     local notesBetweenOffsets = {} ---@type HitObject[]
-    for _, note in pairs(map.HitObjects) do
+    for _, note in ipairs(map.HitObjects) do
         local noteIsInRange = note.StartTime >= startOffset and note.StartTime <= endOffset
         if noteIsInRange then table.insert(notesBetweenOffsets, note) end
     end
@@ -17,7 +17,7 @@ end
 ---@return TimingPoint[] tps All of the [timing points](lua://TimingPoint) within the area.
 function getLinesBetweenOffsets(startOffset, endOffset)
     local linesBetweenoffsets = {} ---@type TimingPoint[]
-    for _, line in pairs(map.TimingPoints) do
+    for _, line in ipairs(map.TimingPoints) do
         local lineIsInRange = line.StartTime >= startOffset and line.StartTime < endOffset
         if lineIsInRange then table.insert(linesBetweenoffsets, line) end
     end
@@ -32,7 +32,7 @@ end
 ---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
 function getSVsBetweenOffsets(startOffset, endOffset, includeEnd, dontSort)
     local svsBetweenOffsets = {} ---@type ScrollVelocity[]
-    for _, sv in pairs(map.ScrollVelocities) do
+    for _, sv in ipairs(map.ScrollVelocities) do
         local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
         if (includeEnd and sv.StartTime == endOffset) then svIsInRange = true end
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
@@ -47,7 +47,7 @@ end
 ---@return Bookmark[] bms All of the [bookmarks](lua://Bookmark) within the area.
 function getBookmarksBetweenOffsets(startOffset, endOffset)
     local bookmarksBetweenOffsets = {} ---@type Bookmark[]
-    for _, bm in pairs(map.Bookmarks) do
+    for _, bm in ipairs(map.Bookmarks) do
         local bmIsInRange = bm.StartTime >= startOffset and bm.StartTime < endOffset
         if bmIsInRange then table.insert(bookmarksBetweenOffsets, bm) end
     end
@@ -60,7 +60,7 @@ end
 ---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
 function getHypotheticalSVsBetweenOffsets(svs, startOffset, endOffset)
     local svsBetweenOffsets = {} ---@type ScrollVelocity[]
-    for _, sv in pairs(svs) do
+    for _, sv in ipairs(svs) do
         local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime < endOffset + 1
         if svIsInRange then table.insert(svsBetweenOffsets, sv) end
     end
@@ -78,7 +78,7 @@ function getSSFsBetweenOffsets(startOffset, endOffset, includeEnd)
     if (ssfs == nil) then
         ssfs = {}
     else
-        for _, ssf in pairs(map.ScrollSpeedFactors) do
+        for _, ssf in ipairs(map.ScrollSpeedFactors) do
             local ssfIsInRange = ssf.StartTime >= startOffset and ssf.StartTime < endOffset
             if (includeEnd and ssf.StartTime == endOffset) then ssfIsInRange = true end
             if ssfIsInRange then table.insert(ssfsBetweenOffsets, ssf) end

@@ -10,7 +10,7 @@ stars = {}
 function updateStars()
     local dim = imgui.GetWindowSize()
 
-    for _, star in pairs(stars) do
+    for _, star in ipairs(stars) do
         local starWrapped = false
         while (star.pos.x > dim.x + 10) do
             starWrapped = true
@@ -49,7 +49,7 @@ function renderBackground()
         updateStars()
     end
 
-    for _, star in pairs(stars) do
+    for _, star in ipairs(stars) do
         local progress = star.pos.x / dim.x
         local brightness = math.clamp(-8 * progress * (progress - 1), 0, 1)
         ctx.AddCircleFilled(star.pos + topLeft, star.size, rgbaToUint(255, 255, 255, math.floor(255 * brightness)))

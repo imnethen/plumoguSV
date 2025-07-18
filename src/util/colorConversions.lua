@@ -4,7 +4,7 @@ function rgbaToUint(r, g, b, a) return a * 16 ^ 6 + b * 16 ^ 4 + g * 16 ^ 2 + r 
 
 function rgbaToHexa(r, g, b, a)
     local hexaStr = ""
-    for _, col in pairs({ r, g, b, a }) do
+    for _, col in ipairs({ r, g, b, a }) do
         hexaStr = hexaStr .. HEXADECIMAL[math.floor(col / 16) + 1] .. HEXADECIMAL[col % 16 + 1]
     end
     return hexaStr

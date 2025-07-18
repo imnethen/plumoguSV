@@ -17,7 +17,7 @@ function addFrameTimes(settingVars)
             hasAlreadyAddedLaneTime[lane][time] = true
         end
     end
-    for _, ho in pairs(state.SelectedHitObjects) do
+    for _, ho in ipairs(state.SelectedHitObjects) do
         local lane = ho.Lane
         local time = ho.StartTime
         if (not hasAlreadyAddedLaneTime[lane][time]) then
@@ -74,9 +74,9 @@ function drawCurrentFrame(settingVars)
     local drawlist = imgui.GetWindowDrawList()
     local childHeight = 250
     imgui.BeginChild("Current Frame", vector.New(255, childHeight), 1)
-    for _, frameTime in pairs(settingVars.frameTimes) do
+    for _, frameTime in ipairs(settingVars.frameTimes) do
         if not frameTime.frame == settingVars.currentFrame then goto continue end
-        for _, lane in pairs(frameTime.lanes) do
+        for _, lane in ipairs(frameTime.lanes) do
             if noteSkinType == "Bar" then
                 local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
                 local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
@@ -108,7 +108,7 @@ function drawCurrentFrame(settingVars)
 end
 
 function addSelectedNoteTimesToList(menuVars)
-    for _, ho in pairs(state.SelectedHitObjects) do
+    for _, ho in ipairs(state.SelectedHitObjects) do
         table.insert(menuVars.noteTimes, ho.StartTime)
     end
     menuVars.noteTimes = table.dedupe(menuVars.noteTimes)

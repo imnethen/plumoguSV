@@ -6,9 +6,9 @@
 function table.normalize(values, targetAverage, includeLastValue)
     local avgValue = table.average(values, includeLastValue)
     if avgValue == 0 then return table.constructRepeating(0, #values) end
-    local newValues = table.construct()
+    local newValues = {}
     for i = 1, #values do
-        newValues:insert((values[i] * targetAverage) / avgValue)
+        table.insert(newValues, (values[i] * targetAverage) / avgValue)
     end
 
     return newValues

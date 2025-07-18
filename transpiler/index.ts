@@ -17,6 +17,8 @@ export default async function transpiler(
     lint = true
 ) {
     let fileCount = 0;
+    let rootLocalCount = 0;
+
     let output = '';
 
     const files = getFilesRecursively('packages');
@@ -32,16 +34,36 @@ export default async function transpiler(
             !file.endsWith('.lua')
         )
             return;
-        const fileData = readFileSync(file, 'utf-8')
+        let fileData = readFileSync(file, 'utf-8')
             .replaceAll(/( *)\<const\> */g, '$1')
             .replaceAll(/\-\-\[\[.*?\-\-\]\][ \r\n]*/gs, '')
             .split('\n')
-            .map((l) =>
-                l.replaceAll(
+            .map((l) => {
+                l = l.replace(/\s+$/, '');
+                l = l.replaceAll(
                     /^([^\-\r\n]*)[\-]{2}([\-]{2,})?[^\-\r\n].+[ \r\n]*/g,
                     '$1'
-                )
-            ); // Removes <const> tag, removes --[[ --]] comments, removes double dash comments (not triple dash) from lines with code
+                ); // Removes <const> tag, removes --[[ --]] comments, removes double dash comments (not triple dash) from lines with code
+                l = l.replaceAll(
+                    /table\.insert\(([a-zA-Z0-9\[\]_\.]+), ([^,\r\n]+)\)( end)?$/g,
+                    '$1[$1 + 1] = $2$3'
+                ); // Replace table insert for performance
+                l = l.replaceAll(
+                    /^function ([a-zA-Z0-9_]+)\(/g,
+                    'local function $1('
+                ); // Reduce global hashmap size with local root functions
+                l = l.replaceAll(/^(?!local)([a-z0-9_]+) = /g, `local $1 = `); // Reduce global hashmap size with local root variables
+                return l;
+            });
+
+        fileData.forEach((line, idx) => {
+            if (!/^local/.test(line)) return;
+            rootLocalCount++;
+            if (rootLocalCount > 200) {
+                fileData[idx] = line.replace(/^local /, '');
+            }
+        }); // Root locals limited to 200 due to lua restriction
+
         output = `${output}\n${fileData
             .map((str) => str.replace(/\s+$/, ''))
             .filter((str) => str)
@@ -55,8 +77,10 @@ export default async function transpiler(
     if (lint) {
         const splitOutput = output.split('\n');
 
-        const functions = getFunctionList(splitOutput)
-        functions[0] = functions[0].filter((fn) => !fn.startsWith("string") && !fn.startsWith("table"))
+        const functions = getFunctionList(splitOutput);
+        functions[0] = functions[0].filter(
+            (fn) => !fn.startsWith('string') && !fn.startsWith('table')
+        );
         const [_, unusedIndexes] = getUnusedFunctions(splitOutput, functions);
 
         unusedIndexes.reverse().forEach((idx) => {

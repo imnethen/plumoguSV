@@ -76,7 +76,7 @@ function plotExponentialCurvature(settingVars)
     imgui.PushItemWidth(28)
     imgui.PushStyleColor(imgui_col.FrameBg, 0)
     local RESOLUTION = 16
-    local values = table.construct()
+    local values = {}
     for i = 1, RESOLUTION do
         local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local t = i / RESOLUTION
@@ -91,7 +91,7 @@ function plotExponentialCurvature(settingVars)
         elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 0.5
         end
-        values:insert(value)
+        table.insert(values, value)
     end
     imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
     imgui.PopStyleColor()
@@ -102,7 +102,7 @@ function plotSigmoidalCurvature(settingVars)
     imgui.PushItemWidth(28)
     imgui.PushStyleColor(imgui_col.FrameBg, 0)
     local RESOLUTION = 32
-    local values = table.construct()
+    local values = {}
     for i = 1, RESOLUTION do
         local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
         local t = i / RESOLUTION * 2
@@ -126,7 +126,7 @@ function plotSigmoidalCurvature(settingVars)
         elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 0.5
         end
-        values:insert(value)
+        table.insert(values, value)
     end
     imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
     imgui.PopStyleColor()

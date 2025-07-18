@@ -12,7 +12,7 @@ function alignTimingLines()
 
     local noteTimes = {}
 
-    for _, n in pairs(map.HitObjects) do
+    for _, n in ipairs(map.HitObjects) do
         table.insert(noteTimes, n.StartTime)
     end
 
@@ -32,7 +32,7 @@ function alignTimingLines()
             table.insert(times, originalTime)
         end
     end
-    for _, time in pairs(times) do
+    for _, time in ipairs(times) do
         if (getTimingPointAt(time).StartTime == time) then
             table.insert(tpsToRemove, getTimingPointAt(time))
         end

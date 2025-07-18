@@ -18,7 +18,7 @@ function selectBySnap(menuVars)
         if (menuVars.snap % i == 0) then table.insert(factors, i) end
     end
 
-    for _, factor in pairs(factors) do
+    for _, factor in ipairs(factors) do
         while (pointer <= endOffset + 10) do
             if ((counter ~= 0 or factor == 1) and pointer >= startOffset) then table.insert(disallowedTimes, pointer) end
             counter = (counter + 1) % factor
@@ -34,7 +34,7 @@ function selectBySnap(menuVars)
         pointer = pointer + (60000 / bpm) / (menuVars.snap)
     end
 
-    for _, bannedTime in pairs(disallowedTimes) do
+    for _, bannedTime in ipairs(disallowedTimes) do
         for idx, time in pairs(times) do
             if (math.abs(time - bannedTime) < 10) then table.remove(times, idx) end
         end
@@ -43,7 +43,7 @@ function selectBySnap(menuVars)
     local notesToSelect = {}
     local currentTime = times[1]
     local index = 2
-    for _, note in pairs(notes) do
+    for _, note in ipairs(notes) do
         if (note.StartTime > currentTime + 10 and index <= #times) then
             currentTime = times[index]
             index = index + 1

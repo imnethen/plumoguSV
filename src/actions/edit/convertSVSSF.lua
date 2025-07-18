@@ -2,35 +2,35 @@ function convertSVSSF(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
-    local objects = table.construct()
-    local editorActions = table.construct()
+    local objects = {}
+    local editorActions = {}
 
     if (menuVars.conversionDirection) then
         local svs = getSVsBetweenOffsets(startOffset, endOffset, false)
-        for _, sv in pairs(svs) do
-            objects:insert({ StartTime = sv.StartTime, Multiplier = sv.Multiplier })
+        for _, sv in ipairs(svs) do
+            table.insert(objects, { StartTime = sv.StartTime, Multiplier = sv.Multiplier })
         end
-        editorActions:insert(utils.CreateEditorAction(action_type.RemoveScrollVelocityBatch, svs))
+        table.insert(editorActions, utils.CreateEditorAction(action_type.RemoveScrollVelocityBatch, svs))
     else
         local ssfs = getSSFsBetweenOffsets(startOffset, endOffset, false)
-        for _, ssf in pairs(ssfs) do
-            objects:insert({ StartTime = ssf.StartTime, Multiplier = ssf.Multiplier })
+        for _, ssf in ipairs(ssfs) do
+            table.insert(objects, { StartTime = ssf.StartTime, Multiplier = ssf.Multiplier })
         end
-        editorActions:insert(utils.CreateEditorAction(action_type.RemoveScrollSpeedFactorBatch, ssfs))
+        table.insert(editorActions, utils.CreateEditorAction(action_type.RemoveScrollSpeedFactorBatch, ssfs))
     end
-    local createTable = table.construct()
-    for _, obj in pairs(objects) do
+    local createTable = {}
+    for _, obj in ipairs(objects) do
         if (menuVars.conversionDirection) then
-            createTable:insert(createSSF(obj.StartTime,
+            table.insert(createTable, createSSF(obj.StartTime,
                 obj.Multiplier))
         else
-            createTable:insert(createSV(obj.StartTime, obj.Multiplier))
+            table.insert(createTable, createSV(obj.StartTime, obj.Multiplier))
         end
     end
     if (menuVars.conversionDirection) then
-        editorActions:insert(utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, createTable))
+        table.insert(editorActions, utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, createTable))
     else
-        editorActions:insert(utils.CreateEditorAction(action_type.AddScrollVelocityBatch, createTable))
+        table.insert(editorActions, utils.CreateEditorAction(action_type.AddScrollVelocityBatch, createTable))
     end
     actions.PerformBatch(editorActions)
     toggleablePrint("w!", "Successfully converted.")

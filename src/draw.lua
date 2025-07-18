@@ -41,7 +41,7 @@ function draw()
 
     if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
         local tgId = state.SelectedHitObjects[1].TimingGroup
-        for _, ho in pairs(state.SelectedHitObjects) do
+        for _, ho in ipairs(state.SelectedHitObjects) do
             if (ho.TimingGroup ~= tgId) then return end
         end
         state.SelectedScrollGroupId = tgId
@@ -69,7 +69,7 @@ end
 function renderMeasureDataWidget()
     if #state.SelectedHitObjects < 2 then return end
     local uniqueDict = {}
-    for _, ho in pairs(state.SelectedHitObjects) do -- uniqueSelectedNoteOffsets was not used here because this approach exits the function faster
+    for _, ho in ipairs(state.SelectedHitObjects) do -- uniqueSelectedNoteOffsets was not used here because this approach exits the function faster
         if (not table.contains(uniqueDict, ho.StartTime)) then
             table.insert(uniqueDict, ho.StartTime)
         end

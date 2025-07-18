@@ -5,7 +5,7 @@
 function table.average(values, includeLastValue)
     if #values == 0 then return 0 end
     local sum = 0
-    for _, value in pairs(values) do
+    for _, value in ipairs(values) do
         sum = sum + value
     end
     if not includeLastValue then
