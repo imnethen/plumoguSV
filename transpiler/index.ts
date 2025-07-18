@@ -62,7 +62,11 @@ export default async function transpiler(
             if (rootLocalCount > 200) {
                 fileData[idx] = line.replace(/^local /, '');
             }
-        }); // Root locals limited to 200 due to lua restriction
+        }); // Limit root locals to 200 due to lua restriction
+
+        fileData.forEach((line, idx) => {
+            if (idx == fileData.length - 1) return;
+        });
 
         output = `${output}\n${fileData
             .map((str) => str.replace(/\s+$/, ''))
