@@ -13,6 +13,13 @@ end
 function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t * t
 end
+---Returns n choose r, or nCr.
+---@param n integer
+---@param r integer
+---@return integer
+function math.binom(n, r)
+    return math.factorial(n) / (math.factorial(r) * math.factorial(n - r))
+end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
 ---@param lowerBound number
@@ -58,6 +65,52 @@ function math.hermite(m1, m2, y2, t)
     return a * t * t * t + b * t * t + c * t
 end
 local matrix = {}
+---Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateCircle(p1, p2, p3)
+    local mtrx = {
+        vector.Table(2 * (p2 - p1)),
+        vector.Table(2 * (p3 - p1))
+    }
+    local vctr = {
+        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
+        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
+    }
+    h, k = matrix.solve(mtrx, vctr)
+    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h * h + k * k - 2 * h * p1.x - 2 * k * p1.y)
+    ---@type number, number, number
+    return h, k, r
+end
+---Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateQuadratic(p1, p2, p3)
+    local mtrx = {
+        (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
+        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
+    }
+    local vctr = {
+        (p2 - p1).y,
+        (p3 - p1).y
+    }
+    a, b = matrix.solve(mtrx, vctr)
+    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
+    ---@type number, number, number
+    return a, b, c
+end
+---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
+---@param weight number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.lerp(weight, lowerBound, upperBound)
+    return upperBound * weight + lowerBound * (1 - weight)
+end
 ---Returns the weight of a number between `lowerBound` and `upperBound`.
 ---@param num number
 ---@param lowerBound number
@@ -115,6 +168,11 @@ function matrix.solve(mtrx, vctr)
         end
     end
     return table.unpack(table.property(augMtrx, #mtrx + 1))
+end
+function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
+    local temp = mtrx[rowIdx1]
+    mtrx[rowIdx1] = mtrx[rowIdx2]
+    mtrx[rowIdx2] = temp
 end
 ---Rounds a number to a given amount of decimal places.
 ---@param number number
@@ -2285,6 +2343,22 @@ local function draw()
         end
         state.SelectedScrollGroupId = tgId
     end
+end
+local function renderNoteDataWidget()
+    if (#state.SelectedHitObjects ~= 1) then return end
+    imgui.BeginTooltip()
+    imgui.Text("Note Info:")
+    local selectedNote = state.SelectedHitObjects[1]
+    imgui.Text("StartTime = " .. selectedNote.StartTime .. " ms")
+    local noteIsNotLN = selectedNote.EndTime == 0
+    if noteIsNotLN then
+        imgui.EndTooltip()
+        return
+    end
+    local lnLength = selectedNote.EndTime - selectedNote.StartTime
+    imgui.Text("EndTime = " .. selectedNote.EndTime .. " ms")
+    imgui.Text("LN Length = " .. lnLength .. " ms")
+    imgui.EndTooltip()
 end
 local function renderMeasureDataWidget()
     if #state.SelectedHitObjects < 2 then return end
@@ -7005,6 +7079,23 @@ function calculateDisplacementsFromSVs(svs, offsets)
     displacements[displacements + 1] = totalDisplacement
     return displacements
 end
+function calculateStillDisplacements(stillType, stillDistance, svDisplacements, nsvDisplacements)
+    local finalDisplacements = {}
+    for i = 1, #svDisplacements do
+        local difference = nsvDisplacements[i] - svDisplacements[i]
+        finalDisplacements[finalDisplacements + 1] = difference
+    end
+    local extraDisplacement = stillDistance
+    if stillType == "End" or stillType == "Otua" then
+        extraDisplacement = stillDistance - finalDisplacements[#finalDisplacements]
+    end
+    if stillType ~= "No" then
+        for i = 1, #finalDisplacements do
+            finalDisplacements[i] = finalDisplacements[i] + extraDisplacement
+        end
+    end
+    return finalDisplacements
+end
 --
 --
 function getUsableDisplacementMultiplier(offset)
@@ -7165,6 +7256,77 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
     end
     circularSet[circularSet + 1] = avgValue
     return circularSet
+end
+function generateComboSet(values1, values2, comboPhase, comboType, comboMultiplier1,
+                          comboMultiplier2, dontNormalize, avgValue, verticalShift)
+    local comboValues = {}
+    if comboType == "SV Type 1 Only" then
+        comboValues = table.duplicate(values1)
+    elseif comboType == "SV Type 2 Only" then
+        comboValues = table.duplicate(values2)
+    else
+        local lastValue1 = table.remove(values1)
+        local lastValue2 = table.remove(values2)
+        local endIndex1 = #values1 - comboPhase
+        local startIndex1 = comboPhase + 1
+        local endIndex2 = comboPhase - #values1
+        local startIndex2 = #values1 + #values2 + 1 - comboPhase
+        for i = 1, endIndex1 do
+            comboValues[comboValues + 1] = values1[i]
+        end
+        for i = 1, endIndex2 do
+            comboValues[comboValues + 1] = values2[i]
+        end
+        if comboType ~= "Remove" then
+            local comboValues1StartIndex = endIndex1 + 1
+            local comboValues1EndIndex = startIndex2 - 1
+            local comboValues2StartIndex = endIndex2 + 1
+            local comboValues2EndIndex = startIndex1 - 1
+            local comboValues1 = {}
+            for i = comboValues1StartIndex, comboValues1EndIndex do
+                comboValues1[comboValues1 + 1] = values1[i]
+            end
+            local comboValues2 = {}
+            for i = comboValues2StartIndex, comboValues2EndIndex do
+                comboValues2[comboValues2 + 1] = values2[i]
+            end
+            for i = 1, #comboValues1 do
+                local comboValue1 = comboValues1[i]
+                local comboValue2 = comboValues2[i]
+                local finalValue
+                if comboType == "Add" then
+                    finalValue = comboMultiplier1 * comboValue1 + comboMultiplier2 * comboValue2
+                elseif comboType == "Cross Multiply" then
+                    finalValue = comboValue1 * comboValue2
+                elseif comboType == "Min" then
+                    finalValue = math.min(comboValue1, comboValue2)
+                elseif comboType == "Max" then
+                    finalValue = math.max(comboValue1, comboValue2)
+                end
+                comboValues[comboValues + 1] = finalValue
+            end
+        end
+        for i = startIndex1, #values2 do
+            comboValues[comboValues + 1] = values2[i]
+        end
+        for i = startIndex2, #values1 do
+            comboValues[comboValues + 1] = values1[i]
+        end
+        if #comboValues == 0 then comboValues[comboValues + 1] = 1 end
+        if (comboPhase - #values2 >= 0) then
+            comboValues[comboValues + 1] = lastValue1
+        else
+            comboValues[comboValues + 1] = lastValue2
+        end
+    end
+    avgValue = avgValue - verticalShift
+    if not dontNormalize then
+        comboValues = table.normalize(comboValues, avgValue, false)
+    end
+    for i = 1, #comboValues do
+        comboValues[i] = comboValues[i] + verticalShift
+    end
+    return comboValues
 end
 function generateCustomSet(values)
     local newValues = table.duplicate(values)
