@@ -611,12 +611,12 @@ function table.vectorize2(tbl)
     if (tbl[1] and tbl[2]) then return vector.New(tbl[1], tbl[2]) end
     return vector.New(tbl.x, tbl.y)
 end
-local function __toBeFunction(obtainedValue, expectedValue)
+local function __toEqualFunction(obtainedValue, expectedValue)
     return obtainedValue == expectedValue
 end
 local function expect(expr)
     return {
-        toBe = function(x) return __toBeFunction(x, expr) end
+        toEqual = function(x) return __toEqualFunction(x, expr) end
     }
 end
 local function expect(func)
@@ -624,17 +624,17 @@ local function expect(func)
         of = function(expr)
             if (type(expr) == "table") then
                 return {
-                    toBe = function(tbl)
+                    toEqual = function(tbl)
                         if (#tbl ~= #expr) then return false end
                         for i = 1, #tbl do
-                            if (not __toBeFunction(tbl[i], func(expr[i]))) then return false end
+                            if (not __toEqualFunction(tbl[i], func(expr[i]))) then return false end
                         end
                         return true
                     end
                 }
             else
                 return {
-                    toBe = function(x) return __toBeFunction(x, expr) end
+                    toEqual = function(x) return __toEqualFunction(x, expr) end
                 }
             end
         end
@@ -2835,7 +2835,7 @@ CREATE_TYPES = {
 }
 local function createSVTab()
     if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
-    choosePlaceSVType()
+    chooseCreateTool()
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Standard" then placeStandardSVMenu() end
     if placeType == "Special" then placeSpecialSVMenu() end
@@ -6639,7 +6639,7 @@ function choosePeriodShift(settingVars)
     settingVars.periodsShift = newShift
     return oldShift ~= newShift
 end
-function choosePlaceSVType()
+function chooseCreateTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
     KeepSameLine()

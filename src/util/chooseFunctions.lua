@@ -590,7 +590,7 @@ function choosePeriodShift(settingVars)
     return oldShift ~= newShift
 end
 
-function choosePlaceSVType()
+function chooseCreateTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("  Type:  ")
     KeepSameLine()
