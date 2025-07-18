@@ -4,14 +4,14 @@
 ---@param t number The time in which to evaluate the cubic bezier.
 ---@return number cBez The result.
 function math.cubicBezier(p2, p3, t)
-    return 3 * t * (1 - t) ^ 2 * p2 + 3 * t ^ 2 * (1 - t) * p3 + t ^ 3
+    return 3 * t * (1 - t) ^ 2 * p2 + 3 * t * t * (1 - t) * p3 + t * t * t
 end
 ---Evaluates a simplified one-dimensional quadratic bezier expression with points (0, p2, 1).
 ---@param p2 number The second point in the quadratic bezier.
 ---@param t number The time in which to evaluate the quadratic bezier.
 ---@return number qBez The result.
 function math.quadraticBezier(p2, t)
-    return 2 * t * (1 - t) * p2 + t ^ 2
+    return 2 * t * (1 - t) * p2 + t * t
 end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
@@ -55,7 +55,7 @@ function math.hermite(m1, m2, y2, t)
     local a = m1 + m2 - 2 * y2
     local b = 3 * y2 - 2 * m1 - m2
     local c = m1
-    return a * t ^ 3 + b * t ^ 2 + c * t
+    return a * t * t * t + b * t * t + c * t
 end
 local matrix = {}
 ---Returns the weight of a number between `lowerBound` and `upperBound`.
@@ -749,16 +749,16 @@ local function placePenisSV(settingVars)
     local svs = {}
     for j = 0, 1 do
         for i = 0, 100 do
-            local time = startTime + i * settingVars.bWidth / 100 + j * (settingVars.sWidth + settingVars.bWidth)
-            local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
-            local trueVal = settingVars.bCurvature / 100 * circVal + (1 - settingVars.bCurvature / 100)
+            local time = startTime + i * settingVars.bWidth * 0.01 + j * (settingVars.sWidth + settingVars.bWidth)
+            local circVal = math.sqrt(1 - ((i * 0.02) - 1) ^ 2)
+            local trueVal = settingVars.bCurvature * 0.01 * circVal + (1 - settingVars.bCurvature * 0.01)
             table.insert(svs, createSV(time, trueVal))
         end
     end
     for i = 0, 100 do
-        local time = startTime + settingVars.bWidth + i * settingVars.sWidth / 100
-        local circVal = math.sqrt(1 - ((i / 50) - 1) ^ 2)
-        local trueVal = settingVars.sCurvature / 100 * circVal + (3.75 - settingVars.sCurvature / 100)
+        local time = startTime + settingVars.bWidth + i * settingVars.sWidth * 0.01
+        local circVal = math.sqrt(1 - ((i * 0.02) - 1) ^ 2)
+        local trueVal = settingVars.sCurvature * 0.01 * circVal + (3.75 - settingVars.sCurvature * 0.01)
         table.insert(svs, createSV(time, trueVal))
     end
     removeAndAddSVs(getSVsBetweenOffsets(startTime, startTime + settingVars.sWidth + settingVars.bWidth * 2), svs)
@@ -794,7 +794,7 @@ local function placeStutterSVs(settingVars)
             local stutterStart = stutterOffsets[j]
             local stutterEnd = stutterOffsets[j + 1]
             local timeInterval = stutterEnd - stutterStart
-            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration / 100
+            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration * 0.01
             addSVToList(svsToAdd, stutterStart, svMultipliers[1], true)
             addSVToList(svsToAdd, secondSVOffset, svMultipliers[2], true)
             stutterIndex = stutterIndex + 1
@@ -833,7 +833,7 @@ local function placeStutterSSFs(settingVars)
             local stutterStart = stutterOffsets[j]
             local stutterEnd = stutterOffsets[j + 1]
             local timeInterval = stutterEnd - stutterStart
-            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration / 100
+            local secondSVOffset = stutterStart + timeInterval * settingVars.stutterDuration * 0.01
             addSSFToList(ssfsToAdd, stutterStart, ssfMultipliers[1], true)
             addSSFToList(ssfsToAdd, secondSVOffset, ssfMultipliers[2], true)
             stutterIndex = stutterIndex + 1
@@ -844,11 +844,11 @@ local function placeStutterSSFs(settingVars)
 end
 local function placeTeleportStutterSVs(settingVars)
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
-    local svPercent = settingVars.svPercent / 100
+    local svPercent = settingVars.svPercent * 0.01
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
     if settingVars.linearlyChange then
-        lastSVPercent = settingVars.svPercent2 / 100
+        lastSVPercent = settingVars.svPercent2 * 0.01
         lastMainSV = settingVars.mainSV2
     end
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -890,11 +890,11 @@ local function placeTeleportStutterSVs(settingVars)
 end
 local function placeTeleportStutterSSFs(settingVars)
     local finalSVType = FINAL_SV_TYPES[settingVars.finalSVIndex]
-    local svPercent = settingVars.svPercent / 100
+    local svPercent = settingVars.svPercent * 0.01
     local lastSVPercent = svPercent
     local lastMainSV = settingVars.mainSV
     if settingVars.linearlyChange then
-        lastSVPercent = settingVars.svPercent2 / 100
+        lastSVPercent = settingVars.svPercent2 * 0.01
         lastMainSV = settingVars.mainSV2
     end
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -3389,18 +3389,18 @@ local function directSVMenu()
     state.SetValue("savedMultiplier", menuVars.multiplier)
     imgui.Separator()
     if (imgui.ArrowButton("##DirectSVLeft", imgui_dir.Left)) then
-        menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs / 10))
+        menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs * 0.1))
     end
     KeepSameLine()
     imgui.Text("Page ")
     KeepSameLine()
     imgui.SetNextItemWidth(100)
-    _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs / 10)), 0)
+    _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs * 0.1)), 0)
     KeepSameLine()
-    imgui.Text(" of " .. math.ceil(#svs / 10))
+    imgui.Text(" of " .. math.ceil(#svs * 0.1))
     KeepSameLine()
     if (imgui.ArrowButton("##DirectSVRight", imgui_dir.Right)) then
-        menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
+        menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs * 0.1))
     end
     imgui.Separator()
     imgui.Text("Start Time")
@@ -4900,7 +4900,7 @@ local function updateStars()
             star.v.x = math.random() * 3 + 1
             star.size = math.random(3) * 0.5
         else
-            star.pos = star.pos + star.v * state.DeltaTime / 20 *
+            star.pos = star.pos + star.v * state.DeltaTime * 0.05 *
                 math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
         end
     end
@@ -7119,7 +7119,7 @@ function scalePercent(settingVars, percent)
     elseif scaleType == "Circular" then
         if a == 0 then return percent end
         local b = 1 / (a ^ (a + 1))
-        local radicand = (b + 1) ^ 2 + b ^ 2 - (workingPercent + b) ^ 2
+        local radicand = (b + 1) ^ 2 + b * b - (workingPercent + b) ^ 2
         newPercent = b + 1 - math.sqrt(radicand)
     elseif scaleType == "Sine Power" then
         local exponent = math.log(a + 1)
@@ -7144,13 +7144,13 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
                              dontNormalize)
     local increaseValues = (behavior == "Speed up")
     avgValue = avgValue - verticalShift
-    local startingAngle = math.pi * (arcPercent / 100)
+    local startingAngle = math.pi * (arcPercent * 0.01)
     local angles = generateLinearSet(startingAngle, 0, numValues)
     local yCoords = {}
     for i = 1, #angles do
         local angle = math.round(angles[i], 8)
         local x = math.cos(angle)
-        yCoords[i] = -avgValue * math.sqrt(1 - x ^ 2)
+        yCoords[i] = -avgValue * math.sqrt(1 - x * x)
     end
     local circularSet = {}
     for i = 1, #yCoords - 1 do
@@ -7286,7 +7286,7 @@ function generateSinusoidalSet(startAmplitude, endAmplitude, periods, periodsShi
     if curveSharpness > 50 then
         normalizedSharpness = math.sqrt((curveSharpness - 50) * 2)
     else
-        normalizedSharpness = (curveSharpness / 50) ^ 2
+        normalizedSharpness = (curveSharpness * 0.02) ^ 2
     end
     for i = 0, totalValues do
         local angle = (math.pi * 0.5) * ((i / valuesPerQuarterPeriod) + quarterPeriodsShift)
@@ -7297,7 +7297,7 @@ function generateSinusoidalSet(startAmplitude, endAmplitude, periods, periodsShi
     return sinusoidalSet
 end
 function generateStutterSet(stutterValue, stutterDuration, avgValue, controlLastValue)
-    local durationPercent = stutterDuration / 100
+    local durationPercent = stutterDuration * 0.01
     if controlLastValue then durationPercent = 1 - durationPercent end
     local otherValue = (avgValue - stutterValue * durationPercent) / (1 - durationPercent)
     local stutterSet = { stutterValue, otherValue, avgValue }

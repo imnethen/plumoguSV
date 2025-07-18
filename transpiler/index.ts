@@ -76,6 +76,16 @@ export default async function transpiler(
         'for k = 1, #$2 do\n$3local $1 = $2[k]\n$3'
     ); // Reduce function overhead by removing ipairs
 
+    for (let i = 2; i <= 9; i++) {
+        const regex = new RegExp(` ([^\\)]) \\^ ${i}`, 'g');
+        output = output.replaceAll(
+            regex,
+            ` $1${Array(i - 1)
+                .fill(' * $1')
+                .join('')}`
+        );
+    }
+
     if (fuckify) output = fuckifyOutput(output);
 
     output = output.replaceAll('\n\n', '\n').trimStart();
