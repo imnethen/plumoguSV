@@ -64,16 +64,17 @@ export default async function transpiler(
             }
         }); // Limit root locals to 200 due to lua restriction
 
-        fileData.forEach((line, idx) => {
-            if (idx == fileData.length - 1) return;
-        });
-
         output = `${output}\n${fileData
             .map((str) => str.replace(/\s+$/, ''))
             .filter((str) => str)
             .join('\n')}`;
         fileCount++;
     });
+
+    output = output.replaceAll(
+        /for _, ([a-zA-Z0-9_]+) in ipairs\(([a-zA-Z0-9_\.\(\), ]+)\) do\n( *)/g,
+        'for k = 1, #$2 do\n$3local $1 = $2[k]\n$3'
+    ); // Reduce function overhead by removing ipairs
 
     if (fuckify) output = fuckifyOutput(output);
 
