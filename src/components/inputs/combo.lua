@@ -1,9 +1,10 @@
--- Creates an imgui combo
--- Returns the updated index of the item in the list that is selected [Int]
--- Parameters
---    label     : label for the combo [String]
---    list      : list for the combo to use [Table]
---    listIndex : current index of the item from the list being selected in the combo [Int]
+---Creates a combo element.
+---@param label string The label for the combo.
+---@param list string[] The list of elements the combo should use.
+---@param listIndex integer The currently selected combo index.
+---@param colorList? string[] An optional list containing an array of colors to use for each item.
+---@param hiddenGroups? string[] An optional list, where if any items in list show up here, they will not be shown on the dropdown.
+---@return number newListIndex The new combo index.
 function Combo(label, list, listIndex, colorList, hiddenGroups)
     local newListIndex = math.clamp(listIndex, 1, #list)
     local currentComboItem = list[listIndex]

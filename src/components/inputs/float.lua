@@ -34,14 +34,14 @@ function NegatableComputableInputFloat(label, var, decimalPlaces, suffix)
     return newValue, oldValue ~= newValue
 end
 
-function SwappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
+function SwappableNegatableInputFloat2(varsTable, lowerName, higherName, label, suffix, digits, widthFactor)
     digits = digits or 2
     suffix = suffix or "x"
     widthFactor = widthFactor or 0.7
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
     ToolTip("Swap start/end values")
-    local oldValues = vector.New(settingVars[lowerName], settingVars[higherName])
+    local oldValues = vector.New(varsTable[lowerName], varsTable[higherName])
     KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
@@ -51,15 +51,15 @@ function SwappableNegatableInputFloat2(settingVars, lowerName, higherName, label
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
     local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
     imgui.PopItemWidth()
-    settingVars[lowerName] = newValues.x
-    settingVars[higherName] = newValues.y
+    varsTable[lowerName] = newValues.x
+    varsTable[higherName] = newValues.y
     if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars[lowerName] = oldValues.y
-        settingVars[higherName] = oldValues.x
+        varsTable[lowerName] = oldValues.y
+        varsTable[higherName] = oldValues.x
     end
     if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars[lowerName] = -oldValues.x
-        settingVars[higherName] = -oldValues.y
+        varsTable[lowerName] = -oldValues.x
+        varsTable[higherName] = -oldValues.y
     end
     return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
         exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
