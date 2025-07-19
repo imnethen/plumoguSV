@@ -270,7 +270,7 @@ function chooseVaryingDistance(settingVars)
         settingVars.distance = ComputableInputFloat("Distance", settingVars.distance, 3, " msx")
         return
     end
-    return swappableNegatableInputFloat2(settingVars, "distance1", "distance2", "Dist.", "msx", 2)
+    return SwappableNegatableInputFloat2(settingVars, "distance1", "distance2", "Dist.", "msx", 2)
 end
 
 function chooseEvery(menuVars)
