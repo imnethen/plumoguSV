@@ -183,14 +183,7 @@ end
 function chooseCursorTrailGhost()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
-
-    local oldCursorTrailGhost = globalVars.cursorTrailGhost
-
-    _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", oldCursorTrailGhost)
-
-    if (oldCursorTrailGhost ~= globalVars.cursorTrailGhost) then
-        write(globalVars)
-    end
+    GlobalCheckbox("cursorTrailGhost", "No Ghost")
 end
 
 function chooseCursorTrailPoints()
@@ -289,30 +282,15 @@ function chooseSnap(menuVars)
 end
 
 function chooseDrawCapybara()
-    local oldDrawCapybara = globalVars.drawCapybara
-    _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
-    HelpMarker("Draws a capybara at the bottom right of the screen")
-    if (oldDrawCapybara ~= globalVars.drawCapybara) then
-        write(globalVars)
-    end
+    GlobalCheckbox("drawCapybara", "Capybara", "Draws a capybara at the bottom right of the screen")
 end
 
 function chooseDrawCapybara2()
-    local oldDrawCapybara2 = globalVars.drawCapybara2
-    _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
-    HelpMarker("Draws a capybara at the bottom left of the screen")
-    if (oldDrawCapybara2 ~= globalVars.drawCapybara2) then
-        write(globalVars)
-    end
+    GlobalCheckbox("drawCapybara2", "Capybara 2", "Draws a capybara at the bottom left of the screen")
 end
 
 function chooseDrawCapybara312()
-    local oldDrawCapybara312 = globalVars.drawCapybara312
-    _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", oldDrawCapybara312)
-    if (oldDrawCapybara312 ~= globalVars.drawCapybara312) then
-        write(globalVars)
-    end
-    HelpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
+    GlobalCheckbox("drawCapybara312", "Capybara 312", "Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
 
 function chooseSelectTool()
@@ -398,8 +376,7 @@ function chooseFlickerType(menuVars)
 end
 
 function chooseFrameOrder(settingVars)
-    local checkBoxText = "Reverse frame order when placing SVs"
-    _, settingVars.reverseFrameOrder = imgui.Checkbox(checkBoxText, settingVars.reverseFrameOrder)
+    BasicCheckbox(settingVars, "reverseFrameOrder", "Reverse frame order when placing SVs")
 end
 
 function chooseFrameSpacing(settingVars)
@@ -439,9 +416,7 @@ function chooseIntensity(settingVars)
 end
 
 function chooseInterlace(menuVars)
-    local oldInterlace = menuVars.interlace
-    _, menuVars.interlace = imgui.Checkbox("Interlace", menuVars.interlace)
-    local interlaceChanged = oldInterlace ~= menuVars.interlace
+    local interlaceChanged = BasicCheckbox(menuVars, "interlace", "Interlace")
     if not menuVars.interlace then return interlaceChanged end
     KeepSameLine()
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.5)
@@ -453,17 +428,11 @@ function chooseInterlace(menuVars)
 end
 
 function chooseLinearlyChange(settingVars)
-    local oldChoice = settingVars.linearlyChange
-    local _, newChoice = imgui.Checkbox("Change stutter over time", oldChoice)
-    settingVars.linearlyChange = newChoice
-    return oldChoice ~= newChoice
+    return BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time")
 end
 
 function chooseLinearlyChangeDist(settingVars)
-    local oldChoice = settingVars.linearlyChange
-    local _, newChoice = imgui.Checkbox("Change distance over time", oldChoice)
-    settingVars.linearlyChange = newChoice
-    return oldChoice ~= newChoice
+    return BasicCheckbox(settingVars, "linearlyChange", "Change distance over time")
 end
 
 -- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
@@ -515,10 +484,7 @@ end
 
 function chooseNoNormalize(settingVars)
     AddPadding()
-    local oldChoice = settingVars.dontNormalize
-    local _, newChoice = imgui.Checkbox("Don't normalize to average SV", oldChoice)
-    settingVars.dontNormalize = newChoice
-    return oldChoice ~= newChoice
+    return BasicCheckbox(settingVars, "dontNormalize", "Don't normalize to average SV")
 end
 
 function chooseNoteSkinType(settingVars)
@@ -840,13 +806,11 @@ function chooseUpscroll()
 end
 
 function chooseUseDistance(settingVars)
-    local label = "Use distance for start SV"
-    _, settingVars.useDistance = imgui.Checkbox(label, settingVars.useDistance)
+    BasicCheckbox(settingVars, "useDistance", "Use distance for start SV")
 end
 
 function chooseHand(settingVars)
-    local label = "Add teleport before note"
-    _, settingVars.teleportBeforeHand = imgui.Checkbox(label, settingVars.teleportBeforeHand)
+    BasicCheckbox(settingVars, "teleportBeforeHand", "Add teleport before note")
 end
 
 function chooseDistanceMode(menuVars)
@@ -995,8 +959,9 @@ function RadioButtons(label, value, options, optionValues, tooltip)
     return value
 end
 
-function BasicCheckbox(settingVars, parameterName, label)
+function BasicCheckbox(settingVars, parameterName, label, tooltip)
     local oldValue = settingVars[parameterName]
     _, settingVars[parameterName] = imgui.Checkbox(label, oldValue)
+    if (tooltip) then HelpMarker(tooltip) end
     return oldValue ~= settingVars[parameterName]
 end
