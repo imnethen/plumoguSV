@@ -11,8 +11,9 @@ export default function checkDuplicatedLines(plugin: string[]) {
         if (trimmedLine.startsWith('return')) return;
         if (trimmedLine.startsWith('imgui')) return;
         if (trimmedLine.startsWith('}')) return;
-        // if (trimmedLine.startsWith('"')) return;
-        // if (/^[a-zA-Z0-9_]+ = [-a-zA-Z0-9_\.\[\(\)\{\}]+,?$/.test(trimmedLine)) return;
+        if (trimmedLine.startsWith('"')) return;
+        if (/^[a-zA-Z0-9_]+ = [-a-zA-Z0-9_\.\[\(\)\{\}]+,$/.test(trimmedLine))
+            return;
         if (!hashmap[trimmedLine])
             hashmap[trimmedLine] = { indices: [], count: 0, trueLine: line };
         hashmap[trimmedLine].count++;
@@ -55,7 +56,7 @@ export default function checkDuplicatedLines(plugin: string[]) {
         if (idx === pluginCursor + 1) {
             savedLines.push(lines[trueIdx]);
         } else {
-            if (savedLines.length >= 10) {
+            if (savedLines.length >= 7) {
                 dupeArr.push(savedLines.join('\n'));
                 failedTests++;
             }
