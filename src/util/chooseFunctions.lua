@@ -63,10 +63,7 @@ function chooseColorTheme()
 end
 
 function chooseComboPhase(settingVars, maxComboPhase)
-    local oldPhase = settingVars.comboPhase
-    _, settingVars.comboPhase = imgui.InputInt("Combo Phase", oldPhase, 1, 1)
-    settingVars.comboPhase = math.clamp(settingVars.comboPhase, 0, maxComboPhase)
-    return oldPhase ~= settingVars.comboPhase
+    return BasicInputInt(settingVars, "comboPhase", "Combo Phase", { 0, maxComboPhase })
 end
 
 function chooseComboSVOption(settingVars, maxComboPhase)
@@ -190,10 +187,8 @@ function chooseCursorTrailPoints()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
-    local label = "Trail Points"
-    local oldCursorTrailPoints = globalVars.cursorTrailPoints
-    _, globalVars.cursorTrailPoints = imgui.InputInt(label, oldCursorTrailPoints, 1, 1)
-    if (oldCursorTrailPoints ~= globalVars.cursorTrailPoints) then
+    local settingChanged = BasicInputInt(globalVars, "cursorTrailPoints", "Trail Points")
+    if (settingChanged) then
         write(globalVars)
     end
 end
@@ -214,11 +209,8 @@ function chooseCursorShapeSize()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
 
-    --Reference
-    local label = "Shape Size"
-    local oldCursorTrailSize = globalVars.cursorTrailSize
-    _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
-    if (oldCursorTrailSize ~= globalVars.cursorTrailSize) then
+    local settingChanged = BasicInputInt(globalVars, "cursorTrailSize", "Shape Size")
+    if (settingChanged) then
         write(globalVars)
     end
 end
@@ -267,18 +259,15 @@ function chooseVaryingDistance(settingVars)
 end
 
 function chooseEvery(menuVars)
-    _, menuVars.every = imgui.InputInt("Every __ notes", math.floor(menuVars.every))
-    menuVars.every = math.clamp(menuVars.every, 1, MAX_SV_POINTS)
+    return BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
 end
 
 function chooseOffset(menuVars)
-    _, menuVars.offset = imgui.InputInt("From note #__", math.floor(menuVars.offset))
-    menuVars.offset = math.clamp(menuVars.offset, 1, menuVars.every)
+    return BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
 end
 
 function chooseSnap(menuVars)
-    _, menuVars.snap = imgui.InputInt("Snap", math.floor(menuVars.snap))
-    menuVars.snap = math.clamp(menuVars.snap, 1, 100)
+    return BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
 end
 
 function chooseDrawCapybara()
@@ -338,13 +327,11 @@ end
 function chooseEffectFPS()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
-    local oldEffectFPS = globalVars.effectFPS
-    _, globalVars.effectFPS = imgui.InputInt("Effect FPS", oldEffectFPS, 1, 1)
-    if (oldEffectFPS ~= globalVars.effectFPS) then
+    local settingChanged = BasicInputInt(globalVars, "effectFPS", "Effect FPS", { 2, 1000 },
+        "Set this to a multiple of UPS or FPS to make cursor effects smooth")
+    if (settingChanged) then
         write(globalVars)
     end
-    HelpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
-    globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
 end
 
 function chooseFinalSV(settingVars, skipFinalSV)
@@ -498,8 +485,7 @@ function chooseNoteSpacing(menuVars)
 end
 
 function chooseNumFlickers(menuVars)
-    _, menuVars.numFlickers = imgui.InputInt("Flickers", menuVars.numFlickers, 1, 1)
-    menuVars.numFlickers = math.clamp(menuVars.numFlickers, 1, 9999)
+    BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
 end
 
 function chooseFlickerPosition(menuVars)
@@ -509,8 +495,7 @@ function chooseFlickerPosition(menuVars)
 end
 
 function chooseNumFrames(settingVars)
-    _, settingVars.numFrames = imgui.InputInt("Total # Frames", math.floor(settingVars.numFrames))
-    settingVars.numFrames = math.clamp(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
+    BasicInputInt(settingVars, "numFrames", "Total # Frames", { 1, MAX_ANIMATION_FRAMES })
 end
 
 function chooseNumPeriods(settingVars)
@@ -743,12 +728,7 @@ function chooseStutterDuration(settingVars)
 end
 
 function chooseStuttersPerSection(settingVars)
-    local oldNumber = settingVars.stuttersPerSection
-    local _, newNumber = imgui.InputInt("Stutters", oldNumber, 1, 1)
-    HelpMarker("Number of stutters per section")
-    newNumber = math.clamp(newNumber, 1, 1000)
-    settingVars.stuttersPerSection = newNumber
-    return oldNumber ~= newNumber
+    return BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 })
 end
 
 function chooseStyleTheme()
@@ -790,10 +770,7 @@ function chooseSVPoints(settingVars, svPointsForce)
         return false
     end
 
-    local oldPoints = settingVars.svPoints
-    _, settingVars.svPoints = imgui.InputInt("SV Points##regular", oldPoints, 1, 1)
-    settingVars.svPoints = math.clamp(settingVars.svPoints, 1, MAX_SV_POINTS)
-    return oldPoints ~= settingVars.svPoints
+    return BasicInputInt(settingVars, "svPoints", "SV Points##regular", { 1, MAX_SV_POINTS })
 end
 
 function chooseUpscroll()
@@ -841,6 +818,17 @@ function choosePulseColor()
         state.SetValue("showColorPicker", false)
     end
     imgui.End()
+end
+
+function chooseVibratoSides(menuVars)
+    imgui.Dummy(vector.New(27, 0))
+    KeepSameLine()
+    menuVars.sides = RadioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
+end
+
+function chooseConvertSVSSFDirection(menuVars)
+    menuVars.conversionDirection = RadioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
+        { false, true })
 end
 
 function ComputableInputFloat(label, var, decimalPlaces, suffix)
@@ -935,17 +923,6 @@ function ColorInput(customStyle, parameterName, label, tooltipText)
     return oldCode ~= customStyle[parameterName]
 end
 
-function chooseVibratoSides(menuVars)
-    imgui.Dummy(vector.New(27, 0))
-    KeepSameLine()
-    menuVars.sides = RadioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
-end
-
-function chooseConvertSVSSFDirection(menuVars)
-    menuVars.conversionDirection = RadioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
-        { false, true })
-end
-
 function RadioButtons(label, value, options, optionValues, tooltip)
     imgui.AlignTextToFramePadding()
     imgui.Text(label)
@@ -963,5 +940,15 @@ function BasicCheckbox(settingVars, parameterName, label, tooltip)
     local oldValue = settingVars[parameterName]
     _, settingVars[parameterName] = imgui.Checkbox(label, oldValue)
     if (tooltip) then HelpMarker(tooltip) end
+    return oldValue ~= settingVars[parameterName]
+end
+
+function BasicInputInt(settingVars, parameterName, label, bounds, tooltip)
+    local oldValue = settingVars[parameterName]
+    _, settingVars[parameterName] = imgui.InputInt(label, oldValue, 1, 1)
+    if (tooltip) then HelpMarker(tooltip) end
+    if (truthy(#bounds)) then
+        settingVars[parameterName] = math.clamp(settingVars[parameterName], bounds[1], bounds[2])
+    end
     return oldValue ~= settingVars[parameterName]
 end
