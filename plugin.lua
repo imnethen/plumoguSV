@@ -2184,2694 +2184,6 @@ function selectBySnap(menuVars)
     actions.SetHitObjectSelection(notesToSelect)
     print(truthy(notesToSelect) and "s!" or "w!", #notesToSelect .. " notes selected")
 end
-function awake()
-    local tempGlobalVars = read()
-    if (not tempGlobalVars) then tempGlobalVars = table.construct() end
-    setGlobalVars(tempGlobalVars)
-    loadDefaultProperties(tempGlobalVars.defaultProperties)
-    setPresets(table.map(tempGlobalVars.presets or {}, table.parse))
-    state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
-end
-devMode = true
-imgui_disable_vector_packing = true
-function draw()
-    state.SetValue("computableInputFloatIndex", 1)
-    state.IsWindowHovered = imgui.IsWindowHovered()
-    drawCapybara()
-    drawCapybara2()
-    drawCapybara312()
-    drawCursorTrail()
-    setPluginAppearance()
-    startNextWindowNotCollapsed("plumoguSVAutoOpen")
-    imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
-    renderBackground()
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-    imgui.BeginTabBar("SV tabs")
-    for i = 1, #TAB_MENUS do
-        createMenuTab(TAB_MENUS[i])
-    end
-    imgui.EndTabBar()
-    if (globalVars.showVibratoWidget) then
-        imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
-        imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
-        placeVibratoSVMenu(true)
-        imgui.End()
-    end
-    if (globalVars.showNoteDataWidget) then
-        renderNoteDataWidget()
-    end
-    if (globalVars.showMeasureDataWidget) then
-        renderMeasureDataWidget()
-    end
-    imgui.End()
-    pulseController()
-    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
-        local tgId = state.SelectedHitObjects[1].TimingGroup
-        for _, ho in pairs(state.SelectedHitObjects) do
-            if (ho.TimingGroup ~= tgId) then return end
-        end
-        state.SelectedScrollGroupId = tgId
-    end
-end
-function renderMeasureDataWidget()
-    if #state.SelectedHitObjects < 2 then return end
-    local uniqueDict = {}
-    for _, ho in pairs(state.SelectedHitObjects) do
-        if (not table.contains(uniqueDict, ho.StartTime)) then
-            table.insert(uniqueDict, ho.StartTime)
-        end
-        if (#uniqueDict > 2) then return end
-    end
-    uniqueDict = table.sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
-    local startOffset = uniqueDict[1]
-    local endOffset = uniqueDict[2] or uniqueDict[1]
-    if (endOffset == startOffset) then return end
-    if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69)) then
-        svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
-        nsvDistance = endOffset - startOffset
-        addStartSVIfMissing(svsBetweenOffsets, startOffset)
-        totalDistance = calculateDisplacementFromSVs(svsBetweenOffsets, startOffset, endOffset)
-        roundedSVDistance = math.round(totalDistance, 3)
-        avgSV = totalDistance / (endOffset - startOffset)
-        roundedAvgSV = math.round(avgSV, 3)
-        state.SetValue("tooltip_nsvDistance", nsvDistance)
-        state.SetValue("tooltip_roundedSVDistance", roundedSVDistance)
-        state.SetValue("tooltip_roundedAvgSV", roundedAvgSV)
-    else
-        nsvDistance = state.GetValue("tooltip_nsvDistance", 0)
-        roundedSVDistance = state.GetValue("tooltip_roundedSVDistance", 0)
-        roundedAvgSV = state.GetValue("tooltip_roundedAvgSV", 0)
-    end
-    imgui.BeginTooltip()
-    imgui.Text("Measure Info:")
-    imgui.Text("NSV Distance = " .. nsvDistance .. " ms")
-    imgui.Text("SV Distance = " .. roundedSVDistance .. " msx")
-    imgui.Text("Avg SV = " .. roundedAvgSV .. "x")
-    imgui.EndTooltip()
-    state.SetValue("oldStartOffset", startOffset)
-    state.SetValue("oldEndOffset", endOffset)
-end
-function pulseController()
-    local prevVal = state.GetValue("prevVal", 0)
-    local colStatus = state.GetValue("colStatus", 0)
-    local timeOffset = 50
-    local timeSinceLastPulse = ((state.SongTime + timeOffset) - getTimingPointAt(state.SongTime).StartTime) %
-        ((60000 / getTimingPointAt(state.SongTime).Bpm))
-    if ((timeSinceLastPulse < prevVal)) then
-        colStatus = 1
-    else
-        colStatus = (colStatus - state.DeltaTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
-    end
-    local futureTime = state.SongTime + state.DeltaTime * 2 + timeOffset
-    if ((futureTime - getTimingPointAt(futureTime).StartTime) < 0) then
-        colStatus = 0
-    end
-    state.SetValue("colStatus", math.max(colStatus, 0))
-    state.SetValue("prevVal", timeSinceLastPulse)
-    colStatus = colStatus * (globalVars.pulseCoefficient or 0)
-    local borderColor = state.GetValue("baseBorderColor") or vector4(1)
-    local negatedBorderColor = vector4(1) - borderColor
-    local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
-    imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
-end
-DEFAULT_WIDGET_HEIGHT = 26
-DEFAULT_WIDGET_WIDTH = 160
-PADDING_WIDTH = 8
-RADIO_BUTTON_SPACING = 7.5
-SAMELINE_SPACING = 5
-ACTION_BUTTON_SIZE = vector.New(253, 42)
-PLOT_GRAPH_SIZE = vector.New(253, 100)
-HALF_ACTION_BUTTON_SIZE = vector.New(125, 42)
-SECONDARY_BUTTON_SIZE = vector.New(48, 24)
-TERTIARY_BUTTON_SIZE = vector.New(21.5, 24)
-EXPORT_BUTTON_SIZE = vector.New(40, 24)
-BEEG_BUTTON_SIZE = vector.New(253, 24)
-MIN_RGB_CYCLE_TIME = 0.1
-MAX_RGB_CYCLE_TIME = 300
-MAX_CURSOR_TRAIL_POINTS = 100
-MAX_SV_POINTS = 1000
-MAX_ANIMATION_FRAMES = 999
-MAX_IMPORT_CHARACTER_LIMIT = 999999
-CHINCHILLA_TYPES = {
-    "Exponential",
-    "Polynomial",
-    "Circular",
-    "Sine Power",
-    "Arc Sine Power",
-    "Inverse Power",
-    "Peter Stock"
-}
-COLOR_THEMES = {
-    "Classic",
-    "Strawberry",
-    "Amethyst",
-    "Tree",
-    "Barbie",
-    "Incognito",
-    "Incognito + RGB",
-    "Tobi's Glass",
-    "Tobi's RGB Glass",
-    "Glass",
-    "Glass + RGB",
-    "RGB Gamer Mode",
-    "edom remag BGR",
-    "BGR + otingocnI",
-    "otingocnI",
-    "CUSTOM"
-}
-COLOR_THEME_COLORS = {
-    "255,255,255",
-    "251,41,67",
-    "153,102,204",
-    "150,111,51",
-    "227,5,173",
-    "150,150,150",
-    "255,0,0",
-    "200,200,200",
-    "0,255,0",
-    "220,220,220",
-    "0,0,255",
-    "255,100,100",
-    "100,255,100",
-    "100,100,255",
-    "255,255,255",
-    "0,0,0",
-}
-COMBO_SV_TYPE = {
-    "Add",
-    "Cross Multiply",
-    "Remove",
-    "Min",
-    "Max",
-    "SV Type 1 Only",
-    "SV Type 2 Only"
-}
-CURSOR_TRAILS = {
-    "None",
-    "Snake",
-    "Dust",
-    "Sparkle"
-}
-DISPLACE_SCALE_SPOTS = {
-    "Start",
-    "End"
-}
-EMOTICONS = {
-    "( - _ - )",
-    "( e . e )",
-    "( * o * )",
-    "( h . m )",
-    "( ~ _ ~ )",
-    "( - . - )",
-    "( C | D )",
-    "( w . w )",
-    "( ^ w ^ )",
-    "( > . < )",
-    "( + x + )",
-    "( o _ 0 )",
-    "[ m w m ]",
-    "( v . ^ )",
-    "( ^ o v )",
-    "( ^ o v )",
-    "( ; A ; )",
-    "[ . _ . ]",
-    "[ ' = ' ]",
-}
-FINAL_SV_TYPES = {
-    "Normal",
-    "Custom",
-    "Override"
-}
-FLICKER_TYPES = {
-    "Normal",
-    "Delayed"
-}
-NOTE_SKIN_TYPES = {
-    "Bar",
-    "Circle"
-}
-RANDOM_TYPES = {
-    "Normal",
-    "Uniform"
-}
-SCALE_TYPES = {
-    "Average SV",
-    "Absolute Distance",
-    "Relative Ratio"
-}
-STANDARD_SVS_NO_COMBO = {
-    "Linear",
-    "Exponential",
-    "Bezier",
-    "Hermite",
-    "Sinusoidal",
-    "Circular",
-    "Random",
-    "Custom",
-    "Chinchilla"
-}
-STILL_TYPES = {
-    "No",
-    "Start",
-    "End",
-    "Auto",
-    "Otua"
-}
-STUTTER_CONTROLS = {
-    "First SV",
-    "Second SV"
-}
-STYLE_THEMES = {
-    "Rounded",
-    "Boxed",
-    "Rounded + Border",
-    "Boxed + Border"
-}
-SV_BEHAVIORS = {
-    "Slow down",
-    "Speed up"
-}
-TRAIL_SHAPES = {
-    "Circles",
-    "Triangles"
-}
-STILL_BEHAVIOR_TYPES = {
-    "Entire Region",
-    "Per Note Group",
-}
-DISTANCE_TYPES = {
-    "Average SV + Shift",
-    "Distance + Shift",
-    "Start / End"
-}
-VIBRATO_TYPES = {
-    "SV (msx)",
-    "SSF (x)",
-}
-VIBRATO_QUALITIES = {
-    "Low",
-    "Medium",
-    "High",
-    "Ultra",
-    "Omega"
-}
-VIBRATO_FRAME_RATES = { 45, 90, 150, 210, 450 }
-VIBRATO_DETAILED_QUALITIES = {}
-for i, v in pairs(VIBRATO_QUALITIES) do
-    table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
-end
-VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
-DEFAULT_STYLE = {
-    windowBg = vector.New(0.00, 0.00, 0.00, 1.00),
-    popupBg = vector.New(0.08, 0.08, 0.08, 0.94),
-    frameBg = vector.New(0.14, 0.24, 0.28, 1.00),
-    frameBgHovered =
-        vector.New(0.24, 0.34, 0.38, 1.00),
-    frameBgActive =
-        vector.New(0.29, 0.39, 0.43, 1.00),
-    titleBg = vector.New(0.14, 0.24, 0.28, 1.00),
-    titleBgActive =
-        vector.New(0.51, 0.58, 0.75, 1.00),
-    titleBgCollapsed =
-        vector.New(0.51, 0.58, 0.75, 0.50),
-    checkMark = vector.New(0.81, 0.88, 1.00, 1.00),
-    sliderGrab =
-        vector.New(0.56, 0.63, 0.75, 1.00),
-    sliderGrabActive =
-        vector.New(0.61, 0.68, 0.80, 1.00),
-    button = vector.New(0.31, 0.38, 0.50, 1.00),
-    buttonHovered =
-        vector.New(0.41, 0.48, 0.60, 1.00),
-    buttonActive =
-        vector.New(0.51, 0.58, 0.70, 1.00),
-    tab = vector.New(0.31, 0.38, 0.50, 1.00),
-    tabHovered =
-        vector.New(0.51, 0.58, 0.75, 1.00),
-    tabActive =
-        vector.New(0.51, 0.58, 0.75, 1.00),
-    header = vector.New(0.81, 0.88, 1.00, 0.40),
-    headerHovered =
-        vector.New(0.81, 0.88, 1.00, 0.50),
-    headerActive =
-        vector.New(0.81, 0.88, 1.00, 0.54),
-    separator = vector.New(0.81, 0.88, 1.00, 0.30),
-    text = vector.New(1.00, 1.00, 1.00, 1.00),
-    textSelectedBg =
-        vector.New(0.81, 0.88, 1.00, 0.40),
-    scrollbarGrab =
-        vector.New(0.31, 0.38, 0.50, 1.00),
-    scrollbarGrabHovered =
-        vector.New(0.41, 0.48, 0.60, 1.00),
-    scrollbarGrabActive =
-        vector.New(0.51, 0.58, 0.70, 1.00),
-    plotLines =
-        vector.New(0.61, 0.61, 0.61, 1.00),
-    plotLinesHovered =
-        vector.New(1.00, 0.43, 0.35, 1.00),
-    plotHistogram =
-        vector.New(0.90, 0.70, 0.00, 1.00),
-    plotHistogramHovered =
-        vector.New(1.00, 0.60, 0.00, 1.00)
-}
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
-GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
-HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
-    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
-    "Execute Vibrato Separately", "Use TG of Selected Note" }
-function CopiableBox(text, label, content)
-    imgui.TextWrapped(text)
-    imgui.PushItemWidth(imgui.GetContentRegionAvailWidth())
-    imgui.InputText(label, content, #content, imgui_input_text_flags.AutoSelectAll)
-    imgui.PopItemWidth()
-    AddPadding()
-end
-function Button(text, size, func, menuVars)
-    if not imgui.Button(text, size) then return end
-    if menuVars then
-        func(menuVars)
-        return
-    end
-    func()
-end
-function Combo(label, list, listIndex, colorList, hiddenGroups)
-    local newListIndex = math.clamp(listIndex, 1, #list)
-    local currentComboItem = list[listIndex]
-    local comboFlag = imgui_combo_flags.HeightLarge
-    rgb = {}
-    hiddenGroups = hiddenGroups or {}
-    if (colorList) then
-        colorList[newListIndex]:gsub("(%d+)", function(c)
-            table.insert(rgb, c)
-        end)
-        imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
-    end
-    if not imgui.BeginCombo(label, currentComboItem, comboFlag) then
-        if (colorList) then imgui.PopStyleColor() end
-        return newListIndex
-    end
-    if (colorList) then imgui.PopStyleColor() end
-    for i = 1, #list do
-        rgb = {}
-        if (colorList) then
-            colorList[i]:gsub("(%d+)", function(c)
-                table.insert(rgb, c)
-            end)
-            imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
-        end
-        local listItem = list[i]
-        if (table.contains(hiddenGroups, listItem)) then goto skipRender end
-        if imgui.Selectable(listItem) then
-            newListIndex = i
-        end
-        ::skipRender::
-        if (colorList) then imgui.PopStyleColor() end
-    end
-    imgui.EndCombo()
-    return newListIndex
-end
-function coordsRelativeToWindow(x, y)
-    local newX = x + imgui.GetWindowPos()[1]
-    local newY = y + imgui.GetWindowPos()[2]
-    return { newX, newY }
-end
-function relativePoint(point, xChange, yChange)
-    return { point[1] + xChange, point[2] + yChange }
-end
-function checkIfFrameChanged(currentTime, fps)
-    local oldFrameInfo = { frameNumber = 0 }
-    getVariables("oldFrameInfo", oldFrameInfo)
-    local newFrameNumber = math.floor(currentTime * fps) % fps
-    local frameChanged = oldFrameInfo.frameNumber ~= newFrameNumber
-    oldFrameInfo.frameNumber = newFrameNumber
-    saveVariables("oldFrameInfo", oldFrameInfo)
-    return frameChanged
-end
-function generate2DPoint(x, y) return { x = x, y = y } end
-function generateParticle(x, y, xRange, yRange, endTime, showParticle)
-    local particle = {
-        x = x,
-        y = y,
-        xRange = xRange,
-        yRange = yRange,
-        endTime = endTime,
-        showParticle = showParticle
-    }
-    return particle
-end
-function KeepSameLine()
-    return imgui.SameLine(0, SAMELINE_SPACING)
-end
-function checkIfMouseMoved(currentMousePosition)
-    local oldMousePosition = {
-        x = 0,
-        y = 0
-    }
-    getVariables("oldMousePosition", oldMousePosition)
-    local xChanged = currentMousePosition.x ~= oldMousePosition.x
-    local yChanged = currentMousePosition.y ~= oldMousePosition.y
-    local mousePositionChanged = xChanged or yChanged
-    oldMousePosition.x = currentMousePosition.x
-    oldMousePosition.y = currentMousePosition.y
-    saveVariables("oldMousePosition", oldMousePosition)
-    return mousePositionChanged
-end
-function drawEquilateralTriangle(o, centerPoint, size, angle, color)
-    local angle2 = 2 * math.pi / 3 + angle
-    local angle3 = 4 * math.pi / 3 + angle
-    local x1 = centerPoint.x + size * math.cos(angle)
-    local y1 = centerPoint.y + size * math.sin(angle)
-    local x2 = centerPoint.x + size * math.cos(angle2)
-    local y2 = centerPoint.y + size * math.sin(angle2)
-    local x3 = centerPoint.x + size * math.cos(angle3)
-    local y3 = centerPoint.y + size * math.sin(angle3)
-    local p1 = vector.New(x1, y1)
-    local p2 = vector.New(x2, y2)
-    local p3 = vector.New(x3, y3)
-    o.AddTriangleFilled(p1, p2, p3, color)
-end
-function drawGlare(o, coords, size, glareColor, auraColor)
-    local outerRadius = size
-    local innerRadius = outerRadius / 7
-    local innerPoints = {}
-    local outerPoints = {}
-    for i = 1, 4 do
-        local angle = math.pi * ((2 * i + 1) / 4)
-        local innerX = innerRadius * math.cos(angle)
-        local innerY = innerRadius * math.sin(angle)
-        local outerX = outerRadius * innerX
-        local outerY = outerRadius * innerY
-        innerPoints[i] = { innerX + coords.x, innerY + coords.y }
-        outerPoints[i] = { outerX + coords.x, outerY + coords.y }
-    end
-    o.AddQuadFilled(innerPoints[1], outerPoints[2], innerPoints[3], outerPoints[4], glareColor)
-    o.AddQuadFilled(outerPoints[1], innerPoints[2], outerPoints[3], innerPoints[4], glareColor)
-    local circlePoints = 20
-    local circleSize1 = size / 1.2
-    local circleSize2 = size / 3
-    o.AddCircleFilled(coords, circleSize1, auraColor, circlePoints)
-    o.AddCircleFilled(coords, circleSize2, auraColor, circlePoints)
-end
-function drawHorizontalPillShape(o, point1, point2, radius, color, circleSegments)
-    o.AddCircleFilled(point1, radius, color, circleSegments)
-    o.AddCircleFilled(point2, radius, color, circleSegments)
-    local rectangleStartCoords = relativePoint(point1, 0, radius)
-    local rectangleEndCoords = relativePoint(point2, 0, -radius)
-    o.AddRectFilled(rectangleStartCoords, rectangleEndCoords, color)
-end
-function AddPadding()
-    imgui.Dummy(vector.New(0, 0))
-end
-function AddSeparator()
-    AddPadding()
-    imgui.Separator()
-    AddPadding()
-end
-function ToolTip(text)
-    if not imgui.IsItemHovered() then return end
-    imgui.BeginTooltip()
-    imgui.PushTextWrapPos(imgui.GetFontSize() * 20)
-    imgui.Text(text)
-    imgui.PopTextWrapPos()
-    imgui.EndTooltip()
-end
-function HelpMarker(text)
-    KeepSameLine()
-    imgui.TextDisabled("(?)")
-    ToolTip(text)
-end
-CREATE_TYPES = {
-    "Standard",
-    "Special",
-    "Still",
-    "Vibrato",
-}
-function createSVTab()
-    if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
-    choosePlaceSVType()
-    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
-    if placeType == "Standard" then placeStandardSVMenu() end
-    if placeType == "Special" then placeSpecialSVMenu() end
-    if placeType == "Still" then placeStillSVMenu() end
-    if placeType == "Vibrato" then placeVibratoSVMenu(false) end
-end
-function renderPresetMenu(menuVars, settingVars)
-    imgui.Columns(4)
-    imgui.Text("Name")
-    imgui.NextColumn()
-    imgui.Text("Menu")
-    imgui.NextColumn()
-    imgui.Text("Details")
-    imgui.NextColumn()
-    imgui.Text("Jump To")
-    imgui.NextColumn()
-    imgui.Separator()
-    for _, preset in pairs(presets) do
-    end
-    imgui.SetColumnWidth(0, 100)
-    imgui.SetColumnWidth(1, 100)
-    imgui.SetColumnWidth(2, 100)
-    imgui.SetColumnWidth(3, 100)
-    imgui.Columns(1)
-end
-function animationFramesSetupMenu(settingVars)
-    chooseMenuStep(settingVars)
-    if settingVars.menuStep == 1 then
-        KeepSameLine()
-        imgui.Text("Choose Frame Settings")
-        AddSeparator()
-        chooseNumFrames(settingVars)
-        chooseFrameSpacing(settingVars)
-        chooseDistance(settingVars)
-        HelpMarker("Initial separating distance from selected note to the first frame")
-        chooseFrameOrder(settingVars)
-        AddSeparator()
-        chooseNoteSkinType(settingVars)
-    elseif settingVars.menuStep == 2 then
-        KeepSameLine()
-        imgui.Text("Adjust Notes/Frames")
-        AddSeparator()
-        imgui.Columns(2, "Notes and Frames", false)
-        addFrameTimes(settingVars)
-        displayFrameTimes(settingVars)
-        removeSelectedFrameTimeButton(settingVars)
-        AddPadding()
-        chooseFrameTimeData(settingVars)
-        imgui.NextColumn()
-        chooseCurrentFrame(settingVars)
-        drawCurrentFrame(settingVars)
-        imgui.Columns(1)
-        local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.x + 1.5 * SAMELINE_SPACING), 1 }
-        imgui.InvisibleButton("sv isnt a real skill", invisibleButtonSize)
-    else
-        KeepSameLine()
-        imgui.Text("Place SVs")
-        AddSeparator()
-        if #settingVars.frameTimes == 0 then
-            imgui.Text("No notes added in Step 2, so can't place SVs yet")
-            return
-        end
-        HelpMarker("This tool displaces notes into frames after the (first) selected note")
-        HelpMarker("Works with pre-existing SVs or no SVs in the map")
-        HelpMarker("This is technically an edit SV tool, but it replaces the old animate function")
-        HelpMarker("Make sure to prepare an empty area for the frames after the note you select")
-        HelpMarker("Note: frame positions and viewing them will break if SV distances change")
-        AddSeparator()
-        local label = "Setup frames after selected note"
-        simpleActionMenu(label, 1, displaceNotesForAnimationFrames, settingVars)
-    end
-end
-function removeSelectedFrameTimeButton(settingVars)
-    if #settingVars.frameTimes == 0 then return end
-    if not imgui.Button("Removed currently selected time", BEEG_BUTTON_SIZE) then return end
-    table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
-    local maxIndex = math.max(1, #settingVars.frameTimes)
-    settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
-end
-function animationPaletteMenu(settingVars)
-    codeInput(settingVars, "instructions", nil, "Write instructions here.")
-end
-function automateSVMenu(settingVars)
-    local copiedSVCount = #settingVars.copiedSVs
-    if (copiedSVCount == 0) then
-        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, settingVars)
-        return
-    end
-    Button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, settingVars)
-    AddSeparator()
-    settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
-    _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
-    KeepSameLine()
-    _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
-    _, settingVars.maintainMs = imgui.Checkbox("Static Time?", settingVars.maintainMs)
-    if (settingVars.maintainMs) then
-        KeepSameLine()
-        imgui.PushItemWidth(71)
-        settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
-        imgui.PopItemWidth()
-    end
-    AddSeparator()
-    simpleActionMenu("Automate SVs for selected notes", 2, automateSVs, settingVars)
-end
-SPECIAL_SVS = {
-    "Stutter",
-    "Teleport Stutter",
-    "Frames Setup",
-    "Automate",
-    "Penis",
-}
-function placeSpecialSVMenu()
-    presetButton()
-    local menuVars = getMenuVars("placeSpecial")
-    chooseSpecialSVType(menuVars)
-    AddSeparator()
-    local currentSVType = SPECIAL_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Special")
-    if globalVars.showPresetMenu then
-        renderPresetMenu(menuVars, settingVars)
-        return
-    end
-    if currentSVType == "Stutter" then stutterMenu(settingVars) end
-    if currentSVType == "Teleport Stutter" then teleportStutterMenu(settingVars) end
-    if currentSVType == "Frames Setup" then
-        animationFramesSetupMenu(settingVars)
-    end
-    if currentSVType == "Automate" then automateSVMenu(settingVars) end
-    if currentSVType == "Penis" then penisMenu(settingVars) end
-    local labelText = currentSVType .. "Special"
-    saveVariables(labelText .. "Settings", settingVars)
-    saveVariables("placeSpecialMenu", menuVars)
-end
-function penisMenu(settingVars)
-    _, settingVars.bWidth = imgui.InputInt("Ball Width", math.floor(settingVars.bWidth))
-    _, settingVars.sWidth = imgui.InputInt("Shaft Width", math.floor(settingVars.sWidth))
-    _, settingVars.sCurvature = imgui.SliderInt("S Curvature", settingVars.sCurvature, 1, 100,
-        settingVars.sCurvature .. "%%")
-    _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
-        settingVars.bCurvature .. "%%")
-    simpleActionMenu("Place SVs", 1, placePenisSV, settingVars)
-end
-function stutterMenu(settingVars)
-    local settingsChanged = #settingVars.svMultipliers == 0
-    settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
-    settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
-    settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
-    settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
-    AddSeparator()
-    settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
-    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-    settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
-    if settingsChanged then updateStutterMenuSVs(settingVars) end
-    displayStutterSVWindows(settingVars)
-    AddSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, settingVars)
-    simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, settingVars, true)
-end
-function teleportStutterMenu(settingVars)
-    if settingVars.useDistance then
-        chooseDistance(settingVars)
-        HelpMarker("Start SV teleport distance")
-    else
-        chooseStartSVPercent(settingVars)
-    end
-    chooseMainSV(settingVars)
-    chooseAverageSV(settingVars)
-    chooseFinalSV(settingVars, false)
-    chooseUseDistance(settingVars)
-    chooseLinearlyChange(settingVars)
-    AddSeparator()
-    simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, settingVars)
-    simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, settingVars, true)
-end
-STANDARD_SVS = {
-    "Linear",
-    "Exponential",
-    "Bezier",
-    "Hermite",
-    "Sinusoidal",
-    "Circular",
-    "Random",
-    "Custom",
-    "Chinchilla",
-    "Combo",
-    "Code"
-}
-function placeStandardSVMenu()
-    presetButton()
-    local menuVars = getMenuVars("placeStandard")
-    local needSVUpdate = #menuVars.svMultipliers == 0
-    needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
-    AddSeparator()
-    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Standard")
-    if globalVars.showPresetMenu then
-        renderPresetMenu(menuVars, settingVars)
-        return
-    end
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
-    AddSeparator()
-    needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
-    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, false) end
-    startNextWindowNotCollapsed("svInfoAutoOpen")
-    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
-        menuVars.svMultipliers, nil, false)
-    menuVars.settingVars = settingVars
-    AddSeparator()
-    if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
-        simpleActionMenu("Place SVs between selected notes##Exponential", 2, placeExponentialSpecialSVs, menuVars)
-    else
-        simpleActionMenu("Place SVs between selected notes", 2, placeSVs, menuVars)
-    end
-    simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, menuVars, true)
-    saveVariables(currentSVType .. "StandardSettings", settingVars)
-    saveVariables("placeStandardMenu", menuVars)
-end
-function placeStillSVMenu()
-    presetButton()
-    local menuVars = getMenuVars("placeStill")
-    local needSVUpdate = #menuVars.svMultipliers == 0
-    needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
-    AddSeparator()
-    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType, "Still")
-    if globalVars.showPresetMenu then
-        renderPresetMenu(menuVars, settingVars)
-        return
-    end
-    imgui.Text("Still Settings:")
-    chooseNoteSpacing(menuVars)
-    chooseStillBehavior(menuVars)
-    chooseStillType(menuVars)
-    AddSeparator()
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
-    AddSeparator()
-    needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
-    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, false) end
-    startNextWindowNotCollapsed("svInfoAutoOpen")
-    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
-        menuVars.svMultipliers, nil, false)
-    AddSeparator()
-    menuVars.settingVars = settingVars
-    simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, menuVars)
-    saveVariables(currentSVType .. "StillSettings", settingVars)
-    saveVariables("placeStillMenu", menuVars)
-end
-function customVibratoMenu(menuVars, settingVars, separateWindow)
-    local typingCode = false
-    if (menuVars.vibratoMode == 1) then
-        codeInput(settingVars, "code", "##code")
-        if imgui.IsItemActive() then
-            typingCode = true
-        else
-            typingCode = false
-        end
-        local func = eval(settingVars.code)
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v)
-            svVibrato(v, func)
-        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    else
-        codeInput(settingVars, "code1", "##code1")
-        if imgui.IsItemActive() then
-            typingCode = true
-        else
-            typingCode = false
-        end
-        codeInput(settingVars, "code2", "##code2")
-        if imgui.IsItemActive() then
-            typingCode = true
-        else
-            typingCode = typingCode or false
-        end
-        local func1 = eval(settingVars.code1)
-        local func2 = eval(settingVars.code2)
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v)
-            ssfVibrato(v, func1, func2)
-        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    end
-end
-function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
-    if (menuVars.vibratoMode == 1) then
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 0.875)
-        chooseCurvatureCoefficient(settingVars)
-        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
-        local func = function(t)
-            t = math.clamp(t, 0, 1)
-            if (curvature < 10) then
-                t = 1 - (1 - t) ^ (1 / curvature)
-            else
-                t = t ^ curvature
-            end
-            return settingVars.endMsx * t +
-                settingVars.startMsx * (1 - t)
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v)
-            svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    else
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
-        chooseCurvatureCoefficient(settingVars)
-        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
-        local func1 = function(t)
-            t = math.clamp(t, 0, 1)
-            if (curvature < 10) then
-                t = 1 - (1 - t) ^ (1 / curvature)
-            else
-                t = t ^ curvature
-            end
-            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
-        end
-        local func2 = function(t)
-            t = math.clamp(t, 0, 1)
-            if (curvature < 10) then
-                t = 1 - (1 - t) ^ (1 / curvature)
-            else
-                t = t ^ curvature
-            end
-            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    end
-end
-VIBRATO_SVS = {
-    "Linear##Vibrato",
-    "Exponential##Vibrato",
-    "Sinusoidal##Vibrato",
-    "Sigmoidal##Vibrato",
-    "Custom##Vibrato"
-}
-function placeVibratoSVMenu(separateWindow)
-    presetButton()
-    local menuVars = getMenuVars("placeVibrato")
-    chooseVibratoSVType(menuVars)
-    AddSeparator()
-    imgui.Text("Vibrato Settings:")
-    chooseVibratoMode(menuVars)
-    chooseVibratoQuality(menuVars)
-    if (menuVars.vibratoMode ~= 2) then
-        chooseVibratoSides(menuVars)
-    end
-    local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
-    local settingVars = getSettingVars(currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF"), "Vibrato")
-    if globalVars.showPresetMenu then
-        return
-    end
-    AddSeparator()
-    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
-    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars, separateWindow) end
-    if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars, separateWindow) end
-    if currentSVType == "Sigmoidal##Vibrato" then sigmoidalVibratoMenu(menuVars, settingVars, separateWindow) end
-    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars, separateWindow) end
-    local labelText = currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF") .. "Vibrato"
-    saveVariables(labelText .. "Settings", settingVars)
-    saveVariables("placeVibratoMenu", menuVars)
-end
-function linearVibratoMenu(menuVars, settingVars, separateWindow)
-    if (menuVars.vibratoMode == 1) then
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 0.875)
-        local func = function(t)
-            return settingVars.endMsx * t + settingVars.startMsx * (1 - t)
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v)
-            svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    else
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
-        local func1 = function(t)
-            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
-        end
-        local func2 = function(t)
-            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    end
-end
-function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
-    if (menuVars.vibratoMode == 1) then
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 7 / 8)
-        chooseCurvatureCoefficient(settingVars)
-        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
-        local func = function(t)
-            t = math.clamp(t, 0, 1) * 2
-            if (curvature >= 1) then
-                if (t <= 1) then
-                    t = t ^ curvature
-                else
-                    t = 2 - (2 - t) ^ curvature
-                end
-            else
-                if (t <= 1) then
-                    t = (1 - (1 - t) ^ (1 / curvature))
-                else
-                    t = (t - 1) ^ (1 / curvature) + 1
-                end
-            end
-            t = t / 2
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v)
-            svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    else
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
-        chooseCurvatureCoefficient(settingVars)
-        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
-        local func1 = function(t)
-            t = math.clamp(t, 0, 1)
-            if (curvature < 10) then
-                t = 1 - (1 - t) ^ (1 / curvature)
-            else
-                t = t ^ curvature
-            end
-            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
-        end
-        local func2 = function(t)
-            t = math.clamp(t, 0, 1)
-            if (curvature < 10) then
-                t = 1 - (1 - t) ^ (1 / curvature)
-            else
-                t = t ^ curvature
-            end
-            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    end
-end
-function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
-    if (menuVars.vibratoMode == 1) then
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 0.875)
-        chooseMsxVerticalShift(settingVars, 0)
-        chooseNumPeriods(settingVars)
-        choosePeriodShift(settingVars)
-        local func = function(t)
-            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) * (settingVars.startMsx +
-                t * (settingVars.endMsx - settingVars.startMsx)) + settingVars.verticalShift
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v)
-            svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    else
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
-        chooseConstantShift(settingVars)
-        chooseNumPeriods(settingVars)
-        choosePeriodShift(settingVars)
-        _, settingVars.applyToHigher = imgui.Checkbox("Apply Vibrato to Higher SSF?", settingVars.applyToHigher)
-        local func1 = function(t)
-            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
-                (settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)) +
-                settingVars.verticalShift
-        end
-        local func2 = function(t)
-            if (settingVars.applyToHigher) then
-                return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
-                    (settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)) +
-                    settingVars.verticalShift
-            end
-            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
-        end
-        AddSeparator()
-        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
-    end
-end
-function deleteTab()
-    local menuVars = getMenuVars("delete")
-    _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
-    KeepSameLine()
-    _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])
-    _, menuVars.deleteTable[3] = imgui.Checkbox("Delete SSFs", menuVars.deleteTable[3])
-    imgui.SameLine(0, SAMELINE_SPACING + 3.5)
-    _, menuVars.deleteTable[4] = imgui.Checkbox("Delete Bookmarks", menuVars.deleteTable[4])
-    saveVariables("deleteMenu", menuVars)
-    for i = 1, 4 do
-        if (menuVars.deleteTable[i]) then goto continue end
-    end
-    do return 69 end
-    ::continue::
-    simpleActionMenu("Delete items between selected notes", 2, deleteItems, menuVars)
-end
-function addTeleportMenu()
-    local menuVars = getMenuVars("addTeleport")
-    chooseDistance(menuVars)
-    chooseHand(menuVars)
-    saveVariables("addTeleportMenu", menuVars)
-    AddSeparator()
-    simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, menuVars)
-end
-function alignTimingLinesMenu()
-    simpleActionMenu("Align Timing Lines In This Region", 0, alignTimingLines, nil)
-end
-function changeGroupsMenu()
-    local menuVars = getMenuVars("changeGroups")
-    imgui.AlignTextToFramePadding()
-    imgui.Text("  Move to: ")
-    KeepSameLine()
-    local groups = { "$Default", "$Global" }
-    local cols = { map.TimingGroups["$Default"].ColorRgb or "86,253,110", map.TimingGroups["$Global"].ColorRgb or
-    "255,255,255" }
-    local hiddenGroups = {}
-    for tgId, tg in pairs(map.TimingGroups) do
-        if string.find(tgId, "%$") then goto cont end
-        if (globalVars.hideAutomatic and string.find(tgId, "automate_")) then
-            table.insert(hiddenGroups,
-                tgId)
-        end
-        table.insert(groups, tgId)
-        table.insert(cols, tg.ColorRgb or "255,255,255")
-        ::cont::
-    end
-    local prevIndex = table.indexOf(groups, menuVars.designatedTimingGroup)
-    imgui.PushItemWidth(155)
-    local newIndex = Combo("##changingScrollGroup", groups, prevIndex, cols, hiddenGroups)
-    imgui.PopItemWidth()
-    imgui.Dummy(vector.New(0, 2))
-    menuVars.designatedTimingGroup = groups[newIndex]
-    _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
-    KeepSameLine()
-    _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
-    AddSeparator()
-    simpleActionMenu("Move items to " .. menuVars.designatedTimingGroup, 2, changeGroups, menuVars)
-end
-function convertSVSSFMenu()
-    local menuVars = getMenuVars("convertSVSSF")
-    chooseConvertSVSSFDirection(menuVars)
-    saveVariables("convertSVSSFMenu", menuVars)
-    simpleActionMenu(menuVars.conversionDirection and "Convert SVs -> SSFs" or "Convert SSFs -> SVs", 2, convertSVSSF,
-        menuVars, false, false)
-end
-function copyNPasteMenu()
-    local menuVars = getMenuVars("copy")
-    _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
-    KeepSameLine()
-    _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
-    _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
-    imgui.SameLine(0, SAMELINE_SPACING + 3.5)
-    _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
-    AddSeparator()
-    local copiedItemCount = #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs + #menuVars.copiedBMs
-    if (copiedItemCount == 0) then
-        simpleActionMenu("Copy items between selected notes", 2, copyItems, menuVars)
-    else
-        Button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
-    end
-    if copiedItemCount == 0 then
-        saveVariables("copyMenu", menuVars)
-        return
-    end
-    AddSeparator()
-    _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
-    saveVariables("copyMenu", menuVars)
-    simpleActionMenu("Paste items at selected notes", 1, pasteItems, menuVars)
-end
-function updateDirectEdit()
-    local offsets = uniqueSelectedNoteOffsets()
-    if (not truthy(offsets)) then return end
-    local firstOffset = offsets[1]
-    local lastOffset = offsets[#offsets]
-    if (#offsets < 2) then
-        state.SetValue("directSVList", {})
-        return
-    end
-    local svs = getSVsBetweenOffsets(firstOffset, lastOffset)
-    state.SetValue("directSVList", svs)
-end
-function directSVMenu()
-    local menuVars = getMenuVars("directSV")
-    local clockTime = 0.2
-    if ((state.UnixTime or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
-        state.SetValue("lastRecordedTime", state.UnixTime or 0)
-        updateDirectEdit()
-    end
-    local svs = state.GetValue("directSVList") or {}
-    if (#svs == 0) then
-        menuVars.selectableIndex = 1
-        imgui.TextWrapped("Select two notes to view SVs.")
-        return
-    end
-    if (menuVars.selectableIndex > #svs) then menuVars.selectableIndex = #svs end
-    local oldStartTime = svs[menuVars.selectableIndex].StartTime
-    local oldMultiplier = svs[menuVars.selectableIndex].Multiplier
-    local primeStartTime = state.GetValue("primeStartTime") or false
-    local primeMultiplier = state.GetValue("primeMultiplier") or false
-    _, menuVars.startTime = imgui.InputFloat("Start Time", oldStartTime)
-    _, menuVars.multiplier = imgui.InputFloat("Multiplier", oldMultiplier)
-    if (oldStartTime ~= menuVars.startTime) then
-        primeStartTime = true
-    else
-        if (not primeStartTime) then goto continue1 end
-        primeStartTime = false
-        local newSV = createSV(state.GetValue("savedStartTime") or 0, menuVars.multiplier)
-        actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
-            utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
-    end
-    ::continue1::
-    if (oldMultiplier ~= menuVars.multiplier) then
-        primeMultiplier = true
-    else
-        if (not primeMultiplier) then goto continue2 end
-        primeMultiplier = false
-        local newSV = createSV(menuVars.startTime, state.GetValue("savedMultiplier") or 1)
-        actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
-            utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
-    end
-    ::continue2::
-    state.SetValue("primeStartTime", primeStartTime)
-    state.SetValue("primeMultiplier", primeMultiplier)
-    state.SetValue("savedStartTime", menuVars.startTime)
-    state.SetValue("savedMultiplier", menuVars.multiplier)
-    imgui.Separator()
-    if (imgui.ArrowButton("##DirectSVLeft", imgui_dir.Left)) then
-        menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs / 10))
-    end
-    KeepSameLine()
-    imgui.Text("Page ")
-    KeepSameLine()
-    imgui.SetNextItemWidth(100)
-    _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs / 10)), 0)
-    KeepSameLine()
-    imgui.Text(" of " .. math.ceil(#svs / 10))
-    KeepSameLine()
-    if (imgui.ArrowButton("##DirectSVRight", imgui_dir.Right)) then
-        menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
-    end
-    imgui.Separator()
-    imgui.Text("Start Time")
-    KeepSameLine()
-    imgui.SetCursorPosX(150)
-    imgui.Text("Multiplier")
-    imgui.Separator()
-    local startingPoint = 10 * menuVars.pageNumber - 10
-    imgui.BeginTable("Test", 2)
-    for idx, v in pairs({ table.unpack(svs, startingPoint + 1, startingPoint + 10) }) do
-        imgui.PushID(idx)
-        imgui.TableNextRow()
-        imgui.TableSetColumnIndex(0)
-        imgui.Selectable(tostring(math.round(v.StartTime, 2)), menuVars.selectableIndex == idx,
-            imgui_selectable_flags.SpanAllColumns)
-        if (imgui.IsItemClicked()) then
-            menuVars.selectableIndex = idx + startingPoint
-        end
-        imgui.TableSetColumnIndex(1)
-        imgui.SetCursorPosX(150)
-        imgui.Text(tostring(math.round(v.Multiplier, 2)));
-        imgui.PopID()
-    end
-    imgui.EndTable()
-    saveVariables("directSVMenu", menuVars)
-end
-function displaceNoteMenu()
-    local menuVars = getMenuVars("displaceNote")
-    chooseVaryingDistance(menuVars)
-    chooseLinearlyChangeDist(menuVars)
-    saveVariables("displaceNoteMenu", menuVars)
-    AddSeparator()
-    simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, menuVars)
-end
-function displaceViewMenu()
-    local menuVars = getMenuVars("displaceView")
-    chooseDistance(menuVars)
-    saveVariables("displaceViewMenu", menuVars)
-    AddSeparator()
-    simpleActionMenu("Displace view between selected notes", 2, displaceViewSVs, menuVars)
-end
-function dynamicScaleMenu()
-    local menuVars = getMenuVars("dynamicScale")
-    local numNoteTimes = #menuVars.noteTimes
-    imgui.Text(#menuVars.noteTimes .. " note times assigned to scale SVs between")
-    addNoteTimesToDynamicScaleButton(menuVars)
-    if numNoteTimes == 0 then
-        saveVariables("dynamicScaleMenu", menuVars)
-        return
-    else
-        clearNoteTimesButton(menuVars)
-    end
-    AddSeparator()
-    if #menuVars.noteTimes < 3 then
-        imgui.Text("Not enough note times assigned")
-        imgui.Text("Assign 3 or more note times instead")
-        saveVariables("dynamicScaleMenu", menuVars)
-        return
-    end
-    local numSVPoints = numNoteTimes - 1
-    local needSVUpdate = #menuVars.svMultipliers == 0 or (#menuVars.svMultipliers ~= numSVPoints)
-    imgui.AlignTextToFramePadding()
-    imgui.Text("Shape:")
-    KeepSameLine()
-    needSVUpdate = chooseStandardSVType(menuVars, true) or needSVUpdate
-    AddSeparator()
-    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
-    if currentSVType == "Sinusoidal" then
-        imgui.Text("Import sinusoidal values using 'Custom' instead")
-        saveVariables("dynamicScaleMenu", menuVars)
-        return
-    end
-    local settingVars = getSettingVars(currentSVType, "DynamicScale")
-    needSVUpdate = showSettingsMenu(currentSVType, settingVars, true, numSVPoints) or needSVUpdate
-    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, true) end
-    startNextWindowNotCollapsed("svInfoAutoOpen")
-    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
-        menuVars.svMultipliers, nil, true)
-    local labelText = currentSVType .. "DynamicScale"
-    saveVariables(labelText .. "Settings", settingVars)
-    saveVariables("dynamicScaleMenu", menuVars)
-    AddSeparator()
-    simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, menuVars)
-end
-function clearNoteTimesButton(menuVars)
-    if not imgui.Button("Clear all assigned note times", BEEG_BUTTON_SIZE) then return end
-    menuVars.noteTimes = {}
-end
-function addNoteTimesToDynamicScaleButton(menuVars)
-    local buttonText = "Assign selected note times"
-    Button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
-end
-function fixLNEndsMenu()
-    imgui.TextWrapped(
-        "If there is a negative SV at an LN end, the LN end will be flipped. This is noticable especially for arrow skins and is jarring. This tool will fix that.")
-    AddSeparator()
-    simpleActionMenu("Fix flipped LN ends", 0, fixFlippedLNEnds, nil)
-end
-function flickerMenu()
-    local menuVars = getMenuVars("flicker")
-    chooseFlickerType(menuVars)
-    chooseVaryingDistance(menuVars)
-    chooseLinearlyChangeDist(menuVars)
-    chooseNumFlickers(menuVars)
-    if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
-    saveVariables("flickerMenu", menuVars)
-    AddSeparator()
-    simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, menuVars)
-end
-EDIT_SV_TOOLS = {
-    "Add Teleport",
-    "Align Timing Lines",
-    "Change Groups",
-    "Convert SV <-> SSF",
-    "Copy & Paste",
-    "Direct SV",
-    "Displace Note",
-    "Displace View",
-    "Dynamic Scale",
-    "Fix LN Ends",
-    "Flicker",
-    "Layer Snaps",
-    "Measure",
-    "Merge",
-    "Reverse Scroll",
-    "Scale (Displace)",
-    "Scale (Multiply)",
-    "Swap Notes",
-    "Vertical Shift"
-}
-function editSVTab()
-    if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
-    chooseEditTool()
-    AddSeparator()
-    local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
-    if toolName == "Add Teleport" then addTeleportMenu() end
-    if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
-    if toolName == "Change Groups" then changeGroupsMenu() end
-    if toolName == "Convert SV <-> SSF" then convertSVSSFMenu() end
-    if toolName == "Copy & Paste" then copyNPasteMenu() end
-    if toolName == "Direct SV" then directSVMenu() end
-    if toolName == "Displace Note" then displaceNoteMenu() end
-    if toolName == "Displace View" then displaceViewMenu() end
-    if toolName == "Dynamic Scale" then dynamicScaleMenu() end
-    if toolName == "Fix LN Ends" then fixLNEndsMenu() end
-    if toolName == "Flicker" then flickerMenu() end
-    if toolName == "Layer Snaps" then layerSnapMenu() end
-    if toolName == "Measure" then measureMenu() end
-    if toolName == "Merge" then mergeMenu() end
-    if toolName == "Reverse Scroll" then reverseScrollMenu() end
-    if toolName == "Scale (Displace)" then scaleDisplaceMenu() end
-    if toolName == "Scale (Multiply)" then scaleMultiplyMenu() end
-    if toolName == "Swap Notes" then swapNotesMenu() end
-    if toolName == "Vertical Shift" then verticalShiftMenu() end
-end
-function layerSnapMenu()
-    simpleActionMenu("Layer snaps between selection", 2, layerSnaps, nil)
-    AddSeparator()
-    simpleActionMenu("Collapse snap layers", 0, collapseSnaps, nil)
-    simpleActionMenu("Clear unused snap layers", 0, clearSnappedLayers, nil)
-end
-function measureMenu()
-    local menuVars = getMenuVars("measure")
-    chooseMeasuredStatsView(menuVars)
-    AddSeparator()
-    if menuVars.unrounded then
-        displayMeasuredStatsUnrounded(menuVars)
-    else
-        displayMeasuredStatsRounded(menuVars)
-    end
-    AddPadding()
-    imgui.TextDisabled("*** Measuring disclaimer ***")
-    ToolTip("Measured values might not be 100%% accurate & may not work on older maps")
-    AddSeparator()
-    simpleActionMenu("Measure SVs between selected notes", 2, measureSVs, menuVars)
-    saveVariables("measureMenu", menuVars)
-end
-function displayMeasuredStatsRounded(menuVars)
-    imgui.Columns(2, "Measured SV Stats", false)
-    imgui.Text("NSV distance:")
-    imgui.Text("SV distance:")
-    imgui.Text("Average SV:")
-    imgui.Text("Start displacement:")
-    imgui.Text("End displacement:")
-    imgui.Text("True average SV:")
-    imgui.NextColumn()
-    imgui.Text(menuVars.roundedNSVDistance .. " msx")
-    HelpMarker("The normal distance between the start and the end, ignoring SVs")
-    imgui.Text(menuVars.roundedSVDistance .. " msx")
-    HelpMarker("The actual distance between the start and the end, calculated with SVs")
-    imgui.Text(menuVars.roundedAvgSV .. "x")
-    imgui.Text(menuVars.roundedStartDisplacement .. " msx")
-    HelpMarker("Calculated using plumoguSV displacement metrics, so might not always work")
-    imgui.Text(menuVars.roundedEndDisplacement .. " msx")
-    HelpMarker("Calculated using plumoguSV displacement metrics, so might not always work")
-    imgui.Text(menuVars.roundedAvgSVDisplaceless .. "x")
-    HelpMarker("Average SV calculated ignoring the start and end displacement")
-    imgui.Columns(1)
-end
-function displayMeasuredStatsUnrounded(menuVars)
-    CopiableBox("NSV distance", "##nsvDistance", menuVars.nsvDistance)
-    CopiableBox("SV distance", "##svDistance", menuVars.svDistance)
-    CopiableBox("Average SV", "##avgSV", menuVars.avgSV)
-    CopiableBox("Start displacement", "##startDisplacement", menuVars.startDisplacement)
-    CopiableBox("End displacement", "##endDisplacement", menuVars.endDisplacement)
-    CopiableBox("True average SV", "##avgSVDisplaceless", menuVars.avgSVDisplaceless)
-end
-function mergeMenu()
-    simpleActionMenu("Merge duplicate SVs between selected notes", 2, mergeSVs, nil)
-end
-function reverseScrollMenu()
-    local menuVars = getMenuVars("reverseScroll")
-    chooseDistance(menuVars)
-    HelpMarker("Height at which reverse scroll notes are hit")
-    saveVariables("reverseScrollMenu", menuVars)
-    AddSeparator()
-    local buttonText = "Reverse scroll between selected notes"
-    simpleActionMenu(buttonText, 2, reverseScrollSVs, menuVars)
-end
-function scaleDisplaceMenu()
-    local menuVars = getMenuVars("scaleDisplace")
-    chooseScaleDisplaceSpot(menuVars)
-    chooseScaleType(menuVars)
-    saveVariables("scaleDisplaceMenu", menuVars)
-    AddSeparator()
-    local buttonText = "Scale SVs between selected notes##displace"
-    simpleActionMenu(buttonText, 2, scaleDisplaceSVs, menuVars)
-end
-function scaleMultiplyMenu()
-    local menuVars = getMenuVars("scaleMultiply")
-    chooseScaleType(menuVars)
-    saveVariables("scaleMultiplyMenu", menuVars)
-    AddSeparator()
-    local buttonText = "Scale SVs between selected notes##multiply"
-    simpleActionMenu(buttonText, 2, scaleMultiplySVs, menuVars)
-end
-function swapNotesMenu()
-    simpleActionMenu("Swap selected notes using SVs", 2, swapNoteSVs, nil)
-end
-function verticalShiftMenu()
-    local menuVars = getMenuVars("verticalShift")
-    chooseConstantShift(menuVars, 0)
-    saveVariables("verticalShiftMenu", menuVars)
-    AddSeparator()
-    local buttonText = "Vertically shift SVs between selected notes"
-    simpleActionMenu(buttonText, 2, verticalShiftSVs, menuVars)
-end
-TAB_MENUS = {
-    "Info",
-    "Select",
-    "Create",
-    "Edit",
-    "Delete"
-}
----Creates a menu tab.
----@param tabName string
-function createMenuTab(tabName)
-    if not imgui.BeginTabItem(tabName) then return end
-    AddPadding()
-    if tabName == "Info" then
-        infoTab()
-    else
-        state.SetValue("showSettingsWindow", false)
-    end
-    if tabName == "Select" then selectTab() end
-    if tabName == "Create" then createSVTab() end
-    if tabName == "Edit" then editSVTab() end
-    if tabName == "Delete" then deleteTab() end
-    imgui.EndTabItem()
-end
-function infoTab()
-    imgui.SeparatorText("Welcome to plumoguSV!")
-    imgui.TextWrapped("This plugin is your one-stop shop for all of \nyour SV needs. Using it is quick and easy:")
-    AddPadding()
-    imgui.BulletText("Choose an SV tool in the Create tab.")
-    imgui.BulletText("Adjust the tool's settings to your liking.")
-    imgui.BulletText("Select notes to use the tool at.")
-    imgui.BulletText("Press the '" .. GLOBAL_HOTKEY_LIST[1] .. "' hotkey.")
-    AddPadding()
-    imgui.SeparatorText("Special thanks to:")
-    AddPadding()
-    imgui.BulletText("kloi34, for being the original dev.")
-    imgui.BulletText("kusa, for some handy widgets.")
-    imgui.BulletText("7xbi + nethen for some useful PRs.")
-    imgui.BulletText("Emik + William for plugin help.")
-    imgui.BulletText("ESV members for constant support.")
-    AddPadding()
-    AddPadding()
-    if (imgui.Button("Click Here To Edit Settings", ACTION_BUTTON_SIZE)) then
-        state.SetValue("showSettingsWindow", true)
-        local windowDim = state.WindowSize
-        local pluginDim = imgui.GetWindowSize()
-        local centeringX = (windowDim[1] - pluginDim.x) / 2
-        local centeringY = (windowDim[2] - pluginDim.y) / 2
-        local coordinatesToCenter = vector.New(centeringX, centeringY)
-        imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
-    end
-    if (state.GetValue("showSettingsWindow")) then
-        showPluginSettingsWindow()
-    end
-    if (imgui.Button("Click Here To Get Map Stats", ACTION_BUTTON_SIZE)) then
-        local currentTg = state.SelectedScrollGroupId
-        local tgList = map.GetTimingGroupIds()
-        local svSum = 0
-        local ssfSum = 0
-        for _, tg in pairs(tgList) do
-            state.SelectedScrollGroupId = tg
-            svSum = svSum + #map.ScrollVelocities
-            ssfSum = ssfSum + #map.ScrollSpeedFactors
-        end
-        print("s!",
-            "That's an average of " ..
-            math.round(svSum * 1000 / map.TrackLength, 2) ..
-            " SVs per second, or " .. math.round(ssfSum * 1000 / map.TrackLength, 2) .. " SSFs per second.")
-        print("s!", "This map also contains " .. #map.TimingPoints .. " timing points.")
-        print("s!",
-            "This map has " .. svSum .. " SVs and " .. ssfSum .. " SSFs across " .. #tgList .. " timing groups.")
-        print("w!",
-            "Remember that the quality of map has no correlation with the object count! Try to be optimal in your object usage.")
-        state.SelectedScrollGroupId = currentTg
-    end
-end
-function selectAlternatingMenu()
-    local menuVars = getMenuVars("selectAlternating")
-    chooseEvery(menuVars)
-    chooseOffset(menuVars)
-    saveVariables("selectAlternatingMenu", menuVars)
-    AddSeparator()
-    simpleActionMenu(
-        "Select a note every " ..
-        menuVars.every .. pluralize(" note, from note #", menuVars.every, 5) .. menuVars.offset,
-        2,
-        selectAlternating, menuVars)
-end
-function selectBookmarkMenu()
-    local bookmarks = map.bookmarks
-    local selectedIndex = state.GetValue("selectedIndex") or 0
-    local searchTerm = state.GetValue("searchTerm") or ""
-    local filterTerm = state.GetValue("filterTerm") or ""
-    local times = {}
-    if (#bookmarks == 0) then
-        imgui.TextWrapped("There are no bookmarks! Add one to navigate.")
-    else
-        imgui.PushItemWidth(70)
-        _, searchTerm = imgui.InputText("Search", searchTerm, 4096)
-        KeepSameLine()
-        _, filterTerm = imgui.InputText("Ignore", filterTerm, 4096)
-        imgui.Columns(3)
-        imgui.Text("Time")
-        imgui.NextColumn()
-        imgui.Text("Bookmark Label")
-        imgui.NextColumn()
-        imgui.Text("Leap")
-        imgui.NextColumn()
-        imgui.Separator()
-        local skippedBookmarks = 0
-        local skippedIndices = 0
-        for idx, bm in pairs(bookmarks) do
-            if (bm.StartTime < 0) then
-                skippedBookmarks = skippedBookmarks + 1
-                skippedIndices = skippedIndices + 1
-                goto continue
-            end
-            if (searchTerm:len() > 0) and (not bm.Note:find(searchTerm)) then
-                skippedBookmarks = skippedBookmarks + 1
-                goto continue
-            end
-            if (filterTerm:len() > 0) and (bm.Note:find(filterTerm)) then
-                skippedBookmarks = skippedBookmarks + 1
-                goto continue
-            end
-            vPos = 126.5 + (idx - skippedBookmarks) * 32
-            imgui.SetCursorPosY(vPos)
-            table.insert(times, bm.StartTime)
-            imgui.Text(bm.StartTime)
-            imgui.NextColumn()
-            imgui.SetCursorPosY(vPos)
-            bm.Note = bm.Note:fixToSize(110)
-            imgui.NextColumn()
-            if (imgui.Button("Go to #" .. idx - skippedIndices, vector.New(65, 24))) then
-                actions.GoToObjects(bm.StartTime)
-            end
-            imgui.NextColumn()
-            if (idx ~= #bookmarks) then imgui.Separator() end
-            ::continue::
-        end
-        local maxTimeLength = #tostring(math.max(table.unpack(times) or 0))
-        imgui.SetColumnWidth(0, maxTimeLength * 10.25)
-        imgui.SetColumnWidth(1, 110)
-        imgui.SetColumnWidth(2, 80)
-        imgui.PopItemWidth()
-        imgui.Columns(1)
-    end
-    state.SetValue("selectedIndex", selectedIndex)
-    state.SetValue("searchTerm", searchTerm)
-    state.SetValue("filterTerm", filterTerm)
-end
-function selectChordSizeMenu()
-    local menuVars = getMenuVars("selectChordSize")
-    _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
-    KeepSameLine()
-    _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
-    _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
-    KeepSameLine()
-    _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
-    simpleActionMenu("Select chords within region", 2, selectByChordSizes, menuVars)
-    saveVariables("selectChordSizeMenu", menuVars)
-end
-SELECT_TOOLS = {
-    "Alternating",
-    "By Snap",
-    "Chord Size",
-    "Note Type",
-    "Bookmark",
-}
-function selectTab()
-    chooseSelectTool()
-    AddSeparator()
-    local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
-    if toolName == "Alternating" then selectAlternatingMenu() end
-    if toolName == "By Snap" then selectBySnapMenu() end
-    if toolName == "Bookmark" then selectBookmarkMenu() end
-    if toolName == "Chord Size" then selectChordSizeMenu() end
-    if toolName == "Note Type" then selectNoteTypeMenu() end
-end
-function selectNoteTypeMenu()
-    local menuVars = getMenuVars("selectNoteType")
-    _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
-    KeepSameLine()
-    _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
-    simpleActionMenu("Select notes within region", 2, selectByNoteType, menuVars)
-    saveVariables("selectNoteTypeMenu", menuVars)
-end
-function selectBySnapMenu()
-    local menuVars = getMenuVars("selectBySnap")
-    chooseSnap(menuVars)
-    saveVariables("selectBySnapMenu", menuVars)
-    AddSeparator()
-    simpleActionMenu(
-        "Select notes with 1/" .. menuVars.snap .. " snap",
-        2,
-        selectBySnap, menuVars)
-end
-function showAppearanceSettings()
-    imgui.PushItemWidth(150)
-    chooseStyleTheme()
-    chooseColorTheme()
-    AddSeparator()
-    chooseCursorTrail()
-    chooseCursorTrailShape()
-    chooseEffectFPS()
-    chooseCursorTrailPoints()
-    chooseCursorShapeSize()
-    chooseSnakeSpringConstant()
-    chooseCursorTrailGhost()
-    AddSeparator()
-    imgui.PopItemWidth()
-    chooseDrawCapybara()
-    imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    chooseDrawCapybara2()
-    chooseDrawCapybara312()
-    AddSeparator()
-    choosePulseCoefficient()
-    _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
-    if (not globalVars.useCustomPulseColor) then imgui.BeginDisabled() end
-    KeepSameLine()
-    if (imgui.Button("Edit Color")) then
-        state.SetValue("showColorPicker", true)
-    end
-    if (state.GetValue("showColorPicker")) then
-        choosePulseColor()
-    end
-    if (not globalVars.useCustomPulseColor) then
-        imgui.EndDisabled()
-        state.SetValue("showColorPicker", false)
-    end
-end
-function showCustomThemeSettings()
-    local settingsChanged = false
-    if (imgui.Button("Reset")) then
-        globalVars.customStyle = table.duplicate(DEFAULT_STYLE)
-        write()
-    end
-    KeepSameLine()
-    if (imgui.Button("Import")) then
-        state.SetValue("importingCustomTheme", true)
-    end
-    KeepSameLine()
-    if (imgui.Button("Export")) then
-        local str = stringifyCustomStyle(globalVars.customStyle)
-        imgui.SetClipboardText(str)
-        print("i!", "Exported custom theme to your clipboard.")
-    end
-    if (state.GetValue("importingCustomTheme")) then
-        local input = state.GetValue("importingCustomThemeInput", "")
-        _, input = imgui.InputText("##customThemeStr", input, 69420)
-        state.SetValue("importingCustomThemeInput", input)
-        KeepSameLine()
-        if (imgui.Button("Send")) then
-            setCustomStyleString(input)
-            state.SetValue("importingCustomTheme", false)
-        end
-        KeepSameLine()
-        if (imgui.Button("X")) then
-            state.SetValue("importingCustomTheme", false)
-        end
-    end
-    settingsChanged = colorInput(globalVars.customStyle, "windowBg", "Window BG") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "popupBg", "Popup BG") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "frameBg", "Frame BG") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "frameBgHovered", "Frame BG\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "frameBgActive", "Frame BG\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "titleBg", "Title BG") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "titleBgActive", "Title BG\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "titleBgCollapsed", "Title BG\n(Collapsed)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "checkMark", "Checkmark") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "sliderGrab", "Slider Grab") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "sliderGrabActive", "Slider Grab\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "button", "Button") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "buttonHovered", "Button\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "buttonActive", "Button\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "tab", "Tab") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "tabHovered", "Tab\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "tabActive", "Tab\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "header", "Header") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "headerHovered", "Header\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "headerActive", "Header\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "separator", "Separator") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "text", "Text") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "textSelectedBg", "Text Selected\n(BG)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "scrollbarGrab", "Scrollbar Grab") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "scrollbarGrabHovered", "Scrollbar Grab\n(Hovered)") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "scrollbarGrabActive", "Scrollbar Grab\n(Active)") or
-        settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotLines", "Plot Lines") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotLinesHovered", "Plot Lines\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotHistogram", "Plot Histogram") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotHistogramHovered", "Plot Histogram\n(Hovered)") or
-        settingsChanged
-    if (settingsChanged) then
-        write(globalVars)
-    end
-end
-function convertStrToShort(str)
-    if (str:lower() == str) then
-        return str:charAt(1) .. str:sub(-1)
-    else
-        local newStr = str:charAt(1)
-        for char in str:gmatch("%u") do
-            newStr = newStr .. char
-        end
-        return newStr
-    end
-end
-function stringifyCustomStyle(customStyle)
-    local keys = table.keys(customStyle)
-    local resultStr = ""
-    for _, key in pairs(keys) do
-        local value = customStyle[key]
-        keyId = convertStrToShort(key)
-        local r = math.floor(value.x * 255)
-        local g = math.floor(value.y * 255)
-        local b = math.floor(value.z * 255)
-        local a = math.floor(value.w * 255)
-        resultStr = resultStr .. keyId .. ":" .. rgbaToHexa(r, g, b, a) .. ","
-    end
-    return resultStr:sub(1, -2)
-end
-function setCustomStyleString(str)
-    local keyIdDict = {}
-    for _, key in pairs(table.keys(DEFAULT_STYLE)) do
-        keyIdDict[key] = convertStrToShort(key)
-    end
-    local customStyle = {}
-    for kvPair in str:gmatch("[0-9#:a-zA-Z]+") do
-        local keyId = kvPair:match("[a-zA-Z]+:"):sub(1, -2)
-        local hexa = kvPair:match(":[a-f0-9]+"):sub(2)
-        local key = table.indexOf(keyIdDict, keyId)
-        if (key ~= -1) then customStyle[key] = hexaToRgba(hexa) / 255 end
-    end
-    globalVars.customStyle = table.duplicate(customStyle)
-end
-function saveSettingPropertiesButton(settingVars, label)
-    local saveButtonClicked = imgui.Button("Save##setting" .. label)
-    imgui.Separator()
-    if (not saveButtonClicked) then return end
-    label = label:charAt(1):lower() .. label:sub(2)
-    if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
-    if (not globalVars.defaultProperties.settings) then globalVars.defaultProperties.settings = {} end
-    globalVars.defaultProperties.settings[label] = settingVars
-    loadDefaultProperties(globalVars.defaultProperties)
-    write(globalVars)
-    print("i!",
-        "Default setting properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
-end
-function saveMenuPropertiesButton(menuVars, label)
-    local saveButtonClicked = imgui.Button("Save##menu" .. label)
-    imgui.Separator()
-    if (not saveButtonClicked) then return end
-    label = label:charAt(1):lower() .. label:sub(2)
-    if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
-    if (not globalVars.defaultProperties.menu) then globalVars.defaultProperties.menu = {} end
-    globalVars.defaultProperties.menu[label] = menuVars
-    loadDefaultProperties(globalVars.defaultProperties)
-    write(globalVars)
-    print("i!",
-        "Default menu properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
-end
-function showDefaultPropertiesSettings()
-    imgui.SeparatorText("Create Tab Settings")
-    if (imgui.CollapsingHeader("General Standard Settings")) then
-        local menuVars = getMenuVars("placeStandard", "Property")
-        chooseStandardSVType(menuVars, false)
-        AddSeparator()
-        chooseInterlace(menuVars)
-        saveMenuPropertiesButton(menuVars, "placeStandard")
-        saveVariables("placeStandardPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("General Special Settings")) then
-        local menuVars = getMenuVars("placeSpecial", "Property")
-        chooseSpecialSVType(menuVars)
-        saveMenuPropertiesButton(menuVars, "placeSpecial")
-        saveVariables("placeSpecialPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("General Still Settings")) then
-        local menuVars = getMenuVars("placeStill", "Property")
-        chooseStandardSVType(menuVars, false)
-        AddSeparator()
-        chooseNoteSpacing(menuVars)
-        chooseStillBehavior(menuVars)
-        chooseStillType(menuVars)
-        chooseInterlace(menuVars)
-        saveMenuPropertiesButton(menuVars, "placeStill")
-        saveVariables("placeStillPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("General Vibrato Settings")) then
-        local menuVars = getMenuVars("placeVibrato", "Property")
-        chooseVibratoSVType(menuVars)
-        AddSeparator()
-        imgui.Text("Vibrato Settings:")
-        chooseVibratoMode(menuVars)
-        chooseVibratoQuality(menuVars)
-        if (menuVars.vibratoMode ~= 2) then
-            chooseVibratoSides(menuVars)
-        end
-        saveMenuPropertiesButton(menuVars, "placeVibrato")
-        saveVariables("placeVibratoPropertyMenu", menuVars)
-    end
-    imgui.SeparatorText("Edit Tab Settings")
-    if (imgui.CollapsingHeader("Add Teleport Settings")) then
-        local menuVars = getMenuVars("addTeleport", "Property")
-        chooseDistance(menuVars)
-        chooseHand(menuVars)
-        saveMenuPropertiesButton(menuVars, "addTeleport")
-        saveVariables("addTeleportPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Change Group Settings")) then
-        local menuVars = getMenuVars("changeGroup", "Property")
-        _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
-        KeepSameLine()
-        _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
-        saveMenuPropertiesButton(menuVars, "changeGroup")
-        saveVariables("changeGroupPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Convert SV <-> SSF Settings")) then
-        local menuVars = getMenuVars("convertSVSSF", "Property")
-        chooseConvertSVSSFDirection(menuVars)
-        saveMenuPropertiesButton(menuVars, "convertSVSSF")
-        saveVariables("convertSVSSFPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Copy Settings")) then
-        local menuVars = getMenuVars("copy", "Property")
-        _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
-        KeepSameLine()
-        _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
-        _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
-        imgui.SameLine(0, SAMELINE_SPACING + 3.5)
-        _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
-        _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
-        imgui.PushItemWidth(100)
-        _, menuVars.alignWindow = imgui.SliderInt("Alignment window (ms)", menuVars.alignWindow, 1, 10)
-        imgui.PopItemWidth()
-        saveMenuPropertiesButton(menuVars, "copy")
-        saveVariables("copyPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Displace Note Settings")) then
-        local menuVars = getMenuVars("displaceNote", "Property")
-        chooseVaryingDistance(menuVars)
-        chooseLinearlyChangeDist(menuVars)
-        saveMenuPropertiesButton(menuVars, "displaceNote")
-        saveVariables("displaceNotePropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Displace View Settings")) then
-        local menuVars = getMenuVars("displaceView", "Property")
-        chooseDistance(menuVars)
-        saveMenuPropertiesButton(menuVars, "displaceView")
-        saveVariables("displaceViewPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Flicker Settings")) then
-        local menuVars = getMenuVars("flicker", "Property")
-        chooseFlickerType(menuVars)
-        chooseVaryingDistance(menuVars)
-        chooseLinearlyChangeDist(menuVars)
-        chooseNumFlickers(menuVars)
-        if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
-        saveMenuPropertiesButton(menuVars, "flicker")
-        saveVariables("flickerPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Reverse Scroll Settings")) then
-        local menuVars = getMenuVars("reverseScroll", "Property")
-        chooseDistance(menuVars)
-        HelpMarker("Height at which reverse scroll notes are hit")
-        saveMenuPropertiesButton(menuVars, "reverseScroll")
-        saveVariables("reverseScrollPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Scale (Displace) Settings")) then
-        local menuVars = getMenuVars("scaleDisplace", "Property")
-        chooseScaleDisplaceSpot(menuVars)
-        chooseScaleType(menuVars)
-        saveMenuPropertiesButton(menuVars, "scaleDisplace")
-        saveVariables("scaleDisplacePropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Scale (Multiply) Settings")) then
-        local menuVars = getMenuVars("scaleMultiply", "Property")
-        chooseScaleType(menuVars)
-        saveMenuPropertiesButton(menuVars, "scaleMultiply")
-        saveVariables("scaleMultiplyPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Vertical Shift Settings")) then
-        local menuVars = getMenuVars("verticalShift", "Property")
-        chooseConstantShift(menuVars, 0)
-        saveMenuPropertiesButton(menuVars, "verticalShift")
-        saveVariables("verticalShiftPropertyMenu", menuVars)
-    end
-    imgui.SeparatorText("Delete Tab Settings")
-    if (imgui.CollapsingHeader("Delete Menu Settings")) then
-        local menuVars = getMenuVars("delete", "Property")
-        _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
-        KeepSameLine()
-        _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])
-        _, menuVars.deleteTable[3] = imgui.Checkbox("Delete SSFs", menuVars.deleteTable[3])
-        imgui.SameLine(0, SAMELINE_SPACING + 3.5)
-        _, menuVars.deleteTable[4] = imgui.Checkbox("Delete Bookmarks", menuVars.deleteTable[4])
-        saveMenuPropertiesButton(menuVars, "delete")
-        saveVariables("deletePropertyMenu", menuVars)
-    end
-    imgui.SeparatorText("Select Tab Settings")
-    if (imgui.CollapsingHeader("Select Alternating Settings")) then
-        local menuVars = getMenuVars("selectAlternating", "Property")
-        chooseEvery(menuVars)
-        chooseOffset(menuVars)
-        saveMenuPropertiesButton(menuVars, "selectAlternating")
-        saveVariables("selectAlternatingPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Select By Snap Settings")) then
-        local menuVars = getMenuVars("selectBySnap", "Property")
-        chooseSnap(menuVars)
-        saveMenuPropertiesButton(menuVars, "selectBySnap")
-        saveVariables("selectBySnapPropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Select Chord Size Settings")) then
-        local menuVars = getMenuVars("selectChordSize", "Property")
-        _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
-        KeepSameLine()
-        _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
-        _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
-        KeepSameLine()
-        _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
-        saveMenuPropertiesButton(menuVars, "selectChordSize")
-        saveVariables("selectChordSizePropertyMenu", menuVars)
-    end
-    if (imgui.CollapsingHeader("Select Note Type Settings")) then
-        local menuVars = getMenuVars("selectNoteType", "Property")
-        _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
-        KeepSameLine()
-        _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
-        saveMenuPropertiesButton(menuVars, "selectNoteType")
-        saveVariables("selectNoteTypePropertyMenu", menuVars)
-    end
-    imgui.SeparatorText("Standard/Still Settings")
-    if (imgui.CollapsingHeader("Linear Settings")) then
-        local settingVars = getSettingVars("Linear", "Property")
-        chooseStartEndSVs(settingVars)
-        chooseSVPoints(settingVars)
-        chooseFinalSV(settingVars)
-        saveSettingPropertiesButton(settingVars, "Linear")
-        saveVariables("LinearPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Exponential Settings")) then
-        local settingVars = getSettingVars("Exponential", "Property")
-        chooseSVBehavior(settingVars)
-        chooseIntensity(settingVars)
-        if (globalVars.advancedMode) then
-            chooseDistanceMode(settingVars)
-        end
-        if (settingVars.distanceMode ~= 3) then
-            chooseConstantShift(settingVars, 0)
-        end
-        if (settingVars.distanceMode == 1) then
-            chooseAverageSV(settingVars)
-        elseif (settingVars.distanceMode == 2) then
-            chooseDistance(settingVars)
-        else
-            chooseStartEndSVs(settingVars)
-        end
-        chooseSVPoints(settingVars)
-        chooseFinalSV(settingVars)
-        saveSettingPropertiesButton(settingVars, "Exponential")
-        saveVariables("ExponentialPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Bezier Settings")) then
-        local settingVars = getSettingVars("Bezier", "Property")
-        provideBezierWebsiteLink(settingVars)
-        chooseBezierPoints(settingVars)
-        chooseConstantShift(settingVars, 0)
-        chooseAverageSV(settingVars)
-        chooseSVPoints(settingVars)
-        chooseFinalSV(settingVars)
-        saveSettingPropertiesButton(settingVars, "Bezier")
-        saveVariables("BezierPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Hermite Settings")) then
-        local settingVars = getSettingVars("Hermite", "Property")
-        chooseStartEndSVs(settingVars)
-        chooseConstantShift(settingVars, 0)
-        chooseAverageSV(settingVars)
-        chooseSVPoints(settingVars)
-        chooseFinalSV(settingVars)
-        saveSettingPropertiesButton(settingVars, "Hermite")
-        saveVariables("HermitePropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Sinusoidal Settings")) then
-        local settingVars = getSettingVars("Sinusoidal", "Property")
-        imgui.Text("Amplitude:")
-        chooseStartEndSVs(settingVars)
-        chooseCurveSharpness(settingVars)
-        chooseConstantShift(settingVars, 1)
-        chooseNumPeriods(settingVars)
-        choosePeriodShift(settingVars)
-        chooseSVPerQuarterPeriod(settingVars)
-        chooseFinalSV(settingVars)
-        saveSettingPropertiesButton(settingVars, "Sinusoidal")
-        saveVariables("SinusoidalPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Circular Settings")) then
-        local settingVars = getSettingVars("Circular", "Property")
-        chooseSVBehavior(settingVars)
-        chooseArcPercent(settingVars)
-        chooseAverageSV(settingVars)
-        chooseConstantShift(settingVars, 0)
-        chooseSVPoints(settingVars)
-        chooseFinalSV(settingVars)
-        chooseNoNormalize(settingVars)
-        saveSettingPropertiesButton(settingVars, "Circular")
-        saveVariables("CircularPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Random Settings")) then
-        local settingVars = getSettingVars("Random", "Property")
-        chooseRandomType(settingVars)
-        chooseRandomScale(settingVars)
-        chooseSVPoints(settingVars)
-        AddSeparator()
-        chooseConstantShift(settingVars, 0)
-        if not settingVars.dontNormalize then
-            chooseAverageSV(settingVars)
-        end
-        chooseFinalSV(settingVars)
-        chooseNoNormalize(settingVars)
-        saveSettingPropertiesButton(settingVars, "Random")
-        saveVariables("RandomPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Chinchilla Settings")) then
-        local settingVars = getSettingVars("Chinchilla", "Property")
-        chooseSVBehavior(settingVars)
-        chooseChinchillaType(settingVars)
-        chooseChinchillaIntensity(settingVars)
-        chooseAverageSV(settingVars)
-        chooseConstantShift(settingVars, 0)
-        chooseSVPoints(settingVars)
-        chooseFinalSV(settingVars)
-        saveSettingPropertiesButton(settingVars, "Chinchilla")
-        saveVariables("ChinchillaPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Code Settings")) then
-        local settingVars = getSettingVars("Code", "Property")
-        codeInput(settingVars, "code", "##code")
-        imgui.Separator()
-        chooseSVPoints(settingVars)
-        chooseFinalSV(settingVars)
-        saveSettingPropertiesButton(settingVars, "Code")
-        saveVariables("CodePropertySettings", settingVars)
-    end
-    imgui.SeparatorText("Special Settings")
-    if (imgui.CollapsingHeader("Stutter Settings")) then
-        local settingVars = getSettingVars("Stutter", "Property")
-        settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
-        settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
-        settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
-        settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
-        AddSeparator()
-        settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
-        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
-        settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
-        saveSettingPropertiesButton(settingVars, "Stutter")
-        saveVariables("StutterPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Teleport Stutter Settings")) then
-        local settingVars = getSettingVars("TeleportStutter", "Property")
-        if settingVars.useDistance then
-            chooseDistance(settingVars)
-            HelpMarker("Start SV teleport distance")
-        else
-            chooseStartSVPercent(settingVars)
-        end
-        chooseMainSV(settingVars)
-        chooseAverageSV(settingVars)
-        chooseFinalSV(settingVars, false)
-        chooseUseDistance(settingVars)
-        chooseLinearlyChange(settingVars)
-        saveSettingPropertiesButton(settingVars, "TeleportStutter")
-        saveVariables("TeleportStutterPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Automate Settings")) then
-        local settingVars = getSettingVars("Automate", "Property")
-        settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
-        _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
-        KeepSameLine()
-        _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
-        _, settingVars.maintainMs = imgui.Checkbox("Static Time?", settingVars.maintainMs)
-        if (settingVars.maintainMs) then
-            KeepSameLine()
-            imgui.PushItemWidth(71)
-            settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
-            imgui.PopItemWidth()
-        end
-        saveSettingPropertiesButton(settingVars, "Automate")
-        saveVariables("AutomatePropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Penis Settings")) then
-        local settingVars = getSettingVars("Penis", "Property")
-        _, settingVars.bWidth = imgui.InputInt("Ball Width", math.floor(settingVars.bWidth))
-        _, settingVars.sWidth = imgui.InputInt("Shaft Width", math.floor(settingVars.sWidth))
-        _, settingVars.sCurvature = imgui.SliderInt("S Curvature", settingVars.sCurvature, 1, 100,
-            settingVars.sCurvature .. "%%")
-        _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
-            settingVars.bCurvature .. "%%")
-        saveSettingPropertiesButton(settingVars, "Penis")
-        saveVariables("PenisPropertySettings", settingVars)
-    end
-    imgui.SeparatorText("SV Vibrato Settings")
-    if (imgui.CollapsingHeader("Linear Vibrato SV Settings")) then
-        local settingVars = getSettingVars("LinearVibratoSV", "Property")
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
-        saveSettingPropertiesButton(settingVars, "LinearVibratoSV")
-        saveVariables("LinearVibratoSVPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Exponential Vibrato SV Settings")) then
-        local settingVars = getSettingVars("ExponentialVibratoSV", "Property")
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
-        chooseCurvatureCoefficient(settingVars)
-        saveSettingPropertiesButton(settingVars, "ExponentialVibratoSV")
-        saveVariables("ExponentialVibratoSVPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Sinusoidal Vibrato SV Settings")) then
-        local settingVars = getSettingVars("SinusoidalVibratoSV", "Property")
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
-        chooseMsxVerticalShift(settingVars, 0)
-        chooseNumPeriods(settingVars)
-        choosePeriodShift(settingVars)
-        saveSettingPropertiesButton(settingVars, "SinusoidalVibratoSV")
-        saveVariables("SinusoidalVibratoSVPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Sigmoidal Vibrato SV Settings")) then
-        local settingVars = getSettingVars("SigmoidalVibratoSV", "Property")
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
-        chooseCurvatureCoefficient(settingVars)
-        saveSettingPropertiesButton(settingVars, "SigmoidalVibratoSV")
-        saveVariables("SigmoidalVibratoSVPropertySettings", settingVars)
-    end
-    imgui.SeparatorText("SSF Vibrato Settings")
-    if (imgui.CollapsingHeader("Linear Vibrato SSF Settings")) then
-        local settingVars = getSettingVars("LinearVibratoSSF", "Property")
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
-        saveSettingPropertiesButton(settingVars, "LinearVibratoSSF")
-        saveVariables("LinearVibratoSSFPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Exponential Vibrato SSF Settings")) then
-        local settingVars = getSettingVars("ExponentialVibratoSSF", "Property")
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
-        chooseCurvatureCoefficient(settingVars)
-        saveSettingPropertiesButton(settingVars, "ExponentialVibratoSSF")
-        saveVariables("ExponentialVibratoSSFPropertySettings", settingVars)
-    end
-    if (imgui.CollapsingHeader("Sinusoidal Vibrato SSF Settings")) then
-        local settingVars = getSettingVars("SinusoidalVibratoSSF", "Property")
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
-        chooseConstantShift(settingVars)
-        chooseNumPeriods(settingVars)
-        choosePeriodShift(settingVars)
-        saveSettingPropertiesButton(settingVars, "SinusoidalVibratoSSF")
-        saveVariables("SinusoidalVibratoSSFPropertySettings", settingVars)
-    end
-end
-function showGeneralSettings()
-    globalCheckbox("advancedMode", "Enable Advanced Mode",
-        "Advanced mode enables a few features that simplify SV creation, at the cost of making the plugin more cluttered.")
-    if (not globalVars.advancedMode) then imgui.BeginDisabled() end
-    globalCheckbox("hideAutomatic", "Hide Automatically Placed TGs",
-        'Timing groups placed by the "Automatic" feature will not be shown in the plumoguSV timing group selector.')
-    if (not globalVars.advancedMode) then imgui.EndDisabled() end
-    AddSeparator()
-    chooseUpscroll()
-    AddSeparator()
-    globalCheckbox("dontReplaceSV", "Don't Replace Existing SVs",
-        "Self-explanatory, but applies only to base SVs made with Standard, Special, or Still. Highly recommended to keep this setting disabled.")
-    globalCheckbox("ignoreNotesOutsideTg", "Ignore Notes Not In Current Timing Group",
-        "Notes that are in a timing group outside of the current one will be ignored by stills, selection checks, etc.")
-    chooseStepSize()
-    globalCheckbox("dontPrintCreation", "Don't Print SV Creation Messages",
-        'Disables printing "Created __ SVs" messages.')
-    globalCheckbox("equalizeLinear", "Equalize Linear SV",
-        "Forces the standard > linear option to have an average sv of 0 if the start and end SVs are equal. For beginners, this should be enabled.")
-end
-DEFAULT_SETTING_TYPES = {
-    "General",
-    "Default Properties",
-    "Appearance",
-    "Windows + Widgets",
-    "Keybinds",
-}
-function showPluginSettingsWindow()
-    local bgColor = vector.New(0.2, 0.2, 0.2, 1)
-    SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)
-    if (COLOR_THEMES[globalVars.colorThemeIndex] == "CUSTOM") then
-        table.insert(SETTING_TYPES, 4, "Custom Theme")
-    end
-    imgui.PopStyleColor(20)
-    setIncognitoColors()
-    setPluginAppearanceStyles("Rounded + Border")
-    imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
-    imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
-    imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
-    imgui.PushStyleColor(imgui_col.Border, vector4(1))
-    imgui.SetNextWindowCollapsed(false)
-    _, settingsOpened = imgui.Begin("plumoguSV Settings", true, 42)
-    imgui.SetWindowSize("plumoguSV Settings", vector.New(433, 400))
-    local typeIndex = state.GetValue("settings_typeIndex", 1)
-    imgui.Columns(2, "settings_columnList", true)
-    imgui.SetColumnWidth(0, 150)
-    imgui.SetColumnWidth(1, 283)
-    imgui.BeginChild(420)
-    imgui.Text("Setting Type")
-    imgui.Separator()
-    for idx, v in pairs(SETTING_TYPES) do
-        if (imgui.Selectable(v, typeIndex == idx)) then
-            typeIndex = idx
-        end
-    end
-    AddSeparator()
-    if (imgui.Button("Reset Settings")) then
-        write({})
-        globalVars = DEFAULT_GLOBAL_VARS
-        toggleablePrint("e!", "Settings have been reset.")
-    end
-    if (imgui.Button("Crash The Game")) then
-        ---@diagnostic disable-next-line: param-type-mismatch
-        imgui.Text(nil)
-    end
-    imgui.EndChild()
-    imgui.NextColumn()
-    imgui.BeginChild(69)
-    if (SETTING_TYPES[typeIndex] == "General") then
-        showGeneralSettings()
-    end
-    if (SETTING_TYPES[typeIndex] == "Default Properties") then
-        showDefaultPropertiesSettings()
-    end
-    if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
-        showWindowSettings()
-    end
-    if (SETTING_TYPES[typeIndex] == "Appearance") then
-        showAppearanceSettings()
-    end
-    if (SETTING_TYPES[typeIndex] == "Custom Theme") then
-        showCustomThemeSettings()
-    end
-    if (SETTING_TYPES[typeIndex] == "Keybinds") then
-        showKeybindSettings()
-    end
-    imgui.EndChild()
-    imgui.Columns(1)
-    state.SetValue("settings_typeIndex", typeIndex)
-    if (not settingsOpened) then
-        state.SetValue("showSettingsWindow", false)
-        state.SetValue("settings_typeIndex", 1)
-    end
-    imgui.PopStyleColor(41)
-    setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex])
-    setPluginAppearanceStyles(STYLE_THEMES[globalVars.styleThemeIndex])
-    imgui.End()
-end
-function showKeybindSettings()
-    local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
-    if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
-        hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
-    end
-    local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
-    for hotkeyIndex, hotkeyCombo in pairs(hotkeyList) do
-        if imgui.Button(awaitingIndex == hotkeyIndex and "Listening...##listening" or hotkeyCombo .. "##" .. hotkeyIndex) then
-            if (awaitingIndex == hotkeyIndex) then
-                awaitingIndex = 0
-            else
-                awaitingIndex = hotkeyIndex
-            end
-        end
-        KeepSameLine()
-        imgui.SetCursorPosX(95)
-        imgui.Text("" .. HOTKEY_LABELS[hotkeyIndex])
-    end
-    AddSeparator()
-    simpleActionMenu("Reset Hotkey Settings", 0, function()
-        globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
-        write(globalVars)
-        awaitingIndex = 0
-    end, nil, true, true)
-    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
-    if (awaitingIndex == 0) then return end
-    local prefixes, key = listenForAnyKeyPressed()
-    if (key == -1) then return end
-    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (truthy(prefixes) and "+" or "") .. keyNumToKey(key)
-    awaitingIndex = 0
-    globalVars.hotkeyList = hotkeyList
-    GLOBAL_HOTKEY_LIST = hotkeyList
-    write(globalVars)
-    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
-end
-function showWindowSettings()
-    globalCheckbox("hideSVInfo", "Hide SV Info Window",
-        "Disables the window that shows note distances when placing Standard, Special, or Still SVs.")
-    globalCheckbox("showVibratoWidget", "Separate Vibrato Into New Window",
-        "For those who are used to having Vibrato as a separate plugin, this option makes a new, independent window with vibrato only.")
-    AddSeparator()
-    globalCheckbox("showNoteDataWidget", "Show Note Data Of Selection",
-        "If one note is selected, shows simple data about that note.")
-    globalCheckbox("showMeasureDataWidget", "Show Measure Data Of Selection",
-        "If two notes are selected, shows measure data within the selected region.")
-end
-function provideBezierWebsiteLink(settingVars)
-    local coordinateParsed = false
-    local bezierText = state.GetValue("bezierText") or "https://cubic-bezier.com/"
-    local imguiFlag = imgui_input_text_flags.AutoSelectAll
-    _, bezierText = imgui.InputText("##bezierWebsite", bezierText, 100, imguiFlag)
-    KeepSameLine()
-    if imgui.Button("Parse##bezierValues", SECONDARY_BUTTON_SIZE) then
-        local regex = "(-?%d*%.?%d+)"
-        local values = {}
-        for value, _ in string.gmatch(bezierText, regex) do
-            table.insert(values, math.toNumber(value))
-        end
-        if #values >= 4 then
-            settingVars.p1 = vector.New(values[1], values[2])
-            settingVars.p2 = vector.New(values[3], values[4])
-            coordinateParsed = true
-        end
-        bezierText = "https://cubic-bezier.com/"
-    end
-    state.SetValue("bezierText", bezierText)
-    HelpMarker("This site lets you play around with a cubic bezier whose graph represents the " ..
-        "motion/path of notes. After finding a good shape for note motion, paste the " ..
-        "resulting url into the input box and hit the parse button to import the " ..
-        "coordinate values. Alternatively, enter 4 numbers and hit parse.")
-    return coordinateParsed
-end
-function checkEnoughSelectedNotes(minimumNotes)
-    if minimumNotes == 0 then return true end
-    local selectedNotes = state.SelectedHitObjects
-    local numSelectedNotes = #selectedNotes
-    if numSelectedNotes == 0 then return false end
-    if minimumNotes == 1 then return true end
-    if numSelectedNotes > map.GetKeyCount() then return true end
-    return selectedNotes[1].StartTime ~= selectedNotes[numSelectedNotes].StartTime
-end
-function importCustomSVs(settingVars)
-    local svsParsed = false
-    local customSVText = state.GetValue("customSVText") or "Import SV values here"
-    local imguiFlag = imgui_input_text_flags.AutoSelectAll
-    _, customSVText = imgui.InputText("##customSVs", customSVText, 99999, imguiFlag)
-    KeepSameLine()
-    if imgui.Button("Parse##customSVs", SECONDARY_BUTTON_SIZE) then
-        local regex = "(-?%d*%.?%d+)"
-        local values = {}
-        for value, _ in string.gmatch(customSVText, regex) do
-            table.insert(values, math.toNumber(value))
-        end
-        if #values >= 1 then
-            settingVars.svMultipliers = values
-            settingVars.selectedMultiplierIndex = 1
-            settingVars.svPoints = #values
-            svsParsed = true
-        end
-        customSVText = "Import SV values here"
-    end
-    state.SetValue("customSVText", customSVText)
-    HelpMarker("Paste custom SV values in the box then hit the parse button (ex. 2 -1 2 -1)")
-    return svsParsed
-end
-function adjustNumberOfMultipliers(settingVars)
-    if settingVars.svPoints > #settingVars.svMultipliers then
-        local difference = settingVars.svPoints - #settingVars.svMultipliers
-        for _ = 1, difference do
-            table.insert(settingVars.svMultipliers, 1)
-        end
-    end
-    if settingVars.svPoints >= #settingVars.svMultipliers then return end
-    if settingVars.selectedMultiplierIndex > settingVars.svPoints then
-        settingVars.selectedMultiplierIndex = settingVars.svPoints
-    end
-    local difference = #settingVars.svMultipliers - settingVars.svPoints
-    for _ = 1, difference do
-        table.remove(settingVars.svMultipliers)
-    end
-end
-function addFrameTimes(settingVars)
-    if not imgui.Button("Add selected notes to use for frames", ACTION_BUTTON_SIZE) then return end
-    local hasAlreadyAddedLaneTime = {}
-    for _ = 1, map.GetKeyCount() do
-        table.insert(hasAlreadyAddedLaneTime, {})
-    end
-    local frameTimeToIndex = {}
-    local totalTimes = #settingVars.frameTimes
-    for i = 1, totalTimes do
-        local frameTime = settingVars.frameTimes[i] ---@cast frameTime { time: number, lanes: number[] }
-        local time = frameTime.time
-        local lanes = frameTime.lanes
-        frameTimeToIndex[time] = i
-        for j = 1, #lanes do
-            local lane = lanes[j]
-            hasAlreadyAddedLaneTime[lane][time] = true
-        end
-    end
-    for _, ho in pairs(state.SelectedHitObjects) do
-        local lane = ho.Lane
-        local time = ho.StartTime
-        if (not hasAlreadyAddedLaneTime[lane][time]) then
-            hasAlreadyAddedLaneTime[lane][time] = true
-            if frameTimeToIndex[time] then
-                local index = frameTimeToIndex[time]
-                local frameTime = settingVars.frameTimes[index] ---@cast frameTime { time: number, lanes: number[] }
-                table.insert(frameTime.lanes, lane)
-                frameTime.lanes = sort(frameTime.lanes, sortAscending)
-            else
-                local defaultFrame = settingVars.currentFrame
-                local defaultPosition = 0
-                local newFrameTime = createFrameTime(time, { lane }, defaultFrame, defaultPosition)
-                table.insert(settingVars.frameTimes, newFrameTime)
-                frameTimeToIndex[time] = #settingVars.frameTimes
-            end
-        end
-    end
-    settingVars.frameTimes = sort(settingVars.frameTimes, sortAscendingTime)
-end
-function displayFrameTimes(settingVars)
-    if #settingVars.frameTimes == 0 then
-        imgui.Text("Add notes to fill the selection box below")
-    else
-        imgui.Text("time | lanes | frame # | position")
-    end
-    HelpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
-    AddPadding()
-    local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.x, 120 }
-    imgui.BeginChild("FrameTimes", frameTimeSelectionArea, 1)
-    for i = 1, #settingVars.frameTimes do
-        local frameTimeData = {}
-        local frameTime = settingVars.frameTimes[i]
-        frameTimeData[1] = frameTime.time
-        frameTimeData[2] = frameTime.lanes .. ", "
-        frameTimeData[3] = frameTime.frame
-        frameTimeData[4] = frameTime.position
-        local selectableText = frameTimeData .. " | "
-        if imgui.Selectable(selectableText, settingVars.selectedTimeIndex == i) then
-            settingVars.selectedTimeIndex = i
-        end
-    end
-    imgui.EndChild()
-end
-function drawCurrentFrame(settingVars)
-    local mapKeyCount = map.GetKeyCount()
-    local noteWidth = 200 / mapKeyCount
-    local noteSpacing = 5
-    local barNoteHeight = math.round(2 * noteWidth / 5, 0)
-    local noteColor = rgbaToUint(117, 117, 117, 255)
-    local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
-    local drawlist = imgui.GetWindowDrawList()
-    local childHeight = 250
-    imgui.BeginChild("Current Frame", vector.New(255, childHeight), 1)
-    for _, frameTime in pairs(settingVars.frameTimes) do
-        if not frameTime.frame == settingVars.currentFrame then goto continue end
-        for _, lane in pairs(frameTime.lanes) do
-            if noteSkinType == "Bar" then
-                local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
-                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
-                local x2 = x1 + noteWidth
-                local y2 = y1 - barNoteHeight
-                if globalVars.upscroll then
-                    y1 = childHeight - y1
-                    y2 = y1 + barNoteHeight
-                end
-                local p1 = coordsRelativeToWindow(x1, y1)
-                local p2 = coordsRelativeToWindow(x2, y2)
-                drawlist.AddRectFilled(p1, p2, noteColor)
-            elseif noteSkinType == "Circle" then
-                local circleRadius = noteWidth / 2
-                local leftBlankSpace = 2 * noteSpacing + circleRadius
-                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
-                local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
-                local y1 = childHeight - yBlankSpace
-                if globalVars.upscroll then
-                    y1 = childHeight - y1
-                end
-                local p1 = coordsRelativeToWindow(x1, y1)
-                drawlist.AddCircleFilled(p1, circleRadius, noteColor, 20)
-            end
-        end
-        ::continue::
-    end
-    imgui.EndChild()
-end
-function addSelectedNoteTimesToList(menuVars)
-    for _, ho in pairs(state.SelectedHitObjects) do
-        table.insert(menuVars.noteTimes, ho.StartTime)
-    end
-    menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
-    menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)
-end
-function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce)
-    if currentSVType == "Linear" then
-        return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Exponential" then
-        return exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Bezier" then
-        return bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Hermite" then
-        return hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Sinusoidal" then
-        return sinusoidalSettingsMenu(settingVars, skipFinalSV)
-    elseif currentSVType == "Circular" then
-        return circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Random" then
-        return randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Custom" then
-        return customSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Chinchilla" then
-        return chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Combo" then
-        return comboSettingsMenu(settingVars)
-    elseif currentSVType == "Code" then
-        return codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    end
-end
-function presetButton()
-    local buttonText = ": )"
-    if globalVars.showPresetMenu then buttonText = "X" end
-    local buttonPressed = imgui.Button(buttonText, EXPORT_BUTTON_SIZE)
-    ToolTip("View presets and export/import them.")
-    KeepSameLine()
-    if not buttonPressed then return end
-    globalVars.showPresetMenu = not globalVars.showPresetMenu
-end
-function updateSVStats(svGraphStats, svStats, svMultipliers, svMultipliersNoEndSV, svDistances)
-    updateGraphStats(svGraphStats, svMultipliers, svDistances)
-    svStats.minSV = math.round(math.min(table.unpack(svMultipliersNoEndSV)), 2)
-    svStats.maxSV = math.round(math.max(table.unpack(svMultipliersNoEndSV)), 2)
-    svStats.avgSV = math.round(table.average(svMultipliersNoEndSV, true), 3)
-end
-function updateGraphStats(graphStats, svMultipliers, svDistances)
-    graphStats.minScale, graphStats.maxScale = calculatePlotScale(svMultipliers)
-    graphStats.distMinScale, graphStats.distMaxScale = calculatePlotScale(svDistances)
-end
-function makeSVInfoWindow(windowText, svGraphStats, svStats, svDistances, svMultipliers,
-                          stutterDuration, skipDistGraph)
-    if (globalVars.hideSVInfo) then return end
-    imgui.Begin(windowText, imgui_window_flags.AlwaysAutoResize)
-    if not skipDistGraph then
-        imgui.Text("Projected Note Motion:")
-        HelpMarker("Distance vs Time graph of notes")
-        plotSVMotion(svDistances, svGraphStats.distMinScale, svGraphStats.distMaxScale)
-        if imgui.CollapsingHeader("New All -w-") then
-            for i = 1, #svDistances do
-                local svDistance = svDistances[i]
-                local content = tostring(svDistance)
-                imgui.PushItemWidth(imgui.GetContentRegionAvailWidth())
-                imgui.InputText("##" .. i, content, #content, imgui_input_text_flags.AutoSelectAll)
-                imgui.PopItemWidth()
-            end
-        end
-    end
-    local projectedText = "Projected SVs:"
-    if skipDistGraph then projectedText = "Projected Scaling (Avg SVs):" end
-    imgui.Text(projectedText)
-    plotSVs(svMultipliers, svGraphStats.minScale, svGraphStats.maxScale)
-    if stutterDuration then
-        displayStutterSVStats(svMultipliers, stutterDuration)
-    else
-        displaySVStats(svStats)
-    end
-    imgui.End()
-end
-function displayStutterSVStats(svMultipliers, stutterDuration)
-    local firstSV = math.round(svMultipliers[1], 3)
-    local secondSV = math.round(svMultipliers[2], 3)
-    local firstDuration = stutterDuration
-    local secondDuration = 100 - stutterDuration
-    imgui.Columns(2, "SV Stutter Stats", false)
-    imgui.Text("First SV:")
-    imgui.Text("Second SV:")
-    imgui.NextColumn()
-    imgui.Text(firstSV .. "x  (" .. firstDuration .. "%% duration)")
-    imgui.Text(secondSV .. "x  (" .. secondDuration .. "%% duration)")
-    imgui.Columns(1)
-end
-function displaySVStats(svStats)
-    imgui.Columns(2, "SV Stats", false)
-    imgui.Text("Max SV:")
-    imgui.Text("Min SV:")
-    imgui.Text("Average SV:")
-    imgui.NextColumn()
-    imgui.Text(svStats.maxSV .. "x")
-    imgui.Text(svStats.minSV .. "x")
-    imgui.Text(svStats.avgSV .. "x")
-    HelpMarker("Rounded to 3 decimal places")
-    imgui.Columns(1)
-end
-function startNextWindowNotCollapsed(windowName)
-    if state.GetValue(windowName) then return end
-    imgui.SetNextWindowCollapsed(false)
-    state.SetValue(windowName, true)
-end
-function displayStutterSVWindows(settingVars)
-    if settingVars.linearlyChange then
-        startNextWindowNotCollapsed("svInfo2AutoOpen")
-        makeSVInfoWindow("SV Info (Starting first SV)", settingVars.svGraphStats, nil,
-            settingVars.svDistances, settingVars.svMultipliers,
-            settingVars.stutterDuration, false)
-        startNextWindowNotCollapsed("svInfo3AutoOpen")
-        makeSVInfoWindow("SV Info (Ending first SV)", settingVars.svGraph2Stats, nil,
-            settingVars.svDistances2, settingVars.svMultipliers2,
-            settingVars.stutterDuration, false)
-    else
-        startNextWindowNotCollapsed("svInfo1AutoOpen")
-        makeSVInfoWindow("SV Info", settingVars.svGraphStats, nil, settingVars.svDistances,
-            settingVars.svMultipliers, settingVars.stutterDuration, false)
-    end
-end
----@class Particle
----@field pos Vector2
----@field v Vector2
----@field a Vector2
----@field col Vector4
----@field size integer
-stars = {}
-function updateStars()
-    local dim = imgui.GetWindowSize()
-    for _, star in pairs(stars) do
-        local starWrapped = false
-        while (star.pos.x > dim.x + 10) do
-            starWrapped = true
-            star.pos.x = star.pos.x - dim.x - 20
-        end
-        while (star.pos.x < -10) do
-            starWrapped = true
-            star.pos.x = star.pos.x + dim.x + 20
-        end
-        if (starWrapped) then
-            star.pos.y = math.random() * dim.y
-            star.v.x = math.random() * 3 + 1
-            star.size = math.random(3) / 2
-        else
-            star.pos = star.pos + star.v * state.DeltaTime / 20 *
-                math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
-        end
-    end
-end
-function renderBackground()
-    local ctx = imgui.GetWindowDrawList()
-    local topLeft = imgui.GetWindowPos()
-    local dim = imgui.GetWindowSize()
-    if (not truthy(#stars)) then
-        for _ = 1, 100 do
-            table.insert(stars,
-                {
-                    pos = vector.New(math.random() * 500, math.random() * 500),
-                    v = vector.New(math.random() * 3 + 1, 0),
-                    size = math.random(3) / 2
-                })
-        end
-    else
-        updateStars()
-    end
-    for _, star in pairs(stars) do
-        local progress = star.pos.x / dim.x
-        local brightness = math.clamp(-8 * progress * (progress - 1), 0, 1)
-        ctx.AddCircleFilled(star.pos + topLeft, star.size, rgbaToUint(255, 255, 255, math.floor(255 * brightness)))
-    end
-    local colorValue = math.floor(50 * (1 + state.GetValue("borderPulseStatus", 0)))
-    local darkPurple = rgbaToUint(colorValue, 0, colorValue, 150)
-    local darkRed = rgbaToUint(colorValue, 0, 0, 150)
-    local transparent = rgbaToUint(0, 0, 0, 0)
-    ctx.AddRectFilledMultiColor(topLeft, vector.New(topLeft.x + dim.x / 5, topLeft.y + dim.y), darkPurple, transparent,
-        transparent, darkPurple)
-    ctx.AddRectFilledMultiColor(topLeft + dim - vector.New(dim.x / 5, dim.y), topLeft + dim, transparent, darkRed,
-        darkRed, transparent)
-end
 function drawCapybara()
     if not globalVars.drawCapybara then return end
     local o = imgui.GetForegroundDrawList()
@@ -5114,6 +2426,200 @@ function drawCapybara312()
     local numSements = 16
     o.AddCircleFilled(p26, eyeRadius, outlineColor, numSements)
     o.AddCircleFilled(p27, eyeRadius, outlineColor, numSements)
+end
+function drawCursorTrail()
+    local o = imgui.GetForegroundDrawList()
+    local m = imgui.GetMousePos()
+    local t = imgui.GetTime()
+    local sz = state.WindowSize
+    local cursorTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
+    if cursorTrail ~= "Dust" then state.SetValue("initializeDustParticles", false) end
+    if cursorTrail ~= "Sparkle" then state.SetValue("initializeSparkleParticles", false) end
+    if cursorTrail == "None" then return end
+    if cursorTrail == "Snake" then drawSnakeTrail(o, m, t) end
+    if cursorTrail == "Dust" then drawDustTrail(o, m, t, sz) end
+    if cursorTrail == "Sparkle" then drawSparkleTrail(o, m, t, sz) end
+end
+function drawSnakeTrail(o, m, t)
+    local trailPoints = globalVars.cursorTrailPoints
+    local snakeTrailPoints = {}
+    initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
+    getVariables("snakeTrailPoints", snakeTrailPoints)
+    local needTrailUpdate = checkIfFrameChanged(t, globalVars.effectFPS)
+    updateSnakeTrailPoints(snakeTrailPoints, needTrailUpdate, m, trailPoints,
+        globalVars.snakeSpringConstant)
+    saveVariables("snakeTrailPoints", snakeTrailPoints)
+    local trailShape = TRAIL_SHAPES[globalVars.cursorTrailShapeIndex]
+    renderSnakeTrailPoints(o, m, snakeTrailPoints, trailPoints, globalVars.cursorTrailSize,
+        globalVars.cursorTrailGhost, trailShape)
+end
+function initializeSnakeTrailPoints(snakeTrailPoints, m, trailPoints)
+    if state.GetValue("initializeSnakeTrail") then
+        for i = 1, trailPoints do
+            snakeTrailPoints[i] = {}
+        end
+        return
+    end
+    for i = 1, trailPoints do
+        snakeTrailPoints[i] = m
+    end
+    state.SetValue("initializeSnakeTrail", true)
+end
+function updateSnakeTrailPoints(snakeTrailPoints, needTrailUpdate, m, trailPoints,
+                                snakeSpringConstant)
+    if not needTrailUpdate then return end
+    for i = trailPoints, 1, -1 do
+        local currentTrailPoint = snakeTrailPoints[i]
+        if i == 1 then
+            currentTrailPoint = m
+        else
+            local lastTrailPoint = snakeTrailPoints[i - 1]
+            local change = lastTrailPoint - currentTrailPoint
+            currentTrailPoint = currentTrailPoint + snakeSpringConstant * change
+        end
+    end
+end
+function renderSnakeTrailPoints(o, m, snakeTrailPoints, trailPoints, cursorTrailSize,
+                                cursorTrailGhost, trailShape)
+    for i = 1, trailPoints do
+        local point = snakeTrailPoints[i]
+        local alpha = 255
+        if not cursorTrailGhost then
+            alpha = math.floor(255 * (trailPoints - i) / (trailPoints - 1))
+        end
+        local color = rgbaToUint(255, 255, 255, alpha)
+        if trailShape == "Circles" then
+            local coords = { point.x, point.y }
+            o.AddCircleFilled(coords, cursorTrailSize, color)
+        elseif trailShape == "Triangles" then
+            drawTriangleTrailPoint(o, m, point, cursorTrailSize, color)
+        end
+    end
+end
+function drawTriangleTrailPoint(o, m, point, cursorTrailSize, color)
+    local dx = m.x - point.x
+    local dy = m.y - point.y
+    if dx == 0 and dy == 0 then return end
+    local angle = math.pi / 2
+    if dx ~= 0 then angle = math.atan(dy / dx) end
+    if dx < 0 then angle = angle + math.pi end
+    if dx == 0 and dy < 0 then angle = angle + math.pi end
+    drawEquilateralTriangle(o, point, cursorTrailSize, angle, color)
+end
+function drawDustTrail(o, m, t, sz)
+    local dustSize = math.floor(sz[2] / 120)
+    local dustDuration = 0.4
+    local numDustParticles = 20
+    local dustParticles = {}
+    initializeDustParticles(sz, t, dustParticles, numDustParticles, dustDuration)
+    getVariables("dustParticles", dustParticles)
+    updateDustParticles(t, m, dustParticles, dustDuration, dustSize)
+    saveVariables("dustParticles", dustParticles)
+    renderDustParticles(globalVars.rgbPeriod, o, t, dustParticles, dustDuration, dustSize)
+end
+function initializeDustParticles(_, t, dustParticles, numDustParticles, dustDuration)
+    if state.GetValue("initializeDustParticles") then
+        for i = 1, numDustParticles do
+            dustParticles[i] = {}
+        end
+        return
+    end
+    for i = 1, numDustParticles do
+        local endTime = t + (i / numDustParticles) * dustDuration
+        local showParticle = false
+        dustParticles[i] = generateParticle(0, 0, 0, 0, endTime, showParticle)
+    end
+    state.SetValue("initializeDustParticles", true)
+    saveVariables("dustParticles", dustParticles)
+end
+function updateDustParticles(t, m, dustParticles, dustDuration, dustSize)
+    local yRange = 8 * dustSize * (math.random() - 0.5)
+    local xRange = 8 * dustSize * (math.random() - 0.5)
+    for i = 1, #dustParticles do
+        local dustParticle = dustParticles[i]
+        local timeLeft = dustParticle.endTime - t
+        if timeLeft < 0 then
+            local endTime = t + dustDuration
+            local showParticle = checkIfMouseMoved(imgui.GetMousePos())
+            dustParticles[i] = generateParticle(m.x, m.y, xRange, yRange, endTime, showParticle)
+        end
+    end
+end
+function renderDustParticles(rgbPeriod, o, t, dustParticles, dustDuration, dustSize)
+    local currentRGBColors = getCurrentRGBColors(rgbPeriod)
+    local currentRed = math.round(255 * currentRGBColors.red, 0)
+    local currentGreen = math.round(255 * currentRGBColors.green, 0)
+    local currentBlue = math.round(255 * currentRGBColors.blue, 0)
+    for i = 1, #dustParticles do
+        local dustParticle = dustParticles[i]
+        if dustParticle.showParticle then
+            local time = 1 - ((dustParticle.endTime - t) / dustDuration)
+            local dustX = dustParticle.x + dustParticle.xRange * time
+            local dy = dustParticle.yRange * math.quadraticBezier(0, time)
+            local dustY = dustParticle.y + dy
+            local dustCoords = vector.New(dustX, dustY)
+            local alpha = math.round(255 * (1 - time), 0)
+            local dustColor = rgbaToUint(currentRed, currentGreen, currentBlue, alpha)
+            o.AddCircleFilled(dustCoords, dustSize, dustColor)
+        end
+    end
+end
+function drawSparkleTrail(_, o, m, t, sz)
+    local sparkleSize = 10
+    local sparkleDuration = 0.3
+    local numSparkleParticles = 10
+    local sparkleParticles = {}
+    initializeSparkleParticles(sz, t, sparkleParticles, numSparkleParticles, sparkleDuration)
+    getVariables("sparkleParticles", sparkleParticles)
+    updateSparkleParticles(t, m, sparkleParticles, sparkleDuration, sparkleSize)
+    saveVariables("sparkleParticles", sparkleParticles)
+    renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkleSize)
+end
+function initializeSparkleParticles(_, t, sparkleParticles, numSparkleParticles, sparkleDuration)
+    if state.GetValue("initializeSparkleParticles") then
+        for i = 1, numSparkleParticles do
+            sparkleParticles[i] = {}
+        end
+        return
+    end
+    for i = 1, numSparkleParticles do
+        local endTime = t + (i / numSparkleParticles) * sparkleDuration
+        local showParticle = false
+        sparkleParticles[i] = generateParticle(0, 0, 0, 0, endTime, showParticle)
+    end
+    state.SetValue("initializeSparkleParticles", true)
+    saveVariables("sparkleParticles", sparkleParticles)
+end
+function updateSparkleParticles(t, m, sparkleParticles, sparkleDuration, sparkleSize)
+    for i = 1, #sparkleParticles do
+        local sparkleParticle = sparkleParticles[i]
+        local timeLeft = sparkleParticle.endTime - t
+        if timeLeft < 0 then
+            local endTime = t + sparkleDuration
+            local showParticle = checkIfMouseMoved(imgui.GetMousePos())
+            local randomX = m.x + sparkleSize * 3 * (math.random() - 0.5)
+            local randomY = m.y + sparkleSize * 3 * (math.random() - 0.5)
+            local yRange = 6 * sparkleSize
+            sparkleParticles[i] = generateParticle(randomX, randomY, 0, yRange, endTime,
+                showParticle)
+        end
+    end
+end
+function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkleSize)
+    for i = 1, #sparkleParticles do
+        local sparkleParticle = sparkleParticles[i]
+        if sparkleParticle.showParticle then
+            local time = 1 - ((sparkleParticle.endTime - t) / sparkleDuration)
+            local sparkleX = sparkleParticle.x + sparkleParticle.xRange * time
+            local dy = -sparkleParticle.yRange * math.quadraticBezier(0, time)
+            local sparkleY = sparkleParticle.y + dy
+            local sparkleCoords = vector.New(sparkleX, sparkleY)
+            local white = rgbaToUint(255, 255, 255, 255)
+            local actualSize = sparkleSize * (1 - math.quadraticBezier(0, time))
+            local sparkleColor = rgbaToUint(255, 255, 100, 30)
+            drawGlare(o, sparkleCoords, actualSize, white, sparkleColor)
+        end
+    end
 end
 function setClassicColors()
     local borderColor = vector.New(0.81, 0.88, 1.00, 0.30)
@@ -5755,6 +3261,88 @@ function getCurrentRGBColors(rgbPeriod)
     end
     return { red = red, green = green, blue = blue }
 end
+function pulseController()
+    local prevVal = state.GetValue("prevVal", 0)
+    local colStatus = state.GetValue("colStatus", 0)
+    local timeOffset = 50
+    local timeSinceLastPulse = ((state.SongTime + timeOffset) - getTimingPointAt(state.SongTime).StartTime) %
+        ((60000 / getTimingPointAt(state.SongTime).Bpm))
+    if ((timeSinceLastPulse < prevVal)) then
+        colStatus = 1
+    else
+        colStatus = (colStatus - state.DeltaTime / (60000 / getTimingPointAt(state.SongTime).Bpm))
+    end
+    local futureTime = state.SongTime + state.DeltaTime * 2 + timeOffset
+    if ((futureTime - getTimingPointAt(futureTime).StartTime) < 0) then
+        colStatus = 0
+    end
+    state.SetValue("colStatus", math.max(colStatus, 0))
+    state.SetValue("prevVal", timeSinceLastPulse)
+    colStatus = colStatus * (globalVars.pulseCoefficient or 0)
+    local borderColor = state.GetValue("baseBorderColor") or vector4(1)
+    local negatedBorderColor = vector4(1) - borderColor
+    local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
+    imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
+end
+---@class Particle
+---@field pos Vector2
+---@field v Vector2
+---@field a Vector2
+---@field col Vector4
+---@field size integer
+stars = {}
+function updateStars()
+    local dim = imgui.GetWindowSize()
+    for _, star in pairs(stars) do
+        local starWrapped = false
+        while (star.pos.x > dim.x + 10) do
+            starWrapped = true
+            star.pos.x = star.pos.x - dim.x - 20
+        end
+        while (star.pos.x < -10) do
+            starWrapped = true
+            star.pos.x = star.pos.x + dim.x + 20
+        end
+        if (starWrapped) then
+            star.pos.y = math.random() * dim.y
+            star.v.x = math.random() * 3 + 1
+            star.size = math.random(3) / 2
+        else
+            star.pos = star.pos + star.v * state.DeltaTime / 20 *
+                math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
+        end
+    end
+end
+function renderBackground()
+    local ctx = imgui.GetWindowDrawList()
+    local topLeft = imgui.GetWindowPos()
+    local dim = imgui.GetWindowSize()
+    if (not truthy(#stars)) then
+        for _ = 1, 100 do
+            table.insert(stars,
+                {
+                    pos = vector.New(math.random() * 500, math.random() * 500),
+                    v = vector.New(math.random() * 3 + 1, 0),
+                    size = math.random(3) / 2
+                })
+        end
+    else
+        updateStars()
+    end
+    for _, star in pairs(stars) do
+        local progress = star.pos.x / dim.x
+        local brightness = math.clamp(-8 * progress * (progress - 1), 0, 1)
+        ctx.AddCircleFilled(star.pos + topLeft, star.size, rgbaToUint(255, 255, 255, math.floor(255 * brightness)))
+    end
+    local colorValue = math.floor(50 * (1 + state.GetValue("borderPulseStatus", 0)))
+    local darkPurple = rgbaToUint(colorValue, 0, colorValue, 150)
+    local darkRed = rgbaToUint(colorValue, 0, 0, 150)
+    local transparent = rgbaToUint(0, 0, 0, 0)
+    ctx.AddRectFilledMultiColor(topLeft, vector.New(topLeft.x + dim.x / 5, topLeft.y + dim.y), darkPurple, transparent,
+        transparent, darkPurple)
+    ctx.AddRectFilledMultiColor(topLeft + dim - vector.New(dim.x / 5, dim.y), topLeft + dim, transparent, darkRed,
+        darkRed, transparent)
+end
 function setPluginAppearance()
     local colorTheme = COLOR_THEMES[globalVars.colorThemeIndex]
     local styleTheme = STYLE_THEMES[globalVars.styleThemeIndex]
@@ -5798,201 +3386,2783 @@ function setPluginAppearanceColors(colorTheme)
     if colorTheme == "CUSTOM" then borderColor = setCustomColors() end
     state.SetValue("baseBorderColor", borderColor)
 end
-function drawCursorTrail()
-    local o = imgui.GetForegroundDrawList()
-    local m = imgui.GetMousePos()
-    local t = imgui.GetTime()
-    local sz = state.WindowSize
-    local cursorTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
-    if cursorTrail ~= "Dust" then state.SetValue("initializeDustParticles", false) end
-    if cursorTrail ~= "Sparkle" then state.SetValue("initializeSparkleParticles", false) end
-    if cursorTrail == "None" then return end
-    if cursorTrail == "Snake" then drawSnakeTrail(o, m, t) end
-    if cursorTrail == "Dust" then drawDustTrail(o, m, t, sz) end
-    if cursorTrail == "Sparkle" then drawSparkleTrail(o, m, t, sz) end
+function awake()
+    local tempGlobalVars = read()
+    if (not tempGlobalVars) then tempGlobalVars = table.construct() end
+    setGlobalVars(tempGlobalVars)
+    loadDefaultProperties(tempGlobalVars.defaultProperties)
+    setPresets(table.map(tempGlobalVars.presets or {}, table.parse))
+    state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 end
-function drawSnakeTrail(o, m, t)
-    local trailPoints = globalVars.cursorTrailPoints
-    local snakeTrailPoints = {}
-    initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
-    getVariables("snakeTrailPoints", snakeTrailPoints)
-    local needTrailUpdate = checkIfFrameChanged(t, globalVars.effectFPS)
-    updateSnakeTrailPoints(snakeTrailPoints, needTrailUpdate, m, trailPoints,
-        globalVars.snakeSpringConstant)
-    saveVariables("snakeTrailPoints", snakeTrailPoints)
-    local trailShape = TRAIL_SHAPES[globalVars.cursorTrailShapeIndex]
-    renderSnakeTrailPoints(o, m, snakeTrailPoints, trailPoints, globalVars.cursorTrailSize,
-        globalVars.cursorTrailGhost, trailShape)
-end
-function initializeSnakeTrailPoints(snakeTrailPoints, m, trailPoints)
-    if state.GetValue("initializeSnakeTrail") then
-        for i = 1, trailPoints do
-            snakeTrailPoints[i] = {}
-        end
+---Creates an imgui button.
+---@param text string The text that the button should have.
+---@param size Vector2 The size of the button.
+---@param func fun(menuVars?: table): nil The function that the button should run upon being clicked.
+---@param menuVars? table A set of variables to be passed into the function.
+function FunctionButton(text, size, func, menuVars)
+    if not imgui.Button(text, size) then return end
+    if menuVars then
+        func(menuVars)
         return
     end
-    for i = 1, trailPoints do
-        snakeTrailPoints[i] = generate2DPoint(m.x, m.y)
-    end
-    state.SetValue("initializeSnakeTrail", true)
+    func()
 end
-function updateSnakeTrailPoints(snakeTrailPoints, needTrailUpdate, m, trailPoints,
-                                snakeSpringConstant)
-    if not needTrailUpdate then return end
-    for i = trailPoints, 1, -1 do
-        local currentTrailPoint = snakeTrailPoints[i]
-        if i == 1 then
-            currentTrailPoint.x = m.x
-            currentTrailPoint.y = m.y
+---Creates a checkbox that directly saves to globalVars and the universal `.yaml` file.
+---@param varsTable { [string]: any }The table that is meant to be modified.
+---@param parameterName string The key of globalVars that will be used for data storage.
+---@param label string The label for the input.
+---@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@return boolean changed Whether or not the checkbox has changed this frame.
+function BasicCheckbox(varsTable, parameterName, label, tooltipText)
+    local oldValue = varsTable[parameterName]
+    _, varsTable[parameterName] = imgui.Checkbox(label, oldValue)
+    if (tooltipText) then HelpMarker(tooltipText) end
+    return oldValue ~= varsTable[parameterName]
+end
+---Creates a checkbox that directly saves to globalVars and the universal `.yaml` file.
+---@param parameterName string The key of globalVars that will be used for data storage.
+---@param label string The label for the input.
+---@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+function GlobalCheckbox(parameterName, label, tooltipText)
+    local oldValue = globalVars[parameterName]
+    ---@cast oldValue boolean
+    _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
+    if (tooltipText) then ToolTip(tooltipText) end
+    if (oldValue ~= globalVars[parameterName]) then write(globalVars) end
+end
+---Creates an input designed specifically for code.
+---@param varsTable { [string]: any } The table that is meant to be modified.
+---@param parameterName string The key of the table that will be used for data storage.
+---@param label string The label for the input.
+---@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@return boolean active Whether or not the code input is currently in edit mode.
+function CodeInput(varsTable, parameterName, label, tooltipText)
+    local oldCode = varsTable[parameterName]
+    _, varsTable[parameterName] = imgui.InputTextMultiline(label, oldCode, 16384,
+        vector.New(240, 120))
+    if (tooltipText) then ToolTip(tooltipText) end
+    return imgui.IsItemActive()
+end
+---Creates a color input.
+---@param customStyle { [string]: any } The table that is meant to be modified.
+---@param parameterName string The key of globalVars that will be used for data storage.
+---@param label string The label for the input.
+---@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@return boolean changed Whether or not the input has changed this frame.
+function ColorInput(customStyle, parameterName, label, tooltipText)
+    AddSeparator()
+    local oldCode = customStyle[parameterName]
+    _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or DEFAULT_STYLE[parameterName])
+    if (tooltipText) then ToolTip(tooltipText) end
+    return oldCode ~= customStyle[parameterName]
+end
+---Creates a combo element.
+---@param label string The label for the combo.
+---@param list string[] The list of elements the combo should use.
+---@param listIndex integer The currently selected combo index.
+---@param colorList? string[] An optional list containing an array of colors to use for each item.
+---@param hiddenGroups? string[] An optional list, where if any items in list show up here, they will not be shown on the dropdown.
+---@return number newListIndex The new combo index.
+function Combo(label, list, listIndex, colorList, hiddenGroups)
+    local newListIndex = math.clamp(listIndex, 1, #list)
+    local currentComboItem = list[listIndex]
+    local comboFlag = imgui_combo_flags.HeightLarge
+    rgb = {}
+    hiddenGroups = hiddenGroups or {}
+    if (colorList) then
+        colorList[newListIndex]:gsub("(%d+)", function(c)
+            table.insert(rgb, c)
+        end)
+        imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
+    end
+    if not imgui.BeginCombo(label, currentComboItem, comboFlag) then
+        if (colorList) then imgui.PopStyleColor() end
+        return newListIndex
+    end
+    if (colorList) then imgui.PopStyleColor() end
+    for i = 1, #list do
+        rgb = {}
+        if (colorList) then
+            colorList[i]:gsub("(%d+)", function(c)
+                table.insert(rgb, c)
+            end)
+            imgui.PushStyleColor(imgui_col.Text, vector.New(rgb[1] / 255, rgb[2] / 255, rgb[3] / 255, 1))
+        end
+        local listItem = list[i]
+        if (table.contains(hiddenGroups, listItem)) then goto skipRender end
+        if imgui.Selectable(listItem) then
+            newListIndex = i
+        end
+        ::skipRender::
+        if (colorList) then imgui.PopStyleColor() end
+    end
+    imgui.EndCombo()
+    return newListIndex
+end
+function ComputableInputFloat(label, var, decimalPlaces, suffix)
+    local computableStateIndex = state.GetValue("ComputableInputFloatIndex") or 1
+    local previousValue = var
+    _, var = imgui.InputText(label,
+        string.format("%." .. decimalPlaces .. "f" .. suffix,
+            math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")) or 0),
+        4096,
+        imgui_input_text_flags.AutoSelectAll)
+    if (not imgui.IsItemActive() and state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex, false)) then
+        local desiredComp = tostring(var):gsub(" ", "")
+        var = expr(desiredComp)
+    end
+    state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())
+    state.SetValue("ComputableInputFloatIndex", computableStateIndex + 1)
+    return math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")),
+        previousValue ~= var
+end
+function SwappableNegatableInputFloat2(varsTable, lowerName, higherName, label, suffix, digits, widthFactor)
+    digits = digits or 2
+    suffix = suffix or "x"
+    widthFactor = widthFactor or 0.7
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
+    local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
+    ToolTip("Swap start/end values")
+    local oldValues = vector.New(varsTable[lowerName], varsTable[higherName])
+    KeepSameLine()
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
+    local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
+    ToolTip("Negate start/end values")
+    KeepSameLine()
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
+    local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
+    imgui.PopItemWidth()
+    varsTable[lowerName] = newValues.x
+    varsTable[higherName] = newValues.y
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
+        varsTable[lowerName] = oldValues.y
+        varsTable[higherName] = oldValues.x
+    end
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
+        varsTable[lowerName] = -oldValues.x
+        varsTable[higherName] = -oldValues.y
+    end
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
+        oldValues ~= newValues
+end
+---Creates an `imgui.inputInt` element.
+---@param varsTable { [string]: any }The table that is meant to be modified.
+---@param parameterName string The key of globalVars that will be used for data storage.
+---@param label string The label for the input.
+---@param bounds? [number, number] A tuple representing the minimum and maximum bounds this input should have.
+---@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@return boolean changed Whether or not the checkbox has changed this frame.
+function BasicInputInt(varsTable, parameterName, label, bounds, tooltipText)
+    local oldValue = varsTable[parameterName]
+    _, varsTable[parameterName] = imgui.InputInt(label, oldValue, 1, 1)
+    if (tooltipText) then HelpMarker(tooltipText) end
+    if (bounds and bounds[1] and bounds[2]) then
+        varsTable[parameterName] = math.clamp(varsTable[parameterName], bounds[1], bounds[2])
+    end
+    return oldValue ~= varsTable[parameterName]
+end
+---Creates a set of radio buttons.
+---@generic T
+---@param label string The label for all radio buttons.
+---@param value T The current value of the input.
+---@param options string[] The list of options that the input should have. Each option has its own radio button.
+---@param optionValues T[] What each option should set the value, in code.
+---@param tooltipText? string An optional tooltip to be shown on hover.
+---@return T idx The value of the currently selected radio button.
+function RadioButtons(label, value, options, optionValues, tooltipText)
+    imgui.AlignTextToFramePadding()
+    imgui.Text(label)
+    if (tooltipText) then ToolTip(tooltipText) end
+    for idx, option in pairs(options) do
+        imgui.SameLine(0, RADIO_BUTTON_SPACING)
+        if imgui.RadioButton(option, value == optionValues[idx]) then
+            value = optionValues[idx]
+        end
+    end
+    return value
+end
+function KeepSameLine()
+    return imgui.SameLine(0, SAMELINE_SPACING)
+end
+function AddPadding()
+    imgui.Dummy(vector.New(0, 0))
+end
+function AddSeparator()
+    AddPadding()
+    imgui.Separator()
+    AddPadding()
+end
+function ToolTip(text)
+    if not imgui.IsItemHovered() then return end
+    imgui.BeginTooltip()
+    imgui.PushTextWrapPos(imgui.GetFontSize() * 20)
+    imgui.Text(text)
+    imgui.PopTextWrapPos()
+    imgui.EndTooltip()
+end
+function HelpMarker(text)
+    KeepSameLine()
+    imgui.TextDisabled("(?)")
+    ToolTip(text)
+end
+devMode = true
+imgui_disable_vector_packing = true
+function draw()
+    state.SetValue("ComputableInputFloatIndex", 1)
+    state.IsWindowHovered = imgui.IsWindowHovered()
+    drawCapybara()
+    drawCapybara2()
+    drawCapybara312()
+    drawCursorTrail()
+    setPluginAppearance()
+    startNextWindowNotCollapsed("plumoguSVAutoOpen")
+    imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
+    renderBackground()
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
+    imgui.BeginTabBar("SV tabs")
+    for i = 1, #TAB_MENUS do
+        createMenuTab(TAB_MENUS[i])
+    end
+    imgui.EndTabBar()
+    if (globalVars.showVibratoWidget) then
+        imgui.Begin("plumoguSV-Vibrato", imgui_window_flags.AlwaysAutoResize)
+        imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH)
+        placeVibratoSVMenu(true)
+        imgui.End()
+    end
+    if (globalVars.showNoteDataWidget) then
+        renderNoteDataWidget()
+    end
+    if (globalVars.showMeasureDataWidget) then
+        renderMeasureDataWidget()
+    end
+    imgui.End()
+    pulseController()
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
+        local tgId = state.SelectedHitObjects[1].TimingGroup
+        for _, ho in pairs(state.SelectedHitObjects) do
+            if (ho.TimingGroup ~= tgId) then return end
+        end
+        state.SelectedScrollGroupId = tgId
+    end
+end
+function renderNoteDataWidget()
+    if (#state.SelectedHitObjects ~= 1) then return end
+    imgui.BeginTooltip()
+    imgui.Text("Note Info:")
+    local selectedNote = state.SelectedHitObjects[1]
+    imgui.Text("StartTime = " .. selectedNote.StartTime .. " ms")
+    local noteIsNotLN = selectedNote.EndTime == 0
+    if noteIsNotLN then
+        imgui.EndTooltip()
+        return
+    end
+    local lnLength = selectedNote.EndTime - selectedNote.StartTime
+    imgui.Text("EndTime = " .. selectedNote.EndTime .. " ms")
+    imgui.Text("LN Length = " .. lnLength .. " ms")
+    imgui.EndTooltip()
+end
+function renderMeasureDataWidget()
+    if #state.SelectedHitObjects < 2 then return end
+    local uniqueDict = {}
+    for _, ho in pairs(state.SelectedHitObjects) do
+        if (not table.contains(uniqueDict, ho.StartTime)) then
+            table.insert(uniqueDict, ho.StartTime)
+        end
+        if (#uniqueDict > 2) then return end
+    end
+    uniqueDict = table.sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
+    local startOffset = uniqueDict[1]
+    local endOffset = uniqueDict[2] or uniqueDict[1]
+    if (endOffset == startOffset) then return end
+    if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69)) then
+        svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
+        nsvDistance = endOffset - startOffset
+        addStartSVIfMissing(svsBetweenOffsets, startOffset)
+        totalDistance = calculateDisplacementFromSVs(svsBetweenOffsets, startOffset, endOffset)
+        roundedSVDistance = math.round(totalDistance, 3)
+        avgSV = totalDistance / (endOffset - startOffset)
+        roundedAvgSV = math.round(avgSV, 3)
+        state.SetValue("tooltip_nsvDistance", nsvDistance)
+        state.SetValue("tooltip_roundedSVDistance", roundedSVDistance)
+        state.SetValue("tooltip_roundedAvgSV", roundedAvgSV)
+    else
+        nsvDistance = state.GetValue("tooltip_nsvDistance", 0)
+        roundedSVDistance = state.GetValue("tooltip_roundedSVDistance", 0)
+        roundedAvgSV = state.GetValue("tooltip_roundedAvgSV", 0)
+    end
+    imgui.BeginTooltip()
+    imgui.Text("Measure Info:")
+    imgui.Text("NSV Distance = " .. nsvDistance .. " ms")
+    imgui.Text("SV Distance = " .. roundedSVDistance .. " msx")
+    imgui.Text("Avg SV = " .. roundedAvgSV .. "x")
+    imgui.EndTooltip()
+    state.SetValue("oldStartOffset", startOffset)
+    state.SetValue("oldEndOffset", endOffset)
+end
+DEFAULT_WIDGET_HEIGHT = 26
+DEFAULT_WIDGET_WIDTH = 160
+PADDING_WIDTH = 8
+RADIO_BUTTON_SPACING = 7.5
+SAMELINE_SPACING = 5
+ACTION_BUTTON_SIZE = vector.New(253, 42)
+PLOT_GRAPH_SIZE = vector.New(253, 100)
+HALF_ACTION_BUTTON_SIZE = vector.New(125, 42)
+SECONDARY_BUTTON_SIZE = vector.New(48, 24)
+TERTIARY_BUTTON_SIZE = vector.New(21.5, 24)
+EXPORT_BUTTON_SIZE = vector.New(40, 24)
+BEEG_BUTTON_SIZE = vector.New(253, 24)
+MIN_RGB_CYCLE_TIME = 0.1
+MAX_RGB_CYCLE_TIME = 300
+MAX_CURSOR_TRAIL_POINTS = 100
+MAX_SV_POINTS = 1000
+MAX_ANIMATION_FRAMES = 999
+MAX_IMPORT_CHARACTER_LIMIT = 999999
+CHINCHILLA_TYPES = {
+    "Exponential",
+    "Polynomial",
+    "Circular",
+    "Sine Power",
+    "Arc Sine Power",
+    "Inverse Power",
+    "Peter Stock"
+}
+COLOR_THEMES = {
+    "Classic",
+    "Strawberry",
+    "Amethyst",
+    "Tree",
+    "Barbie",
+    "Incognito",
+    "Incognito + RGB",
+    "Tobi's Glass",
+    "Tobi's RGB Glass",
+    "Glass",
+    "Glass + RGB",
+    "RGB Gamer Mode",
+    "edom remag BGR",
+    "BGR + otingocnI",
+    "otingocnI",
+    "CUSTOM"
+}
+COLOR_THEME_COLORS = {
+    "255,255,255",
+    "251,41,67",
+    "153,102,204",
+    "150,111,51",
+    "227,5,173",
+    "150,150,150",
+    "255,0,0",
+    "200,200,200",
+    "0,255,0",
+    "220,220,220",
+    "0,0,255",
+    "255,100,100",
+    "100,255,100",
+    "100,100,255",
+    "255,255,255",
+    "0,0,0",
+}
+COMBO_SV_TYPE = {
+    "Add",
+    "Cross Multiply",
+    "Remove",
+    "Min",
+    "Max",
+    "SV Type 1 Only",
+    "SV Type 2 Only"
+}
+CURSOR_TRAILS = {
+    "None",
+    "Snake",
+    "Dust",
+    "Sparkle"
+}
+DISPLACE_SCALE_SPOTS = {
+    "Start",
+    "End"
+}
+EMOTICONS = {
+    "( - _ - )",
+    "( e . e )",
+    "( * o * )",
+    "( h . m )",
+    "( ~ _ ~ )",
+    "( - . - )",
+    "( C | D )",
+    "( w . w )",
+    "( ^ w ^ )",
+    "( > . < )",
+    "( + x + )",
+    "( o _ 0 )",
+    "[ m w m ]",
+    "( v . ^ )",
+    "( ^ o v )",
+    "( ^ o v )",
+    "( ; A ; )",
+    "[ . _ . ]",
+    "[ ' = ' ]",
+}
+FINAL_SV_TYPES = {
+    "Normal",
+    "Custom",
+    "Override"
+}
+FLICKER_TYPES = {
+    "Normal",
+    "Delayed"
+}
+NOTE_SKIN_TYPES = {
+    "Bar",
+    "Circle"
+}
+RANDOM_TYPES = {
+    "Normal",
+    "Uniform"
+}
+SCALE_TYPES = {
+    "Average SV",
+    "Absolute Distance",
+    "Relative Ratio"
+}
+STANDARD_SVS_NO_COMBO = {
+    "Linear",
+    "Exponential",
+    "Bezier",
+    "Hermite",
+    "Sinusoidal",
+    "Circular",
+    "Random",
+    "Custom",
+    "Chinchilla"
+}
+STILL_TYPES = {
+    "No",
+    "Start",
+    "End",
+    "Auto",
+    "Otua"
+}
+STUTTER_CONTROLS = {
+    "First SV",
+    "Second SV"
+}
+STYLE_THEMES = {
+    "Rounded",
+    "Boxed",
+    "Rounded + Border",
+    "Boxed + Border"
+}
+SV_BEHAVIORS = {
+    "Slow down",
+    "Speed up"
+}
+TRAIL_SHAPES = {
+    "Circles",
+    "Triangles"
+}
+STILL_BEHAVIOR_TYPES = {
+    "Entire Region",
+    "Per Note Group",
+}
+DISTANCE_TYPES = {
+    "Average SV + Shift",
+    "Distance + Shift",
+    "Start / End"
+}
+VIBRATO_TYPES = {
+    "SV (msx)",
+    "SSF (x)",
+}
+VIBRATO_QUALITIES = {
+    "Low",
+    "Medium",
+    "High",
+    "Ultra",
+    "Omega"
+}
+VIBRATO_FRAME_RATES = { 45, 90, 150, 210, 450 }
+VIBRATO_DETAILED_QUALITIES = {}
+for i, v in pairs(VIBRATO_QUALITIES) do
+    table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
+end
+VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
+DEFAULT_STYLE = {
+    windowBg = vector.New(0.00, 0.00, 0.00, 1.00),
+    popupBg = vector.New(0.08, 0.08, 0.08, 0.94),
+    frameBg = vector.New(0.14, 0.24, 0.28, 1.00),
+    frameBgHovered =
+        vector.New(0.24, 0.34, 0.38, 1.00),
+    frameBgActive =
+        vector.New(0.29, 0.39, 0.43, 1.00),
+    titleBg = vector.New(0.14, 0.24, 0.28, 1.00),
+    titleBgActive =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    titleBgCollapsed =
+        vector.New(0.51, 0.58, 0.75, 0.50),
+    checkMark = vector.New(0.81, 0.88, 1.00, 1.00),
+    sliderGrab =
+        vector.New(0.56, 0.63, 0.75, 1.00),
+    sliderGrabActive =
+        vector.New(0.61, 0.68, 0.80, 1.00),
+    button = vector.New(0.31, 0.38, 0.50, 1.00),
+    buttonHovered =
+        vector.New(0.41, 0.48, 0.60, 1.00),
+    buttonActive =
+        vector.New(0.51, 0.58, 0.70, 1.00),
+    tab = vector.New(0.31, 0.38, 0.50, 1.00),
+    tabHovered =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    tabActive =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    header = vector.New(0.81, 0.88, 1.00, 0.40),
+    headerHovered =
+        vector.New(0.81, 0.88, 1.00, 0.50),
+    headerActive =
+        vector.New(0.81, 0.88, 1.00, 0.54),
+    separator = vector.New(0.81, 0.88, 1.00, 0.30),
+    text = vector.New(1.00, 1.00, 1.00, 1.00),
+    textSelectedBg =
+        vector.New(0.81, 0.88, 1.00, 0.40),
+    scrollbarGrab =
+        vector.New(0.31, 0.38, 0.50, 1.00),
+    scrollbarGrabHovered =
+        vector.New(0.41, 0.48, 0.60, 1.00),
+    scrollbarGrabActive =
+        vector.New(0.51, 0.58, 0.70, 1.00),
+    plotLines =
+        vector.New(0.61, 0.61, 0.61, 1.00),
+    plotLinesHovered =
+        vector.New(1.00, 0.43, 0.35, 1.00),
+    plotHistogram =
+        vector.New(0.90, 0.70, 0.00, 1.00),
+    plotHistogramHovered =
+        vector.New(1.00, 0.60, 0.00, 1.00)
+}
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
+GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
+HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
+    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
+    "Execute Vibrato Separately", "Use TG of Selected Note" }
+function coordsRelativeToWindow(x, y)
+    local newX = x + imgui.GetWindowPos()[1]
+    local newY = y + imgui.GetWindowPos()[2]
+    return { newX, newY }
+end
+function relativePoint(point, xChange, yChange)
+    return { point[1] + xChange, point[2] + yChange }
+end
+function checkIfFrameChanged(currentTime, fps)
+    local oldFrameInfo = { frameNumber = 0 }
+    getVariables("oldFrameInfo", oldFrameInfo)
+    local newFrameNumber = math.floor(currentTime * fps) % fps
+    local frameChanged = oldFrameInfo.frameNumber ~= newFrameNumber
+    oldFrameInfo.frameNumber = newFrameNumber
+    saveVariables("oldFrameInfo", oldFrameInfo)
+    return frameChanged
+end
+function generateParticle(x, y, xRange, yRange, endTime, showParticle)
+    local particle = {
+        x = x,
+        y = y,
+        xRange = xRange,
+        yRange = yRange,
+        endTime = endTime,
+        showParticle = showParticle
+    }
+    return particle
+end
+function checkIfMouseMoved(currentMousePosition)
+    local oldMousePosition = {
+        x = 0,
+        y = 0
+    }
+    getVariables("oldMousePosition", oldMousePosition)
+    local xChanged = currentMousePosition.x ~= oldMousePosition.x
+    local yChanged = currentMousePosition.y ~= oldMousePosition.y
+    local mousePositionChanged = xChanged or yChanged
+    oldMousePosition.x = currentMousePosition.x
+    oldMousePosition.y = currentMousePosition.y
+    saveVariables("oldMousePosition", oldMousePosition)
+    return mousePositionChanged
+end
+function drawEquilateralTriangle(o, centerPoint, size, angle, color)
+    local angle2 = 2 * math.pi / 3 + angle
+    local angle3 = 4 * math.pi / 3 + angle
+    local x1 = centerPoint.x + size * math.cos(angle)
+    local y1 = centerPoint.y + size * math.sin(angle)
+    local x2 = centerPoint.x + size * math.cos(angle2)
+    local y2 = centerPoint.y + size * math.sin(angle2)
+    local x3 = centerPoint.x + size * math.cos(angle3)
+    local y3 = centerPoint.y + size * math.sin(angle3)
+    local p1 = vector.New(x1, y1)
+    local p2 = vector.New(x2, y2)
+    local p3 = vector.New(x3, y3)
+    o.AddTriangleFilled(p1, p2, p3, color)
+end
+function drawGlare(o, coords, size, glareColor, auraColor)
+    local outerRadius = size
+    local innerRadius = outerRadius / 7
+    local innerPoints = {}
+    local outerPoints = {}
+    for i = 1, 4 do
+        local angle = math.pi * ((2 * i + 1) / 4)
+        local innerX = innerRadius * math.cos(angle)
+        local innerY = innerRadius * math.sin(angle)
+        local outerX = outerRadius * innerX
+        local outerY = outerRadius * innerY
+        innerPoints[i] = { innerX + coords.x, innerY + coords.y }
+        outerPoints[i] = { outerX + coords.x, outerY + coords.y }
+    end
+    o.AddQuadFilled(innerPoints[1], outerPoints[2], innerPoints[3], outerPoints[4], glareColor)
+    o.AddQuadFilled(outerPoints[1], innerPoints[2], outerPoints[3], innerPoints[4], glareColor)
+    local circlePoints = 20
+    local circleSize1 = size / 1.2
+    local circleSize2 = size / 3
+    o.AddCircleFilled(coords, circleSize1, auraColor, circlePoints)
+    o.AddCircleFilled(coords, circleSize2, auraColor, circlePoints)
+end
+function drawHorizontalPillShape(o, point1, point2, radius, color, circleSegments)
+    o.AddCircleFilled(point1, radius, color, circleSegments)
+    o.AddCircleFilled(point2, radius, color, circleSegments)
+    local rectangleStartCoords = relativePoint(point1, 0, radius)
+    local rectangleEndCoords = relativePoint(point2, 0, -radius)
+    o.AddRectFilled(rectangleStartCoords, rectangleEndCoords, color)
+end
+CREATE_TYPES = {
+    "Standard",
+    "Special",
+    "Still",
+    "Vibrato",
+}
+function createSVTab()
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
+    choosePlaceSVType()
+    local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
+    if placeType == "Standard" then placeStandardSVMenu() end
+    if placeType == "Special" then placeSpecialSVMenu() end
+    if placeType == "Still" then placeStillSVMenu() end
+    if placeType == "Vibrato" then placeVibratoSVMenu(false) end
+end
+function renderPresetMenu(menuVars, settingVars)
+    imgui.Columns(4)
+    imgui.Text("Name")
+    imgui.NextColumn()
+    imgui.Text("Menu")
+    imgui.NextColumn()
+    imgui.Text("Details")
+    imgui.NextColumn()
+    imgui.Text("Select")
+    imgui.NextColumn()
+    imgui.Separator()
+    for idx, preset in pairs(presets) do
+        imgui.Text(preset.name)
+        imgui.NextColumn()
+        imgui.Text(table.concat({ preset.type, " > ", preset.menu }))
+        imgui.NextColumn()
+        HelpMarker(table.stringify(preset.data.settingVars))
+        imgui.NextColumn()
+        if (imgui.Button("Select##Preset" .. idx)) then
+            globalVars.showPresetMenu = false
+            globalVars.placeTypeIndex = table.indexOf(CREATE_TYPES, preset.menu)
+            saveVariables(preset.menu .. preset.type .. "Settings", preset.data.settingVars)
+            saveVariables("place" .. preset.menu .. "Menu", preset.data.menuVars)
+        end
+    end
+    imgui.SetColumnWidth(0, 100)
+    imgui.SetColumnWidth(1, 100)
+    imgui.SetColumnWidth(2, 30)
+    imgui.SetColumnWidth(3, 80)
+    imgui.Columns(1)
+end
+function animationFramesSetupMenu(settingVars)
+    chooseMenuStep(settingVars)
+    if settingVars.menuStep == 1 then
+        KeepSameLine()
+        imgui.Text("Choose Frame Settings")
+        AddSeparator()
+        chooseNumFrames(settingVars)
+        chooseFrameSpacing(settingVars)
+        chooseDistance(settingVars)
+        HelpMarker("Initial separating distance from selected note to the first frame")
+        chooseFrameOrder(settingVars)
+        AddSeparator()
+        chooseNoteSkinType(settingVars)
+    elseif settingVars.menuStep == 2 then
+        KeepSameLine()
+        imgui.Text("Adjust Notes/Frames")
+        AddSeparator()
+        imgui.Columns(2, "Notes and Frames", false)
+        addFrameTimes(settingVars)
+        displayFrameTimes(settingVars)
+        removeSelectedFrameTimeButton(settingVars)
+        AddPadding()
+        chooseFrameTimeData(settingVars)
+        imgui.NextColumn()
+        chooseCurrentFrame(settingVars)
+        drawCurrentFrame(settingVars)
+        imgui.Columns(1)
+        local invisibleButtonSize = { 2 * (ACTION_BUTTON_SIZE.x + 1.5 * SAMELINE_SPACING), 1 }
+        imgui.InvisibleButton("sv isnt a real skill", invisibleButtonSize)
+    else
+        KeepSameLine()
+        imgui.Text("Place SVs")
+        AddSeparator()
+        if #settingVars.frameTimes == 0 then
+            imgui.Text("No notes added in Step 2, so can't place SVs yet")
+            return
+        end
+        HelpMarker("This tool displaces notes into frames after the (first) selected note")
+        HelpMarker("Works with pre-existing SVs or no SVs in the map")
+        HelpMarker("This is technically an edit SV tool, but it replaces the old animate function")
+        HelpMarker("Make sure to prepare an empty area for the frames after the note you select")
+        HelpMarker("Note: frame positions and viewing them will break if SV distances change")
+        AddSeparator()
+        local label = "Setup frames after selected note"
+        simpleActionMenu(label, 1, displaceNotesForAnimationFrames, settingVars)
+    end
+end
+function removeSelectedFrameTimeButton(settingVars)
+    if #settingVars.frameTimes == 0 then return end
+    if not imgui.Button("Removed currently selected time", BEEG_BUTTON_SIZE) then return end
+    table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
+    local maxIndex = math.max(1, #settingVars.frameTimes)
+    settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
+end
+function animationPaletteMenu(settingVars)
+    CodeInput(settingVars, "instructions", nil, "Write instructions here.")
+end
+function automateSVMenu(settingVars)
+    local copiedSVCount = #settingVars.copiedSVs
+    if (copiedSVCount == 0) then
+        simpleActionMenu("Copy SVs between selected notes", 2, automateCopySVs, settingVars)
+        return
+    end
+    FunctionButton("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, settingVars)
+    AddSeparator()
+    settingVars.initialSV = NegatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
+    _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
+    KeepSameLine()
+    _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
+    _, settingVars.maintainMs = imgui.Checkbox("Static Time?", settingVars.maintainMs)
+    if (settingVars.maintainMs) then
+        KeepSameLine()
+        imgui.PushItemWidth(71)
+        settingVars.ms = ComputableInputFloat("Time", settingVars.ms, 2, "ms")
+        imgui.PopItemWidth()
+    end
+    AddSeparator()
+    simpleActionMenu("Automate SVs for selected notes", 2, automateSVs, settingVars)
+end
+SPECIAL_SVS = {
+    "Stutter",
+    "Teleport Stutter",
+    "Frames Setup",
+    "Automate",
+    "Penis",
+}
+function placeSpecialSVMenu()
+    presetButton()
+    local menuVars = getMenuVars("placeSpecial")
+    chooseSpecialSVType(menuVars)
+    AddSeparator()
+    local currentSVType = SPECIAL_SVS[menuVars.svTypeIndex]
+    local settingVars = getSettingVars(currentSVType, "Special")
+    if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
+        return
+    end
+    if currentSVType == "Stutter" then stutterMenu(settingVars) end
+    if currentSVType == "Teleport Stutter" then teleportStutterMenu(settingVars) end
+    if currentSVType == "Frames Setup" then
+        animationFramesSetupMenu(settingVars)
+    end
+    if currentSVType == "Automate" then automateSVMenu(settingVars) end
+    if currentSVType == "Penis" then penisMenu(settingVars) end
+    local labelText = currentSVType .. "Special"
+    saveVariables(labelText .. "Settings", settingVars)
+    saveVariables("placeSpecialMenu", menuVars)
+end
+function penisMenu(settingVars)
+    _, settingVars.bWidth = imgui.InputInt("Ball Width", math.floor(settingVars.bWidth))
+    _, settingVars.sWidth = imgui.InputInt("Shaft Width", math.floor(settingVars.sWidth))
+    _, settingVars.sCurvature = imgui.SliderInt("S Curvature", settingVars.sCurvature, 1, 100,
+        settingVars.sCurvature .. "%%")
+    _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
+        settingVars.bCurvature .. "%%")
+    simpleActionMenu("Place SVs", 1, placePenisSV, settingVars)
+end
+function stutterMenu(settingVars)
+    local settingsChanged = #settingVars.svMultipliers == 0
+    settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
+    settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
+    settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
+    settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+    AddSeparator()
+    settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+    settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+    settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
+    if settingsChanged then updateStutterMenuSVs(settingVars) end
+    displayStutterSVWindows(settingVars)
+    AddSeparator()
+    simpleActionMenu("Place SVs between selected notes", 2, placeStutterSVs, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeStutterSSFs, settingVars, true)
+end
+function teleportStutterMenu(settingVars)
+    if settingVars.useDistance then
+        chooseDistance(settingVars)
+        HelpMarker("Start SV teleport distance")
+    else
+        chooseStartSVPercent(settingVars)
+    end
+    chooseMainSV(settingVars)
+    chooseAverageSV(settingVars)
+    chooseFinalSV(settingVars, false)
+    chooseUseDistance(settingVars)
+    chooseLinearlyChange(settingVars)
+    AddSeparator()
+    simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, settingVars)
+    simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, settingVars, true)
+end
+STANDARD_SVS = {
+    "Linear",
+    "Exponential",
+    "Bezier",
+    "Hermite",
+    "Sinusoidal",
+    "Circular",
+    "Random",
+    "Custom",
+    "Chinchilla",
+    "Combo",
+    "Code"
+}
+function placeStandardSVMenu()
+    presetButton()
+    local menuVars = getMenuVars("placeStandard")
+    local needSVUpdate = #menuVars.svMultipliers == 0
+    needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
+    AddSeparator()
+    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
+    local settingVars = getSettingVars(currentSVType, "Standard")
+    if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
+        return
+    end
+    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
+    AddSeparator()
+    needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
+    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, false) end
+    startNextWindowNotCollapsed("svInfoAutoOpen")
+    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
+        menuVars.svMultipliers, nil, false)
+    menuVars.settingVars = settingVars
+    AddSeparator()
+    if (STANDARD_SVS[menuVars.svTypeIndex] == "Exponential" and settingVars.distanceMode == 2) then
+        simpleActionMenu("Place SVs between selected notes##Exponential", 2, placeExponentialSpecialSVs, menuVars)
+    else
+        simpleActionMenu("Place SVs between selected notes", 2, placeSVs, menuVars)
+    end
+    simpleActionMenu("Place SSFs between selected notes", 2, placeSSFs, menuVars, true)
+    saveVariables(currentSVType .. "StandardSettings", settingVars)
+    saveVariables("placeStandardMenu", menuVars)
+end
+function placeStillSVMenu()
+    presetButton()
+    local menuVars = getMenuVars("placeStill")
+    local needSVUpdate = #menuVars.svMultipliers == 0
+    needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate
+    AddSeparator()
+    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
+    local settingVars = getSettingVars(currentSVType, "Still")
+    if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
+        return
+    end
+    imgui.Text("Still Settings:")
+    chooseNoteSpacing(menuVars)
+    chooseStillBehavior(menuVars)
+    chooseStillType(menuVars)
+    AddSeparator()
+    needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
+    AddSeparator()
+    needSVUpdate = chooseInterlace(menuVars) or needSVUpdate
+    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, false) end
+    startNextWindowNotCollapsed("svInfoAutoOpen")
+    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
+        menuVars.svMultipliers, nil, false)
+    AddSeparator()
+    menuVars.settingVars = settingVars
+    simpleActionMenu("Place SVs between selected notes", 2, placeStillSVsParent, menuVars)
+    saveVariables(currentSVType .. "StillSettings", settingVars)
+    saveVariables("placeStillMenu", menuVars)
+end
+function customVibratoMenu(menuVars, settingVars, separateWindow)
+    local typingCode = false
+    if (menuVars.vibratoMode == 1) then
+        CodeInput(settingVars, "code", "##code")
+        if imgui.IsItemActive() then
+            typingCode = true
         else
-            local lastTrailPoint = snakeTrailPoints[i - 1]
-            local xChange = lastTrailPoint.x - currentTrailPoint.x
-            local yChange = lastTrailPoint.y - currentTrailPoint.y
-            currentTrailPoint.x = currentTrailPoint.x + snakeSpringConstant * xChange
-            currentTrailPoint.y = currentTrailPoint.y + snakeSpringConstant * yChange
+            typingCode = false
         end
+        local func = eval(settingVars.code)
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    else
+        CodeInput(settingVars, "code1", "##code1")
+        if imgui.IsItemActive() then
+            typingCode = true
+        else
+            typingCode = false
+        end
+        CodeInput(settingVars, "code2", "##code2")
+        if imgui.IsItemActive() then
+            typingCode = true
+        else
+            typingCode = typingCode or false
+        end
+        local func1 = eval(settingVars.code1)
+        local func2 = eval(settingVars.code2)
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            ssfVibrato(v, func1, func2)
+        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end
-function renderSnakeTrailPoints(o, m, snakeTrailPoints, trailPoints, cursorTrailSize,
-                                cursorTrailGhost, trailShape)
-    for i = 1, trailPoints do
-        local point = snakeTrailPoints[i]
-        local alpha = 255
-        if not cursorTrailGhost then
-            alpha = math.floor(255 * (trailPoints - i) / (trailPoints - 1))
+function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
+    if (menuVars.vibratoMode == 1) then
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 0.875)
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local func = function(t)
+            t = math.clamp(t, 0, 1)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.endMsx * t +
+                settingVars.startMsx * (1 - t)
         end
-        local color = rgbaToUint(255, 255, 255, alpha)
-        if trailShape == "Circles" then
-            local coords = { point.x, point.y }
-            o.AddCircleFilled(coords, cursorTrailSize, color)
-        elseif trailShape == "Triangles" then
-            drawTriangleTrailPoint(o, m, point, cursorTrailSize, color)
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    else
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local func1 = function(t)
+            t = math.clamp(t, 0, 1)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
         end
+        local func2 = function(t)
+            t = math.clamp(t, 0, 1)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end
-function drawTriangleTrailPoint(o, m, point, cursorTrailSize, color)
-    local dx = m.x - point.x
-    local dy = m.y - point.y
-    if dx == 0 and dy == 0 then return end
-    local angle = math.pi / 2
-    if dx ~= 0 then angle = math.atan(dy / dx) end
-    if dx < 0 then angle = angle + math.pi end
-    if dx == 0 and dy < 0 then angle = angle + math.pi end
-    drawEquilateralTriangle(o, point, cursorTrailSize, angle, color)
-end
-function drawDustTrail(o, m, t, sz)
-    local dustSize = math.floor(sz[2] / 120)
-    local dustDuration = 0.4
-    local numDustParticles = 20
-    local dustParticles = {}
-    initializeDustParticles(sz, t, dustParticles, numDustParticles, dustDuration)
-    getVariables("dustParticles", dustParticles)
-    updateDustParticles(t, m, dustParticles, dustDuration, dustSize)
-    saveVariables("dustParticles", dustParticles)
-    renderDustParticles(globalVars.rgbPeriod, o, t, dustParticles, dustDuration, dustSize)
-end
-function initializeDustParticles(_, t, dustParticles, numDustParticles, dustDuration)
-    if state.GetValue("initializeDustParticles") then
-        for i = 1, numDustParticles do
-            dustParticles[i] = {}
-        end
+VIBRATO_SVS = {
+    "Linear##Vibrato",
+    "Exponential##Vibrato",
+    "Sinusoidal##Vibrato",
+    "Sigmoidal##Vibrato",
+    "Custom##Vibrato"
+}
+function placeVibratoSVMenu(separateWindow)
+    presetButton()
+    local menuVars = getMenuVars("placeVibrato")
+    chooseVibratoSVType(menuVars)
+    AddSeparator()
+    imgui.Text("Vibrato Settings:")
+    chooseVibratoMode(menuVars)
+    chooseVibratoQuality(menuVars)
+    if (menuVars.vibratoMode ~= 2) then
+        chooseVibratoSides(menuVars)
+    end
+    local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
+    local settingVars = getSettingVars(currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF"), "Vibrato")
+    if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
         return
     end
-    for i = 1, numDustParticles do
-        local endTime = t + (i / numDustParticles) * dustDuration
-        local showParticle = false
-        dustParticles[i] = generateParticle(0, 0, 0, 0, endTime, showParticle)
-    end
-    state.SetValue("initializeDustParticles", true)
-    saveVariables("dustParticles", dustParticles)
+    AddSeparator()
+    if currentSVType == "Linear##Vibrato" then linearVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Exponential##Vibrato" then exponentialVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Sinusoidal##Vibrato" then sinusoidalVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Sigmoidal##Vibrato" then sigmoidalVibratoMenu(menuVars, settingVars, separateWindow) end
+    if currentSVType == "Custom##Vibrato" then customVibratoMenu(menuVars, settingVars, separateWindow) end
+    local labelText = currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF") .. "Vibrato"
+    saveVariables(labelText .. "Settings", settingVars)
+    saveVariables("placeVibratoMenu", menuVars)
 end
-function updateDustParticles(t, m, dustParticles, dustDuration, dustSize)
-    local yRange = 8 * dustSize * (math.random() - 0.5)
-    local xRange = 8 * dustSize * (math.random() - 0.5)
-    for i = 1, #dustParticles do
-        local dustParticle = dustParticles[i]
-        local timeLeft = dustParticle.endTime - t
-        if timeLeft < 0 then
-            local endTime = t + dustDuration
-            local showParticle = checkIfMouseMoved(imgui.GetMousePos())
-            dustParticles[i] = generateParticle(m.x, m.y, xRange, yRange, endTime, showParticle)
+function linearVibratoMenu(menuVars, settingVars, separateWindow)
+    if (menuVars.vibratoMode == 1) then
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 0.875)
+        local func = function(t)
+            return settingVars.endMsx * t + settingVars.startMsx * (1 - t)
         end
-    end
-end
-function renderDustParticles(rgbPeriod, o, t, dustParticles, dustDuration, dustSize)
-    local currentRGBColors = getCurrentRGBColors(rgbPeriod)
-    local currentRed = math.round(255 * currentRGBColors.red, 0)
-    local currentGreen = math.round(255 * currentRGBColors.green, 0)
-    local currentBlue = math.round(255 * currentRGBColors.blue, 0)
-    for i = 1, #dustParticles do
-        local dustParticle = dustParticles[i]
-        if dustParticle.showParticle then
-            local time = 1 - ((dustParticle.endTime - t) / dustDuration)
-            local dustX = dustParticle.x + dustParticle.xRange * time
-            local dy = dustParticle.yRange * math.quadraticBezier(0, time)
-            local dustY = dustParticle.y + dy
-            local dustCoords = vector.New(dustX, dustY)
-            local alpha = math.round(255 * (1 - time), 0)
-            local dustColor = rgbaToUint(currentRed, currentGreen, currentBlue, alpha)
-            o.AddCircleFilled(dustCoords, dustSize, dustColor)
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    else
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
+        local func1 = function(t)
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
         end
+        local func2 = function(t)
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     end
 end
-function drawSparkleTrail(_, o, m, t, sz)
-    local sparkleSize = 10
-    local sparkleDuration = 0.3
-    local numSparkleParticles = 10
-    local sparkleParticles = {}
-    initializeSparkleParticles(sz, t, sparkleParticles, numSparkleParticles, sparkleDuration)
-    getVariables("sparkleParticles", sparkleParticles)
-    updateSparkleParticles(t, m, sparkleParticles, sparkleDuration, sparkleSize)
-    saveVariables("sparkleParticles", sparkleParticles)
-    renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkleSize)
-end
-function initializeSparkleParticles(_, t, sparkleParticles, numSparkleParticles, sparkleDuration)
-    if state.GetValue("initializeSparkleParticles") then
-        for i = 1, numSparkleParticles do
-            sparkleParticles[i] = {}
+function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
+    if (menuVars.vibratoMode == 1) then
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 7 / 8)
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local func = function(t)
+            t = math.clamp(t, 0, 1) * 2
+            if (curvature >= 1) then
+                if (t <= 1) then
+                    t = t ^ curvature
+                else
+                    t = 2 - (2 - t) ^ curvature
+                end
+            else
+                if (t <= 1) then
+                    t = (1 - (1 - t) ^ (1 / curvature))
+                else
+                    t = (t - 1) ^ (1 / curvature) + 1
+                end
+            end
+            t = t / 2
         end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    else
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
+        chooseCurvatureCoefficient(settingVars)
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local func1 = function(t)
+            t = math.clamp(t, 0, 1)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)
+        end
+        local func2 = function(t)
+            t = math.clamp(t, 0, 1)
+            if (curvature < 10) then
+                t = 1 - (1 - t) ^ (1 / curvature)
+            else
+                t = t ^ curvature
+            end
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    end
+end
+function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
+    if (menuVars.vibratoMode == 1) then
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End##Vibrato", " msx", 0, 0.875)
+        chooseMsxVerticalShift(settingVars, 0)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        local func = function(t)
+            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) * (settingVars.startMsx +
+                t * (settingVars.endMsx - settingVars.startMsx)) + settingVars.verticalShift
+        end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v)
+            svVibrato(v, func)
+        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    else
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
+        chooseConstantShift(settingVars)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        _, settingVars.applyToHigher = imgui.Checkbox("Apply Vibrato to Higher SSF?", settingVars.applyToHigher)
+        local func1 = function(t)
+            return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
+                (settingVars.lowerStart + t * (settingVars.lowerEnd - settingVars.lowerStart)) +
+                settingVars.verticalShift
+        end
+        local func2 = function(t)
+            if (settingVars.applyToHigher) then
+                return math.sin(2 * math.pi * (settingVars.periods * t + settingVars.periodsShift)) *
+                    (settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)) +
+                    settingVars.verticalShift
+            end
+            return settingVars.higherStart + t * (settingVars.higherEnd - settingVars.higherStart)
+        end
+        AddSeparator()
+        simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
+            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+    end
+end
+function deleteTab()
+    local menuVars = getMenuVars("delete")
+    _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
+    KeepSameLine()
+    _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])
+    _, menuVars.deleteTable[3] = imgui.Checkbox("Delete SSFs", menuVars.deleteTable[3])
+    imgui.SameLine(0, SAMELINE_SPACING + 3.5)
+    _, menuVars.deleteTable[4] = imgui.Checkbox("Delete Bookmarks", menuVars.deleteTable[4])
+    saveVariables("deleteMenu", menuVars)
+    for i = 1, 4 do
+        if (menuVars.deleteTable[i]) then goto continue end
+    end
+    do return 69 end
+    ::continue::
+    simpleActionMenu("Delete items between selected notes", 2, deleteItems, menuVars)
+end
+function addTeleportMenu()
+    local menuVars = getMenuVars("addTeleport")
+    chooseDistance(menuVars)
+    chooseHand(menuVars)
+    saveVariables("addTeleportMenu", menuVars)
+    AddSeparator()
+    simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, menuVars)
+end
+function alignTimingLinesMenu()
+    simpleActionMenu("Align Timing Lines In This Region", 0, alignTimingLines, nil)
+end
+function changeGroupsMenu()
+    local menuVars = getMenuVars("changeGroups")
+    imgui.AlignTextToFramePadding()
+    imgui.Text("  Move to: ")
+    KeepSameLine()
+    local groups = { "$Default", "$Global" }
+    local cols = { map.TimingGroups["$Default"].ColorRgb or "86,253,110", map.TimingGroups["$Global"].ColorRgb or
+    "255,255,255" }
+    local hiddenGroups = {}
+    for tgId, tg in pairs(map.TimingGroups) do
+        if string.find(tgId, "%$") then goto cont end
+        if (globalVars.hideAutomatic and string.find(tgId, "automate_")) then
+            table.insert(hiddenGroups,
+                tgId)
+        end
+        table.insert(groups, tgId)
+        table.insert(cols, tg.ColorRgb or "255,255,255")
+        ::cont::
+    end
+    local prevIndex = table.indexOf(groups, menuVars.designatedTimingGroup)
+    imgui.PushItemWidth(155)
+    local newIndex = Combo("##changingScrollGroup", groups, prevIndex, cols, hiddenGroups)
+    imgui.PopItemWidth()
+    imgui.Dummy(vector.New(0, 2))
+    menuVars.designatedTimingGroup = groups[newIndex]
+    _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
+    KeepSameLine()
+    _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
+    AddSeparator()
+    simpleActionMenu("Move items to " .. menuVars.designatedTimingGroup, 2, changeGroups, menuVars)
+end
+function convertSVSSFMenu()
+    local menuVars = getMenuVars("convertSVSSF")
+    chooseConvertSVSSFDirection(menuVars)
+    saveVariables("convertSVSSFMenu", menuVars)
+    simpleActionMenu(menuVars.conversionDirection and "Convert SVs -> SSFs" or "Convert SSFs -> SVs", 2, convertSVSSF,
+        menuVars, false, false)
+end
+function copyNPasteMenu()
+    local menuVars = getMenuVars("copy")
+    _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
+    KeepSameLine()
+    _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
+    _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
+    imgui.SameLine(0, SAMELINE_SPACING + 3.5)
+    _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
+    AddSeparator()
+    local copiedItemCount = #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs + #menuVars.copiedBMs
+    if (copiedItemCount == 0) then
+        simpleActionMenu("Copy items between selected notes", 2, copyItems, menuVars)
+    else
+        FunctionButton("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
+    end
+    if copiedItemCount == 0 then
+        saveVariables("copyMenu", menuVars)
         return
     end
-    for i = 1, numSparkleParticles do
-        local endTime = t + (i / numSparkleParticles) * sparkleDuration
-        local showParticle = false
-        sparkleParticles[i] = generateParticle(0, 0, 0, 0, endTime, showParticle)
-    end
-    state.SetValue("initializeSparkleParticles", true)
-    saveVariables("sparkleParticles", sparkleParticles)
+    AddSeparator()
+    _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
+    saveVariables("copyMenu", menuVars)
+    simpleActionMenu("Paste items at selected notes", 1, pasteItems, menuVars)
 end
-function updateSparkleParticles(t, m, sparkleParticles, sparkleDuration, sparkleSize)
-    for i = 1, #sparkleParticles do
-        local sparkleParticle = sparkleParticles[i]
-        local timeLeft = sparkleParticle.endTime - t
-        if timeLeft < 0 then
-            local endTime = t + sparkleDuration
-            local showParticle = checkIfMouseMoved(imgui.GetMousePos())
-            local randomX = m.x + sparkleSize * 3 * (math.random() - 0.5)
-            local randomY = m.y + sparkleSize * 3 * (math.random() - 0.5)
-            local yRange = 6 * sparkleSize
-            sparkleParticles[i] = generateParticle(randomX, randomY, 0, yRange, endTime,
-                showParticle)
+function updateDirectEdit()
+    local offsets = uniqueSelectedNoteOffsets()
+    if (not truthy(offsets)) then return end
+    local firstOffset = offsets[1]
+    local lastOffset = offsets[#offsets]
+    if (#offsets < 2) then
+        state.SetValue("directSVList", {})
+        return
+    end
+    local svs = getSVsBetweenOffsets(firstOffset, lastOffset)
+    state.SetValue("directSVList", svs)
+end
+function directSVMenu()
+    local menuVars = getMenuVars("directSV")
+    local clockTime = 0.2
+    if ((state.UnixTime or 0) - (state.GetValue("lastRecordedTime") or 0) >= clockTime) then
+        state.SetValue("lastRecordedTime", state.UnixTime or 0)
+        updateDirectEdit()
+    end
+    local svs = state.GetValue("directSVList") or {}
+    if (#svs == 0) then
+        menuVars.selectableIndex = 1
+        imgui.TextWrapped("Select two notes to view SVs.")
+        return
+    end
+    if (menuVars.selectableIndex > #svs) then menuVars.selectableIndex = #svs end
+    local oldStartTime = svs[menuVars.selectableIndex].StartTime
+    local oldMultiplier = svs[menuVars.selectableIndex].Multiplier
+    local primeStartTime = state.GetValue("primeStartTime") or false
+    local primeMultiplier = state.GetValue("primeMultiplier") or false
+    _, menuVars.startTime = imgui.InputFloat("Start Time", oldStartTime)
+    _, menuVars.multiplier = imgui.InputFloat("Multiplier", oldMultiplier)
+    if (oldStartTime ~= menuVars.startTime) then
+        primeStartTime = true
+    else
+        if (not primeStartTime) then goto continue1 end
+        primeStartTime = false
+        local newSV = createSV(state.GetValue("savedStartTime") or 0, menuVars.multiplier)
+        actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
+            utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
+    end
+    ::continue1::
+    if (oldMultiplier ~= menuVars.multiplier) then
+        primeMultiplier = true
+    else
+        if (not primeMultiplier) then goto continue2 end
+        primeMultiplier = false
+        local newSV = createSV(menuVars.startTime, state.GetValue("savedMultiplier") or 1)
+        actions.PerformBatch({ utils.CreateEditorAction(action_type.RemoveScrollVelocity, svs[menuVars.selectableIndex]),
+            utils.CreateEditorAction(action_type.AddScrollVelocity, newSV) })
+    end
+    ::continue2::
+    state.SetValue("primeStartTime", primeStartTime)
+    state.SetValue("primeMultiplier", primeMultiplier)
+    state.SetValue("savedStartTime", menuVars.startTime)
+    state.SetValue("savedMultiplier", menuVars.multiplier)
+    imgui.Separator()
+    if (imgui.ArrowButton("##DirectSVLeft", imgui_dir.Left)) then
+        menuVars.pageNumber = math.clamp(menuVars.pageNumber - 1, 1, math.ceil(#svs / 10))
+    end
+    KeepSameLine()
+    imgui.Text("Page ")
+    KeepSameLine()
+    imgui.SetNextItemWidth(100)
+    _, menuVars.pageNumber = imgui.InputInt("##PageNum", math.clamp(menuVars.pageNumber, 1, math.ceil(#svs / 10)), 0)
+    KeepSameLine()
+    imgui.Text(" of " .. math.ceil(#svs / 10))
+    KeepSameLine()
+    if (imgui.ArrowButton("##DirectSVRight", imgui_dir.Right)) then
+        menuVars.pageNumber = math.clamp(menuVars.pageNumber + 1, 1, math.ceil(#svs / 10))
+    end
+    imgui.Separator()
+    imgui.Text("Start Time")
+    KeepSameLine()
+    imgui.SetCursorPosX(150)
+    imgui.Text("Multiplier")
+    imgui.Separator()
+    local startingPoint = 10 * menuVars.pageNumber - 10
+    imgui.BeginTable("Test", 2)
+    for idx, v in pairs({ table.unpack(svs, startingPoint + 1, startingPoint + 10) }) do
+        imgui.PushID(idx)
+        imgui.TableNextRow()
+        imgui.TableSetColumnIndex(0)
+        imgui.Selectable(tostring(math.round(v.StartTime, 2)), menuVars.selectableIndex == idx,
+            imgui_selectable_flags.SpanAllColumns)
+        if (imgui.IsItemClicked()) then
+            menuVars.selectableIndex = idx + startingPoint
+        end
+        imgui.TableSetColumnIndex(1)
+        imgui.SetCursorPosX(150)
+        imgui.Text(tostring(math.round(v.Multiplier, 2)));
+        imgui.PopID()
+    end
+    imgui.EndTable()
+    saveVariables("directSVMenu", menuVars)
+end
+function displaceNoteMenu()
+    local menuVars = getMenuVars("displaceNote")
+    chooseVaryingDistance(menuVars)
+    chooseLinearlyChangeDist(menuVars)
+    saveVariables("displaceNoteMenu", menuVars)
+    AddSeparator()
+    simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, menuVars)
+end
+function displaceViewMenu()
+    local menuVars = getMenuVars("displaceView")
+    chooseDistance(menuVars)
+    saveVariables("displaceViewMenu", menuVars)
+    AddSeparator()
+    simpleActionMenu("Displace view between selected notes", 2, displaceViewSVs, menuVars)
+end
+function dynamicScaleMenu()
+    local menuVars = getMenuVars("dynamicScale")
+    local numNoteTimes = #menuVars.noteTimes
+    imgui.Text(#menuVars.noteTimes .. " note times assigned to scale SVs between")
+    addNoteTimesToDynamicScaleButton(menuVars)
+    if numNoteTimes == 0 then
+        saveVariables("dynamicScaleMenu", menuVars)
+        return
+    else
+        clearNoteTimesButton(menuVars)
+    end
+    AddSeparator()
+    if #menuVars.noteTimes < 3 then
+        imgui.Text("Not enough note times assigned")
+        imgui.Text("Assign 3 or more note times instead")
+        saveVariables("dynamicScaleMenu", menuVars)
+        return
+    end
+    local numSVPoints = numNoteTimes - 1
+    local needSVUpdate = #menuVars.svMultipliers == 0 or (#menuVars.svMultipliers ~= numSVPoints)
+    imgui.AlignTextToFramePadding()
+    imgui.Text("Shape:")
+    KeepSameLine()
+    needSVUpdate = chooseStandardSVType(menuVars, true) or needSVUpdate
+    AddSeparator()
+    local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
+    if currentSVType == "Sinusoidal" then
+        imgui.Text("Import sinusoidal values using 'Custom' instead")
+        saveVariables("dynamicScaleMenu", menuVars)
+        return
+    end
+    local settingVars = getSettingVars(currentSVType, "DynamicScale")
+    needSVUpdate = showSettingsMenu(currentSVType, settingVars, true, numSVPoints) or needSVUpdate
+    if needSVUpdate then updateMenuSVs(currentSVType, menuVars, settingVars, true) end
+    startNextWindowNotCollapsed("svInfoAutoOpen")
+    makeSVInfoWindow("SV Info", menuVars.svGraphStats, menuVars.svStats, menuVars.svDistances,
+        menuVars.svMultipliers, nil, true)
+    local labelText = currentSVType .. "DynamicScale"
+    saveVariables(labelText .. "Settings", settingVars)
+    saveVariables("dynamicScaleMenu", menuVars)
+    AddSeparator()
+    simpleActionMenu("Scale spacing between assigned notes", 0, dynamicScaleSVs, menuVars)
+end
+function clearNoteTimesButton(menuVars)
+    if not imgui.Button("Clear all assigned note times", BEEG_BUTTON_SIZE) then return end
+    menuVars.noteTimes = {}
+end
+function addNoteTimesToDynamicScaleButton(menuVars)
+    local buttonText = "Assign selected note times"
+    FunctionButton(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
+end
+function fixLNEndsMenu()
+    imgui.TextWrapped(
+        "If there is a negative SV at an LN end, the LN end will be flipped. This is noticable especially for arrow skins and is jarring. This tool will fix that.")
+    AddSeparator()
+    simpleActionMenu("Fix flipped LN ends", 0, fixFlippedLNEnds, nil)
+end
+function flickerMenu()
+    local menuVars = getMenuVars("flicker")
+    chooseFlickerType(menuVars)
+    chooseVaryingDistance(menuVars)
+    chooseLinearlyChangeDist(menuVars)
+    chooseNumFlickers(menuVars)
+    if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
+    saveVariables("flickerMenu", menuVars)
+    AddSeparator()
+    simpleActionMenu("Add flicker SVs between selected notes", 2, flickerSVs, menuVars)
+end
+EDIT_SV_TOOLS = {
+    "Add Teleport",
+    "Align Timing Lines",
+    "Change Groups",
+    "Convert SV <-> SSF",
+    "Copy & Paste",
+    "Direct SV",
+    "Displace Note",
+    "Displace View",
+    "Dynamic Scale",
+    "Fix LN Ends",
+    "Flicker",
+    "Layer Snaps",
+    "Measure",
+    "Merge",
+    "Reverse Scroll",
+    "Scale (Displace)",
+    "Scale (Multiply)",
+    "Swap Notes",
+    "Vertical Shift"
+}
+function editSVTab()
+    if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
+    chooseEditTool()
+    AddSeparator()
+    local toolName = EDIT_SV_TOOLS[globalVars.editToolIndex]
+    if toolName == "Add Teleport" then addTeleportMenu() end
+    if toolName == "Align Timing Lines" then alignTimingLinesMenu() end
+    if toolName == "Change Groups" then changeGroupsMenu() end
+    if toolName == "Convert SV <-> SSF" then convertSVSSFMenu() end
+    if toolName == "Copy & Paste" then copyNPasteMenu() end
+    if toolName == "Direct SV" then directSVMenu() end
+    if toolName == "Displace Note" then displaceNoteMenu() end
+    if toolName == "Displace View" then displaceViewMenu() end
+    if toolName == "Dynamic Scale" then dynamicScaleMenu() end
+    if toolName == "Fix LN Ends" then fixLNEndsMenu() end
+    if toolName == "Flicker" then flickerMenu() end
+    if toolName == "Layer Snaps" then layerSnapMenu() end
+    if toolName == "Measure" then measureMenu() end
+    if toolName == "Merge" then mergeMenu() end
+    if toolName == "Reverse Scroll" then reverseScrollMenu() end
+    if toolName == "Scale (Displace)" then scaleDisplaceMenu() end
+    if toolName == "Scale (Multiply)" then scaleMultiplyMenu() end
+    if toolName == "Swap Notes" then swapNotesMenu() end
+    if toolName == "Vertical Shift" then verticalShiftMenu() end
+end
+function layerSnapMenu()
+    simpleActionMenu("Layer snaps between selection", 2, layerSnaps, nil)
+    AddSeparator()
+    simpleActionMenu("Collapse snap layers", 0, collapseSnaps, nil)
+    simpleActionMenu("Clear unused snap layers", 0, clearSnappedLayers, nil)
+end
+function measureMenu()
+    local menuVars = getMenuVars("measure")
+    chooseMeasuredStatsView(menuVars)
+    AddSeparator()
+    if menuVars.unrounded then
+        displayMeasuredStatsUnrounded(menuVars)
+    else
+        displayMeasuredStatsRounded(menuVars)
+    end
+    AddPadding()
+    imgui.TextDisabled("*** Measuring disclaimer ***")
+    ToolTip("Measured values might not be 100%% accurate & may not work on older maps")
+    AddSeparator()
+    simpleActionMenu("Measure SVs between selected notes", 2, measureSVs, menuVars)
+    saveVariables("measureMenu", menuVars)
+end
+function displayMeasuredStatsRounded(menuVars)
+    imgui.Columns(2, "Measured SV Stats", false)
+    imgui.Text("NSV distance:")
+    imgui.Text("SV distance:")
+    imgui.Text("Average SV:")
+    imgui.Text("Start displacement:")
+    imgui.Text("End displacement:")
+    imgui.Text("True average SV:")
+    imgui.NextColumn()
+    imgui.Text(menuVars.roundedNSVDistance .. " msx")
+    HelpMarker("The normal distance between the start and the end, ignoring SVs")
+    imgui.Text(menuVars.roundedSVDistance .. " msx")
+    HelpMarker("The actual distance between the start and the end, calculated with SVs")
+    imgui.Text(menuVars.roundedAvgSV .. "x")
+    imgui.Text(menuVars.roundedStartDisplacement .. " msx")
+    HelpMarker("Calculated using plumoguSV displacement metrics, so might not always work")
+    imgui.Text(menuVars.roundedEndDisplacement .. " msx")
+    HelpMarker("Calculated using plumoguSV displacement metrics, so might not always work")
+    imgui.Text(menuVars.roundedAvgSVDisplaceless .. "x")
+    HelpMarker("Average SV calculated ignoring the start and end displacement")
+    imgui.Columns(1)
+end
+function displayMeasuredStatsUnrounded(menuVars)
+    CopiableBox("NSV distance", "##nsvDistance", menuVars.nsvDistance)
+    CopiableBox("SV distance", "##svDistance", menuVars.svDistance)
+    CopiableBox("Average SV", "##avgSV", menuVars.avgSV)
+    CopiableBox("Start displacement", "##startDisplacement", menuVars.startDisplacement)
+    CopiableBox("End displacement", "##endDisplacement", menuVars.endDisplacement)
+    CopiableBox("True average SV", "##avgSVDisplaceless", menuVars.avgSVDisplaceless)
+end
+function CopiableBox(text, label, content)
+    imgui.TextWrapped(text)
+    imgui.PushItemWidth(imgui.GetContentRegionAvailWidth())
+    imgui.InputText(label, content, #content, imgui_input_text_flags.AutoSelectAll)
+    imgui.PopItemWidth()
+    AddPadding()
+end
+function mergeMenu()
+    simpleActionMenu("Merge duplicate SVs between selected notes", 2, mergeSVs, nil)
+end
+function reverseScrollMenu()
+    local menuVars = getMenuVars("reverseScroll")
+    chooseDistance(menuVars)
+    HelpMarker("Height at which reverse scroll notes are hit")
+    saveVariables("reverseScrollMenu", menuVars)
+    AddSeparator()
+    local buttonText = "Reverse scroll between selected notes"
+    simpleActionMenu(buttonText, 2, reverseScrollSVs, menuVars)
+end
+function scaleDisplaceMenu()
+    local menuVars = getMenuVars("scaleDisplace")
+    chooseScaleDisplaceSpot(menuVars)
+    chooseScaleType(menuVars)
+    saveVariables("scaleDisplaceMenu", menuVars)
+    AddSeparator()
+    local buttonText = "Scale SVs between selected notes##displace"
+    simpleActionMenu(buttonText, 2, scaleDisplaceSVs, menuVars)
+end
+function scaleMultiplyMenu()
+    local menuVars = getMenuVars("scaleMultiply")
+    chooseScaleType(menuVars)
+    saveVariables("scaleMultiplyMenu", menuVars)
+    AddSeparator()
+    local buttonText = "Scale SVs between selected notes##multiply"
+    simpleActionMenu(buttonText, 2, scaleMultiplySVs, menuVars)
+end
+function swapNotesMenu()
+    simpleActionMenu("Swap selected notes using SVs", 2, swapNoteSVs, nil)
+end
+function verticalShiftMenu()
+    local menuVars = getMenuVars("verticalShift")
+    chooseConstantShift(menuVars, 0)
+    saveVariables("verticalShiftMenu", menuVars)
+    AddSeparator()
+    local buttonText = "Vertically shift SVs between selected notes"
+    simpleActionMenu(buttonText, 2, verticalShiftSVs, menuVars)
+end
+TAB_MENUS = {
+    "Info",
+    "Select",
+    "Create",
+    "Edit",
+    "Delete"
+}
+---Creates a menu tab.
+---@param tabName string
+function createMenuTab(tabName)
+    if not imgui.BeginTabItem(tabName) then return end
+    AddPadding()
+    if tabName == "Info" then
+        infoTab()
+    else
+        state.SetValue("showSettingsWindow", false)
+    end
+    if tabName == "Select" then selectTab() end
+    if tabName == "Create" then createSVTab() end
+    if tabName == "Edit" then editSVTab() end
+    if tabName == "Delete" then deleteTab() end
+    imgui.EndTabItem()
+end
+function infoTab()
+    imgui.SeparatorText("Welcome to plumoguSV!")
+    imgui.TextWrapped("This plugin is your one-stop shop for all of \nyour SV needs. Using it is quick and easy:")
+    AddPadding()
+    imgui.BulletText("Choose an SV tool in the Create tab.")
+    imgui.BulletText("Adjust the tool's settings to your liking.")
+    imgui.BulletText("Select notes to use the tool at.")
+    imgui.BulletText("Press the '" .. GLOBAL_HOTKEY_LIST[1] .. "' hotkey.")
+    AddPadding()
+    imgui.SeparatorText("Special thanks to:")
+    AddPadding()
+    imgui.BulletText("kloi34, for being the original dev.")
+    imgui.BulletText("kusa, for some handy widgets.")
+    imgui.BulletText("7xbi + nethen for some useful PRs.")
+    imgui.BulletText("Emik + William for plugin help.")
+    imgui.BulletText("ESV members for constant support.")
+    AddPadding()
+    AddPadding()
+    if (imgui.Button("Click Here To Edit Settings", ACTION_BUTTON_SIZE)) then
+        state.SetValue("showSettingsWindow", true)
+        local windowDim = state.WindowSize
+        local pluginDim = imgui.GetWindowSize()
+        local centeringX = (windowDim[1] - pluginDim.x) / 2
+        local centeringY = (windowDim[2] - pluginDim.y) / 2
+        local coordinatesToCenter = vector.New(centeringX, centeringY)
+        imgui.SetWindowPos("plumoguSV Settings", coordinatesToCenter)
+    end
+    if (state.GetValue("showSettingsWindow")) then
+        showPluginSettingsWindow()
+    end
+    if (imgui.Button("Click Here To Get Map Stats", ACTION_BUTTON_SIZE)) then
+        local currentTg = state.SelectedScrollGroupId
+        local tgList = map.GetTimingGroupIds()
+        local svSum = 0
+        local ssfSum = 0
+        for _, tg in pairs(tgList) do
+            state.SelectedScrollGroupId = tg
+            svSum = svSum + #map.ScrollVelocities
+            ssfSum = ssfSum + #map.ScrollSpeedFactors
+        end
+        print("s!",
+            "That's an average of " ..
+            math.round(svSum * 1000 / map.TrackLength, 2) ..
+            " SVs per second, or " .. math.round(ssfSum * 1000 / map.TrackLength, 2) .. " SSFs per second.")
+        print("s!", "This map also contains " .. #map.TimingPoints .. " timing points.")
+        print("s!",
+            "This map has " .. svSum .. " SVs and " .. ssfSum .. " SSFs across " .. #tgList .. " timing groups.")
+        print("w!",
+            "Remember that the quality of map has no correlation with the object count! Try to be optimal in your object usage.")
+        state.SelectedScrollGroupId = currentTg
+    end
+end
+function selectAlternatingMenu()
+    local menuVars = getMenuVars("selectAlternating")
+    chooseEvery(menuVars)
+    chooseOffset(menuVars)
+    saveVariables("selectAlternatingMenu", menuVars)
+    AddSeparator()
+    simpleActionMenu(
+        "Select a note every " ..
+        menuVars.every .. pluralize(" note, from note #", menuVars.every, 5) .. menuVars.offset,
+        2,
+        selectAlternating, menuVars)
+end
+function selectBookmarkMenu()
+    local bookmarks = map.bookmarks
+    local selectedIndex = state.GetValue("selectedIndex") or 0
+    local searchTerm = state.GetValue("searchTerm") or ""
+    local filterTerm = state.GetValue("filterTerm") or ""
+    local times = {}
+    if (#bookmarks == 0) then
+        imgui.TextWrapped("There are no bookmarks! Add one to navigate.")
+    else
+        imgui.PushItemWidth(70)
+        _, searchTerm = imgui.InputText("Search", searchTerm, 4096)
+        KeepSameLine()
+        _, filterTerm = imgui.InputText("Ignore", filterTerm, 4096)
+        imgui.Columns(3)
+        imgui.Text("Time")
+        imgui.NextColumn()
+        imgui.Text("Bookmark Label")
+        imgui.NextColumn()
+        imgui.Text("Leap")
+        imgui.NextColumn()
+        imgui.Separator()
+        local skippedBookmarks = 0
+        local skippedIndices = 0
+        for idx, bm in pairs(bookmarks) do
+            if (bm.StartTime < 0) then
+                skippedBookmarks = skippedBookmarks + 1
+                skippedIndices = skippedIndices + 1
+                goto continue
+            end
+            if (searchTerm:len() > 0) and (not bm.Note:find(searchTerm)) then
+                skippedBookmarks = skippedBookmarks + 1
+                goto continue
+            end
+            if (filterTerm:len() > 0) and (bm.Note:find(filterTerm)) then
+                skippedBookmarks = skippedBookmarks + 1
+                goto continue
+            end
+            vPos = 126.5 + (idx - skippedBookmarks) * 32
+            imgui.SetCursorPosY(vPos)
+            table.insert(times, bm.StartTime)
+            imgui.Text(bm.StartTime)
+            imgui.NextColumn()
+            imgui.SetCursorPosY(vPos)
+            bm.Note = bm.Note:fixToSize(110)
+            imgui.NextColumn()
+            if (imgui.Button("Go to #" .. idx - skippedIndices, vector.New(65, 24))) then
+                actions.GoToObjects(bm.StartTime)
+            end
+            imgui.NextColumn()
+            if (idx ~= #bookmarks) then imgui.Separator() end
+            ::continue::
+        end
+        local maxTimeLength = #tostring(math.max(table.unpack(times) or 0))
+        imgui.SetColumnWidth(0, maxTimeLength * 10.25)
+        imgui.SetColumnWidth(1, 110)
+        imgui.SetColumnWidth(2, 80)
+        imgui.PopItemWidth()
+        imgui.Columns(1)
+    end
+    state.SetValue("selectedIndex", selectedIndex)
+    state.SetValue("searchTerm", searchTerm)
+    state.SetValue("filterTerm", filterTerm)
+end
+function selectChordSizeMenu()
+    local menuVars = getMenuVars("selectChordSize")
+    _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
+    KeepSameLine()
+    _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
+    _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
+    KeepSameLine()
+    _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
+    simpleActionMenu("Select chords within region", 2, selectByChordSizes, menuVars)
+    saveVariables("selectChordSizeMenu", menuVars)
+end
+SELECT_TOOLS = {
+    "Alternating",
+    "By Snap",
+    "Chord Size",
+    "Note Type",
+    "Bookmark",
+}
+function selectTab()
+    chooseSelectTool()
+    AddSeparator()
+    local toolName = SELECT_TOOLS[globalVars.selectTypeIndex]
+    if toolName == "Alternating" then selectAlternatingMenu() end
+    if toolName == "By Snap" then selectBySnapMenu() end
+    if toolName == "Bookmark" then selectBookmarkMenu() end
+    if toolName == "Chord Size" then selectChordSizeMenu() end
+    if toolName == "Note Type" then selectNoteTypeMenu() end
+end
+function selectNoteTypeMenu()
+    local menuVars = getMenuVars("selectNoteType")
+    _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
+    KeepSameLine()
+    _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
+    simpleActionMenu("Select notes within region", 2, selectByNoteType, menuVars)
+    saveVariables("selectNoteTypeMenu", menuVars)
+end
+function selectBySnapMenu()
+    local menuVars = getMenuVars("selectBySnap")
+    chooseSnap(menuVars)
+    saveVariables("selectBySnapMenu", menuVars)
+    AddSeparator()
+    simpleActionMenu(
+        "Select notes with 1/" .. menuVars.snap .. " snap",
+        2,
+        selectBySnap, menuVars)
+end
+function showAppearanceSettings()
+    imgui.PushItemWidth(150)
+    chooseStyleTheme()
+    chooseColorTheme()
+    AddSeparator()
+    chooseCursorTrail()
+    chooseCursorTrailShape()
+    chooseEffectFPS()
+    chooseCursorTrailPoints()
+    chooseCursorShapeSize()
+    chooseSnakeSpringConstant()
+    chooseCursorTrailGhost()
+    AddSeparator()
+    imgui.PopItemWidth()
+    chooseDrawCapybara()
+    imgui.SameLine(0, RADIO_BUTTON_SPACING)
+    chooseDrawCapybara2()
+    chooseDrawCapybara312()
+    AddSeparator()
+    choosePulseCoefficient()
+    _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
+    if (not globalVars.useCustomPulseColor) then imgui.BeginDisabled() end
+    KeepSameLine()
+    if (imgui.Button("Edit Color")) then
+        state.SetValue("showColorPicker", true)
+    end
+    if (state.GetValue("showColorPicker")) then
+        choosePulseColor()
+    end
+    if (not globalVars.useCustomPulseColor) then
+        imgui.EndDisabled()
+        state.SetValue("showColorPicker", false)
+    end
+end
+function showCustomThemeSettings()
+    local settingsChanged = false
+    if (imgui.Button("Reset")) then
+        globalVars.customStyle = table.duplicate(DEFAULT_STYLE)
+        write()
+    end
+    KeepSameLine()
+    if (imgui.Button("Import")) then
+        state.SetValue("importingCustomTheme", true)
+    end
+    KeepSameLine()
+    if (imgui.Button("Export")) then
+        local str = stringifyCustomStyle(globalVars.customStyle)
+        imgui.SetClipboardText(str)
+        print("i!", "Exported custom theme to your clipboard.")
+    end
+    if (state.GetValue("importingCustomTheme")) then
+        local input = state.GetValue("importingCustomThemeInput", "")
+        _, input = imgui.InputText("##customThemeStr", input, 69420)
+        state.SetValue("importingCustomThemeInput", input)
+        KeepSameLine()
+        if (imgui.Button("Send")) then
+            setCustomStyleString(input)
+            state.SetValue("importingCustomTheme", false)
+        end
+        KeepSameLine()
+        if (imgui.Button("X")) then
+            state.SetValue("importingCustomTheme", false)
         end
     end
+    settingsChanged = ColorInput(globalVars.customStyle, "windowBg", "Window BG") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "popupBg", "Popup BG") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "frameBg", "Frame BG") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "frameBgHovered", "Frame BG\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "frameBgActive", "Frame BG\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "titleBg", "Title BG") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "titleBgActive", "Title BG\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "titleBgCollapsed", "Title BG\n(Collapsed)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "checkMark", "Checkmark") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "sliderGrab", "Slider Grab") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "sliderGrabActive", "Slider Grab\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "button", "Button") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "buttonHovered", "Button\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "buttonActive", "Button\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "tab", "Tab") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "tabHovered", "Tab\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "tabActive", "Tab\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "header", "Header") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "headerHovered", "Header\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "headerActive", "Header\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "separator", "Separator") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "text", "Text") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "textSelectedBg", "Text Selected\n(BG)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "scrollbarGrab", "Scrollbar Grab") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "scrollbarGrabHovered", "Scrollbar Grab\n(Hovered)") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "scrollbarGrabActive", "Scrollbar Grab\n(Active)") or
+        settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "plotLines", "Plot Lines") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "plotLinesHovered", "Plot Lines\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "plotHistogram", "Plot Histogram") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "plotHistogramHovered", "Plot Histogram\n(Hovered)") or
+        settingsChanged
+    if (settingsChanged) then
+        write(globalVars)
+    end
 end
-function renderSparkleParticles(o, t, sparkleParticles, sparkleDuration, sparkleSize)
-    for i = 1, #sparkleParticles do
-        local sparkleParticle = sparkleParticles[i]
-        if sparkleParticle.showParticle then
-            local time = 1 - ((sparkleParticle.endTime - t) / sparkleDuration)
-            local sparkleX = sparkleParticle.x + sparkleParticle.xRange * time
-            local dy = -sparkleParticle.yRange * math.quadraticBezier(0, time)
-            local sparkleY = sparkleParticle.y + dy
-            local sparkleCoords = vector.New(sparkleX, sparkleY)
-            local white = rgbaToUint(255, 255, 255, 255)
-            local actualSize = sparkleSize * (1 - math.quadraticBezier(0, time))
-            local sparkleColor = rgbaToUint(255, 255, 100, 30)
-            drawGlare(o, sparkleCoords, actualSize, white, sparkleColor)
+function convertStrToShort(str)
+    if (str:lower() == str) then
+        return str:charAt(1) .. str:sub(-1)
+    else
+        local newStr = str:charAt(1)
+        for char in str:gmatch("%u") do
+            newStr = newStr .. char
         end
+        return newStr
+    end
+end
+function stringifyCustomStyle(customStyle)
+    local keys = table.keys(customStyle)
+    local resultStr = ""
+    for _, key in pairs(keys) do
+        local value = customStyle[key]
+        keyId = convertStrToShort(key)
+        local r = math.floor(value.x * 255)
+        local g = math.floor(value.y * 255)
+        local b = math.floor(value.z * 255)
+        local a = math.floor(value.w * 255)
+        resultStr = resultStr .. keyId .. ":" .. rgbaToHexa(r, g, b, a) .. ","
+    end
+    return resultStr:sub(1, -2)
+end
+function setCustomStyleString(str)
+    local keyIdDict = {}
+    for _, key in pairs(table.keys(DEFAULT_STYLE)) do
+        keyIdDict[key] = convertStrToShort(key)
+    end
+    local customStyle = {}
+    for kvPair in str:gmatch("[0-9#:a-zA-Z]+") do
+        local keyId = kvPair:match("[a-zA-Z]+:"):sub(1, -2)
+        local hexa = kvPair:match(":[a-f0-9]+"):sub(2)
+        local key = table.indexOf(keyIdDict, keyId)
+        if (key ~= -1) then customStyle[key] = hexaToRgba(hexa) / 255 end
+    end
+    globalVars.customStyle = table.duplicate(customStyle)
+end
+function saveSettingPropertiesButton(settingVars, label)
+    local saveButtonClicked = imgui.Button("Save##setting" .. label)
+    imgui.Separator()
+    if (not saveButtonClicked) then return end
+    label = label:charAt(1):lower() .. label:sub(2)
+    if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
+    if (not globalVars.defaultProperties.settings) then globalVars.defaultProperties.settings = {} end
+    globalVars.defaultProperties.settings[label] = settingVars
+    loadDefaultProperties(globalVars.defaultProperties)
+    write(globalVars)
+    print("i!",
+        "Default setting properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
+end
+function saveMenuPropertiesButton(menuVars, label)
+    local saveButtonClicked = imgui.Button("Save##menu" .. label)
+    imgui.Separator()
+    if (not saveButtonClicked) then return end
+    label = label:charAt(1):lower() .. label:sub(2)
+    if (not globalVars.defaultProperties) then globalVars.defaultProperties = {} end
+    if (not globalVars.defaultProperties.menu) then globalVars.defaultProperties.menu = {} end
+    globalVars.defaultProperties.menu[label] = menuVars
+    loadDefaultProperties(globalVars.defaultProperties)
+    write(globalVars)
+    print("i!",
+        "Default menu properties for " .. label .. " have been set. Changes will be shown on the next plugin refresh.")
+end
+function showDefaultPropertiesSettings()
+    imgui.SeparatorText("Create Tab Settings")
+    if (imgui.CollapsingHeader("General Standard Settings")) then
+        local menuVars = getMenuVars("placeStandard", "Property")
+        chooseStandardSVType(menuVars, false)
+        AddSeparator()
+        chooseInterlace(menuVars)
+        saveMenuPropertiesButton(menuVars, "placeStandard")
+        saveVariables("placeStandardPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("General Special Settings")) then
+        local menuVars = getMenuVars("placeSpecial", "Property")
+        chooseSpecialSVType(menuVars)
+        saveMenuPropertiesButton(menuVars, "placeSpecial")
+        saveVariables("placeSpecialPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("General Still Settings")) then
+        local menuVars = getMenuVars("placeStill", "Property")
+        chooseStandardSVType(menuVars, false)
+        AddSeparator()
+        chooseNoteSpacing(menuVars)
+        chooseStillBehavior(menuVars)
+        chooseStillType(menuVars)
+        chooseInterlace(menuVars)
+        saveMenuPropertiesButton(menuVars, "placeStill")
+        saveVariables("placeStillPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("General Vibrato Settings")) then
+        local menuVars = getMenuVars("placeVibrato", "Property")
+        chooseVibratoSVType(menuVars)
+        AddSeparator()
+        imgui.Text("Vibrato Settings:")
+        chooseVibratoMode(menuVars)
+        chooseVibratoQuality(menuVars)
+        if (menuVars.vibratoMode ~= 2) then
+            chooseVibratoSides(menuVars)
+        end
+        saveMenuPropertiesButton(menuVars, "placeVibrato")
+        saveVariables("placeVibratoPropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Edit Tab Settings")
+    if (imgui.CollapsingHeader("Add Teleport Settings")) then
+        local menuVars = getMenuVars("addTeleport", "Property")
+        chooseDistance(menuVars)
+        chooseHand(menuVars)
+        saveMenuPropertiesButton(menuVars, "addTeleport")
+        saveVariables("addTeleportPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Change Group Settings")) then
+        local menuVars = getMenuVars("changeGroup", "Property")
+        _, menuVars.changeSVs = imgui.Checkbox("Change SVs?", menuVars.changeSVs)
+        KeepSameLine()
+        _, menuVars.changeSSFs = imgui.Checkbox("Change SSFs?", menuVars.changeSSFs)
+        saveMenuPropertiesButton(menuVars, "changeGroup")
+        saveVariables("changeGroupPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Convert SV <-> SSF Settings")) then
+        local menuVars = getMenuVars("convertSVSSF", "Property")
+        chooseConvertSVSSFDirection(menuVars)
+        saveMenuPropertiesButton(menuVars, "convertSVSSF")
+        saveVariables("convertSVSSFPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Copy Settings")) then
+        local menuVars = getMenuVars("copy", "Property")
+        _, menuVars.copyTable[1] = imgui.Checkbox("Copy Lines", menuVars.copyTable[1])
+        KeepSameLine()
+        _, menuVars.copyTable[2] = imgui.Checkbox("Copy SVs", menuVars.copyTable[2])
+        _, menuVars.copyTable[3] = imgui.Checkbox("Copy SSFs", menuVars.copyTable[3])
+        imgui.SameLine(0, SAMELINE_SPACING + 3.5)
+        _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
+        _, menuVars.tryAlign = imgui.Checkbox("Try to fix misalignments", menuVars.tryAlign)
+        imgui.PushItemWidth(100)
+        _, menuVars.alignWindow = imgui.SliderInt("Alignment window (ms)", menuVars.alignWindow, 1, 10)
+        imgui.PopItemWidth()
+        saveMenuPropertiesButton(menuVars, "copy")
+        saveVariables("copyPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Displace Note Settings")) then
+        local menuVars = getMenuVars("displaceNote", "Property")
+        chooseVaryingDistance(menuVars)
+        chooseLinearlyChangeDist(menuVars)
+        saveMenuPropertiesButton(menuVars, "displaceNote")
+        saveVariables("displaceNotePropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Displace View Settings")) then
+        local menuVars = getMenuVars("displaceView", "Property")
+        chooseDistance(menuVars)
+        saveMenuPropertiesButton(menuVars, "displaceView")
+        saveVariables("displaceViewPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Flicker Settings")) then
+        local menuVars = getMenuVars("flicker", "Property")
+        chooseFlickerType(menuVars)
+        chooseVaryingDistance(menuVars)
+        chooseLinearlyChangeDist(menuVars)
+        chooseNumFlickers(menuVars)
+        if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
+        saveMenuPropertiesButton(menuVars, "flicker")
+        saveVariables("flickerPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Reverse Scroll Settings")) then
+        local menuVars = getMenuVars("reverseScroll", "Property")
+        chooseDistance(menuVars)
+        HelpMarker("Height at which reverse scroll notes are hit")
+        saveMenuPropertiesButton(menuVars, "reverseScroll")
+        saveVariables("reverseScrollPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Scale (Displace) Settings")) then
+        local menuVars = getMenuVars("scaleDisplace", "Property")
+        chooseScaleDisplaceSpot(menuVars)
+        chooseScaleType(menuVars)
+        saveMenuPropertiesButton(menuVars, "scaleDisplace")
+        saveVariables("scaleDisplacePropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Scale (Multiply) Settings")) then
+        local menuVars = getMenuVars("scaleMultiply", "Property")
+        chooseScaleType(menuVars)
+        saveMenuPropertiesButton(menuVars, "scaleMultiply")
+        saveVariables("scaleMultiplyPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Vertical Shift Settings")) then
+        local menuVars = getMenuVars("verticalShift", "Property")
+        chooseConstantShift(menuVars, 0)
+        saveMenuPropertiesButton(menuVars, "verticalShift")
+        saveVariables("verticalShiftPropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Delete Tab Settings")
+    if (imgui.CollapsingHeader("Delete Menu Settings")) then
+        local menuVars = getMenuVars("delete", "Property")
+        _, menuVars.deleteTable[1] = imgui.Checkbox("Delete Lines", menuVars.deleteTable[1])
+        KeepSameLine()
+        _, menuVars.deleteTable[2] = imgui.Checkbox("Delete SVs", menuVars.deleteTable[2])
+        _, menuVars.deleteTable[3] = imgui.Checkbox("Delete SSFs", menuVars.deleteTable[3])
+        imgui.SameLine(0, SAMELINE_SPACING + 3.5)
+        _, menuVars.deleteTable[4] = imgui.Checkbox("Delete Bookmarks", menuVars.deleteTable[4])
+        saveMenuPropertiesButton(menuVars, "delete")
+        saveVariables("deletePropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Select Tab Settings")
+    if (imgui.CollapsingHeader("Select Alternating Settings")) then
+        local menuVars = getMenuVars("selectAlternating", "Property")
+        chooseEvery(menuVars)
+        chooseOffset(menuVars)
+        saveMenuPropertiesButton(menuVars, "selectAlternating")
+        saveVariables("selectAlternatingPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Select By Snap Settings")) then
+        local menuVars = getMenuVars("selectBySnap", "Property")
+        chooseSnap(menuVars)
+        saveMenuPropertiesButton(menuVars, "selectBySnap")
+        saveVariables("selectBySnapPropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Select Chord Size Settings")) then
+        local menuVars = getMenuVars("selectChordSize", "Property")
+        _, menuVars.single = imgui.Checkbox("Select Singles", menuVars.single)
+        KeepSameLine()
+        _, menuVars.jump = imgui.Checkbox("Select Jumps", menuVars.jump)
+        _, menuVars.hand = imgui.Checkbox("Select Hands", menuVars.hand)
+        KeepSameLine()
+        _, menuVars.quad = imgui.Checkbox("Select Quads", menuVars.quad)
+        saveMenuPropertiesButton(menuVars, "selectChordSize")
+        saveVariables("selectChordSizePropertyMenu", menuVars)
+    end
+    if (imgui.CollapsingHeader("Select Note Type Settings")) then
+        local menuVars = getMenuVars("selectNoteType", "Property")
+        _, menuVars.rice = imgui.Checkbox("Select Rice Notes", menuVars.rice)
+        KeepSameLine()
+        _, menuVars.ln = imgui.Checkbox("Select LNs", menuVars.ln)
+        saveMenuPropertiesButton(menuVars, "selectNoteType")
+        saveVariables("selectNoteTypePropertyMenu", menuVars)
+    end
+    imgui.SeparatorText("Standard/Still Settings")
+    if (imgui.CollapsingHeader("Linear Settings")) then
+        local settingVars = getSettingVars("Linear", "Property")
+        chooseStartEndSVs(settingVars)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(settingVars, "Linear")
+        saveVariables("LinearPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Exponential Settings")) then
+        local settingVars = getSettingVars("Exponential", "Property")
+        chooseSVBehavior(settingVars)
+        chooseIntensity(settingVars)
+        if (globalVars.advancedMode) then
+            chooseDistanceMode(settingVars)
+        end
+        if (settingVars.distanceMode ~= 3) then
+            chooseConstantShift(settingVars, 0)
+        end
+        if (settingVars.distanceMode == 1) then
+            chooseAverageSV(settingVars)
+        elseif (settingVars.distanceMode == 2) then
+            chooseDistance(settingVars)
+        else
+            chooseStartEndSVs(settingVars)
+        end
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(settingVars, "Exponential")
+        saveVariables("ExponentialPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Bezier Settings")) then
+        local settingVars = getSettingVars("Bezier", "Property")
+        provideBezierWebsiteLink(settingVars)
+        chooseBezierPoints(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseAverageSV(settingVars)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(settingVars, "Bezier")
+        saveVariables("BezierPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Hermite Settings")) then
+        local settingVars = getSettingVars("Hermite", "Property")
+        chooseStartEndSVs(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseAverageSV(settingVars)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(settingVars, "Hermite")
+        saveVariables("HermitePropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sinusoidal Settings")) then
+        local settingVars = getSettingVars("Sinusoidal", "Property")
+        imgui.Text("Amplitude:")
+        chooseStartEndSVs(settingVars)
+        chooseCurveSharpness(settingVars)
+        chooseConstantShift(settingVars, 1)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        chooseSVPerQuarterPeriod(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(settingVars, "Sinusoidal")
+        saveVariables("SinusoidalPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Circular Settings")) then
+        local settingVars = getSettingVars("Circular", "Property")
+        chooseSVBehavior(settingVars)
+        chooseArcPercent(settingVars)
+        chooseAverageSV(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        chooseNoNormalize(settingVars)
+        saveSettingPropertiesButton(settingVars, "Circular")
+        saveVariables("CircularPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Random Settings")) then
+        local settingVars = getSettingVars("Random", "Property")
+        chooseRandomType(settingVars)
+        chooseRandomScale(settingVars)
+        chooseSVPoints(settingVars)
+        AddSeparator()
+        chooseConstantShift(settingVars, 0)
+        if not settingVars.dontNormalize then
+            chooseAverageSV(settingVars)
+        end
+        chooseFinalSV(settingVars)
+        chooseNoNormalize(settingVars)
+        saveSettingPropertiesButton(settingVars, "Random")
+        saveVariables("RandomPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Chinchilla Settings")) then
+        local settingVars = getSettingVars("Chinchilla", "Property")
+        chooseSVBehavior(settingVars)
+        chooseChinchillaType(settingVars)
+        chooseChinchillaIntensity(settingVars)
+        chooseAverageSV(settingVars)
+        chooseConstantShift(settingVars, 0)
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(settingVars, "Chinchilla")
+        saveVariables("ChinchillaPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Code Settings")) then
+        local settingVars = getSettingVars("Code", "Property")
+        CodeInput(settingVars, "code", "##code")
+        imgui.Separator()
+        chooseSVPoints(settingVars)
+        chooseFinalSV(settingVars)
+        saveSettingPropertiesButton(settingVars, "Code")
+        saveVariables("CodePropertySettings", settingVars)
+    end
+    imgui.SeparatorText("Special Settings")
+    if (imgui.CollapsingHeader("Stutter Settings")) then
+        local settingVars = getSettingVars("Stutter", "Property")
+        settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
+        settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
+        settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
+        settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+        AddSeparator()
+        settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+        settingsChanged = chooseAverageSV(settingVars) or settingsChanged
+        settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
+        saveSettingPropertiesButton(settingVars, "Stutter")
+        saveVariables("StutterPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Teleport Stutter Settings")) then
+        local settingVars = getSettingVars("TeleportStutter", "Property")
+        if settingVars.useDistance then
+            chooseDistance(settingVars)
+            HelpMarker("Start SV teleport distance")
+        else
+            chooseStartSVPercent(settingVars)
+        end
+        chooseMainSV(settingVars)
+        chooseAverageSV(settingVars)
+        chooseFinalSV(settingVars, false)
+        chooseUseDistance(settingVars)
+        chooseLinearlyChange(settingVars)
+        saveSettingPropertiesButton(settingVars, "TeleportStutter")
+        saveVariables("TeleportStutterPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Automate Settings")) then
+        local settingVars = getSettingVars("Automate", "Property")
+        settingVars.initialSV = NegatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
+        _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
+        KeepSameLine()
+        _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
+        _, settingVars.maintainMs = imgui.Checkbox("Static Time?", settingVars.maintainMs)
+        if (settingVars.maintainMs) then
+            KeepSameLine()
+            imgui.PushItemWidth(71)
+            settingVars.ms = ComputableInputFloat("Time", settingVars.ms, 2, "ms")
+            imgui.PopItemWidth()
+        end
+        saveSettingPropertiesButton(settingVars, "Automate")
+        saveVariables("AutomatePropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Penis Settings")) then
+        local settingVars = getSettingVars("Penis", "Property")
+        _, settingVars.bWidth = imgui.InputInt("Ball Width", math.floor(settingVars.bWidth))
+        _, settingVars.sWidth = imgui.InputInt("Shaft Width", math.floor(settingVars.sWidth))
+        _, settingVars.sCurvature = imgui.SliderInt("S Curvature", settingVars.sCurvature, 1, 100,
+            settingVars.sCurvature .. "%%")
+        _, settingVars.bCurvature = imgui.SliderInt("B Curvature", settingVars.bCurvature, 1, 100,
+            settingVars.bCurvature .. "%%")
+        saveSettingPropertiesButton(settingVars, "Penis")
+        saveVariables("PenisPropertySettings", settingVars)
+    end
+    imgui.SeparatorText("SV Vibrato Settings")
+    if (imgui.CollapsingHeader("Linear Vibrato SV Settings")) then
+        local settingVars = getSettingVars("LinearVibratoSV", "Property")
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        saveSettingPropertiesButton(settingVars, "LinearVibratoSV")
+        saveVariables("LinearVibratoSVPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Exponential Vibrato SV Settings")) then
+        local settingVars = getSettingVars("ExponentialVibratoSV", "Property")
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseCurvatureCoefficient(settingVars)
+        saveSettingPropertiesButton(settingVars, "ExponentialVibratoSV")
+        saveVariables("ExponentialVibratoSVPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sinusoidal Vibrato SV Settings")) then
+        local settingVars = getSettingVars("SinusoidalVibratoSV", "Property")
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseMsxVerticalShift(settingVars, 0)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        saveSettingPropertiesButton(settingVars, "SinusoidalVibratoSV")
+        saveVariables("SinusoidalVibratoSVPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sigmoidal Vibrato SV Settings")) then
+        local settingVars = getSettingVars("SigmoidalVibratoSV", "Property")
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        chooseCurvatureCoefficient(settingVars)
+        saveSettingPropertiesButton(settingVars, "SigmoidalVibratoSV")
+        saveVariables("SigmoidalVibratoSVPropertySettings", settingVars)
+    end
+    imgui.SeparatorText("SSF Vibrato Settings")
+    if (imgui.CollapsingHeader("Linear Vibrato SSF Settings")) then
+        local settingVars = getSettingVars("LinearVibratoSSF", "Property")
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        saveSettingPropertiesButton(settingVars, "LinearVibratoSSF")
+        saveVariables("LinearVibratoSSFPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Exponential Vibrato SSF Settings")) then
+        local settingVars = getSettingVars("ExponentialVibratoSSF", "Property")
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseCurvatureCoefficient(settingVars)
+        saveSettingPropertiesButton(settingVars, "ExponentialVibratoSSF")
+        saveVariables("ExponentialVibratoSSFPropertySettings", settingVars)
+    end
+    if (imgui.CollapsingHeader("Sinusoidal Vibrato SSF Settings")) then
+        local settingVars = getSettingVars("SinusoidalVibratoSSF", "Property")
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        chooseConstantShift(settingVars)
+        chooseNumPeriods(settingVars)
+        choosePeriodShift(settingVars)
+        saveSettingPropertiesButton(settingVars, "SinusoidalVibratoSSF")
+        saveVariables("SinusoidalVibratoSSFPropertySettings", settingVars)
+    end
+end
+function showGeneralSettings()
+    GlobalCheckbox("advancedMode", "Enable Advanced Mode",
+        "Advanced mode enables a few features that simplify SV creation, at the cost of making the plugin more cluttered.")
+    if (not globalVars.advancedMode) then imgui.BeginDisabled() end
+    GlobalCheckbox("hideAutomatic", "Hide Automatically Placed TGs",
+        'Timing groups placed by the "Automatic" feature will not be shown in the plumoguSV timing group selector.')
+    if (not globalVars.advancedMode) then imgui.EndDisabled() end
+    AddSeparator()
+    chooseUpscroll()
+    AddSeparator()
+    GlobalCheckbox("dontReplaceSV", "Don't Replace Existing SVs",
+        "Self-explanatory, but applies only to base SVs made with Standard, Special, or Still. Highly recommended to keep this setting disabled.")
+    GlobalCheckbox("ignoreNotesOutsideTg", "Ignore Notes Not In Current Timing Group",
+        "Notes that are in a timing group outside of the current one will be ignored by stills, selection checks, etc.")
+    chooseStepSize()
+    GlobalCheckbox("dontPrintCreation", "Don't Print SV Creation Messages",
+        'Disables printing "Created __ SVs" messages.')
+    GlobalCheckbox("equalizeLinear", "Equalize Linear SV",
+        "Forces the standard > linear option to have an average sv of 0 if the start and end SVs are equal. For beginners, this should be enabled.")
+end
+DEFAULT_SETTING_TYPES = {
+    "General",
+    "Default Properties",
+    "Appearance",
+    "Windows + Widgets",
+    "Keybinds",
+}
+function showPluginSettingsWindow()
+    local bgColor = vector.New(0.2, 0.2, 0.2, 1)
+    SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)
+    if (COLOR_THEMES[globalVars.colorThemeIndex] == "CUSTOM") then
+        table.insert(SETTING_TYPES, 4, "Custom Theme")
+    end
+    imgui.PopStyleColor(20)
+    setIncognitoColors()
+    setPluginAppearanceStyles("Rounded + Border")
+    imgui.PushStyleColor(imgui_col.WindowBg, bgColor)
+    imgui.PushStyleColor(imgui_col.TitleBg, bgColor)
+    imgui.PushStyleColor(imgui_col.TitleBgActive, bgColor)
+    imgui.PushStyleColor(imgui_col.Border, vector4(1))
+    imgui.SetNextWindowCollapsed(false)
+    _, settingsOpened = imgui.Begin("plumoguSV Settings", true, 42)
+    imgui.SetWindowSize("plumoguSV Settings", vector.New(433, 400))
+    local typeIndex = state.GetValue("settings_typeIndex", 1)
+    imgui.Columns(2, "settings_columnList", true)
+    imgui.SetColumnWidth(0, 150)
+    imgui.SetColumnWidth(1, 283)
+    imgui.BeginChild(420)
+    imgui.Text("Setting Type")
+    imgui.Separator()
+    for idx, v in pairs(SETTING_TYPES) do
+        if (imgui.Selectable(v, typeIndex == idx)) then
+            typeIndex = idx
+        end
+    end
+    AddSeparator()
+    if (imgui.Button("Reset Settings")) then
+        write({})
+        globalVars = DEFAULT_GLOBAL_VARS
+        toggleablePrint("e!", "Settings have been reset.")
+    end
+    if (imgui.Button("Crash The Game")) then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        imgui.Text(nil)
+    end
+    imgui.EndChild()
+    imgui.NextColumn()
+    imgui.BeginChild(69)
+    if (SETTING_TYPES[typeIndex] == "General") then
+        showGeneralSettings()
+    end
+    if (SETTING_TYPES[typeIndex] == "Default Properties") then
+        showDefaultPropertiesSettings()
+    end
+    if (SETTING_TYPES[typeIndex] == "Windows + Widgets") then
+        showWindowSettings()
+    end
+    if (SETTING_TYPES[typeIndex] == "Appearance") then
+        showAppearanceSettings()
+    end
+    if (SETTING_TYPES[typeIndex] == "Custom Theme") then
+        showCustomThemeSettings()
+    end
+    if (SETTING_TYPES[typeIndex] == "Keybinds") then
+        showKeybindSettings()
+    end
+    imgui.EndChild()
+    imgui.Columns(1)
+    state.SetValue("settings_typeIndex", typeIndex)
+    if (not settingsOpened) then
+        state.SetValue("showSettingsWindow", false)
+        state.SetValue("settings_typeIndex", 1)
+    end
+    imgui.PopStyleColor(41)
+    setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex])
+    setPluginAppearanceStyles(STYLE_THEMES[globalVars.styleThemeIndex])
+    imgui.End()
+end
+function showKeybindSettings()
+    local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
+    if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
+        hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
+    end
+    local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
+    for hotkeyIndex, hotkeyCombo in pairs(hotkeyList) do
+        if imgui.Button(awaitingIndex == hotkeyIndex and "Listening...##listening" or hotkeyCombo .. "##" .. hotkeyIndex) then
+            if (awaitingIndex == hotkeyIndex) then
+                awaitingIndex = 0
+            else
+                awaitingIndex = hotkeyIndex
+            end
+        end
+        KeepSameLine()
+        imgui.SetCursorPosX(95)
+        imgui.Text("" .. HOTKEY_LABELS[hotkeyIndex])
+    end
+    AddSeparator()
+    simpleActionMenu("Reset Hotkey Settings", 0, function()
+        globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
+        write(globalVars)
+        awaitingIndex = 0
+    end, nil, true, true)
+    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
+    if (awaitingIndex == 0) then return end
+    local prefixes, key = listenForAnyKeyPressed()
+    if (key == -1) then return end
+    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (truthy(prefixes) and "+" or "") .. keyNumToKey(key)
+    awaitingIndex = 0
+    globalVars.hotkeyList = hotkeyList
+    GLOBAL_HOTKEY_LIST = hotkeyList
+    write(globalVars)
+    state.SetValue("hotkey_awaitingIndex", awaitingIndex)
+end
+function showWindowSettings()
+    GlobalCheckbox("hideSVInfo", "Hide SV Info Window",
+        "Disables the window that shows note distances when placing Standard, Special, or Still SVs.")
+    GlobalCheckbox("showVibratoWidget", "Separate Vibrato Into New Window",
+        "For those who are used to having Vibrato as a separate plugin, this option makes a new, independent window with vibrato only.")
+    AddSeparator()
+    GlobalCheckbox("showNoteDataWidget", "Show Note Data Of Selection",
+        "If one note is selected, shows simple data about that note.")
+    GlobalCheckbox("showMeasureDataWidget", "Show Measure Data Of Selection",
+        "If two notes are selected, shows measure data within the selected region.")
+end
+function provideBezierWebsiteLink(settingVars)
+    local coordinateParsed = false
+    local bezierText = state.GetValue("bezierText") or "https://cubic-bezier.com/"
+    local imguiFlag = imgui_input_text_flags.AutoSelectAll
+    _, bezierText = imgui.InputText("##bezierWebsite", bezierText, 100, imguiFlag)
+    KeepSameLine()
+    if imgui.Button("Parse##bezierValues", SECONDARY_BUTTON_SIZE) then
+        local regex = "(-?%d*%.?%d+)"
+        local values = {}
+        for value, _ in string.gmatch(bezierText, regex) do
+            table.insert(values, math.toNumber(value))
+        end
+        if #values >= 4 then
+            settingVars.p1 = vector.New(values[1], values[2])
+            settingVars.p2 = vector.New(values[3], values[4])
+            coordinateParsed = true
+        end
+        bezierText = "https://cubic-bezier.com/"
+    end
+    state.SetValue("bezierText", bezierText)
+    HelpMarker("This site lets you play around with a cubic bezier whose graph represents the " ..
+        "motion/path of notes. After finding a good shape for note motion, paste the " ..
+        "resulting url into the input box and hit the parse button to import the " ..
+        "coordinate values. Alternatively, enter 4 numbers and hit parse.")
+    return coordinateParsed
+end
+function checkEnoughSelectedNotes(minimumNotes)
+    if minimumNotes == 0 then return true end
+    local selectedNotes = state.SelectedHitObjects
+    local numSelectedNotes = #selectedNotes
+    if numSelectedNotes == 0 then return false end
+    if minimumNotes == 1 then return true end
+    if numSelectedNotes > map.GetKeyCount() then return true end
+    return selectedNotes[1].StartTime ~= selectedNotes[numSelectedNotes].StartTime
+end
+function importCustomSVs(settingVars)
+    local svsParsed = false
+    local customSVText = state.GetValue("customSVText") or "Import SV values here"
+    local imguiFlag = imgui_input_text_flags.AutoSelectAll
+    _, customSVText = imgui.InputText("##customSVs", customSVText, 99999, imguiFlag)
+    KeepSameLine()
+    if imgui.Button("Parse##customSVs", SECONDARY_BUTTON_SIZE) then
+        local regex = "(-?%d*%.?%d+)"
+        local values = {}
+        for value, _ in string.gmatch(customSVText, regex) do
+            table.insert(values, math.toNumber(value))
+        end
+        if #values >= 1 then
+            settingVars.svMultipliers = values
+            settingVars.selectedMultiplierIndex = 1
+            settingVars.svPoints = #values
+            svsParsed = true
+        end
+        customSVText = "Import SV values here"
+    end
+    state.SetValue("customSVText", customSVText)
+    HelpMarker("Paste custom SV values in the box then hit the parse button (ex. 2 -1 2 -1)")
+    return svsParsed
+end
+function adjustNumberOfMultipliers(settingVars)
+    if settingVars.svPoints > #settingVars.svMultipliers then
+        local difference = settingVars.svPoints - #settingVars.svMultipliers
+        for _ = 1, difference do
+            table.insert(settingVars.svMultipliers, 1)
+        end
+    end
+    if settingVars.svPoints >= #settingVars.svMultipliers then return end
+    if settingVars.selectedMultiplierIndex > settingVars.svPoints then
+        settingVars.selectedMultiplierIndex = settingVars.svPoints
+    end
+    local difference = #settingVars.svMultipliers - settingVars.svPoints
+    for _ = 1, difference do
+        table.remove(settingVars.svMultipliers)
+    end
+end
+function addFrameTimes(settingVars)
+    if not imgui.Button("Add selected notes to use for frames", ACTION_BUTTON_SIZE) then return end
+    local hasAlreadyAddedLaneTime = {}
+    for _ = 1, map.GetKeyCount() do
+        table.insert(hasAlreadyAddedLaneTime, {})
+    end
+    local frameTimeToIndex = {}
+    local totalTimes = #settingVars.frameTimes
+    for i = 1, totalTimes do
+        local frameTime = settingVars.frameTimes[i] ---@cast frameTime { time: number, lanes: number[] }
+        local time = frameTime.time
+        local lanes = frameTime.lanes
+        frameTimeToIndex[time] = i
+        for j = 1, #lanes do
+            local lane = lanes[j]
+            hasAlreadyAddedLaneTime[lane][time] = true
+        end
+    end
+    for _, ho in pairs(state.SelectedHitObjects) do
+        local lane = ho.Lane
+        local time = ho.StartTime
+        if (not hasAlreadyAddedLaneTime[lane][time]) then
+            hasAlreadyAddedLaneTime[lane][time] = true
+            if frameTimeToIndex[time] then
+                local index = frameTimeToIndex[time]
+                local frameTime = settingVars.frameTimes[index] ---@cast frameTime { time: number, lanes: number[] }
+                table.insert(frameTime.lanes, lane)
+                frameTime.lanes = sort(frameTime.lanes, sortAscending)
+            else
+                local defaultFrame = settingVars.currentFrame
+                local defaultPosition = 0
+                local newFrameTime = createFrameTime(time, { lane }, defaultFrame, defaultPosition)
+                table.insert(settingVars.frameTimes, newFrameTime)
+                frameTimeToIndex[time] = #settingVars.frameTimes
+            end
+        end
+    end
+    settingVars.frameTimes = sort(settingVars.frameTimes, sortAscendingTime)
+end
+function displayFrameTimes(settingVars)
+    if #settingVars.frameTimes == 0 then
+        imgui.Text("Add notes to fill the selection box below")
+    else
+        imgui.Text("time | lanes | frame # | position")
+    end
+    HelpMarker("Make sure to select ALL lanes from a chord with multiple notes, not just one lane")
+    AddPadding()
+    local frameTimeSelectionArea = { ACTION_BUTTON_SIZE.x, 120 }
+    imgui.BeginChild("FrameTimes", frameTimeSelectionArea, 1)
+    for i = 1, #settingVars.frameTimes do
+        local frameTimeData = {}
+        local frameTime = settingVars.frameTimes[i]
+        frameTimeData[1] = frameTime.time
+        frameTimeData[2] = frameTime.lanes .. ", "
+        frameTimeData[3] = frameTime.frame
+        frameTimeData[4] = frameTime.position
+        local selectableText = frameTimeData .. " | "
+        if imgui.Selectable(selectableText, settingVars.selectedTimeIndex == i) then
+            settingVars.selectedTimeIndex = i
+        end
+    end
+    imgui.EndChild()
+end
+function drawCurrentFrame(settingVars)
+    local mapKeyCount = map.GetKeyCount()
+    local noteWidth = 200 / mapKeyCount
+    local noteSpacing = 5
+    local barNoteHeight = math.round(2 * noteWidth / 5, 0)
+    local noteColor = rgbaToUint(117, 117, 117, 255)
+    local noteSkinType = NOTE_SKIN_TYPES[settingVars.noteSkinTypeIndex]
+    local drawlist = imgui.GetWindowDrawList()
+    local childHeight = 250
+    imgui.BeginChild("Current Frame", vector.New(255, childHeight), 1)
+    for _, frameTime in pairs(settingVars.frameTimes) do
+        if not frameTime.frame == settingVars.currentFrame then goto continue end
+        for _, lane in pairs(frameTime.lanes) do
+            if noteSkinType == "Bar" then
+                local x1 = 2 * noteSpacing + (noteWidth + noteSpacing) * (lane - 1)
+                local y1 = (childHeight - 2 * noteSpacing) - (frameTime.position / 2)
+                local x2 = x1 + noteWidth
+                local y2 = y1 - barNoteHeight
+                if globalVars.upscroll then
+                    y1 = childHeight - y1
+                    y2 = y1 + barNoteHeight
+                end
+                local p1 = coordsRelativeToWindow(x1, y1)
+                local p2 = coordsRelativeToWindow(x2, y2)
+                drawlist.AddRectFilled(p1, p2, noteColor)
+            elseif noteSkinType == "Circle" then
+                local circleRadius = noteWidth / 2
+                local leftBlankSpace = 2 * noteSpacing + circleRadius
+                local yBlankSpace = 2 * noteSpacing + circleRadius + frameTime.position / 2
+                local x1 = leftBlankSpace + (noteWidth + noteSpacing) * (lane - 1)
+                local y1 = childHeight - yBlankSpace
+                if globalVars.upscroll then
+                    y1 = childHeight - y1
+                end
+                local p1 = coordsRelativeToWindow(x1, y1)
+                drawlist.AddCircleFilled(p1, circleRadius, noteColor, 20)
+            end
+        end
+        ::continue::
+    end
+    imgui.EndChild()
+end
+function addSelectedNoteTimesToList(menuVars)
+    for _, ho in pairs(state.SelectedHitObjects) do
+        table.insert(menuVars.noteTimes, ho.StartTime)
+    end
+    menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
+    menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)
+end
+function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce)
+    if currentSVType == "Linear" then
+        return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Exponential" then
+        return exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Bezier" then
+        return bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Hermite" then
+        return hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Sinusoidal" then
+        return sinusoidalSettingsMenu(settingVars, skipFinalSV)
+    elseif currentSVType == "Circular" then
+        return circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Random" then
+        return randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Custom" then
+        return customSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Chinchilla" then
+        return chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Combo" then
+        return comboSettingsMenu(settingVars)
+    elseif currentSVType == "Code" then
+        return codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    end
+end
+function presetButton()
+    local buttonText = ": )"
+    if globalVars.showPresetMenu then buttonText = "X" end
+    local buttonPressed = imgui.Button(buttonText, EXPORT_BUTTON_SIZE)
+    ToolTip("View presets and export/import them.")
+    KeepSameLine()
+    if not buttonPressed then return end
+    globalVars.showPresetMenu = not globalVars.showPresetMenu
+end
+function updateSVStats(svGraphStats, svStats, svMultipliers, svMultipliersNoEndSV, svDistances)
+    updateGraphStats(svGraphStats, svMultipliers, svDistances)
+    svStats.minSV = math.round(math.min(table.unpack(svMultipliersNoEndSV)), 2)
+    svStats.maxSV = math.round(math.max(table.unpack(svMultipliersNoEndSV)), 2)
+    svStats.avgSV = math.round(table.average(svMultipliersNoEndSV, true), 3)
+end
+function updateGraphStats(graphStats, svMultipliers, svDistances)
+    graphStats.minScale, graphStats.maxScale = calculatePlotScale(svMultipliers)
+    graphStats.distMinScale, graphStats.distMaxScale = calculatePlotScale(svDistances)
+end
+function makeSVInfoWindow(windowText, svGraphStats, svStats, svDistances, svMultipliers,
+                          stutterDuration, skipDistGraph)
+    if (globalVars.hideSVInfo) then return end
+    imgui.Begin(windowText, imgui_window_flags.AlwaysAutoResize)
+    if not skipDistGraph then
+        imgui.Text("Projected Note Motion:")
+        HelpMarker("Distance vs Time graph of notes")
+        plotSVMotion(svDistances, svGraphStats.distMinScale, svGraphStats.distMaxScale)
+        if imgui.CollapsingHeader("New All -w-") then
+            for i = 1, #svDistances do
+                local svDistance = svDistances[i]
+                local content = tostring(svDistance)
+                imgui.PushItemWidth(imgui.GetContentRegionAvailWidth())
+                imgui.InputText("##" .. i, content, #content, imgui_input_text_flags.AutoSelectAll)
+                imgui.PopItemWidth()
+            end
+        end
+    end
+    local projectedText = "Projected SVs:"
+    if skipDistGraph then projectedText = "Projected Scaling (Avg SVs):" end
+    imgui.Text(projectedText)
+    plotSVs(svMultipliers, svGraphStats.minScale, svGraphStats.maxScale)
+    if stutterDuration then
+        displayStutterSVStats(svMultipliers, stutterDuration)
+    else
+        displaySVStats(svStats)
+    end
+    imgui.End()
+end
+function displayStutterSVStats(svMultipliers, stutterDuration)
+    local firstSV = math.round(svMultipliers[1], 3)
+    local secondSV = math.round(svMultipliers[2], 3)
+    local firstDuration = stutterDuration
+    local secondDuration = 100 - stutterDuration
+    imgui.Columns(2, "SV Stutter Stats", false)
+    imgui.Text("First SV:")
+    imgui.Text("Second SV:")
+    imgui.NextColumn()
+    imgui.Text(firstSV .. "x  (" .. firstDuration .. "%% duration)")
+    imgui.Text(secondSV .. "x  (" .. secondDuration .. "%% duration)")
+    imgui.Columns(1)
+end
+function displaySVStats(svStats)
+    imgui.Columns(2, "SV Stats", false)
+    imgui.Text("Max SV:")
+    imgui.Text("Min SV:")
+    imgui.Text("Average SV:")
+    imgui.NextColumn()
+    imgui.Text(svStats.maxSV .. "x")
+    imgui.Text(svStats.minSV .. "x")
+    imgui.Text(svStats.avgSV .. "x")
+    HelpMarker("Rounded to 3 decimal places")
+    imgui.Columns(1)
+end
+function startNextWindowNotCollapsed(windowName)
+    if state.GetValue(windowName) then return end
+    imgui.SetNextWindowCollapsed(false)
+    state.SetValue(windowName, true)
+end
+function displayStutterSVWindows(settingVars)
+    if settingVars.linearlyChange then
+        startNextWindowNotCollapsed("svInfo2AutoOpen")
+        makeSVInfoWindow("SV Info (Starting first SV)", settingVars.svGraphStats, nil,
+            settingVars.svDistances, settingVars.svMultipliers,
+            settingVars.stutterDuration, false)
+        startNextWindowNotCollapsed("svInfo3AutoOpen")
+        makeSVInfoWindow("SV Info (Ending first SV)", settingVars.svGraph2Stats, nil,
+            settingVars.svDistances2, settingVars.svMultipliers2,
+            settingVars.stutterDuration, false)
+    else
+        startNextWindowNotCollapsed("svInfo1AutoOpen")
+        makeSVInfoWindow("SV Info", settingVars.svGraphStats, nil, settingVars.svDistances,
+            settingVars.svMultipliers, settingVars.stutterDuration, false)
     end
 end
 function chooseAddComboMultipliers(settingVars)
@@ -6009,7 +6179,7 @@ function chooseArcPercent(settingVars)
     return oldPercent ~= settingVars.arcPercent
 end
 function chooseAverageSV(menuVars)
-    local outputValue, settingsChanged = negatableComputableInputFloat("Average SV", menuVars.avgSV, 2, "x")
+    local outputValue, settingsChanged = NegatableComputableInputFloat("Average SV", menuVars.avgSV, 2, "x")
     menuVars.avgSV = outputValue
     return settingsChanged
 end
@@ -6048,10 +6218,7 @@ function chooseColorTheme()
     chooseRGBPeriod()
 end
 function chooseComboPhase(settingVars, maxComboPhase)
-    local oldPhase = settingVars.comboPhase
-    _, settingVars.comboPhase = imgui.InputInt("Combo Phase", oldPhase, 1, 1)
-    settingVars.comboPhase = math.clamp(settingVars.comboPhase, 0, maxComboPhase)
-    return oldPhase ~= settingVars.comboPhase
+    return BasicInputInt(settingVars, "comboPhase", "Combo Phase", { 0, maxComboPhase })
 end
 function chooseComboSVOption(settingVars, maxComboPhase)
     local oldIndex = settingVars.comboTypeIndex
@@ -6149,19 +6316,13 @@ end
 function chooseCursorTrailGhost()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
-    local oldCursorTrailGhost = globalVars.cursorTrailGhost
-    _, globalVars.cursorTrailGhost = imgui.Checkbox("No Ghost", oldCursorTrailGhost)
-    if (oldCursorTrailGhost ~= globalVars.cursorTrailGhost) then
-        write(globalVars)
-    end
+    GlobalCheckbox("cursorTrailGhost", "No Ghost")
 end
 function chooseCursorTrailPoints()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
-    local label = "Trail Points"
-    local oldCursorTrailPoints = globalVars.cursorTrailPoints
-    _, globalVars.cursorTrailPoints = imgui.InputInt(label, oldCursorTrailPoints, 1, 1)
-    if (oldCursorTrailPoints ~= globalVars.cursorTrailPoints) then
+    local settingChanged = BasicInputInt(globalVars, "cursorTrailPoints", "Trail Points")
+    if (settingChanged) then
         write(globalVars)
     end
 end
@@ -6178,10 +6339,8 @@ end
 function chooseCursorShapeSize()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
-    local label = "Shape Size"
-    local oldCursorTrailSize = globalVars.cursorTrailSize
-    _, globalVars.cursorTrailSize = imgui.InputInt(label, oldCursorTrailSize, 1, 1)
-    if (oldCursorTrailSize ~= globalVars.cursorTrailSize) then
+    local settingChanged = BasicInputInt(globalVars, "cursorTrailSize", "Shape Size")
+    if (settingChanged) then
         write(globalVars)
     end
 end
@@ -6214,76 +6373,33 @@ function chooseCustomMultipliers(settingVars)
 end
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
-    menuVars.distance = negatableComputableInputFloat("Distance", menuVars.distance, 3, " msx")
+    menuVars.distance = NegatableComputableInputFloat("Distance", menuVars.distance, 3, " msx")
     return oldDistance ~= menuVars.distance
 end
 function chooseVaryingDistance(settingVars)
     if (not settingVars.linearlyChange) then
-        settingVars.distance = computableInputFloat("Distance", settingVars.distance, 3, " msx")
+        settingVars.distance = ComputableInputFloat("Distance", settingVars.distance, 3, " msx")
         return
     end
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
-    local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
-    ToolTip("Swap start/end SV values")
-    local oldValues = vector.New(settingVars.distance1, settingVars.distance2)
-    KeepSameLine()
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
-    ToolTip("Negate start/end SV values")
-    KeepSameLine()
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.98 - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2("Dist.", oldValues, "%.2f msx")
-    imgui.PopItemWidth()
-    settingVars.distance1 = newValues.x
-    settingVars.distance2 = newValues.y
-    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars.distance1 = oldValues.y
-        settingVars.distance2 = oldValues.x
-    end
-    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars.distance1 = -oldValues.x
-        settingVars.distance2 = -oldValues.y
-    end
-    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
-        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues ~= newValues
+    return SwappableNegatableInputFloat2(settingVars, "distance1", "distance2", "Dist.", "msx", 2)
 end
 function chooseEvery(menuVars)
-    _, menuVars.every = imgui.InputInt("Every __ notes", math.floor(menuVars.every))
-    menuVars.every = math.clamp(menuVars.every, 1, MAX_SV_POINTS)
+    return BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
 end
 function chooseOffset(menuVars)
-    _, menuVars.offset = imgui.InputInt("From note #__", math.floor(menuVars.offset))
-    menuVars.offset = math.clamp(menuVars.offset, 1, menuVars.every)
+    return BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
 end
 function chooseSnap(menuVars)
-    _, menuVars.snap = imgui.InputInt("Snap", math.floor(menuVars.snap))
-    menuVars.snap = math.clamp(menuVars.snap, 1, 100)
+    return BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
 end
 function chooseDrawCapybara()
-    local oldDrawCapybara = globalVars.drawCapybara
-    _, globalVars.drawCapybara = imgui.Checkbox("Capybara", oldDrawCapybara)
-    HelpMarker("Draws a capybara at the bottom right of the screen")
-    if (oldDrawCapybara ~= globalVars.drawCapybara) then
-        write(globalVars)
-    end
+    GlobalCheckbox("drawCapybara", "Capybara", "Draws a capybara at the bottom right of the screen")
 end
 function chooseDrawCapybara2()
-    local oldDrawCapybara2 = globalVars.drawCapybara2
-    _, globalVars.drawCapybara2 = imgui.Checkbox("Capybara 2", oldDrawCapybara2)
-    HelpMarker("Draws a capybara at the bottom left of the screen")
-    if (oldDrawCapybara2 ~= globalVars.drawCapybara2) then
-        write(globalVars)
-    end
+    GlobalCheckbox("drawCapybara2", "Capybara 2", "Draws a capybara at the bottom left of the screen")
 end
 function chooseDrawCapybara312()
-    local oldDrawCapybara312 = globalVars.drawCapybara312
-    _, globalVars.drawCapybara312 = imgui.Checkbox("Capybara 312", oldDrawCapybara312)
-    if (oldDrawCapybara312 ~= globalVars.drawCapybara312) then
-        write(globalVars)
-    end
-    HelpMarker("Draws a capybara???!?!??!!!!? AGAIN?!?!")
+    GlobalCheckbox("drawCapybara312", "Capybara 312", "Draws a capybara???!?!??!!!!? AGAIN?!?!")
 end
 function chooseSelectTool()
     imgui.AlignTextToFramePadding()
@@ -6326,13 +6442,11 @@ end
 function chooseEffectFPS()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
     if currentTrail ~= "Snake" then return end
-    local oldEffectFPS = globalVars.effectFPS
-    _, globalVars.effectFPS = imgui.InputInt("Effect FPS", oldEffectFPS, 1, 1)
-    if (oldEffectFPS ~= globalVars.effectFPS) then
+    local settingChanged = BasicInputInt(globalVars, "effectFPS", "Effect FPS", { 2, 1000 },
+        "Set this to a multiple of UPS or FPS to make cursor effects smooth")
+    if (settingChanged) then
         write(globalVars)
     end
-    HelpMarker("Set this to a multiple of UPS or FPS to make cursor effects smooth")
-    globalVars.effectFPS = math.clamp(globalVars.effectFPS, 2, 1000)
 end
 function chooseFinalSV(settingVars, skipFinalSV)
     if skipFinalSV then return false end
@@ -6360,8 +6474,7 @@ function chooseFlickerType(menuVars)
     menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
 end
 function chooseFrameOrder(settingVars)
-    local checkBoxText = "Reverse frame order when placing SVs"
-    _, settingVars.reverseFrameOrder = imgui.Checkbox(checkBoxText, settingVars.reverseFrameOrder)
+    BasicCheckbox(settingVars, "reverseFrameOrder", "Reverse frame order when placing SVs")
 end
 function chooseFrameSpacing(settingVars)
     _, settingVars.frameDistance = imgui.InputFloat("Frame Spacing", settingVars.frameDistance,
@@ -6392,9 +6505,7 @@ function chooseIntensity(settingVars)
     return oldIntensity ~= settingVars.intensity
 end
 function chooseInterlace(menuVars)
-    local oldInterlace = menuVars.interlace
-    _, menuVars.interlace = imgui.Checkbox("Interlace", menuVars.interlace)
-    local interlaceChanged = oldInterlace ~= menuVars.interlace
+    local interlaceChanged = BasicCheckbox(menuVars, "interlace", "Interlace")
     if not menuVars.interlace then return interlaceChanged end
     KeepSameLine()
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.5)
@@ -6405,16 +6516,10 @@ function chooseInterlace(menuVars)
     return interlaceChanged or oldRatio ~= menuVars.interlaceRatio
 end
 function chooseLinearlyChange(settingVars)
-    local oldChoice = settingVars.linearlyChange
-    local _, newChoice = imgui.Checkbox("Change stutter over time", oldChoice)
-    settingVars.linearlyChange = newChoice
-    return oldChoice ~= newChoice
+    return BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time")
 end
 function chooseLinearlyChangeDist(settingVars)
-    local oldChoice = settingVars.linearlyChange
-    local _, newChoice = imgui.Checkbox("Change distance over time", oldChoice)
-    settingVars.linearlyChange = newChoice
-    return oldChoice ~= newChoice
+    return BasicCheckbox(settingVars, "linearlyChange", "Change distance over time")
 end
 function chooseStepSize()
     imgui.PushItemWidth(40)
@@ -6438,7 +6543,7 @@ function chooseMainSV(settingVars)
     _, settingVars.mainSV2 = imgui.InputFloat("Main SV (end)", settingVars.mainSV2, 0, 0, "%.2fx")
 end
 function chooseMeasuredStatsView(menuVars)
-    menuVars.unrounded = radioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
+    menuVars.unrounded = RadioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
 end
 function chooseMenuStep(settingVars)
     imgui.AlignTextToFramePadding()
@@ -6459,10 +6564,7 @@ function chooseMenuStep(settingVars)
 end
 function chooseNoNormalize(settingVars)
     AddPadding()
-    local oldChoice = settingVars.dontNormalize
-    local _, newChoice = imgui.Checkbox("Don't normalize to average SV", oldChoice)
-    settingVars.dontNormalize = newChoice
-    return oldChoice ~= newChoice
+    return BasicCheckbox(settingVars, "dontNormalize", "Don't normalize to average SV")
 end
 function chooseNoteSkinType(settingVars)
     settingVars.noteSkinTypeIndex = Combo("Preview skin", NOTE_SKIN_TYPES,
@@ -6473,8 +6575,7 @@ function chooseNoteSpacing(menuVars)
     _, menuVars.noteSpacing = imgui.InputFloat("Note Spacing", menuVars.noteSpacing, 0, 0, "%.2fx")
 end
 function chooseNumFlickers(menuVars)
-    _, menuVars.numFlickers = imgui.InputInt("Flickers", menuVars.numFlickers, 1, 1)
-    menuVars.numFlickers = math.clamp(menuVars.numFlickers, 1, 9999)
+    BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
 end
 function chooseFlickerPosition(menuVars)
     _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
@@ -6482,8 +6583,7 @@ function chooseFlickerPosition(menuVars)
     menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
 end
 function chooseNumFrames(settingVars)
-    _, settingVars.numFrames = imgui.InputInt("Total # Frames", math.floor(settingVars.numFrames))
-    settingVars.numFrames = math.clamp(settingVars.numFrames, 1, MAX_ANIMATION_FRAMES)
+    BasicInputInt(settingVars, "numFrames", "Total # Frames", { 1, MAX_ANIMATION_FRAMES })
 end
 function chooseNumPeriods(settingVars)
     local oldPeriods = settingVars.periods
@@ -6601,10 +6701,6 @@ end
 function chooseVibratoMode(menuVars)
     menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
 end
-function chooseVibratoQuality(menuVars)
-    menuVars.vibratoQuality = Combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
-    ToolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
-end
 function chooseCurvatureCoefficient(settingVars)
     plotExponentialCurvature(settingVars)
     imgui.SameLine(0, 0)
@@ -6632,7 +6728,7 @@ function chooseStartEndSVs(settingVars)
         _, settingVars.startSV = imgui.InputFloat("SV Value", oldValue, 0, 0, "%.2fx")
         return oldValue ~= settingVars.startSV
     end
-    return swappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
+    return SwappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
 end
 function chooseStartSVPercent(settingVars)
     local label1 = "Start SV %"
@@ -6687,12 +6783,7 @@ function chooseStutterDuration(settingVars)
     return durationChanged
 end
 function chooseStuttersPerSection(settingVars)
-    local oldNumber = settingVars.stuttersPerSection
-    local _, newNumber = imgui.InputInt("Stutters", oldNumber, 1, 1)
-    HelpMarker("Number of stutters per section")
-    newNumber = math.clamp(newNumber, 1, 1000)
-    settingVars.stuttersPerSection = newNumber
-    return oldNumber ~= newNumber
+    return BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 })
 end
 function chooseStyleTheme()
     local oldStyleTheme = globalVars.styleThemeIndex
@@ -6729,26 +6820,21 @@ function chooseSVPoints(settingVars, svPointsForce)
         settingVars.svPoints = svPointsForce
         return false
     end
-    local oldPoints = settingVars.svPoints
-    _, settingVars.svPoints = imgui.InputInt("SV Points##regular", oldPoints, 1, 1)
-    settingVars.svPoints = math.clamp(settingVars.svPoints, 1, MAX_SV_POINTS)
-    return oldPoints ~= settingVars.svPoints
+    return BasicInputInt(settingVars, "svPoints", "SV Points##regular", { 1, MAX_SV_POINTS })
 end
 function chooseUpscroll()
     local oldUpscroll = globalVars.upscroll
-    globalVars.upscroll = radioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
+    globalVars.upscroll = RadioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
         "Orientation for distance graphs and visuals")
     if (oldUpscroll ~= globalVars.upscroll) then
         write(globalVars)
     end
 end
 function chooseUseDistance(settingVars)
-    local label = "Use distance for start SV"
-    _, settingVars.useDistance = imgui.Checkbox(label, settingVars.useDistance)
+    BasicCheckbox(settingVars, "useDistance", "Use distance for start SV")
 end
 function chooseHand(settingVars)
-    local label = "Add teleport before note"
-    _, settingVars.teleportBeforeHand = imgui.Checkbox(label, settingVars.teleportBeforeHand)
+    BasicCheckbox(settingVars, "teleportBeforeHand", "Add teleport before note")
 end
 function chooseDistanceMode(menuVars)
     local oldMode = menuVars.distanceMode
@@ -6777,117 +6863,25 @@ function choosePulseColor()
     end
     imgui.End()
 end
-function computableInputFloat(label, var, decimalPlaces, suffix)
-    local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
-    local previousValue = var
-    _, var = imgui.InputText(label,
-        string.format("%." .. decimalPlaces .. "f" .. suffix,
-            math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")) or 0),
-        4096,
-        imgui_input_text_flags.AutoSelectAll)
-    if (not imgui.IsItemActive() and state.GetValue("previouslyActiveImguiFloat" .. computableStateIndex, false)) then
-        local desiredComp = tostring(var):gsub(" ", "")
-        var = expr(desiredComp)
-    end
-    state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())
-    state.SetValue("computableInputFloatIndex", computableStateIndex + 1)
-    return math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")),
-        previousValue ~= var
-end
-function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
-    local oldValue = var
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
-    ToolTip("Negate SV value")
-    KeepSameLine()
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    local newValue = computableInputFloat(label, var, decimalPlaces, suffix)
-    imgui.PopItemWidth()
-    if ((negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) and newValue ~= 0) then
-        newValue = -newValue
-    end
-    return newValue, oldValue ~= newValue
-end
-function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
-    digits = digits or 2
-    suffix = suffix or "x"
-    widthFactor = widthFactor or 0.7
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
-    local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
-    ToolTip("Swap start/end values")
-    local oldValues = vector.New(settingVars[lowerName], settingVars[higherName])
-    KeepSameLine()
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
-    ToolTip("Negate start/end values")
-    KeepSameLine()
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
-    imgui.PopItemWidth()
-    settingVars[lowerName] = newValues.x
-    settingVars[higherName] = newValues.y
-    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars[lowerName] = oldValues.y
-        settingVars[higherName] = oldValues.x
-    end
-    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars[lowerName] = -oldValues.x
-        settingVars[higherName] = -oldValues.y
-    end
-    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
-        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues ~= newValues
-end
-function globalCheckbox(parameterName, label, tooltipText)
-    local oldValue = globalVars[parameterName]
-    ---@cast oldValue boolean
-    _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
-    if (tooltipText) then ToolTip(tooltipText) end
-    if (oldValue ~= globalVars[parameterName]) then write(globalVars) end
-end
-function codeInput(settingVars, parameterName, label, tooltipText)
-    local oldCode = settingVars[parameterName]
-    _, settingVars[parameterName] = imgui.InputTextMultiline(label, settingVars[parameterName], 16384,
-        vector.New(240, 120))
-    if (tooltipText) then ToolTip(tooltipText) end
-    return oldCode ~= settingVars[parameterName]
-end
-function colorInput(customStyle, parameterName, label, tooltipText)
-    AddSeparator()
-    local oldCode = customStyle[parameterName]
-    _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or DEFAULT_STYLE[parameterName])
-    if (tooltipText) then ToolTip(tooltipText) end
-    return oldCode ~= customStyle[parameterName]
-end
 function chooseVibratoSides(menuVars)
     imgui.Dummy(vector.New(27, 0))
     KeepSameLine()
-    menuVars.sides = radioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
+    menuVars.sides = RadioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
 end
 function chooseConvertSVSSFDirection(menuVars)
-    menuVars.conversionDirection = radioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
+    menuVars.conversionDirection = RadioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
         { false, true })
 end
-function radioButtons(label, value, options, optionValues, tooltip)
-    imgui.AlignTextToFramePadding()
-    imgui.Text(label)
-    if (tooltip) then ToolTip(tooltip) end
-    for idx, option in pairs(options) do
-        imgui.SameLine(0, RADIO_BUTTON_SPACING)
-        if imgui.RadioButton(option, value == optionValues[idx]) then
-            value = optionValues[idx]
-        end
-    end
-    return value
-end
 HEXADECIMAL = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" }
-function rgbaToUint(r, g, b, a) return a * 16 ^ 6 + b * 16 ^ 4 + g * 16 ^ 2 + r end
+function rgbaToUint(r, g, b, a)
+    local flr = math.floor
+    return flr(a) * 16 ^ 6 + flr(b) * 16 ^ 4 + flr(g) * 16 ^ 2 + flr(r)
+end
 function rgbaToHexa(r, g, b, a)
+    local flr = math.floor
     local hexaStr = ""
-    for _, col in pairs({ r, g, b, a }) do
-        hexaStr = hexaStr .. HEXADECIMAL[math.floor(col / 16) + 1] .. HEXADECIMAL[col % 16 + 1]
+    for _, col in ipairs({ r, g, b, a }) do
+        hexaStr = hexaStr .. HEXADECIMAL[math.floor(col / 16) + 1] .. HEXADECIMAL[flr(col) % 16 + 1]
     end
     return hexaStr
 end
@@ -6898,6 +6892,26 @@ function hexaToRgba(hexa)
             table.indexOf(HEXADECIMAL, hexa:charAt(i)) * 16 + table.indexOf(HEXADECIMAL, hexa:charAt(i + 1)) - 17)
     end
     return table.vectorize4(rgbaTable)
+end
+function rgbaToHsva(r, g, b, a)
+    local colPrime = { r / 255, g / 255, b / 255 }
+    local cMax = math.max(table.unpack(colPrime))
+    local cMin = math.min(table.unpack(colPrime))
+    local delta = cMax - cMin
+    local maxIdx = 1
+    local higherVal = colPrime[2]
+    local lowerVal = colPrime[3]
+    for i = 2, 3 do
+        if (colPrime[i] == cMax) then
+            maxIdx = i
+            higherVal = colPrime[i % 3 + 1]
+            lowerVal = colPrime[(i + 1) % 3 + 1]
+        end
+    end
+    local h = 60 * ((higherVal - lowerVal) / delta * (2 * maxIdx - 2)) % 6
+    local s = truthy(cMax) and delta / cMax or 0
+    local v = cMax
+    return vector.New(h, s, v, a)
 end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
@@ -7897,7 +7911,7 @@ function circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
 end
 function codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
-    codeInput(settingVars, "code", "##code")
+    CodeInput(settingVars, "code", "##code")
     if (imgui.Button("Refresh Plot", vector.New(ACTION_BUTTON_SIZE.x, 30))) then
         settingsChanged = true
     end
@@ -8036,7 +8050,7 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, menuVars, hideNo
         if (not hideNoteReq) then imgui.Text(infoText) end
         return
     end
-    Button(buttonText, ACTION_BUTTON_SIZE, actionfunc, menuVars)
+    FunctionButton(buttonText, ACTION_BUTTON_SIZE, actionfunc, menuVars)
     if (disableKeyInput) then return end
     if (hideNoteReq) then
         ToolTip("Press \'" .. GLOBAL_HOTKEY_LIST[2] .. "\' on your keyboard to do the same thing as this button")
@@ -8381,7 +8395,7 @@ function setPresets(presetList)
     for _, preset in pairs(presetList) do
         local presetIsValid, presetData = checkPresetValidity(preset)
         if (not presetIsValid) then goto continue end
-        table.insert(presets, { name = preset.name, type = preset.type, menu = preset.menu, presetData })
+        table.insert(presets, { name = preset.name, type = preset.type, menu = preset.menu, data = presetData })
         ::continue::
     end
 end

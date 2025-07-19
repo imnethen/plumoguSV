@@ -14,7 +14,7 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, menuVars, hideNo
         if (not hideNoteReq) then imgui.Text(infoText) end
         return
     end
-    Button(buttonText, ACTION_BUTTON_SIZE, actionfunc, menuVars)
+    FunctionButton(buttonText, ACTION_BUTTON_SIZE, actionfunc, menuVars)
     if (disableKeyInput) then return end
     if (hideNoteReq) then
         ToolTip("Press \'" .. GLOBAL_HOTKEY_LIST[2] .. "\' on your keyboard to do the same thing as this button")

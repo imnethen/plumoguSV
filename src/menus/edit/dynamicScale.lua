@@ -55,5 +55,5 @@ end
 
 function addNoteTimesToDynamicScaleButton(menuVars)
     local buttonText = "Assign selected note times"
-    Button(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
+    FunctionButton(buttonText, ACTION_BUTTON_SIZE, addSelectedNoteTimesToList, menuVars)
 end

@@ -15,7 +15,7 @@ function copyNPasteMenu()
     if (copiedItemCount == 0) then
         simpleActionMenu("Copy items between selected notes", 2, copyItems, menuVars)
     else
-        Button("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
+        FunctionButton("Clear copied items", ACTION_BUTTON_SIZE, clearCopiedItems, menuVars)
     end
 
     if copiedItemCount == 0 then
