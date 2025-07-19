@@ -63,7 +63,6 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Fix merge inefficiency~~
 * Animation palette generator
 * ~~Rework bezier backend to use vectors~~
-* Allow for dynamic sv fps instead of static sv points (v2.1)
 * ~~automate optimizations~~
 * ~~Use sliderint instead of clamped dragint as much as possible~~
 * ~~Fix automate TGs being hidden breaking stuff~~
@@ -71,3 +70,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Remove passing globalVars to children~~
 * ~~Update radio buttons to use new radio button constructor~~
 * ~~note lock hotkey (with horizontal and vertical movement independently restricted)~~
+* Allow for dynamic sv fps instead of static sv points (v2.1)
