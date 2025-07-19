@@ -4132,7 +4132,7 @@ function removeSelectedFrameTimeButton(settingVars)
     settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
 end
 function animationPaletteMenu(settingVars)
-    CodeInput(settingVars, "instructions", nil, "Write instructions here.")
+    CodeInput(settingVars, "instructions", "", "Write instructions here.")
 end
 function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
