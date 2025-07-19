@@ -4,7 +4,7 @@ function setPresets(presetList)
     for _, preset in pairs(presetList) do
         local presetIsValid, presetData = checkPresetValidity(preset)
         if (not presetIsValid) then goto continue end
-        table.insert(presets, { name = preset.name, type = preset.type, menu = preset.menu, presetData })
+        table.insert(presets, { name = preset.name, type = preset.type, menu = preset.menu, data = presetData })
         ::continue::
     end
 end

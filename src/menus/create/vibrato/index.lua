@@ -21,6 +21,7 @@ function placeVibratoSVMenu(separateWindow)
     local currentSVType = VIBRATO_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType .. (menuVars.vibratoMode == 1 and "SV" or "SSF"), "Vibrato")
     if globalVars.showPresetMenu then
+        renderPresetMenu(menuVars, settingVars)
         return
     end
 
