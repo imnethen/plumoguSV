@@ -72,6 +72,11 @@ export default async function transpiler(
     });
 
     output = output.replaceAll(
+        /\("([^"]+?)" \.\. (.+) \.\. (.+)\)/g,
+        '(table.concat({"$1", $2, $3}))'
+    );
+
+    output = output.replaceAll(
         /for _, ([a-zA-Z0-9_]+) in ipairs\(([a-zA-Z0-9_\.\(\), ]+)\) do\n( *)/g,
         'for k = 1, #$2 do\n$3local $1 = $2[k]\n$3'
     ); // Reduce function overhead by removing ipairs
@@ -92,11 +97,16 @@ export default async function transpiler(
     if (lint) {
         const splitOutput = output.split('\n');
 
-        const functions = getFunctionList(splitOutput);
-        functions[0] = functions[0].filter(
-            (fn) => !fn.startsWith('string') && !fn.startsWith('table')
-        );
-        const [_, unusedIndexes] = getUnusedFunctions(splitOutput, functions);
+        let [functions, fnIndices] = getFunctionList(splitOutput);
+        functions = functions.filter((fn, idx) => {
+            const cond = fn.startsWith('string') || fn.startsWith('table');
+            if (cond) fnIndices.splice(idx, 1);
+            return !cond;
+        });
+        const [_, unusedIndexes] = getUnusedFunctions(splitOutput, [
+            functions,
+            fnIndices,
+        ]);
 
         unusedIndexes.reverse().forEach((idx) => {
             let startIdx = idx;
@@ -104,7 +114,7 @@ export default async function transpiler(
             while (/^---/.test(splitOutput[startIdx - 1]) && startIdx > 0)
                 startIdx--;
             while (!/^end/.test(splitOutput[endIdx])) endIdx++;
-            splitOutput.splice(startIdx, endIdx - startIdx + 1);
+            // splitOutput.splice(startIdx, endIdx - startIdx + 1);
         });
 
         output = splitOutput.join('\n');

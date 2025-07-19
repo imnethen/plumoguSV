@@ -2349,15 +2349,15 @@ local function renderNoteDataWidget()
     imgui.BeginTooltip()
     imgui.Text("Note Info:")
     local selectedNote = state.SelectedHitObjects[1]
-    imgui.Text("StartTime = " .. selectedNote.StartTime .. " ms")
+    imgui.Text(table.concat({"StartTime = ", selectedNote.StartTime, " ms"}))
     local noteIsNotLN = selectedNote.EndTime == 0
     if noteIsNotLN then
         imgui.EndTooltip()
         return
     end
     local lnLength = selectedNote.EndTime - selectedNote.StartTime
-    imgui.Text("EndTime = " .. selectedNote.EndTime .. " ms")
-    imgui.Text("LN Length = " .. lnLength .. " ms")
+    imgui.Text(table.concat({"EndTime = ", selectedNote.EndTime, " ms"}))
+    imgui.Text(table.concat({"LN Length = ", lnLength, " ms"}))
     imgui.EndTooltip()
 end
 local function renderMeasureDataWidget()
@@ -2392,9 +2392,9 @@ local function renderMeasureDataWidget()
     end
     imgui.BeginTooltip()
     imgui.Text("Measure Info:")
-    imgui.Text("NSV Distance = " .. nsvDistance .. " ms")
-    imgui.Text("SV Distance = " .. roundedSVDistance .. " msx")
-    imgui.Text("Avg SV = " .. roundedAvgSV .. "x")
+    imgui.Text(table.concat({"NSV Distance = ", nsvDistance, " ms"}))
+    imgui.Text(table.concat({"SV Distance = ", roundedSVDistance, " msx"}))
+    imgui.Text(table.concat({"Avg SV = ", roundedAvgSV, "x"}))
     imgui.EndTooltip()
     state.SetValue("oldStartOffset", startOffset)
     state.SetValue("oldEndOffset", endOffset)
@@ -3752,7 +3752,7 @@ local function infoTab()
     imgui.BulletText("Choose an SV tool in the Create tab.")
     imgui.BulletText("Adjust the tool's settings to your liking.")
     imgui.BulletText("Select notes to use the tool at.")
-    imgui.BulletText("Press the '" .. GLOBAL_HOTKEY_LIST[1] .. "' hotkey.")
+    imgui.BulletText(table.concat({"Press the '", GLOBAL_HOTKEY_LIST[1], "' hotkey."}))
     AddPadding()
     imgui.SeparatorText("Special thanks to:")
     AddPadding()
@@ -8273,15 +8273,15 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, menuVars, hideNo
     Button(buttonText, ACTION_BUTTON_SIZE, actionfunc, menuVars)
     if (disableKeyInput) then return end
     if (hideNoteReq) then
-        ToolTip("Press \'" .. GLOBAL_HOTKEY_LIST[2] .. "\' on your keyboard to do the same thing as this button")
+        ToolTip(table.concat({"Press \'", GLOBAL_HOTKEY_LIST[2], "\' on your keyboard to do the same thing as this button"}))
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, menuVars)
     else
         if (optionalKeyOverride) then
-            ToolTip("Press \'" .. optionalKeyOverride .. "\' on your keyboard to do the same thing as this button")
+            ToolTip(table.concat({"Press \'", optionalKeyOverride, "\' on your keyboard to do the same thing as this button"}))
             executeFunctionIfTrue(exclusiveKeyPressed(optionalKeyOverride), actionfunc, menuVars)
             return
         end
-        ToolTip("Press \'" .. GLOBAL_HOTKEY_LIST[1] .. "\' on your keyboard to do the same thing as this button")
+        ToolTip(table.concat({"Press \'", GLOBAL_HOTKEY_LIST[1], "\' on your keyboard to do the same thing as this button"}))
         executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, menuVars)
     end
 end
