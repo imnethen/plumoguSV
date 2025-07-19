@@ -1,7 +1,8 @@
 function customVibratoMenu(menuVars, settingVars, separateWindow)
     local typingCode = false
     if (menuVars.vibratoMode == 1) then
-        CodeInput(settingVars, "code", "##code")
+        CodeInput(settingVars, "code", "##code",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         if imgui.IsItemActive() then
             typingCode = true
         else
@@ -14,13 +15,15 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
             svVibrato(v, func)
         end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
-        CodeInput(settingVars, "code1", "##code1")
+        CodeInput(settingVars, "code1", "##code1",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         if imgui.IsItemActive() then
             typingCode = true
         else
             typingCode = false
         end
-        CodeInput(settingVars, "code2", "##code2")
+        CodeInput(settingVars, "code2", "##code2",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         if imgui.IsItemActive() then
             typingCode = true
         else

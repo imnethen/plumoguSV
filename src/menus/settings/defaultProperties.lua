@@ -372,7 +372,8 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Code Settings")) then
         local settingVars = getSettingVars("Code", "Property")
 
-        CodeInput(settingVars, "code", "##code")
+        CodeInput(settingVars, "code", "##code",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         imgui.Separator()
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
