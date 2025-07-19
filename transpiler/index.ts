@@ -74,7 +74,12 @@ export default async function transpiler(
     output = output.replaceAll(
         /\("([^"]+?)" \.\. (.+) \.\. (.+)\)/g,
         '(table.concat({"$1", $2, $3}))'
-    );
+    ); // Remove double string concats with table
+
+    output = output.replaceAll(
+        /\(("[a-z]!"), "([^"]+?)" \.\. (.+) \.\. (.+)\)/g,
+        '($1, table.concat({"$2", $3, $4}))'
+    ); // Same as above, but with notification type parameter
 
     output = output.replaceAll(
         /for _, ([a-zA-Z0-9_]+) in ipairs\(([a-zA-Z0-9_\.\(\), ]+)\) do\n( *)/g,

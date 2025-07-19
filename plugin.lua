@@ -744,7 +744,7 @@ local function automateCopySVs(settingVars)
         }
         settingVars.copiedSVs[settingVars.copiedSVs + 1] = copiedSV
     end
-    if (#settingVars.copiedSVs > 0) then toggleablePrint("s!", "Copied " .. #settingVars.copiedSVs .. " SVs.") end
+    if (#settingVars.copiedSVs > 0) then toggleablePrint("s!", table.concat({"Copied ", #settingVars.copiedSVs, " SVs."})) end
 end
 local function clearAutomateSVs(settingVars)
     settingVars.copiedSVs = {}
@@ -1178,7 +1178,7 @@ local function ssfVibrato(menuVars, func1, func2)
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
     })
-    toggleablePrint("s!", "Created " .. #ssfs .. pluralize(" SSF.", #ssfs, -2))
+    toggleablePrint("s!", table.concat({"Created ", #ssfs, pluralize(" SSF.", #ssfs, -2)}))
 end
 local function svVibrato(menuVars, heightFunc)
     local offsets = uniqueNoteOffsetsBetweenSelected()
@@ -1280,7 +1280,7 @@ local function deleteItems(menuVars)
                 action_type.RemoveBookmarkBatch, bmsToRemove) })
     end
     if (truthy(#linesToRemove)) then
-        toggleablePrint("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
+        toggleablePrint("e!", table.concat({"Deleted ", #linesToRemove, pluralize(" timing point.", #linesToRemove, -2)}))
     end
     if (truthy(#svsToRemove)) then
         toggleablePrint("e!",
@@ -1291,7 +1291,7 @@ local function deleteItems(menuVars)
             "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        toggleablePrint("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
+        toggleablePrint("e!", table.concat({"Deleted ", #bmsToRemove, pluralize(" bookmark.", #bmsToRemove, -2)}))
     end
 end
 local function addTeleportSVs(menuVars)
@@ -1358,8 +1358,8 @@ local function alignTimingLines()
         utils.CreateEditorAction(action_type.AddTimingPointBatch, timingpoints),
         utils.CreateEditorAction(action_type.RemoveTimingPointBatch, tpsToRemove)
     })
-    toggleablePrint("s!", "Created " .. #timingpoints .. pluralize(" timing point.", #timingpoints, -2))
-    toggleablePrint("e!", "Deleted " .. #tpsToRemove .. pluralize(" timing point.", #tpsToRemove, -2))
+    toggleablePrint("s!", table.concat({"Created ", #timingpoints, pluralize(" timing point.", #timingpoints, -2)}))
+    toggleablePrint("e!", table.concat({"Deleted ", #tpsToRemove, pluralize(" timing point.", #tpsToRemove, -2)}))
 end
 local function changeGroups(menuVars)
     if (state.SelectedScrollGroupId == menuVars.designatedTimingGroup) then
@@ -1502,10 +1502,10 @@ local function copyItems(menuVars)
         menuVars.copiedBMs[menuVars.copiedBMs + 1] = copiedBM
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
-    if (#menuVars.copiedSSFs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
-    if (#menuVars.copiedSVs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
-    if (#menuVars.copiedLines > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
+    if (#menuVars.copiedBMs > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedBMs, " Bookmarks."})) end
+    if (#menuVars.copiedSSFs > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedSSFs, " SSFs."})) end
+    if (#menuVars.copiedSVs > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedSVs, " SVs."})) end
+    if (#menuVars.copiedLines > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedLines, " Lines."})) end
 end
 local function clearCopiedItems(menuVars)
     menuVars.copiedLines = {}
@@ -1597,7 +1597,7 @@ local function pasteItems(menuVars)
         utils.CreateEditorAction(action_type.AddBookmarkBatch, bmsToAdd),
     })
     if (truthy(#linesToRemove)) then
-        toggleablePrint("e!", "Deleted " .. #linesToRemove .. pluralize(" timing point.", #linesToRemove, -2))
+        toggleablePrint("e!", table.concat({"Deleted ", #linesToRemove, pluralize(" timing point.", #linesToRemove, -2)}))
     end
     if (truthy(#svsToRemove)) then
         toggleablePrint("e!",
@@ -1608,10 +1608,10 @@ local function pasteItems(menuVars)
             "Deleted " .. #ssfsToRemove .. pluralize(" scroll speed factor.", #ssfsToRemove, -2))
     end
     if (truthy(#bmsToRemove)) then
-        toggleablePrint("e!", "Deleted " .. #bmsToRemove .. pluralize(" bookmark.", #bmsToRemove, -2))
+        toggleablePrint("e!", table.concat({"Deleted ", #bmsToRemove, pluralize(" bookmark.", #bmsToRemove, -2)}))
     end
     if (truthy(#linesToAdd)) then
-        toggleablePrint("s!", "Created " .. #linesToAdd .. pluralize(" timing point.", #linesToAdd, -2))
+        toggleablePrint("s!", table.concat({"Created ", #linesToAdd, pluralize(" timing point.", #linesToAdd, -2)}))
     end
     if (truthy(#svsToAdd)) then
         toggleablePrint("s!",
@@ -1622,7 +1622,7 @@ local function pasteItems(menuVars)
             "Created " .. #ssfsToAdd .. pluralize(" scroll speed factor.", #ssfsToAdd, -2))
     end
     if (truthy(#bmsToAdd)) then
-        toggleablePrint("s!", "Created " .. #bmsToAdd .. pluralize(" bookmark.", #bmsToAdd, -2))
+        toggleablePrint("s!", table.concat({"Created ", #bmsToAdd, pluralize(" bookmark.", #bmsToAdd, -2)}))
     end
 end
 local function tryAlignToHitObjects(time, hitObjectTimes, alignWindow)
@@ -3790,7 +3790,7 @@ local function infoTab()
             "That's an average of " ..
             math.round(svSum * 1000 / map.TrackLength, 2) ..
             " SVs per second, or " .. math.round(ssfSum * 1000 / map.TrackLength, 2) .. " SSFs per second.")
-        print("s!", "This map also contains " .. #map.TimingPoints .. " timing points.")
+        print("s!", table.concat({"This map also contains ", #map.TimingPoints, " timing points."}))
         print("s!",
             "This map has " .. svSum .. " SVs and " .. ssfSum .. " SSFs across " .. #tgList .. " timing groups.")
         print("w!",
@@ -8080,7 +8080,7 @@ function removeAndAddSVs(svsToRemove, svsToAdd)
         utils.CreateEditorAction(action_type.AddScrollVelocityBatch, svsToAdd)
     }
     actions.PerformBatch(editorActions)
-    toggleablePrint("s!", "Created " .. #svsToAdd .. pluralize(" SV.", #svsToAdd, -2))
+    toggleablePrint("s!", table.concat({"Created ", #svsToAdd, pluralize(" SV.", #svsToAdd, -2)}))
 end
 function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
     if #ssfsToAdd == 0 then return end
@@ -8089,7 +8089,7 @@ function removeAndAddSSFs(ssfsToRemove, ssfsToAdd)
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfsToAdd)
     }
     actions.PerformBatch(editorActions)
-    toggleablePrint("s!", "Created " .. #ssfsToAdd .. pluralize(" SSF.", #ssfsToAdd, -2))
+    toggleablePrint("s!", table.concat({"Created ", #ssfsToAdd, pluralize(" SSF.", #ssfsToAdd, -2)}))
 end
 function createSSF(startTime, multiplier)
      return utils.CreateScrollSpeedFactor(startTime, multiplier)
