@@ -14,7 +14,7 @@ function chooseArcPercent(settingVars)
 end
 
 function chooseAverageSV(menuVars)
-    local outputValue, settingsChanged = negatableComputableInputFloat("Average SV", menuVars.avgSV, 2, "x")
+    local outputValue, settingsChanged = NegatableComputableInputFloat("Average SV", menuVars.avgSV, 2, "x")
     menuVars.avgSV = outputValue
     return settingsChanged
 end
@@ -261,13 +261,13 @@ end
 
 function chooseDistance(menuVars)
     local oldDistance = menuVars.distance
-    menuVars.distance = negatableComputableInputFloat("Distance", menuVars.distance, 3, " msx")
+    menuVars.distance = NegatableComputableInputFloat("Distance", menuVars.distance, 3, " msx")
     return oldDistance ~= menuVars.distance
 end
 
 function chooseVaryingDistance(settingVars)
     if (not settingVars.linearlyChange) then
-        settingVars.distance = computableInputFloat("Distance", settingVars.distance, 3, " msx")
+        settingVars.distance = ComputableInputFloat("Distance", settingVars.distance, 3, " msx")
         return
     end
     return swappableNegatableInputFloat2(settingVars, "distance1", "distance2", "Dist.", "msx", 2)
@@ -492,7 +492,7 @@ function chooseMainSV(settingVars)
 end
 
 function chooseMeasuredStatsView(menuVars)
-    menuVars.unrounded = radioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
+    menuVars.unrounded = RadioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
 end
 
 function chooseMenuStep(settingVars)
@@ -714,7 +714,7 @@ function chooseStartEndSVs(settingVars)
         _, settingVars.startSV = imgui.InputFloat("SV Value", oldValue, 0, 0, "%.2fx")
         return oldValue ~= settingVars.startSV
     end
-    return swappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
+    return SwappableNegatableInputFloat2(settingVars, "startSV", "endSV", "Start/End SV")
 end
 
 function chooseStartSVPercent(settingVars)
@@ -832,7 +832,7 @@ end
 
 function chooseUpscroll()
     local oldUpscroll = globalVars.upscroll
-    globalVars.upscroll = radioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
+    globalVars.upscroll = RadioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
         "Orientation for distance graphs and visuals")
     if (oldUpscroll ~= globalVars.upscroll) then
         write(globalVars)
@@ -879,8 +879,8 @@ function choosePulseColor()
     imgui.End()
 end
 
-function computableInputFloat(label, var, decimalPlaces, suffix)
-    local computableStateIndex = state.GetValue("computableInputFloatIndex") or 1
+function ComputableInputFloat(label, var, decimalPlaces, suffix)
+    local computableStateIndex = state.GetValue("ComputableInputFloatIndex") or 1
     local previousValue = var
 
     _, var = imgui.InputText(label,
@@ -893,13 +893,13 @@ function computableInputFloat(label, var, decimalPlaces, suffix)
         var = expr(desiredComp)
     end
     state.SetValue("previouslyActiveImguiFloat" .. computableStateIndex, imgui.IsItemActive())
-    state.SetValue("computableInputFloatIndex", computableStateIndex + 1)
+    state.SetValue("ComputableInputFloatIndex", computableStateIndex + 1)
 
     return math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")),
         previousValue ~= var
 end
 
-function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
+function NegatableComputableInputFloat(label, var, decimalPlaces, suffix)
     local oldValue = var
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
     local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
@@ -907,7 +907,7 @@ function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
     KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
-    local newValue = computableInputFloat(label, var, decimalPlaces, suffix)
+    local newValue = ComputableInputFloat(label, var, decimalPlaces, suffix)
     imgui.PopItemWidth()
     if ((negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) and newValue ~= 0) then
         newValue = -newValue
@@ -915,7 +915,7 @@ function negatableComputableInputFloat(label, var, decimalPlaces, suffix)
     return newValue, oldValue ~= newValue
 end
 
-function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
+function SwappableNegatableInputFloat2(settingVars, lowerName, higherName, label, suffix, digits, widthFactor)
     digits = digits or 2
     suffix = suffix or "x"
     widthFactor = widthFactor or 0.7
@@ -947,7 +947,7 @@ function swappableNegatableInputFloat2(settingVars, lowerName, higherName, label
         oldValues ~= newValues
 end
 
-function globalCheckbox(parameterName, label, tooltipText)
+function GlobalCheckbox(parameterName, label, tooltipText)
     local oldValue = globalVars[parameterName]
     ---@cast oldValue boolean
     _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
@@ -955,7 +955,7 @@ function globalCheckbox(parameterName, label, tooltipText)
     if (oldValue ~= globalVars[parameterName]) then write(globalVars) end
 end
 
-function codeInput(settingVars, parameterName, label, tooltipText)
+function CodeInput(settingVars, parameterName, label, tooltipText)
     local oldCode = settingVars[parameterName]
     _, settingVars[parameterName] = imgui.InputTextMultiline(label, settingVars[parameterName], 16384,
         vector.New(240, 120))
@@ -963,7 +963,7 @@ function codeInput(settingVars, parameterName, label, tooltipText)
     return oldCode ~= settingVars[parameterName]
 end
 
-function colorInput(customStyle, parameterName, label, tooltipText)
+function ColorInput(customStyle, parameterName, label, tooltipText)
     AddSeparator()
     local oldCode = customStyle[parameterName]
     _, customStyle[parameterName] = imgui.ColorPicker4(label, customStyle[parameterName] or DEFAULT_STYLE[parameterName])
@@ -974,15 +974,15 @@ end
 function chooseVibratoSides(menuVars)
     imgui.Dummy(vector.New(27, 0))
     KeepSameLine()
-    menuVars.sides = radioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
+    menuVars.sides = RadioButtons("Sides:", menuVars.sides, { "1", "2", "3" }, { 1, 2, 3 })
 end
 
 function chooseConvertSVSSFDirection(menuVars)
-    menuVars.conversionDirection = radioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
+    menuVars.conversionDirection = RadioButtons("Direction:", menuVars.conversionDirection, { "SSF -> SV", "SV -> SSF" },
         { false, true })
 end
 
-function radioButtons(label, value, options, optionValues, tooltip)
+function RadioButtons(label, value, options, optionValues, tooltip)
     imgui.AlignTextToFramePadding()
     imgui.Text(label)
     if (tooltip) then ToolTip(tooltip) end
@@ -993,4 +993,10 @@ function radioButtons(label, value, options, optionValues, tooltip)
         end
     end
     return value
+end
+
+function BasicCheckbox(settingVars, parameterName, label)
+    local oldValue = settingVars[parameterName]
+    _, settingVars[parameterName] = imgui.Checkbox(label, oldValue)
+    return oldValue ~= settingVars[parameterName]
 end

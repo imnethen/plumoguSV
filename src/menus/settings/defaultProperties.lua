@@ -372,7 +372,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Code Settings")) then
         local settingVars = getSettingVars("Code", "Property")
 
-        codeInput(settingVars, "code", "##code")
+        CodeInput(settingVars, "code", "##code")
         imgui.Separator()
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
@@ -420,7 +420,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Automate Settings")) then
         local settingVars = getSettingVars("Automate", "Property")
 
-        settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
+        settingVars.initialSV = NegatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
         _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
         KeepSameLine()
         _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
@@ -428,7 +428,7 @@ function showDefaultPropertiesSettings()
         if (settingVars.maintainMs) then
             KeepSameLine()
             imgui.PushItemWidth(71)
-            settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
+            settingVars.ms = ComputableInputFloat("Time", settingVars.ms, 2, "ms")
             imgui.PopItemWidth()
         end
 
@@ -455,7 +455,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Linear Vibrato SV Settings")) then
         local settingVars = getSettingVars("LinearVibratoSV", "Property")
 
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
 
         saveSettingPropertiesButton(settingVars, "LinearVibratoSV")
         saveVariables("LinearVibratoSVPropertySettings", settingVars)
@@ -463,7 +463,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Exponential Vibrato SV Settings")) then
         local settingVars = getSettingVars("ExponentialVibratoSV", "Property")
 
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseCurvatureCoefficient(settingVars)
 
         saveSettingPropertiesButton(settingVars, "ExponentialVibratoSV")
@@ -472,7 +472,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Sinusoidal Vibrato SV Settings")) then
         local settingVars = getSettingVars("SinusoidalVibratoSV", "Property")
 
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseMsxVerticalShift(settingVars, 0)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
@@ -495,8 +495,8 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Linear Vibrato SSF Settings")) then
         local settingVars = getSettingVars("LinearVibratoSSF", "Property")
 
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
 
         saveSettingPropertiesButton(settingVars, "LinearVibratoSSF")
         saveVariables("LinearVibratoSSFPropertySettings", settingVars)
@@ -504,8 +504,8 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Exponential Vibrato SSF Settings")) then
         local settingVars = getSettingVars("ExponentialVibratoSSF", "Property")
 
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
         chooseCurvatureCoefficient(settingVars)
 
         saveSettingPropertiesButton(settingVars, "ExponentialVibratoSSF")
@@ -514,8 +514,8 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Sinusoidal Vibrato SSF Settings")) then
         local settingVars = getSettingVars("SinusoidalVibratoSSF", "Property")
 
-        swappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
-        swappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs", "x")
+        SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs", "x")
         chooseConstantShift(settingVars)
         chooseNumPeriods(settingVars)
         choosePeriodShift(settingVars)
