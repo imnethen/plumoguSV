@@ -16,10 +16,10 @@ const plugin = fs
 const [failed1, count1] = checkDoubleNestedFiles();
 const [failed2, count2] = checkUnusedFunctions(plugin);
 const [failed3, count3] = checkMissingAnnotations(plugin);
-// const [failed4, count4] = checkDuplicatedLines(plugin)
+const [failed4, count4] = checkDuplicatedLines(plugin);
 
-const totalFailed = failed1 + failed2 + failed3;
-const totalCount = count1 + count2 + count3;
+const totalFailed = failed1 + failed2 + failed3 + failed4;
+const totalCount = count1 + count2 + count3 + count4;
 
 console.log(
     chalk.green(`${totalCount - totalFailed} / ${totalCount} tests passed.`)
