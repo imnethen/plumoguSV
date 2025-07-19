@@ -70,4 +70,4 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * ~~Make globalVars.... actually global so i don't have to fucking pass it down everywhere~~
 * ~~Remove passing globalVars to children~~
 * ~~Update radio buttons to use new radio button constructor~~
-* note lock hotkey (with horizontal and vertical movement independently restricted)
+* ~~note lock hotkey (with horizontal and vertical movement independently restricted)~~
