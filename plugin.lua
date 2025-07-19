@@ -2074,7 +2074,22 @@ function initializeNoteLockMode()
     state.SetValue("note-lock-mode", 0)
     listen(function(action, type, fromLua)
         if (fromLua) then return end
-        local action = tonumber(action.Type)
+        local actionIndex = tonumber(action.Type) ---@cast actionIndex EditorActionType
+        local mode = state.GetValue("note-lock-mode", 0)
+        if (mode == 1) then
+            if (actionIndex > 9) then return end
+            action.Undo()
+        end
+        if (mode == 2) then
+            local allowedIndices = { 2, 5, 6, 7 }
+            if (not table.contains(allowedIndices, actionIndex)) then return end
+            action.Undo()
+        end
+        if (mode == 3) then
+            local allowedIndices = { 0, 1, 3, 4, 8, 9 }
+            if (not table.contains(allowedIndices, actionIndex)) then return end
+            action.Undo()
+        end
     end)
 end
 function checkForGlobalHotkeys()
@@ -3461,8 +3476,7 @@ end
 ---@param label string The label for the input.
 ---@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
 function GlobalCheckbox(parameterName, label, tooltipText)
-    local oldValue = globalVars[parameterName]
-    ---@cast oldValue boolean
+    local oldValue = globalVars[parameterName] ---@cast oldValue boolean
     _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
     if (tooltipText) then ToolTip(tooltipText) end
     if (oldValue ~= globalVars[parameterName]) then write(globalVars) end

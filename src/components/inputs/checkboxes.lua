@@ -16,8 +16,7 @@ end
 ---@param label string The label for the input.
 ---@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
 function GlobalCheckbox(parameterName, label, tooltipText)
-    local oldValue = globalVars[parameterName]
-    ---@cast oldValue boolean
+    local oldValue = globalVars[parameterName] ---@cast oldValue boolean
     _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
     if (tooltipText) then ToolTip(tooltipText) end
     if (oldValue ~= globalVars[parameterName]) then write(globalVars) end
