@@ -1,6 +1,6 @@
 function codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
-    codeInput(settingVars, "code", "##code")
+    CodeInput(settingVars, "code", "##code")
     if (imgui.Button("Refresh Plot", vector.New(ACTION_BUTTON_SIZE.x, 30))) then
         settingsChanged = true
     end

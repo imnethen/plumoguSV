@@ -1,7 +1,7 @@
 imgui_disable_vector_packing = true
 
 function draw()
-    state.SetValue("computableInputFloatIndex", 1)
+    state.SetValue("ComputableInputFloatIndex", 1)
     state.IsWindowHovered = imgui.IsWindowHovered()
 
     drawCapybara()

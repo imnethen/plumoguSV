@@ -43,7 +43,7 @@ function initializeSnakeTrailPoints(snakeTrailPoints, m, trailPoints)
         return
     end
     for i = 1, trailPoints do
-        snakeTrailPoints[i] = generate2DPoint(m.x, m.y)
+        snakeTrailPoints[i] = m
     end
     state.SetValue("initializeSnakeTrail", true)
 end
@@ -61,14 +61,11 @@ function updateSnakeTrailPoints(snakeTrailPoints, needTrailUpdate, m, trailPoint
     for i = trailPoints, 1, -1 do
         local currentTrailPoint = snakeTrailPoints[i]
         if i == 1 then
-            currentTrailPoint.x = m.x
-            currentTrailPoint.y = m.y
+            currentTrailPoint = m
         else
             local lastTrailPoint = snakeTrailPoints[i - 1]
-            local xChange = lastTrailPoint.x - currentTrailPoint.x
-            local yChange = lastTrailPoint.y - currentTrailPoint.y
-            currentTrailPoint.x = currentTrailPoint.x + snakeSpringConstant * xChange
-            currentTrailPoint.y = currentTrailPoint.y + snakeSpringConstant * yChange
+            local change = lastTrailPoint - currentTrailPoint
+            currentTrailPoint = currentTrailPoint + snakeSpringConstant * change
         end
     end
 end

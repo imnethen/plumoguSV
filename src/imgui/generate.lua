@@ -1,9 +1,3 @@
--- Returns a 2D (x, y) point [Table]
--- Parameters
---    x : x coordinate of the point [Int/Float]
---    y : y coordinate of the point [Int/Float]
-function generate2DPoint(x, y) return { x = x, y = y } end
-
 -- Generates and returns a particle [Table]
 -- Parameters
 --    x            : starting x coordiate of particle [Int/Float]

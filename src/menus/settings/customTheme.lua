@@ -28,48 +28,48 @@ function showCustomThemeSettings()
             state.SetValue("importingCustomTheme", false)
         end
     end
-    settingsChanged = colorInput(globalVars.customStyle, "windowBg", "Window BG") or
+    settingsChanged = ColorInput(globalVars.customStyle, "windowBg", "Window BG") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "popupBg", "Popup BG") or
+    settingsChanged = ColorInput(globalVars.customStyle, "popupBg", "Popup BG") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "frameBg", "Frame BG") or
+    settingsChanged = ColorInput(globalVars.customStyle, "frameBg", "Frame BG") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "frameBgHovered", "Frame BG\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "frameBgActive", "Frame BG\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "titleBg", "Title BG") or
+    settingsChanged = ColorInput(globalVars.customStyle, "frameBgHovered", "Frame BG\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "frameBgActive", "Frame BG\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "titleBg", "Title BG") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "titleBgActive", "Title BG\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "titleBgCollapsed", "Title BG\n(Collapsed)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "checkMark", "Checkmark") or
+    settingsChanged = ColorInput(globalVars.customStyle, "titleBgActive", "Title BG\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "titleBgCollapsed", "Title BG\n(Collapsed)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "checkMark", "Checkmark") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "sliderGrab", "Slider Grab") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "sliderGrabActive", "Slider Grab\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "button", "Button") or
+    settingsChanged = ColorInput(globalVars.customStyle, "sliderGrab", "Slider Grab") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "sliderGrabActive", "Slider Grab\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "button", "Button") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "buttonHovered", "Button\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "buttonActive", "Button\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "tab", "Tab") or
+    settingsChanged = ColorInput(globalVars.customStyle, "buttonHovered", "Button\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "buttonActive", "Button\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "tab", "Tab") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "tabHovered", "Tab\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "tabActive", "Tab\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "header", "Header") or
+    settingsChanged = ColorInput(globalVars.customStyle, "tabHovered", "Tab\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "tabActive", "Tab\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "header", "Header") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "headerHovered", "Header\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "headerActive", "Header\n(Active)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "separator", "Separator") or
+    settingsChanged = ColorInput(globalVars.customStyle, "headerHovered", "Header\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "headerActive", "Header\n(Active)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "separator", "Separator") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "text", "Text") or
+    settingsChanged = ColorInput(globalVars.customStyle, "text", "Text") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "textSelectedBg", "Text Selected\n(BG)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "scrollbarGrab", "Scrollbar Grab") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "scrollbarGrabHovered", "Scrollbar Grab\n(Hovered)") or
+    settingsChanged = ColorInput(globalVars.customStyle, "textSelectedBg", "Text Selected\n(BG)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "scrollbarGrab", "Scrollbar Grab") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "scrollbarGrabHovered", "Scrollbar Grab\n(Hovered)") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "scrollbarGrabActive", "Scrollbar Grab\n(Active)") or
+    settingsChanged = ColorInput(globalVars.customStyle, "scrollbarGrabActive", "Scrollbar Grab\n(Active)") or
         settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotLines", "Plot Lines") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotLinesHovered", "Plot Lines\n(Hovered)") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotHistogram", "Plot Histogram") or settingsChanged
-    settingsChanged = colorInput(globalVars.customStyle, "plotHistogramHovered", "Plot Histogram\n(Hovered)") or
+    settingsChanged = ColorInput(globalVars.customStyle, "plotLines", "Plot Lines") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "plotLinesHovered", "Plot Lines\n(Hovered)") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "plotHistogram", "Plot Histogram") or settingsChanged
+    settingsChanged = ColorInput(globalVars.customStyle, "plotHistogramHovered", "Plot Histogram\n(Hovered)") or
         settingsChanged
     if (settingsChanged) then
         write(globalVars)

@@ -8,7 +8,7 @@ function automateSVMenu(settingVars)
 
     Button("Clear copied items", ACTION_BUTTON_SIZE, clearAutomateSVs, settingVars)
     AddSeparator()
-    settingVars.initialSV = negatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
+    settingVars.initialSV = NegatableComputableInputFloat("Initial SV", settingVars.initialSV, 2, "x")
     _, settingVars.scaleSVs = imgui.Checkbox("Scale SVs?", settingVars.scaleSVs)
     KeepSameLine()
     _, settingVars.optimizeTGs = imgui.Checkbox("Optimize TGs?", settingVars.optimizeTGs)
@@ -16,7 +16,7 @@ function automateSVMenu(settingVars)
     if (settingVars.maintainMs) then
         KeepSameLine()
         imgui.PushItemWidth(71)
-        settingVars.ms = computableInputFloat("Time", settingVars.ms, 2, "ms")
+        settingVars.ms = ComputableInputFloat("Time", settingVars.ms, 2, "ms")
         imgui.PopItemWidth()
     end
     AddSeparator()
