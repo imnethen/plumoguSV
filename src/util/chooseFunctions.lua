@@ -270,32 +270,7 @@ function chooseVaryingDistance(settingVars)
         settingVars.distance = computableInputFloat("Distance", settingVars.distance, 3, " msx")
         return
     end
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
-    local swapButtonPressed = imgui.Button("S", TERTIARY_BUTTON_SIZE)
-    ToolTip("Swap start/end SV values")
-    local oldValues = vector.New(settingVars.distance1, settingVars.distance2)
-    KeepSameLine()
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("N", TERTIARY_BUTTON_SIZE)
-    ToolTip("Negate start/end SV values")
-    KeepSameLine()
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.98 - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2("Dist.", oldValues, "%.2f msx")
-    imgui.PopItemWidth()
-    settingVars.distance1 = newValues.x
-    settingVars.distance2 = newValues.y
-    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        settingVars.distance1 = oldValues.y
-        settingVars.distance2 = oldValues.x
-    end
-    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        settingVars.distance1 = -oldValues.x
-        settingVars.distance2 = -oldValues.y
-    end
-    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
-        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues ~= newValues
+    return swappableNegatableInputFloat2(settingVars, "distance1", "distance2", "Dist.", "msx", 2)
 end
 
 function chooseEvery(menuVars)
