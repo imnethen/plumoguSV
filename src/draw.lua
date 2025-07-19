@@ -38,14 +38,7 @@ function draw()
     imgui.End()
 
     pulseController()
-
-    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
-        local tgId = state.SelectedHitObjects[1].TimingGroup
-        for _, ho in pairs(state.SelectedHitObjects) do
-            if (ho.TimingGroup ~= tgId) then return end
-        end
-        state.SelectedScrollGroupId = tgId
-    end
+    checkForGlobalHotkeys()
 end
 
 function renderNoteDataWidget()

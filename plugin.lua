@@ -2052,6 +2052,42 @@ function verticalShiftSVs(menuVars)
     end
     removeAndAddSVs(svsToRemove, svsToAdd)
 end
+function changeNoteLockMode()
+    local mode = state.GetValue("note-lock-mode", 0)
+    mode = (mode + 1) % 4
+    if (mode == 0) then
+        print("s", "Notes have been unlocked.")
+    end
+    if (mode == 1) then
+        print("e", "Notes have been fully locked. To change the lock mode, press " .. GLOBAL_HOTKEY_LIST[10])
+    end
+    if (mode == 2) then
+        print("w", "Notes can no longer be placed, only moved. To change the lock mode, press" .. GLOBAL_HOTKEY_LIST[10])
+    end
+    if (mode == 3) then
+        print("w",
+            "Notes can no longer be moved, only placed and deleted. To change the lock mode, press" ..
+            GLOBAL_HOTKEY_LIST[10])
+    end
+end
+function initializeNoteLockMode()
+    state.SetValue("note-lock-mode", 0)
+    listen(function(action, type, fromLua)
+        if (fromLua) then return end
+        local action = tonumber(action.Type)
+    end)
+end
+function checkForGlobalHotkeys()
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then jumpToTg() end
+    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[10])) then changeNoteLockMode() end
+end
+function jumpToTg()
+    local tgId = state.SelectedHitObjects[1].TimingGroup
+    for _, ho in pairs(state.SelectedHitObjects) do
+        if (ho.TimingGroup ~= tgId) then return end
+    end
+    state.SelectedScrollGroupId = tgId
+end
 function selectAlternating(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end
@@ -3392,6 +3428,7 @@ function awake()
     setGlobalVars(tempGlobalVars)
     loadDefaultProperties(tempGlobalVars.defaultProperties)
     setPresets(table.map(tempGlobalVars.presets or {}, table.parse))
+    initializeNoteLockMode()
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
 end
 ---Creates an imgui button.
@@ -3516,36 +3553,20 @@ function ComputableInputFloat(label, var, decimalPlaces, suffix)
     return math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")),
         previousValue ~= var
 end
-function SwappableNegatableInputFloat2(varsTable, lowerName, higherName, label, suffix, digits, widthFactor)
-    digits = digits or 2
-    suffix = suffix or "x"
-    widthFactor = widthFactor or 0.7
-    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
-    local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
-    ToolTip("Swap start/end values")
-    local oldValues = vector.New(varsTable[lowerName], varsTable[higherName])
-    KeepSameLine()
+function NegatableComputableInputFloat(label, var, decimalPlaces, suffix)
+    local oldValue = var
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
-    local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
-    ToolTip("Negate start/end values")
+    local negateButtonPressed = imgui.Button("Neg.", SECONDARY_BUTTON_SIZE)
+    ToolTip("Negate SV value")
     KeepSameLine()
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
-    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
-    local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
+    local newValue = ComputableInputFloat(label, var, decimalPlaces, suffix)
     imgui.PopItemWidth()
-    varsTable[lowerName] = newValues.x
-    varsTable[higherName] = newValues.y
-    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
-        varsTable[lowerName] = oldValues.y
-        varsTable[higherName] = oldValues.x
+    if ((negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) and newValue ~= 0) then
+        newValue = -newValue
     end
-    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
-        varsTable[lowerName] = -oldValues.x
-        varsTable[higherName] = -oldValues.y
-    end
-    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
-        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
-        oldValues ~= newValues
+    return newValue, oldValue ~= newValue
 end
 ---Creates an `imgui.inputInt` element.
 ---@param varsTable { [string]: any }The table that is meant to be modified.
@@ -3640,13 +3661,7 @@ function draw()
     end
     imgui.End()
     pulseController()
-    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then
-        local tgId = state.SelectedHitObjects[1].TimingGroup
-        for _, ho in pairs(state.SelectedHitObjects) do
-            if (ho.TimingGroup ~= tgId) then return end
-        end
-        state.SelectedScrollGroupId = tgId
-    end
+    checkForGlobalHotkeys()
 end
 function renderNoteDataWidget()
     if (#state.SelectedHitObjects ~= 1) then return end
@@ -3941,11 +3956,36 @@ DEFAULT_STYLE = {
     plotHistogramHovered =
         vector.New(1.00, 0.60, 0.00, 1.00)
 }
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
-GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G" }
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
+GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
-    "Execute Vibrato Separately", "Use TG of Selected Note" }
+    "Execute Vibrato Separately", "Use TG of Selected Note", "Toggle Note Lock Mode" }
+function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce)
+    if currentSVType == "Linear" then
+        return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Exponential" then
+        return exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Bezier" then
+        return bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Hermite" then
+        return hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Sinusoidal" then
+        return sinusoidalSettingsMenu(settingVars, skipFinalSV)
+    elseif currentSVType == "Circular" then
+        return circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Random" then
+        return randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Custom" then
+        return customSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Chinchilla" then
+        return chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    elseif currentSVType == "Combo" then
+        return comboSettingsMenu(settingVars)
+    elseif currentSVType == "Code" then
+        return codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
+    end
+end
 function coordsRelativeToWindow(x, y)
     local newX = x + imgui.GetWindowPos()[1]
     local newY = y + imgui.GetWindowPos()[2]
@@ -4302,7 +4342,8 @@ end
 function customVibratoMenu(menuVars, settingVars, separateWindow)
     local typingCode = false
     if (menuVars.vibratoMode == 1) then
-        CodeInput(settingVars, "code", "##code")
+        CodeInput(settingVars, "code", "##code",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         if imgui.IsItemActive() then
             typingCode = true
         else
@@ -4314,13 +4355,15 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
             svVibrato(v, func)
         end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
     else
-        CodeInput(settingVars, "code1", "##code1")
+        CodeInput(settingVars, "code1", "##code1",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         if imgui.IsItemActive() then
             typingCode = true
         else
             typingCode = false
         end
-        CodeInput(settingVars, "code2", "##code2")
+        CodeInput(settingVars, "code2", "##code2",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         if imgui.IsItemActive() then
             typingCode = true
         else
@@ -5594,7 +5637,8 @@ function showDefaultPropertiesSettings()
     end
     if (imgui.CollapsingHeader("Code Settings")) then
         local settingVars = getSettingVars("Code", "Property")
-        CodeInput(settingVars, "code", "##code")
+        CodeInput(settingVars, "code", "##code",
+            "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
         imgui.Separator()
         chooseSVPoints(settingVars)
         chooseFinalSV(settingVars)
@@ -6045,31 +6089,6 @@ function addSelectedNoteTimesToList(menuVars)
     end
     menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
     menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)
-end
-function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce)
-    if currentSVType == "Linear" then
-        return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Exponential" then
-        return exponentialSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Bezier" then
-        return bezierSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Hermite" then
-        return hermiteSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Sinusoidal" then
-        return sinusoidalSettingsMenu(settingVars, skipFinalSV)
-    elseif currentSVType == "Circular" then
-        return circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Random" then
-        return randomSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Custom" then
-        return customSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Chinchilla" then
-        return chinchillaSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    elseif currentSVType == "Combo" then
-        return comboSettingsMenu(settingVars)
-    elseif currentSVType == "Code" then
-        return codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
-    end
 end
 function presetButton()
     local buttonText = ": )"
@@ -7911,7 +7930,8 @@ function circularSettingsMenu(settingVars, skipFinalSV, svPointsForce)
 end
 function codeSettingsMenu(settingVars, skipFinalSV, svPointsForce)
     local settingsChanged = false
-    CodeInput(settingVars, "code", "##code")
+    CodeInput(settingVars, "code", "##code",
+        "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the scroll velocity multiplier at (100t)% of the way between the first and last selected note times.")
     if (imgui.Button("Refresh Plot", vector.New(ACTION_BUTTON_SIZE.x, 30))) then
         settingsChanged = true
     end
