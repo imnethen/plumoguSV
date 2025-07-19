@@ -483,7 +483,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Sigmoidal Vibrato SV Settings")) then
         local settingVars = getSettingVars("SigmoidalVibratoSV", "Property")
 
-        swappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
+        SwappableNegatableInputFloat2(settingVars, "startMsx", "endMsx", "Start/End", " msx", 0, 0.875)
         chooseCurvatureCoefficient(settingVars)
 
         saveSettingPropertiesButton(settingVars, "SigmoidalVibratoSV")
