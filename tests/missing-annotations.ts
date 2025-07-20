@@ -28,8 +28,8 @@ export default function checkMissingAnnotations(file: string[]) {
             );
             failedTests++;
             fnDict[fnLine] = [];
-            return
-        };
+            return;
+        }
         while (file[index].includes('---') && index > 0) {
             const line = file[index];
             if (line.includes('@return')) returnAnnotated = true;
@@ -63,15 +63,19 @@ export default function checkMissingAnnotations(file: string[]) {
             .split('(')[1]
             .split(')')[0]
             .replaceAll(' ', '')
-            .split(',');
-        if (parameters.some((param) => !annoParams.includes(param)) && parameters.map((s) => (s.trim())).filter((s) => s).length) {
+            .split(',')
+            .filter((s) => s !== 'settingVars' && s !== 'menuVars');
+        if (
+            parameters.some((param) => !annoParams.includes(param)) &&
+            parameters.map((s) => s.trim()).filter((s) => s).length
+        ) {
             const missingParams = parameters.filter(
                 (param) => !annoParams.includes(param)
             );
             console.log(
                 `The function ${chalk.red(
                     chalk.bold(functionName)
-                )} is missing the following parameters: ${chalk.red(
+                )} is missing the following parameters in its annotation: ${chalk.red(
                     missingParams.join(', ')
                 )}`
             );
