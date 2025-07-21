@@ -3,7 +3,7 @@
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
 ---@param bounds? [number, number] A tuple representing the minimum and maximum bounds this input should have.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean changed Whether or not the checkbox has changed this frame.
 function BasicInputInt(varsTable, parameterName, label, bounds, tooltipText)
     local oldValue = varsTable[parameterName]
