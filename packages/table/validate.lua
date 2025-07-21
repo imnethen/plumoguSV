@@ -1,3 +1,6 @@
+require("packages.table.keys")
+require("packages.table.construct")
+require("packages.table.contains")
 ---When given a dictionary and table of keys, returns a new table with only the specified keys and values.
 ---@generic T table
 ---@param checkList T The base table, which has a list of keys to include in the new table.

@@ -1,3 +1,6 @@
+require("packages.table.construct")
+require("packages.table.dedupe")
+
 ---Returns a table of keys from a table.
 ---@param tbl { [string]: any } The table to search in.
 ---@return string[] keys A list of keys.

@@ -1,3 +1,5 @@
+require("packages.table.duplicate")
+
 ---Sorting function for sorting objects by their numerical value. Should be passed into [`table.sort`](lua://table.sort).
 ---@param a number
 ---@param b number
