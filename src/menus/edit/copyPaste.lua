@@ -9,8 +9,31 @@ function copyNPasteMenu()
     _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
 
     AddSeparator()
+    _, menuVars.curSlot = imgui.InputInt("cur slot", menuVars.curSlot)
+    while menuVars.curSlot > #menuVars.copiedSVs do
+        -- this errors
+        -- table.insert(menuVars.copiedLines, {})
+        -- table.insert(menuVars.copiedSVs, {})
+        -- table.insert(menuVars.copiedSSFs, {})
+        -- table.insert(menuVars.copiedBMs, {})
+        local newCopiedLines = table.duplicate(menuVars.copiedLines)
+        table.insert(newCopiedLines, {})
+        menuVars.copiedLines = newCopiedLines
+        local newCopiedSVs   = table.duplicate(menuVars.copiedSVs)
+        table.insert(newCopiedSVs, {})
+        menuVars.copiedSVs = newCopiedSVs
+        local newCopiedSSFs  = table.duplicate(menuVars.copiedSSFs)
+        table.insert(newCopiedSSFs, {})
+        menuVars.copiedSSFs = newCopiedSSFs
+        local newCopiedBMs   = table.duplicate(menuVars.copiedBMs)
+        table.insert(newCopiedBMs, {})
+        menuVars.copiedBMs = newCopiedBMs
 
-    local copiedItemCount = #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs + #menuVars.copiedBMs
+        break
+    end
+    AddSeparator()
+
+    local copiedItemCount = #menuVars.copiedLines[menuVars.curSlot] + #menuVars.copiedSVs[menuVars.curSlot] + #menuVars.copiedSSFs[menuVars.curSlot] + #menuVars.copiedBMs[menuVars.curSlot]
 
     if (copiedItemCount == 0) then
         simpleActionMenu("Copy items between selected notes", 2, copyItems, menuVars)

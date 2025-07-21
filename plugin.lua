@@ -13,6 +13,13 @@ end
 function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end
+---Returns n choose r, or nCr.
+---@param n integer
+---@param r integer
+---@return integer
+function math.binom(n, r)
+    return math.factorial(n) / (math.factorial(r) * math.factorial(n - r))
+end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
 ---@param lowerBound number
@@ -58,6 +65,52 @@ function math.hermite(m1, m2, y2, t)
     return a * t ^ 3 + b * t ^ 2 + c * t
 end
 matrix = {}
+---Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateCircle(p1, p2, p3)
+    local mtrx = {
+        vector.Table(2 * (p2 - p1)),
+        vector.Table(2 * (p3 - p1))
+    }
+    local vctr = {
+        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
+        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
+    }
+    h, k = matrix.solve(mtrx, vctr)
+    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
+    ---@type number, number, number
+    return h, k, r
+end
+---Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateQuadratic(p1, p2, p3)
+    local mtrx = {
+        (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
+        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
+    }
+    local vctr = {
+        (p2 - p1).y,
+        (p3 - p1).y
+    }
+    a, b = matrix.solve(mtrx, vctr)
+    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
+    ---@type number, number, number
+    return a, b, c
+end
+---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
+---@param weight number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.lerp(weight, lowerBound, upperBound)
+    return upperBound * weight + lowerBound * (1 - weight)
+end
 ---Returns the weight of a number between `lowerBound` and `upperBound`.
 ---@param num number
 ---@param lowerBound number
@@ -114,6 +167,11 @@ function matrix.solve(mtrx, vctr)
         end
     end
     return table.unpack(table.property(augMtrx, #mtrx + 1))
+end
+function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
+    local temp = mtrx[rowIdx1]
+    mtrx[rowIdx1] = mtrx[rowIdx2]
+    mtrx[rowIdx2] = temp
 end
 ---Rounds a number to a given amount of decimal places.
 ---@param number number
@@ -1371,10 +1429,7 @@ function convertSVSSF(menuVars)
     toggleablePrint("w!", "Successfully converted.")
 end
 function copyItems(menuVars)
-    menuVars.copiedLines = {}
-    menuVars.copiedSVs = {}
-    menuVars.copiedSSFs = {}
-    menuVars.copiedBMs = {}
+    clearCopiedItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
@@ -1387,7 +1442,7 @@ function copyItems(menuVars)
             signature = line.Signature,
             hidden = line.Hidden,
         }
-        table.insert(menuVars.copiedLines, copiedLine)
+        table.insert(menuVars.copiedLines[menuVars.curSlot], copiedLine)
     end
     ::continue1::
     if (not menuVars.copyTable[2]) then goto continue2 end
@@ -1396,7 +1451,7 @@ function copyItems(menuVars)
             relativeOffset = sv.StartTime - startOffset,
             multiplier = sv.Multiplier
         }
-        table.insert(menuVars.copiedSVs, copiedSV)
+        table.insert(menuVars.copiedSVs[menuVars.curSlot], copiedSV)
     end
     ::continue2::
     if (not menuVars.copyTable[3]) then goto continue3 end
@@ -1405,7 +1460,7 @@ function copyItems(menuVars)
             relativeOffset = ssf.StartTime - startOffset,
             multiplier = ssf.Multiplier
         }
-        table.insert(menuVars.copiedSSFs, copiedSSF)
+        table.insert(menuVars.copiedSSFs[menuVars.curSlot], copiedSSF)
     end
     ::continue3::
     if (not menuVars.copyTable[4]) then goto continue4 end
@@ -1414,29 +1469,37 @@ function copyItems(menuVars)
             relativeOffset = bm.StartTime - startOffset,
             note = bm.Note
         }
-        table.insert(menuVars.copiedBMs, copiedBM)
+        table.insert(menuVars.copiedBMs[menuVars.curSlot], copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedBMs .. " Bookmarks.") end
-    if (#menuVars.copiedSSFs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSSFs .. " SSFs.") end
-    if (#menuVars.copiedSVs > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSVs .. " SVs.") end
-    if (#menuVars.copiedLines > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedLines .. " Lines.") end
+    if (#menuVars.copiedBMs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedBMs[menuVars.curSlot] .. " Bookmarks.") end
+    if (#menuVars.copiedSSFs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSSFs[menuVars.curSlot] .. " SSFs.") end
+    if (#menuVars.copiedSVs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSVs[menuVars.curSlot] .. " SVs.") end
+    if (#menuVars.copiedLines[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedLines[menuVars.curSlot] .. " Lines.") end
 end
 function clearCopiedItems(menuVars)
-    menuVars.copiedLines = {}
-    menuVars.copiedSVs = {}
-    menuVars.copiedSSFs = {}
-    menuVars.copiedBMs = {}
+    local newCopiedLines = table.duplicate(menuVars.copiedLines)
+    newCopiedLines[menuVars.curSlot] = {}
+    menuVars.copiedLines = newCopiedLines
+    local newCopiedSVs   = table.duplicate(menuVars.copiedSVs)
+    newCopiedSVs[menuVars.curSlot] = {}
+    menuVars.copiedSVs = newCopiedSVs
+    local newCopiedSSFs  = table.duplicate(menuVars.copiedSSFs)
+    newCopiedSSFs[menuVars.curSlot] = {}
+    menuVars.copiedSSFs = newCopiedSSFs
+    local newCopiedBMs   = table.duplicate(menuVars.copiedBMs)
+    newCopiedBMs[menuVars.curSlot] = {}
+    menuVars.copiedBMs = newCopiedBMs
 end
 function pasteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
-    local lastCopiedLine = menuVars.copiedLines[#menuVars.copiedLines]
-    local lastCopiedSV = menuVars.copiedSVs[#menuVars.copiedSVs]
-    local lastCopiedSSF = menuVars.copiedSSFs[#menuVars.copiedSSFs]
-    local lastCopiedBM = menuVars.copiedBMs[#menuVars.copiedBMs]
+    local lastCopiedLine = menuVars.copiedLines[menuVars.curSlot][#menuVars.copiedLines[menuVars.curSlot]]
+    local lastCopiedSV = menuVars.copiedSVs[menuVars.curSlot][#menuVars.copiedSVs[menuVars.curSlot]]
+    local lastCopiedSSF = menuVars.copiedSSFs[menuVars.curSlot][#menuVars.copiedSSFs[menuVars.curSlot]]
+    local lastCopiedBM = menuVars.copiedBMs[menuVars.curSlot][#menuVars.copiedBMs[menuVars.curSlot]]
     local lastCopiedValue = lastCopiedSV
     if (lastCopiedValue == nil) then
         lastCopiedValue = lastCopiedSSF or lastCopiedLine or lastCopiedBM or { relativeOffset = 0 }
@@ -1461,7 +1524,7 @@ function pasteItems(menuVars)
         local pasteOffset = offsets[i]
         local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
         local ignoranceTolerance = 0.01
-        for _, line in ipairs(menuVars.copiedLines) do
+        for _, line in ipairs(menuVars.copiedLines[menuVars.curSlot]) do
             local timeToPasteLine = pasteOffset + line.relativeOffset
             if (math.abs(timeToPasteLine - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip1
@@ -1469,7 +1532,7 @@ function pasteItems(menuVars)
             table.insert(linesToAdd, utils.CreateTimingPoint(timeToPasteLine, line.bpm, line.signature, line.hidden))
             ::skip1::
         end
-        for _, sv in ipairs(menuVars.copiedSVs) do
+        for _, sv in ipairs(menuVars.copiedSVs[menuVars.curSlot]) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
             if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip2
@@ -1480,7 +1543,7 @@ function pasteItems(menuVars)
             table.insert(svsToAdd, createSV(timeToPasteSV, sv.multiplier))
             ::skip2::
         end
-        for _, ssf in ipairs(menuVars.copiedSSFs) do
+        for _, ssf in ipairs(menuVars.copiedSSFs[menuVars.curSlot]) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
             if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip3
@@ -1488,7 +1551,7 @@ function pasteItems(menuVars)
             table.insert(ssfsToAdd, createSSF(timeToPasteSSF, ssf.multiplier))
             ::skip3::
         end
-        for _, bm in ipairs(menuVars.copiedBMs) do
+        for _, bm in ipairs(menuVars.copiedBMs[menuVars.curSlot]) do
             local timeToPasteBM = pasteOffset + bm.relativeOffset
             if (math.abs(timeToPasteBM - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip4
@@ -3551,6 +3614,8 @@ function Combo(label, list, listIndex, colorList, hiddenGroups)
     imgui.EndCombo()
     return newListIndex
 end
+function BasicInputFloat(label, var, decimalPlaces, suffix, step)
+end
 function ComputableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("ComputableInputFloatIndex") or 1
     local previousValue = var
@@ -4005,7 +4070,7 @@ DEFAULT_STYLE = {
         vector.New(1.00, 0.60, 0.00, 1.00)
 }
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
-GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
+GLOBAL_HOTKEY_LIST = table.duplicate(DEFAULT_HOTKEY_LIST)
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
     "Execute Vibrato Separately", "Use TG of Selected Note", "Toggle Note Lock Mode" }
@@ -4218,6 +4283,9 @@ function removeSelectedFrameTimeButton(settingVars)
     table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
     local maxIndex = math.max(1, #settingVars.frameTimes)
     settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
+end
+function animationPaletteMenu(settingVars)
+    CodeInput(settingVars, "instructions", "", "Write instructions here.")
 end
 function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
@@ -4694,7 +4762,24 @@ function copyNPasteMenu()
     imgui.SameLine(0, SAMELINE_SPACING + 3.5)
     _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
     AddSeparator()
-    local copiedItemCount = #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs + #menuVars.copiedBMs
+    _, menuVars.curSlot = imgui.InputInt("cur slot", menuVars.curSlot)
+    while menuVars.curSlot > #menuVars.copiedSVs do
+        local newCopiedLines = table.duplicate(menuVars.copiedLines)
+        table.insert(newCopiedLines, {})
+        menuVars.copiedLines = newCopiedLines
+        local newCopiedSVs   = table.duplicate(menuVars.copiedSVs)
+        table.insert(newCopiedSVs, {})
+        menuVars.copiedSVs = newCopiedSVs
+        local newCopiedSSFs  = table.duplicate(menuVars.copiedSSFs)
+        table.insert(newCopiedSSFs, {})
+        menuVars.copiedSSFs = newCopiedSSFs
+        local newCopiedBMs   = table.duplicate(menuVars.copiedBMs)
+        table.insert(newCopiedBMs, {})
+        menuVars.copiedBMs = newCopiedBMs
+        break
+    end
+    AddSeparator()
+    local copiedItemCount = #menuVars.copiedLines[menuVars.curSlot] + #menuVars.copiedSVs[menuVars.curSlot] + #menuVars.copiedSSFs[menuVars.curSlot] + #menuVars.copiedBMs[menuVars.curSlot]
     if (copiedItemCount == 0) then
         simpleActionMenu("Copy items between selected notes", 2, copyItems, menuVars)
     else
@@ -6895,6 +6980,26 @@ function hexaToRgba(hexa)
     end
     return table.vectorize4(rgbaTable)
 end
+function rgbaToHsva(r, g, b, a)
+    local colPrime = { r / 255, g / 255, b / 255 }
+    local cMax = math.max(table.unpack(colPrime))
+    local cMin = math.min(table.unpack(colPrime))
+    local delta = cMax - cMin
+    local maxIdx = 1
+    local higherVal = colPrime[2]
+    local lowerVal = colPrime[3]
+    for i = 2, 3 do
+        if (colPrime[i] == cMax) then
+            maxIdx = i
+            higherVal = colPrime[i % 3 + 1]
+            lowerVal = colPrime[(i + 1) % 3 + 1]
+        end
+    end
+    local h = 60 * ((higherVal - lowerVal) / delta * (2 * maxIdx - 2)) % 6
+    local s = truthy(cMax) and delta / cMax or 0
+    local v = cMax
+    return vector.New(h, s, v, a)
+end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
     local displacements = { 0 }
@@ -7499,6 +7604,40 @@ function plotExponentialCurvature(settingVars)
     imgui.PopStyleColor()
     imgui.PopItemWidth()
 end
+function plotSigmoidalCurvature(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 32
+    local values = table.construct()
+    for i = 1, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION * 2
+        local value = t
+        if (curvature >= 1) then
+            if (t <= 1) then
+                value = t ^ curvature
+            else
+                value = 2 - (2 - t) ^ curvature
+            end
+        else
+            if (t <= 1) then
+                value = (1 - (1 - t) ^ (1 / curvature))
+            else
+                value = (t - 1) ^ (1 / curvature) + 1
+            end
+        end
+        value = value / 2
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 1 - value
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 0.5
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+end
 function createFrameTime(thisTime, thisLanes, thisFrame, thisPosition)
     local frameTime = {
         time = thisTime,
@@ -7582,6 +7721,22 @@ function getHypotheticalSVMultiplierAt(svs, offset)
         end
     end
     return 1
+end
+---Returns the SV time in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
+function getHypotheticalSVTimeAt(svs, offset)
+    if (#svs == 1) then return svs[1].StartTime end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index].StartTime
+        end
+    end
+    return -69
 end
 function getSVStartTimeAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
@@ -8255,8 +8410,7 @@ function setGlobalVars(tempGlobalVars)
     globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
     globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
     globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
-    GLOBAL_HOTKEY_LIST = (tempGlobalVars.hotkeyList and truthy(#tempGlobalVars.hotkeyList)) and tempGlobalVars
-        .hotkeyList or table.duplicate(DEFAULT_HOTKEY_LIST)
+    GLOBAL_HOTKEY_LIST = table.validate(DEFAULT_HOTKEY_LIST, tempGlobalVars.hotkeyList, true)
     globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
     globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
 end
@@ -8310,12 +8464,13 @@ DEFAULT_STARTING_MENU_VARS = {
     },
     copy = {
         copyTable = { true, true, true, true },
-        copiedLines = {},
-        copiedSVs = {},
-        copiedSSFs = {},
-        copiedBMs = {},
+        copiedLines = {{}},
+        copiedSVs = {{}},
+        copiedSSFs = {{}},
+        copiedBMs = {{}},
         tryAlign = true,
         alignWindow = 3,
+        curSlot = 1,
     },
     directSV = {
         selectableIndex = 1,

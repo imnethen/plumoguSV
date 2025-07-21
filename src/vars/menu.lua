@@ -48,12 +48,13 @@ DEFAULT_STARTING_MENU_VARS = {
     },
     copy = {
         copyTable = { true, true, true, true }, -- 1: timing lines, 2: svs, 3: ssfs, 4: bookmarks
-        copiedLines = {},
-        copiedSVs = {},
-        copiedSSFs = {},
-        copiedBMs = {},
+        copiedLines = {{}},
+        copiedSVs = {{}},
+        copiedSSFs = {{}},
+        copiedBMs = {{}},
         tryAlign = true,
         alignWindow = 3,
+        curSlot = 1,
     },
     directSV = {
         selectableIndex = 1,
