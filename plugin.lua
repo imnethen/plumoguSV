@@ -4005,7 +4005,7 @@ DEFAULT_STYLE = {
         vector.New(1.00, 0.60, 0.00, 1.00)
 }
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
-GLOBAL_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
+GLOBAL_HOTKEY_LIST = table.duplicate(DEFAULT_HOTKEY_LIST)
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
     "Execute Vibrato Separately", "Use TG of Selected Note", "Toggle Note Lock Mode" }
@@ -8255,8 +8255,7 @@ function setGlobalVars(tempGlobalVars)
     globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
     globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
     globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
-    GLOBAL_HOTKEY_LIST = (tempGlobalVars.hotkeyList and truthy(#tempGlobalVars.hotkeyList)) and tempGlobalVars
-        .hotkeyList or table.duplicate(DEFAULT_HOTKEY_LIST)
+    GLOBAL_HOTKEY_LIST = table.validate(DEFAULT_HOTKEY_LIST, tempGlobalVars.hotkeyList, true)
     globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
     globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
 end
