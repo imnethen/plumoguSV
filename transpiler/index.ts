@@ -55,9 +55,16 @@ export default async function transpiler(
     if (lint) {
         const splitOutput = output.split('\n');
 
-        const functions = getFunctionList(splitOutput)
-        functions[0] = functions[0].filter((fn) => !fn.startsWith("string") && !fn.startsWith("table"))
-        const [_, unusedIndexes] = getUnusedFunctions(splitOutput, functions);
+        let [functions, fnIndices] = getFunctionList(splitOutput);
+        functions = functions.filter((fn, idx) => {
+            const cond = fn.startsWith('string') || fn.startsWith('table');
+            if (cond) fnIndices.splice(idx, 1);
+            return !cond;
+        });
+        const [_, unusedIndexes] = getUnusedFunctions(splitOutput, [
+            functions,
+            fnIndices,
+        ]);
 
         unusedIndexes.reverse().forEach((idx) => {
             let startIdx = idx;
