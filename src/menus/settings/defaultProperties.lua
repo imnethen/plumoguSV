@@ -54,7 +54,7 @@ function showDefaultPropertiesSettings()
 
         chooseStandardSVType(menuVars, false)
         AddSeparator()
-        chooseNoteSpacing(menuVars)
+        menuVars.noteSpacing = ComputableInputFloat("Note Spacing", menuVars.noteSpacing, 2, "x")
         menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
         chooseStillType(menuVars)
         chooseInterlace(menuVars)

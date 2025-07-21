@@ -432,10 +432,6 @@ function chooseNoteSkinType(settingVars)
     HelpMarker("Note skin type for the preview of the frames")
 end
 
-function chooseNoteSpacing(menuVars)
-    _, menuVars.noteSpacing = imgui.InputFloat("Note Spacing", menuVars.noteSpacing, 0, 0, "%.2fx")
-end
-
 function chooseFlickerPosition(menuVars)
     _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
         math.round(menuVars.flickerPosition * 100) .. "%%")
@@ -516,10 +512,6 @@ function chooseRandomType(settingVars)
     return oldIndex ~= settingVars.randomTypeIndex
 end
 
-function chooseRatio(menuVars)
-    _, menuVars.ratio = imgui.InputFloat("Ratio", menuVars.ratio, 0, 0, "%.3f")
-end
-
 function chooseRGBPeriod()
     local oldRGBPeriod = globalVars.rgbPeriod
     _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", oldRGBPeriod, 0, 0,
@@ -538,7 +530,7 @@ function chooseScaleType(menuVars)
     local scaleType = SCALE_TYPES[menuVars.scaleTypeIndex]
     if scaleType == "Average SV" then chooseAverageSV(menuVars) end
     if scaleType == "Absolute Distance" then chooseDistance(menuVars) end
-    if scaleType == "Relative Ratio" then chooseRatio(menuVars) end
+    if scaleType == "Relative Ratio" then ComputableInputFloat("Ratio", menuVars.ratio, 3) end
 end
 
 function chooseSnakeSpringConstant()

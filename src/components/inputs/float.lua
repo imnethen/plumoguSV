@@ -1,9 +1,16 @@
+function BasicInputFloat(label, var, decimalPlaces, suffix, step)
+
+end
+
 function ComputableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("ComputableInputFloatIndex") or 1
     local previousValue = var
 
+    local fmt = "%." .. decimalPlaces .. "f"
+    if (suffix) then fmt = fmt .. suffix end
+
     _, var = imgui.InputText(label,
-        string.format("%." .. decimalPlaces .. "f" .. suffix,
+        string.format(fmt,
             math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")) or 0),
         4096,
         imgui_input_text_flags.AutoSelectAll)

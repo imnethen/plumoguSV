@@ -12,7 +12,7 @@ function placeStillSVMenu()
         return
     end
     imgui.Text("Still Settings:")
-    chooseNoteSpacing(menuVars)
+    menuVars.noteSpacing = ComputableInputFloat("Note Spacing", menuVars.noteSpacing, 2, "x")
     menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
     chooseStillType(menuVars)
 
