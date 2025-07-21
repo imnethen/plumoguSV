@@ -62,17 +62,13 @@ function chooseColorTheme()
     chooseRGBPeriod()
 end
 
-function chooseComboPhase(settingVars, maxComboPhase)
-    return BasicInputInt(settingVars, "comboPhase", "Combo Phase", { 0, maxComboPhase })
-end
-
 function chooseComboSVOption(settingVars, maxComboPhase)
     local oldIndex = settingVars.comboTypeIndex
     settingVars.comboTypeIndex = Combo("Combo Type", COMBO_SV_TYPE, settingVars.comboTypeIndex)
     local currentComboType = COMBO_SV_TYPE[settingVars.comboTypeIndex]
     local addTypeChanged = false
     if currentComboType ~= "SV Type 1 Only" and currentComboType ~= "SV Type 2 Only" then
-        addTypeChanged = chooseComboPhase(settingVars, maxComboPhase) or addTypeChanged
+        addTypeChanged = BasicInputInt(settingVars, "comboPhase", "Combo Phase", { 0, maxComboPhase }) or addTypeChanged
     end
     if currentComboType == "Add" then
         addTypeChanged = chooseAddComboMultipliers(settingVars) or addTypeChanged
@@ -258,30 +254,6 @@ function chooseVaryingDistance(settingVars)
     return SwappableNegatableInputFloat2(settingVars, "distance1", "distance2", "Dist.", "msx", 2)
 end
 
-function chooseEvery(menuVars)
-    return BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
-end
-
-function chooseOffset(menuVars)
-    return BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
-end
-
-function chooseSnap(menuVars)
-    return BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
-end
-
-function chooseDrawCapybara()
-    GlobalCheckbox("drawCapybara", "Capybara", "Draws a capybara at the bottom right of the screen")
-end
-
-function chooseDrawCapybara2()
-    GlobalCheckbox("drawCapybara2", "Capybara 2", "Draws a capybara at the bottom left of the screen")
-end
-
-function chooseDrawCapybara312()
-    GlobalCheckbox("drawCapybara312", "Capybara 312", "Draws a capybara???!?!??!!!!? AGAIN?!?!")
-end
-
 function chooseSelectTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("Current Type:")
@@ -358,14 +330,6 @@ function chooseFinalSV(settingVars, skipFinalSV)
     return (oldIndex ~= settingVars.finalSVIndex) or (oldCustomSV ~= settingVars.customSV)
 end
 
-function chooseFlickerType(menuVars)
-    menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
-end
-
-function chooseFrameOrder(settingVars)
-    BasicCheckbox(settingVars, "reverseFrameOrder", "Reverse frame order when placing SVs")
-end
-
 function chooseFrameSpacing(settingVars)
     _, settingVars.frameDistance = imgui.InputFloat("Frame Spacing", settingVars.frameDistance,
         0, 0, "%.0f msx")
@@ -414,14 +378,6 @@ function chooseInterlace(menuVars)
     return interlaceChanged or oldRatio ~= menuVars.interlaceRatio
 end
 
-function chooseLinearlyChange(settingVars)
-    return BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time")
-end
-
-function chooseLinearlyChangeDist(settingVars)
-    return BasicCheckbox(settingVars, "linearlyChange", "Change distance over time")
-end
-
 -- Lets you choose the increments the Intensity slider goes by (e.g. Exponential Intensity Slider)
 function chooseStepSize()
     imgui.PushItemWidth(40)
@@ -445,10 +401,6 @@ function chooseMainSV(settingVars)
     end
 
     _, settingVars.mainSV2 = imgui.InputFloat("Main SV (end)", settingVars.mainSV2, 0, 0, "%.2fx")
-end
-
-function chooseMeasuredStatsView(menuVars)
-    menuVars.unrounded = RadioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
 end
 
 function chooseMenuStep(settingVars)
@@ -484,18 +436,10 @@ function chooseNoteSpacing(menuVars)
     _, menuVars.noteSpacing = imgui.InputFloat("Note Spacing", menuVars.noteSpacing, 0, 0, "%.2fx")
 end
 
-function chooseNumFlickers(menuVars)
-    BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
-end
-
 function chooseFlickerPosition(menuVars)
     _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
         math.round(menuVars.flickerPosition * 100) .. "%%")
     menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
-end
-
-function chooseNumFrames(settingVars)
-    BasicInputInt(settingVars, "numFrames", "Total # Frames", { 1, MAX_ANIMATION_FRAMES })
 end
 
 function chooseNumPeriods(settingVars)
@@ -587,10 +531,6 @@ function chooseRGBPeriod()
     end
 end
 
-function chooseScaleDisplaceSpot(menuVars)
-    menuVars.scaleSpotIndex = Combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
-end
-
 function chooseScaleType(menuVars)
     local label = "Scale Type"
     menuVars.scaleTypeIndex = Combo(label, SCALE_TYPES, menuVars.scaleTypeIndex)
@@ -624,10 +564,6 @@ function chooseVibratoSVType(menuVars)
     local emoticonIndex = menuVars.svTypeIndex + #VIBRATO_SVS
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = Combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
-end
-
-function chooseVibratoMode(menuVars)
-    menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
 end
 
 function chooseVibratoQuality(menuVars)
@@ -712,10 +648,6 @@ function chooseStillType(menuVars)
     imgui.PopItemWidth()
 end
 
-function chooseStillBehavior(menuVars)
-    menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
-end
-
 function chooseStutterDuration(settingVars)
     local oldDuration = settingVars.stutterDuration
     if settingVars.controlLastSV then oldDuration = 100 - oldDuration end
@@ -725,10 +657,6 @@ function chooseStutterDuration(settingVars)
     if settingVars.controlLastSV then newDuration = 100 - newDuration end
     settingVars.stutterDuration = newDuration
     return durationChanged
-end
-
-function chooseStuttersPerSection(settingVars)
-    return BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 })
 end
 
 function chooseStyleTheme()
@@ -780,14 +708,6 @@ function chooseUpscroll()
     if (oldUpscroll ~= globalVars.upscroll) then
         write(globalVars)
     end
-end
-
-function chooseUseDistance(settingVars)
-    BasicCheckbox(settingVars, "useDistance", "Use distance for start SV")
-end
-
-function chooseHand(settingVars)
-    BasicCheckbox(settingVars, "teleportBeforeHand", "Add teleport before note")
 end
 
 function chooseDistanceMode(menuVars)

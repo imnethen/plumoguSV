@@ -1,7 +1,7 @@
 -- Creates the scale (displace) menu
 function scaleDisplaceMenu()
     local menuVars = getMenuVars("scaleDisplace")
-    chooseScaleDisplaceSpot(menuVars)
+    menuVars.scaleSpotIndex = Combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
     chooseScaleType(menuVars)
     saveVariables("scaleDisplaceMenu", menuVars)
 

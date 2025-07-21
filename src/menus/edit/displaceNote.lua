@@ -1,7 +1,7 @@
 function displaceNoteMenu()
     local menuVars = getMenuVars("displaceNote")
     chooseVaryingDistance(menuVars)
-    chooseLinearlyChangeDist(menuVars)
+    BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
     saveVariables("displaceNoteMenu", menuVars)
 
     AddSeparator()

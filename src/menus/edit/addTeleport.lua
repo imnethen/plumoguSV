@@ -1,7 +1,7 @@
 function addTeleportMenu()
     local menuVars = getMenuVars("addTeleport")
     chooseDistance(menuVars)
-    chooseHand(menuVars)
+    BasicCheckbox(menuVars, "teleportBeforeHand", "Add teleport before note")
     saveVariables("addTeleportMenu", menuVars)
 
     AddSeparator()

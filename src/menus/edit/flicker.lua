@@ -1,9 +1,9 @@
 function flickerMenu()
     local menuVars = getMenuVars("flicker")
-    chooseFlickerType(menuVars)
+    menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
     chooseVaryingDistance(menuVars)
-    chooseLinearlyChangeDist(menuVars)
-    chooseNumFlickers(menuVars)
+    BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
+    BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
     if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
     saveVariables("flickerMenu", menuVars)
 

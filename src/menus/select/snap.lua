@@ -1,6 +1,6 @@
 function selectBySnapMenu()
     local menuVars = getMenuVars("selectBySnap")
-    chooseSnap(menuVars)
+    BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
     saveVariables("selectBySnapMenu", menuVars)
 
     AddSeparator()

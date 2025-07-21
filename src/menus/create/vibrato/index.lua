@@ -13,7 +13,7 @@ function placeVibratoSVMenu(separateWindow)
 
     AddSeparator()
     imgui.Text("Vibrato Settings:")
-    chooseVibratoMode(menuVars)
+    menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
     chooseVibratoQuality(menuVars)
     if (menuVars.vibratoMode ~= 2) then
         chooseVibratoSides(menuVars)

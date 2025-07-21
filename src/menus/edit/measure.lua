@@ -1,6 +1,6 @@
 function measureMenu()
     local menuVars = getMenuVars("measure")
-    chooseMeasuredStatsView(menuVars)
+    menuVars.unrounded = RadioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
 
     AddSeparator()
     if menuVars.unrounded then

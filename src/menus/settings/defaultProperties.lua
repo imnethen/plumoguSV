@@ -55,7 +55,7 @@ function showDefaultPropertiesSettings()
         chooseStandardSVType(menuVars, false)
         AddSeparator()
         chooseNoteSpacing(menuVars)
-        chooseStillBehavior(menuVars)
+        menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
         chooseStillType(menuVars)
         chooseInterlace(menuVars)
 
@@ -68,7 +68,7 @@ function showDefaultPropertiesSettings()
         chooseVibratoSVType(menuVars)
         AddSeparator()
         imgui.Text("Vibrato Settings:")
-        chooseVibratoMode(menuVars)
+        menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
         chooseVibratoQuality(menuVars)
         if (menuVars.vibratoMode ~= 2) then
             chooseVibratoSides(menuVars)
@@ -84,7 +84,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("addTeleport", "Property")
 
         chooseDistance(menuVars)
-        chooseHand(menuVars)
+        BasicCheckbox(menuVars, "teleportBeforeHand", "Add teleport before note")
 
         saveMenuPropertiesButton(menuVars, "addTeleport")
         saveVariables("addTeleportPropertyMenu", menuVars)
@@ -129,7 +129,7 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("displaceNote", "Property")
 
         chooseVaryingDistance(menuVars)
-        chooseLinearlyChangeDist(menuVars)
+        BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
 
         saveMenuPropertiesButton(menuVars, "displaceNote")
         saveVariables("displaceNotePropertyMenu", menuVars)
@@ -145,10 +145,10 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Flicker Settings")) then
         local menuVars = getMenuVars("flicker", "Property")
 
-        chooseFlickerType(menuVars)
+        menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
         chooseVaryingDistance(menuVars)
-        chooseLinearlyChangeDist(menuVars)
-        chooseNumFlickers(menuVars)
+        BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
+        BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
         if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
 
         saveMenuPropertiesButton(menuVars, "flicker")
@@ -166,7 +166,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Scale (Displace) Settings")) then
         local menuVars = getMenuVars("scaleDisplace", "Property")
 
-        chooseScaleDisplaceSpot(menuVars)
+        menuVars.scaleSpotIndex = Combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
         chooseScaleType(menuVars)
 
         saveMenuPropertiesButton(menuVars, "scaleDisplace")
@@ -210,8 +210,8 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Select Alternating Settings")) then
         local menuVars = getMenuVars("selectAlternating", "Property")
 
-        chooseEvery(menuVars)
-        chooseOffset(menuVars)
+        BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
+        BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
 
         saveMenuPropertiesButton(menuVars, "selectAlternating")
         saveVariables("selectAlternatingPropertyMenu", menuVars)
@@ -219,7 +219,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Select By Snap Settings")) then
         local menuVars = getMenuVars("selectBySnap", "Property")
 
-        chooseSnap(menuVars)
+        BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
 
         saveMenuPropertiesButton(menuVars, "selectBySnap")
         saveVariables("selectBySnapPropertyMenu", menuVars)
@@ -390,10 +390,10 @@ function showDefaultPropertiesSettings()
         settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
         settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
         settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
-        settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+        settingsChanged = BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time") or settingsChanged
 
         AddSeparator()
-        settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+        settingsChanged = BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 }) or settingsChanged
         settingsChanged = chooseAverageSV(settingVars) or settingsChanged
         settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
 
@@ -412,8 +412,8 @@ function showDefaultPropertiesSettings()
         chooseMainSV(settingVars)
         chooseAverageSV(settingVars)
         chooseFinalSV(settingVars, false)
-        chooseUseDistance(settingVars)
-        chooseLinearlyChange(settingVars)
+        BasicCheckbox(settingVars, "useDistance", "Use distance for start SV")
+        BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time")
 
         saveSettingPropertiesButton(settingVars, "TeleportStutter")
         saveVariables("TeleportStutterPropertySettings", settingVars)

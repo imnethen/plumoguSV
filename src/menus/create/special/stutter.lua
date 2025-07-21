@@ -3,10 +3,10 @@ function stutterMenu(settingVars)
     settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
     settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
     settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
-    settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+    settingsChanged = BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time") or settingsChanged
 
     AddSeparator()
-    settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+    settingsChanged = BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 }) or settingsChanged
     settingsChanged = chooseAverageSV(settingVars) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
     if settingsChanged then updateStutterMenuSVs(settingVars) end

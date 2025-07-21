@@ -1,7 +1,7 @@
 function selectAlternatingMenu()
     local menuVars = getMenuVars("selectAlternating")
-    chooseEvery(menuVars)
-    chooseOffset(menuVars)
+    BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
+    BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
     saveVariables("selectAlternatingMenu", menuVars)
 
     AddSeparator()
