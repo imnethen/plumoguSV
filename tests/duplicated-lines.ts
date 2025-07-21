@@ -1,5 +1,4 @@
 import chalk = require('chalk');
-
 export default function checkDuplicatedLines(plugin: string[]) {
     const hashmap = {};
     let failedTests = 0;

@@ -1,5 +1,4 @@
 import chalk = require('chalk');
-
 export default function checkMissingAnnotations(file: string[]) {
     const specialIndices = [];
     const indices = file.reduce((idxs, line, idx) => {

@@ -1,5 +1,4 @@
 require("packages.math.factorial")
-
 ---Returns n choose r, or nCr.
 ---@param n integer
 ---@param r integer
