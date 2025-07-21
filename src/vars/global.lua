@@ -68,8 +68,7 @@ function setGlobalVars(tempGlobalVars)
     globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
     globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
     globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
-    GLOBAL_HOTKEY_LIST = (tempGlobalVars.hotkeyList and truthy(#tempGlobalVars.hotkeyList)) and tempGlobalVars
-        .hotkeyList or table.duplicate(DEFAULT_HOTKEY_LIST)
+    GLOBAL_HOTKEY_LIST = table.validate(DEFAULT_HOTKEY_LIST, tempGlobalVars.hotkeyList, true)
     globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
     globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
 end
