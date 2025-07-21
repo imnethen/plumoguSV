@@ -1,18 +1,14 @@
-DEFAULT_SETTING_TYPES = {
+SETTING_TYPES = {
     "General",
     "Default Properties",
     "Appearance",
+    "Custom Theme",
     "Windows + Widgets",
     "Keybinds",
 }
 
 function showPluginSettingsWindow()
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
-    SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)
-
-    if (COLOR_THEMES[globalVars.colorThemeIndex] == "CUSTOM") then
-        table.insert(SETTING_TYPES, 4, "Custom Theme")
-    end
 
     imgui.PopStyleColor(20)
     setIncognitoColors()
@@ -69,7 +65,7 @@ function showPluginSettingsWindow()
     if (SETTING_TYPES[typeIndex] == "Appearance") then
         showAppearanceSettings()
     end
-    if (SETTING_TYPES[typeIndex] == "Custom Theme") then
+    if (SETTING_TYPES[typeIndex] == "Custom Theme" and COLOR_THEMES[globalVars.colorThemeIndex] == "CUSTOM") then
         showCustomThemeSettings()
     end
     if (SETTING_TYPES[typeIndex] == "Keybinds") then

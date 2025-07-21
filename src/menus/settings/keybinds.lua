@@ -1,8 +1,5 @@
 function showKeybindSettings()
     local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
-    if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
-        hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
-    end
     local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
     for hotkeyIndex, hotkeyCombo in pairs(hotkeyList) do
         if imgui.Button(awaitingIndex == hotkeyIndex and "Listening...##listening" or hotkeyCombo .. "##" .. hotkeyIndex) then
