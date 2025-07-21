@@ -468,13 +468,15 @@ function table.stringify(var)
     if (type(var) == "string") then return '"' .. var .. '"' end
     if (type(var) == "number") then return var end
     if (type(var) ~= "table") then return "UNKNOWN" end
-    if (var[1] == nil) then
+    if (var[1] ~= nil) then
+        if (not truthy(#var)) then return "[]" end
         local str = "["
         for _, v in pairs(var) do
             str = str .. table.stringify(v) .. ","
         end
         return str:sub(1, -2) .. "]"
     end
+    if (not truthy(#var)) then return "{}" end
     local str = "{"
     for k, v in pairs(var) do
         str = str .. k .. "=" .. table.stringify(v) .. ","
@@ -2059,15 +2061,15 @@ function changeNoteLockMode()
         print("s", "Notes have been unlocked.")
     end
     if (mode == 1) then
-        print("e", "Notes have been fully locked. To change the lock mode, press " .. GLOBAL_HOTKEY_LIST[10])
+        print("e", "Notes have been fully locked. To change the lock mode, press " .. globalVars.hotkeyList[10])
     end
     if (mode == 2) then
-        print("w", "Notes can no longer be placed, only moved. To change the lock mode, press" .. GLOBAL_HOTKEY_LIST[10])
+        print("w", "Notes can no longer be placed, only moved. To change the lock mode, press" .. globalVars.hotkeyList[10])
     end
     if (mode == 3) then
         print("w",
             "Notes can no longer be moved, only placed and deleted. To change the lock mode, press" ..
-            GLOBAL_HOTKEY_LIST[10])
+            globalVars.hotkeyList[10])
     end
 end
 function initializeNoteLockMode()
@@ -2093,8 +2095,8 @@ function initializeNoteLockMode()
     end)
 end
 function checkForGlobalHotkeys()
-    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[9])) then jumpToTg() end
-    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[10])) then changeNoteLockMode() end
+    if (exclusiveKeyPressed(globalVars.hotkeyList[9])) then jumpToTg() end
+    if (exclusiveKeyPressed(globalVars.hotkeyList[10])) then changeNoteLockMode() end
 end
 function jumpToTg()
     local tgId = state.SelectedHitObjects[1].TimingGroup
@@ -3580,7 +3582,7 @@ function NegatableComputableInputFloat(label, var, decimalPlaces, suffix)
     imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * 0.7 - SAMELINE_SPACING)
     local newValue = ComputableInputFloat(label, var, decimalPlaces, suffix)
     imgui.PopItemWidth()
-    if ((negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) and newValue ~= 0) then
+    if ((negateButtonPressed or exclusiveKeyPressed(globalVars.hotkeyList[4])) and newValue ~= 0) then
         newValue = -newValue
     end
     return newValue, oldValue ~= newValue
@@ -3604,16 +3606,16 @@ function SwappableNegatableInputFloat2(varsTable, lowerName, higherName, label, 
     imgui.PopItemWidth()
     varsTable[lowerName] = newValues.x
     varsTable[higherName] = newValues.y
-    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
+    if (swapButtonPressed or exclusiveKeyPressed(globalVars.hotkeyList[3])) then
         varsTable[lowerName] = oldValues.y
         varsTable[higherName] = oldValues.x
     end
-    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
+    if (negateButtonPressed or exclusiveKeyPressed(globalVars.hotkeyList[4])) then
         varsTable[lowerName] = -oldValues.x
         varsTable[higherName] = -oldValues.y
     end
-    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
-        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(globalVars.hotkeyList[3]) or
+        exclusiveKeyPressed(globalVars.hotkeyList[4]) or
         oldValues ~= newValues
 end
 ---Creates an `imgui.inputInt` element.
@@ -4004,8 +4006,8 @@ DEFAULT_STYLE = {
     plotHistogramHovered =
         vector.New(1.00, 0.60, 0.00, 1.00)
 }
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
-GLOBAL_HOTKEY_LIST = table.duplicate(DEFAULT_HOTKEY_LIST)
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" } ---@type string[]
+globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
     "Execute Vibrato Separately", "Use TG of Selected Note", "Toggle Note Lock Mode" }
@@ -4398,7 +4400,7 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, typingCode, separateWindow and globalVars.hotkeyList[8] or nil)
     else
         CodeInput(settingVars, "code1", "##code1",
             "This input should return a function that takes in a number t=[0-1], and returns a value corresponding to the msx value of the vibrato at (100t)% of the way through the first and last selected note times.")
@@ -4419,7 +4421,7 @@ function customVibratoMenu(menuVars, settingVars, separateWindow)
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             ssfVibrato(v, func1, func2)
-        end, menuVars, false, typingCode, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, typingCode, separateWindow and globalVars.hotkeyList[8] or nil)
     end
 end
 function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
@@ -4440,7 +4442,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, false, separateWindow and globalVars.hotkeyList[8] or nil)
     else
         SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
         SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
@@ -4466,7 +4468,7 @@ function exponentialVibratoMenu(menuVars, settingVars, separateWindow)
         end
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+            separateWindow and globalVars.hotkeyList[8] or nil)
     end
 end
 VIBRATO_SVS = {
@@ -4512,7 +4514,7 @@ function linearVibratoMenu(menuVars, settingVars, separateWindow)
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, false, separateWindow and globalVars.hotkeyList[8] or nil)
     else
         SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
         SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
@@ -4524,7 +4526,7 @@ function linearVibratoMenu(menuVars, settingVars, separateWindow)
         end
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+            separateWindow and globalVars.hotkeyList[8] or nil)
     end
 end
 function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
@@ -4552,7 +4554,7 @@ function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, false, separateWindow and globalVars.hotkeyList[8] or nil)
     else
         SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
         SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
@@ -4578,7 +4580,7 @@ function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
         end
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+            separateWindow and globalVars.hotkeyList[8] or nil)
     end
 end
 function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
@@ -4594,7 +4596,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v)
             svVibrato(v, func)
-        end, menuVars, false, false, separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+        end, menuVars, false, false, separateWindow and globalVars.hotkeyList[8] or nil)
     else
         SwappableNegatableInputFloat2(settingVars, "lowerStart", "lowerEnd", "Lower S/E SSFs##Vibrato", "x")
         SwappableNegatableInputFloat2(settingVars, "higherStart", "higherEnd", "Higher S/E SSFs##Vibrato", "x")
@@ -4617,7 +4619,7 @@ function sinusoidalVibratoMenu(menuVars, settingVars, separateWindow)
         end
         AddSeparator()
         simpleActionMenu("Vibrate", 2, function(v) ssfVibrato(v, func1, func2) end, menuVars, false, false,
-            separateWindow and GLOBAL_HOTKEY_LIST[8] or nil)
+            separateWindow and globalVars.hotkeyList[8] or nil)
     end
 end
 function deleteTab()
@@ -5063,7 +5065,7 @@ function infoTab()
     imgui.BulletText("Choose an SV tool in the Create tab.")
     imgui.BulletText("Adjust the tool's settings to your liking.")
     imgui.BulletText("Select notes to use the tool at.")
-    imgui.BulletText("Press the '" .. GLOBAL_HOTKEY_LIST[1] .. "' hotkey.")
+    imgui.BulletText("Press the '" .. globalVars.hotkeyList[1] .. "' hotkey.")
     AddPadding()
     imgui.SeparatorText("Special thanks to:")
     AddPadding()
@@ -5824,19 +5826,16 @@ function showGeneralSettings()
     GlobalCheckbox("equalizeLinear", "Equalize Linear SV",
         "Forces the standard > linear option to have an average sv of 0 if the start and end SVs are equal. For beginners, this should be enabled.")
 end
-DEFAULT_SETTING_TYPES = {
+SETTING_TYPES = {
     "General",
     "Default Properties",
     "Appearance",
+    "Custom Theme",
     "Windows + Widgets",
     "Keybinds",
 }
 function showPluginSettingsWindow()
     local bgColor = vector.New(0.2, 0.2, 0.2, 1)
-    SETTING_TYPES = table.duplicate(DEFAULT_SETTING_TYPES)
-    if (COLOR_THEMES[globalVars.colorThemeIndex] == "CUSTOM") then
-        table.insert(SETTING_TYPES, 4, "Custom Theme")
-    end
     imgui.PopStyleColor(20)
     setIncognitoColors()
     setPluginAppearanceStyles("Rounded + Border")
@@ -5884,7 +5883,7 @@ function showPluginSettingsWindow()
     if (SETTING_TYPES[typeIndex] == "Appearance") then
         showAppearanceSettings()
     end
-    if (SETTING_TYPES[typeIndex] == "Custom Theme") then
+    if (SETTING_TYPES[typeIndex] == "Custom Theme" and COLOR_THEMES[globalVars.colorThemeIndex] == "CUSTOM") then
         showCustomThemeSettings()
     end
     if (SETTING_TYPES[typeIndex] == "Keybinds") then
@@ -5903,12 +5902,8 @@ function showPluginSettingsWindow()
     imgui.End()
 end
 function showKeybindSettings()
-    local hotkeyList = table.duplicate(globalVars.hotkeyList or DEFAULT_HOTKEY_LIST)
-    if (#hotkeyList < #DEFAULT_HOTKEY_LIST) then
-        hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
-    end
     local awaitingIndex = state.GetValue("hotkey_awaitingIndex", 0)
-    for hotkeyIndex, hotkeyCombo in pairs(hotkeyList) do
+    for hotkeyIndex, hotkeyCombo in pairs(globalVars.hotkeyList) do
         if imgui.Button(awaitingIndex == hotkeyIndex and "Listening...##listening" or hotkeyCombo .. "##" .. hotkeyIndex) then
             if (awaitingIndex == hotkeyIndex) then
                 awaitingIndex = 0
@@ -5922,7 +5917,7 @@ function showKeybindSettings()
     end
     AddSeparator()
     simpleActionMenu("Reset Hotkey Settings", 0, function()
-        globalVars.hotkeyList = DEFAULT_HOTKEY_LIST
+        globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
         write(globalVars)
         awaitingIndex = 0
     end, nil, true, true)
@@ -5930,10 +5925,9 @@ function showKeybindSettings()
     if (awaitingIndex == 0) then return end
     local prefixes, key = listenForAnyKeyPressed()
     if (key == -1) then return end
-    hotkeyList[awaitingIndex] = table.concat(prefixes, "+") .. (truthy(prefixes) and "+" or "") .. keyNumToKey(key)
+    globalVars.hotkeyList[awaitingIndex] = table.concat(prefixes, "+") ..
+        (truthy(prefixes) and "+" or "") .. keyNumToKey(key)
     awaitingIndex = 0
-    globalVars.hotkeyList = hotkeyList
-    GLOBAL_HOTKEY_LIST = hotkeyList
     write(globalVars)
     state.SetValue("hotkey_awaitingIndex", awaitingIndex)
 end
@@ -6298,7 +6292,7 @@ function chooseConstantShift(settingVars, defaultShift)
     local oldShift = settingVars.verticalShift
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
-    if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
+    if (resetButtonPressed or exclusiveKeyPressed(globalVars.hotkeyList[5])) then
         settingVars.verticalShift = defaultShift
     end
     ToolTip("Reset vertical shift to initial values")
@@ -6321,7 +6315,7 @@ function chooseMsxVerticalShift(settingVars, defaultShift)
     local oldShift = settingVars.verticalShift
     imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
     local resetButtonPressed = imgui.Button("R", TERTIARY_BUTTON_SIZE)
-    if (resetButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[5])) then
+    if (resetButtonPressed or exclusiveKeyPressed(globalVars.hotkeyList[5])) then
         settingVars.verticalShift = defaultShift or 0
     end
     ToolTip("Reset vertical shift to initial values")
@@ -6647,10 +6641,10 @@ function chooseCurrentScrollGroup()
     imgui.PushItemWidth(155)
     globalVars.scrollGroupIndex = Combo("##scrollGroup", groups, globalVars.scrollGroupIndex, cols, hiddenGroups)
     imgui.PopItemWidth()
-    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[6])) then
+    if (exclusiveKeyPressed(globalVars.hotkeyList[6])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex - 1, 1, #groups)
     end
-    if (exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[7])) then
+    if (exclusiveKeyPressed(globalVars.hotkeyList[7])) then
         globalVars.scrollGroupIndex = math.clamp(globalVars.scrollGroupIndex + 1, 1, #groups)
     end
     AddSeparator()
@@ -6809,7 +6803,7 @@ function chooseSVBehavior(settingVars)
     local oldBehaviorIndex = settingVars.behaviorIndex
     settingVars.behaviorIndex = Combo("Behavior", SV_BEHAVIORS, oldBehaviorIndex)
     imgui.PopItemWidth()
-    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
+    if (swapButtonPressed or exclusiveKeyPressed(globalVars.hotkeyList[3])) then
         settingVars.behaviorIndex = oldBehaviorIndex == 1 and 2 or 1
     end
     return oldBehaviorIndex ~= settingVars.behaviorIndex
@@ -8074,16 +8068,16 @@ function simpleActionMenu(buttonText, minimumNotes, actionfunc, menuVars, hideNo
     FunctionButton(buttonText, ACTION_BUTTON_SIZE, actionfunc, menuVars)
     if (disableKeyInput) then return end
     if (hideNoteReq) then
-        ToolTip("Press \'" .. GLOBAL_HOTKEY_LIST[2] .. "\' on your keyboard to do the same thing as this button")
-        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[2]), actionfunc, menuVars)
+        ToolTip("Press \'" .. globalVars.hotkeyList[2] .. "\' on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(globalVars.hotkeyList[2]), actionfunc, menuVars)
     else
         if (optionalKeyOverride) then
             ToolTip("Press \'" .. optionalKeyOverride .. "\' on your keyboard to do the same thing as this button")
             executeFunctionIfTrue(exclusiveKeyPressed(optionalKeyOverride), actionfunc, menuVars)
             return
         end
-        ToolTip("Press \'" .. GLOBAL_HOTKEY_LIST[1] .. "\' on your keyboard to do the same thing as this button")
-        executeFunctionIfTrue(exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[1]), actionfunc, menuVars)
+        ToolTip("Press \'" .. globalVars.hotkeyList[1] .. "\' on your keyboard to do the same thing as this button")
+        executeFunctionIfTrue(exclusiveKeyPressed(globalVars.hotkeyList[1]), actionfunc, menuVars)
     end
 end
 ---Runs a function with the given parameters if the given `condition` is true.
@@ -8255,7 +8249,7 @@ function setGlobalVars(tempGlobalVars)
     globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
     globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
     globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
-    GLOBAL_HOTKEY_LIST = table.validate(DEFAULT_HOTKEY_LIST, tempGlobalVars.hotkeyList, true)
+    globalVars.hotkeyList = table.validate(DEFAULT_HOTKEY_LIST, tempGlobalVars.hotkeyList, true)
     globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
     globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
 end
@@ -8405,7 +8399,7 @@ DEFAULT_STARTING_MENU_VARS = {
 ---@return table
 function getMenuVars(menuType, optionalLabel)
     optionalLabel = optionalLabel or ""
-    local menuVars = DEFAULT_STARTING_MENU_VARS[menuType]
+    local menuVars = table.duplicate(DEFAULT_STARTING_MENU_VARS[menuType])
     local labelText = menuType .. optionalLabel .. "Menu"
     getVariables(labelText, menuVars)
     return menuVars

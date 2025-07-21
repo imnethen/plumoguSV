@@ -5,15 +5,15 @@ function changeNoteLockMode()
         print("s", "Notes have been unlocked.")
     end
     if (mode == 1) then
-        print("e", "Notes have been fully locked. To change the lock mode, press " .. GLOBAL_HOTKEY_LIST[10])
+        print("e", "Notes have been fully locked. To change the lock mode, press " .. globalVars.hotkeyList[10])
     end
     if (mode == 2) then
-        print("w", "Notes can no longer be placed, only moved. To change the lock mode, press" .. GLOBAL_HOTKEY_LIST[10])
+        print("w", "Notes can no longer be placed, only moved. To change the lock mode, press" .. globalVars.hotkeyList[10])
     end
     if (mode == 3) then
         print("w",
             "Notes can no longer be moved, only placed and deleted. To change the lock mode, press" ..
-            GLOBAL_HOTKEY_LIST[10])
+            globalVars.hotkeyList[10])
     end
 end
 

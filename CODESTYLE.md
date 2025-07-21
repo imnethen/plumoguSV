@@ -31,7 +31,7 @@
 2. Add the category to the tab's `index.lua` file and include it in the list of if-statements.
 
 ## Creating a new hotkey
-1. Add your default hotkey to both the `DEFAULT_HOTKEY_LIST` and `GLOBAL_HOTKEY_LIST` root arrays.
+1. Add your default hotkey to both the `DEFAULT_HOTKEY_LIST` and `globalVars.hotkeyList` root arrays.
 2. Add the description of your hotkey in the `HOTKEY_LABELS` global.
 3. If your hotkey is to be run at all times, create your action in `actions/hotkeys` and reference its function in `actions/hotkeys/index.lua`.
 
