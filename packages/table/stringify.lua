@@ -6,13 +6,15 @@ function table.stringify(var)
     if (type(var) == "string") then return '"' .. var .. '"' end
     if (type(var) == "number") then return var end
     if (type(var) ~= "table") then return "UNKNOWN" end
-    if (var[1] == nil) then
+    if (var[1] ~= nil) then
+        if (not truthy(#var)) then return "[]" end
         local str = "["
         for _, v in pairs(var) do
             str = str .. table.stringify(v) .. ","
         end
         return str:sub(1, -2) .. "]"
     end -- from below, must be a key-value table
+    if (not truthy(#var)) then return "{}" end
     local str = "{"
     for k, v in pairs(var) do
         str = str .. k .. "=" .. table.stringify(v) .. ","
