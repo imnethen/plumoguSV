@@ -3335,10 +3335,11 @@ function pulseController()
     local pulseColor = globalVars.useCustomPulseColor and globalVars.pulseColor or negatedBorderColor
     imgui.PushStyleColor(imgui_col.Border, pulseColor * colStatus + borderColor * (1 - colStatus))
 end
----@class Particle
+---@class PhysicsObject
 ---@field pos Vector2
 ---@field v Vector2
 ---@field a Vector2
+---@class Particle: PhysicsObject
 ---@field col Vector4
 ---@field size integer
 stars = {}
@@ -3553,8 +3554,10 @@ end
 function ComputableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("ComputableInputFloatIndex") or 1
     local previousValue = var
+    local fmt = "%." .. decimalPlaces .. "f"
+    if (suffix) then fmt = fmt .. suffix end
     _, var = imgui.InputText(label,
-        string.format("%." .. decimalPlaces .. "f" .. suffix,
+        string.format(fmt,
             math.toNumber(tostring(var):match("%d*[%-]?%d+[%.]?%d+") or tostring(var):match("%d*[%-]?%d+")) or 0),
         4096,
         imgui_input_text_flags.AutoSelectAll)
@@ -3581,6 +3584,37 @@ function NegatableComputableInputFloat(label, var, decimalPlaces, suffix)
         newValue = -newValue
     end
     return newValue, oldValue ~= newValue
+end
+function SwappableNegatableInputFloat2(varsTable, lowerName, higherName, label, suffix, digits, widthFactor)
+    digits = digits or 2
+    suffix = suffix or "x"
+    widthFactor = widthFactor or 0.7
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(7, 4))
+    local swapButtonPressed = imgui.Button("S##" .. lowerName, TERTIARY_BUTTON_SIZE)
+    ToolTip("Swap start/end values")
+    local oldValues = vector.New(varsTable[lowerName], varsTable[higherName])
+    KeepSameLine()
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(6.5, 4))
+    local negateButtonPressed = imgui.Button("N##" .. higherName, TERTIARY_BUTTON_SIZE)
+    ToolTip("Negate start/end values")
+    KeepSameLine()
+    imgui.PushStyleVar(imgui_style_var.FramePadding, vector.New(PADDING_WIDTH, 5))
+    imgui.PushItemWidth(DEFAULT_WIDGET_WIDTH * widthFactor - SAMELINE_SPACING)
+    local _, newValues = imgui.InputFloat2(label, oldValues, "%." .. digits .. "f" .. suffix)
+    imgui.PopItemWidth()
+    varsTable[lowerName] = newValues.x
+    varsTable[higherName] = newValues.y
+    if (swapButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3])) then
+        varsTable[lowerName] = oldValues.y
+        varsTable[higherName] = oldValues.x
+    end
+    if (negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4])) then
+        varsTable[lowerName] = -oldValues.x
+        varsTable[higherName] = -oldValues.y
+    end
+    return swapButtonPressed or negateButtonPressed or exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[3]) or
+        exclusiveKeyPressed(GLOBAL_HOTKEY_LIST[4]) or
+        oldValues ~= newValues
 end
 ---Creates an `imgui.inputInt` element.
 ---@param varsTable { [string]: any }The table that is meant to be modified.
@@ -4137,11 +4171,11 @@ function animationFramesSetupMenu(settingVars)
         KeepSameLine()
         imgui.Text("Choose Frame Settings")
         AddSeparator()
-        chooseNumFrames(settingVars)
+        BasicInputInt(settingVars, "numFrames", "Total # Frames", { 1, MAX_ANIMATION_FRAMES })
         chooseFrameSpacing(settingVars)
         chooseDistance(settingVars)
         HelpMarker("Initial separating distance from selected note to the first frame")
-        chooseFrameOrder(settingVars)
+        BasicCheckbox(settingVars, "reverseFrameOrder", "Reverse frame order when placing SVs")
         AddSeparator()
         chooseNoteSkinType(settingVars)
     elseif settingVars.menuStep == 2 then
@@ -4184,9 +4218,6 @@ function removeSelectedFrameTimeButton(settingVars)
     table.remove(settingVars.frameTimes, settingVars.selectedTimeIndex)
     local maxIndex = math.max(1, #settingVars.frameTimes)
     settingVars.selectedTimeIndex = math.clamp(settingVars.selectedTimeIndex, 1, maxIndex)
-end
-function animationPaletteMenu(settingVars)
-    CodeInput(settingVars, "instructions", "", "Write instructions here.")
 end
 function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
@@ -4253,9 +4284,9 @@ function stutterMenu(settingVars)
     settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
     settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
     settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
-    settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+    settingsChanged = BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time") or settingsChanged
     AddSeparator()
-    settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+    settingsChanged = BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 }) or settingsChanged
     settingsChanged = chooseAverageSV(settingVars) or settingsChanged
     settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
     if settingsChanged then updateStutterMenuSVs(settingVars) end
@@ -4274,8 +4305,8 @@ function teleportStutterMenu(settingVars)
     chooseMainSV(settingVars)
     chooseAverageSV(settingVars)
     chooseFinalSV(settingVars, false)
-    chooseUseDistance(settingVars)
-    chooseLinearlyChange(settingVars)
+    BasicCheckbox(settingVars, "useDistance", "Use distance for start SV")
+    BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time")
     AddSeparator()
     simpleActionMenu("Place SVs between selected notes", 2, placeTeleportStutterSVs, settingVars)
     simpleActionMenu("Place SSFs between selected notes", 2, placeTeleportStutterSSFs, settingVars, true)
@@ -4336,8 +4367,8 @@ function placeStillSVMenu()
         return
     end
     imgui.Text("Still Settings:")
-    chooseNoteSpacing(menuVars)
-    chooseStillBehavior(menuVars)
+    menuVars.noteSpacing = ComputableInputFloat("Note Spacing", menuVars.noteSpacing, 2, "x")
+    menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
     chooseStillType(menuVars)
     AddSeparator()
     needSVUpdate = showSettingsMenu(currentSVType, settingVars, false, nil) or needSVUpdate
@@ -4451,7 +4482,7 @@ function placeVibratoSVMenu(separateWindow)
     chooseVibratoSVType(menuVars)
     AddSeparator()
     imgui.Text("Vibrato Settings:")
-    chooseVibratoMode(menuVars)
+    menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
     chooseVibratoQuality(menuVars)
     if (menuVars.vibratoMode ~= 2) then
         chooseVibratoSides(menuVars)
@@ -4608,7 +4639,7 @@ end
 function addTeleportMenu()
     local menuVars = getMenuVars("addTeleport")
     chooseDistance(menuVars)
-    chooseHand(menuVars)
+    BasicCheckbox(menuVars, "teleportBeforeHand", "Add teleport before note")
     saveVariables("addTeleportMenu", menuVars)
     AddSeparator()
     simpleActionMenu("Add teleport SVs at selected notes", 1, addTeleportSVs, menuVars)
@@ -4777,7 +4808,7 @@ end
 function displaceNoteMenu()
     local menuVars = getMenuVars("displaceNote")
     chooseVaryingDistance(menuVars)
-    chooseLinearlyChangeDist(menuVars)
+    BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
     saveVariables("displaceNoteMenu", menuVars)
     AddSeparator()
     simpleActionMenu("Displace selected notes", 1, displaceNoteSVsParent, menuVars)
@@ -4848,10 +4879,10 @@ function fixLNEndsMenu()
 end
 function flickerMenu()
     local menuVars = getMenuVars("flicker")
-    chooseFlickerType(menuVars)
+    menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
     chooseVaryingDistance(menuVars)
-    chooseLinearlyChangeDist(menuVars)
-    chooseNumFlickers(menuVars)
+    BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
+    BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
     if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
     saveVariables("flickerMenu", menuVars)
     AddSeparator()
@@ -4911,7 +4942,7 @@ function layerSnapMenu()
 end
 function measureMenu()
     local menuVars = getMenuVars("measure")
-    chooseMeasuredStatsView(menuVars)
+    menuVars.unrounded = RadioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
     AddSeparator()
     if menuVars.unrounded then
         displayMeasuredStatsUnrounded(menuVars)
@@ -4976,7 +5007,7 @@ function reverseScrollMenu()
 end
 function scaleDisplaceMenu()
     local menuVars = getMenuVars("scaleDisplace")
-    chooseScaleDisplaceSpot(menuVars)
+    menuVars.scaleSpotIndex = Combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
     chooseScaleType(menuVars)
     saveVariables("scaleDisplaceMenu", menuVars)
     AddSeparator()
@@ -5079,8 +5110,8 @@ function infoTab()
 end
 function selectAlternatingMenu()
     local menuVars = getMenuVars("selectAlternating")
-    chooseEvery(menuVars)
-    chooseOffset(menuVars)
+    BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
+    BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
     saveVariables("selectAlternatingMenu", menuVars)
     AddSeparator()
     simpleActionMenu(
@@ -5190,7 +5221,7 @@ function selectNoteTypeMenu()
 end
 function selectBySnapMenu()
     local menuVars = getMenuVars("selectBySnap")
-    chooseSnap(menuVars)
+    BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
     saveVariables("selectBySnapMenu", menuVars)
     AddSeparator()
     simpleActionMenu(
@@ -5212,10 +5243,10 @@ function showAppearanceSettings()
     chooseCursorTrailGhost()
     AddSeparator()
     imgui.PopItemWidth()
-    chooseDrawCapybara()
+    GlobalCheckbox("drawCapybara", "Capybara", "Draws a capybara at the bottom right of the screen")
     imgui.SameLine(0, RADIO_BUTTON_SPACING)
-    chooseDrawCapybara2()
-    chooseDrawCapybara312()
+    GlobalCheckbox("drawCapybara2", "Capybara 2", "Draws a capybara at the bottom left of the screen")
+    GlobalCheckbox("drawCapybara312", "Capybara 312", "Draws a capybara???!?!??!!!!? AGAIN?!?!")
     AddSeparator()
     choosePulseCoefficient()
     _, globalVars.useCustomPulseColor = imgui.Checkbox("Use Custom Color?", globalVars.useCustomPulseColor)
@@ -5394,8 +5425,8 @@ function showDefaultPropertiesSettings()
         local menuVars = getMenuVars("placeStill", "Property")
         chooseStandardSVType(menuVars, false)
         AddSeparator()
-        chooseNoteSpacing(menuVars)
-        chooseStillBehavior(menuVars)
+        menuVars.noteSpacing = ComputableInputFloat("Note Spacing", menuVars.noteSpacing, 2, "x")
+        menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
         chooseStillType(menuVars)
         chooseInterlace(menuVars)
         saveMenuPropertiesButton(menuVars, "placeStill")
@@ -5406,7 +5437,7 @@ function showDefaultPropertiesSettings()
         chooseVibratoSVType(menuVars)
         AddSeparator()
         imgui.Text("Vibrato Settings:")
-        chooseVibratoMode(menuVars)
+        menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
         chooseVibratoQuality(menuVars)
         if (menuVars.vibratoMode ~= 2) then
             chooseVibratoSides(menuVars)
@@ -5418,7 +5449,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Add Teleport Settings")) then
         local menuVars = getMenuVars("addTeleport", "Property")
         chooseDistance(menuVars)
-        chooseHand(menuVars)
+        BasicCheckbox(menuVars, "teleportBeforeHand", "Add teleport before note")
         saveMenuPropertiesButton(menuVars, "addTeleport")
         saveVariables("addTeleportPropertyMenu", menuVars)
     end
@@ -5454,7 +5485,7 @@ function showDefaultPropertiesSettings()
     if (imgui.CollapsingHeader("Displace Note Settings")) then
         local menuVars = getMenuVars("displaceNote", "Property")
         chooseVaryingDistance(menuVars)
-        chooseLinearlyChangeDist(menuVars)
+        BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
         saveMenuPropertiesButton(menuVars, "displaceNote")
         saveVariables("displaceNotePropertyMenu", menuVars)
     end
@@ -5466,10 +5497,10 @@ function showDefaultPropertiesSettings()
     end
     if (imgui.CollapsingHeader("Flicker Settings")) then
         local menuVars = getMenuVars("flicker", "Property")
-        chooseFlickerType(menuVars)
+        menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
         chooseVaryingDistance(menuVars)
-        chooseLinearlyChangeDist(menuVars)
-        chooseNumFlickers(menuVars)
+        BasicCheckbox(menuVars, "linearlyChange", "Change distance over time")
+        BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
         if (globalVars.advancedMode) then chooseFlickerPosition(menuVars) end
         saveMenuPropertiesButton(menuVars, "flicker")
         saveVariables("flickerPropertyMenu", menuVars)
@@ -5483,7 +5514,7 @@ function showDefaultPropertiesSettings()
     end
     if (imgui.CollapsingHeader("Scale (Displace) Settings")) then
         local menuVars = getMenuVars("scaleDisplace", "Property")
-        chooseScaleDisplaceSpot(menuVars)
+        menuVars.scaleSpotIndex = Combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
         chooseScaleType(menuVars)
         saveMenuPropertiesButton(menuVars, "scaleDisplace")
         saveVariables("scaleDisplacePropertyMenu", menuVars)
@@ -5515,14 +5546,14 @@ function showDefaultPropertiesSettings()
     imgui.SeparatorText("Select Tab Settings")
     if (imgui.CollapsingHeader("Select Alternating Settings")) then
         local menuVars = getMenuVars("selectAlternating", "Property")
-        chooseEvery(menuVars)
-        chooseOffset(menuVars)
+        BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
+        BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
         saveMenuPropertiesButton(menuVars, "selectAlternating")
         saveVariables("selectAlternatingPropertyMenu", menuVars)
     end
     if (imgui.CollapsingHeader("Select By Snap Settings")) then
         local menuVars = getMenuVars("selectBySnap", "Property")
-        chooseSnap(menuVars)
+        BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
         saveMenuPropertiesButton(menuVars, "selectBySnap")
         saveVariables("selectBySnapPropertyMenu", menuVars)
     end
@@ -5665,9 +5696,9 @@ function showDefaultPropertiesSettings()
         settingsChanged = chooseControlSecondSV(settingVars) or settingsChanged
         settingsChanged = chooseStartEndSVs(settingVars) or settingsChanged
         settingsChanged = chooseStutterDuration(settingVars) or settingsChanged
-        settingsChanged = chooseLinearlyChange(settingVars) or settingsChanged
+        settingsChanged = BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time") or settingsChanged
         AddSeparator()
-        settingsChanged = chooseStuttersPerSection(settingVars) or settingsChanged
+        settingsChanged = BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 }) or settingsChanged
         settingsChanged = chooseAverageSV(settingVars) or settingsChanged
         settingsChanged = chooseFinalSV(settingVars, false) or settingsChanged
         saveSettingPropertiesButton(settingVars, "Stutter")
@@ -5684,8 +5715,8 @@ function showDefaultPropertiesSettings()
         chooseMainSV(settingVars)
         chooseAverageSV(settingVars)
         chooseFinalSV(settingVars, false)
-        chooseUseDistance(settingVars)
-        chooseLinearlyChange(settingVars)
+        BasicCheckbox(settingVars, "useDistance", "Use distance for start SV")
+        BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time")
         saveSettingPropertiesButton(settingVars, "TeleportStutter")
         saveVariables("TeleportStutterPropertySettings", settingVars)
     end
@@ -6250,16 +6281,13 @@ function chooseColorTheme()
     if not isRGBColorTheme then return end
     chooseRGBPeriod()
 end
-function chooseComboPhase(settingVars, maxComboPhase)
-    return BasicInputInt(settingVars, "comboPhase", "Combo Phase", { 0, maxComboPhase })
-end
 function chooseComboSVOption(settingVars, maxComboPhase)
     local oldIndex = settingVars.comboTypeIndex
     settingVars.comboTypeIndex = Combo("Combo Type", COMBO_SV_TYPE, settingVars.comboTypeIndex)
     local currentComboType = COMBO_SV_TYPE[settingVars.comboTypeIndex]
     local addTypeChanged = false
     if currentComboType ~= "SV Type 1 Only" and currentComboType ~= "SV Type 2 Only" then
-        addTypeChanged = chooseComboPhase(settingVars, maxComboPhase) or addTypeChanged
+        addTypeChanged = BasicInputInt(settingVars, "comboPhase", "Combo Phase", { 0, maxComboPhase }) or addTypeChanged
     end
     if currentComboType == "Add" then
         addTypeChanged = chooseAddComboMultipliers(settingVars) or addTypeChanged
@@ -6416,24 +6444,6 @@ function chooseVaryingDistance(settingVars)
     end
     return SwappableNegatableInputFloat2(settingVars, "distance1", "distance2", "Dist.", "msx", 2)
 end
-function chooseEvery(menuVars)
-    return BasicInputInt(menuVars, "every", "Every __ notes", { 1, MAX_SV_POINTS })
-end
-function chooseOffset(menuVars)
-    return BasicInputInt(menuVars, "offset", "From note #__", { 1, menuVars.every })
-end
-function chooseSnap(menuVars)
-    return BasicInputInt(menuVars, "snap", "Snap", { 1, 100 })
-end
-function chooseDrawCapybara()
-    GlobalCheckbox("drawCapybara", "Capybara", "Draws a capybara at the bottom right of the screen")
-end
-function chooseDrawCapybara2()
-    GlobalCheckbox("drawCapybara2", "Capybara 2", "Draws a capybara at the bottom left of the screen")
-end
-function chooseDrawCapybara312()
-    GlobalCheckbox("drawCapybara312", "Capybara 312", "Draws a capybara???!?!??!!!!? AGAIN?!?!")
-end
 function chooseSelectTool()
     imgui.AlignTextToFramePadding()
     imgui.Text("Current Type:")
@@ -6503,12 +6513,6 @@ function chooseFinalSV(settingVars, skipFinalSV)
     imgui.PopItemWidth()
     return (oldIndex ~= settingVars.finalSVIndex) or (oldCustomSV ~= settingVars.customSV)
 end
-function chooseFlickerType(menuVars)
-    menuVars.flickerTypeIndex = Combo("Flicker Type", FLICKER_TYPES, menuVars.flickerTypeIndex)
-end
-function chooseFrameOrder(settingVars)
-    BasicCheckbox(settingVars, "reverseFrameOrder", "Reverse frame order when placing SVs")
-end
 function chooseFrameSpacing(settingVars)
     _, settingVars.frameDistance = imgui.InputFloat("Frame Spacing", settingVars.frameDistance,
         0, 0, "%.0f msx")
@@ -6548,12 +6552,6 @@ function chooseInterlace(menuVars)
     imgui.PopItemWidth()
     return interlaceChanged or oldRatio ~= menuVars.interlaceRatio
 end
-function chooseLinearlyChange(settingVars)
-    return BasicCheckbox(settingVars, "linearlyChange", "Change stutter over time")
-end
-function chooseLinearlyChangeDist(settingVars)
-    return BasicCheckbox(settingVars, "linearlyChange", "Change distance over time")
-end
 function chooseStepSize()
     imgui.PushItemWidth(40)
     local oldStepSize = globalVars.stepSize
@@ -6574,9 +6572,6 @@ function chooseMainSV(settingVars)
         return
     end
     _, settingVars.mainSV2 = imgui.InputFloat("Main SV (end)", settingVars.mainSV2, 0, 0, "%.2fx")
-end
-function chooseMeasuredStatsView(menuVars)
-    menuVars.unrounded = RadioButtons("View values:", menuVars.unrounded, { "Rounded", "Unrounded" }, { false, true })
 end
 function chooseMenuStep(settingVars)
     imgui.AlignTextToFramePadding()
@@ -6604,19 +6599,10 @@ function chooseNoteSkinType(settingVars)
         settingVars.noteSkinTypeIndex)
     HelpMarker("Note skin type for the preview of the frames")
 end
-function chooseNoteSpacing(menuVars)
-    _, menuVars.noteSpacing = imgui.InputFloat("Note Spacing", menuVars.noteSpacing, 0, 0, "%.2fx")
-end
-function chooseNumFlickers(menuVars)
-    BasicInputInt(menuVars, "numFlickers", "Flickers", { 1, 9999 })
-end
 function chooseFlickerPosition(menuVars)
     _, menuVars.flickerPosition = imgui.SliderFloat("Flicker Position", menuVars.flickerPosition, 0.05, 0.95,
         math.round(menuVars.flickerPosition * 100) .. "%%")
     menuVars.flickerPosition = math.round(menuVars.flickerPosition * 2, 1) / 2
-end
-function chooseNumFrames(settingVars)
-    BasicInputInt(settingVars, "numFrames", "Total # Frames", { 1, MAX_ANIMATION_FRAMES })
 end
 function chooseNumPeriods(settingVars)
     local oldPeriods = settingVars.periods
@@ -6686,9 +6672,6 @@ function chooseRandomType(settingVars)
     settingVars.randomTypeIndex = Combo("Random Type", RANDOM_TYPES, settingVars.randomTypeIndex)
     return oldIndex ~= settingVars.randomTypeIndex
 end
-function chooseRatio(menuVars)
-    _, menuVars.ratio = imgui.InputFloat("Ratio", menuVars.ratio, 0, 0, "%.3f")
-end
 function chooseRGBPeriod()
     local oldRGBPeriod = globalVars.rgbPeriod
     _, globalVars.rgbPeriod = imgui.InputFloat("RGB cycle length", oldRGBPeriod, 0, 0,
@@ -6699,16 +6682,13 @@ function chooseRGBPeriod()
         write(globalVars)
     end
 end
-function chooseScaleDisplaceSpot(menuVars)
-    menuVars.scaleSpotIndex = Combo("Displace Spot", DISPLACE_SCALE_SPOTS, menuVars.scaleSpotIndex)
-end
 function chooseScaleType(menuVars)
     local label = "Scale Type"
     menuVars.scaleTypeIndex = Combo(label, SCALE_TYPES, menuVars.scaleTypeIndex)
     local scaleType = SCALE_TYPES[menuVars.scaleTypeIndex]
     if scaleType == "Average SV" then chooseAverageSV(menuVars) end
     if scaleType == "Absolute Distance" then chooseDistance(menuVars) end
-    if scaleType == "Relative Ratio" then chooseRatio(menuVars) end
+    if scaleType == "Relative Ratio" then ComputableInputFloat("Ratio", menuVars.ratio, 3) end
 end
 function chooseSnakeSpringConstant()
     local currentTrail = CURSOR_TRAILS[globalVars.cursorTrailIndex]
@@ -6731,8 +6711,9 @@ function chooseVibratoSVType(menuVars)
     local label = "  " .. EMOTICONS[emoticonIndex]
     menuVars.svTypeIndex = Combo(label, VIBRATO_SVS, menuVars.svTypeIndex)
 end
-function chooseVibratoMode(menuVars)
-    menuVars.vibratoMode = Combo("Vibrato Mode", VIBRATO_TYPES, menuVars.vibratoMode)
+function chooseVibratoQuality(menuVars)
+    menuVars.vibratoQuality = Combo("Vibrato Quality", VIBRATO_DETAILED_QUALITIES, menuVars.vibratoQuality)
+    ToolTip("Note that higher FPS will look worse on lower refresh rate monitors.")
 end
 function chooseCurvatureCoefficient(settingVars)
     plotExponentialCurvature(settingVars)
@@ -6802,9 +6783,6 @@ function chooseStillType(menuVars)
     end
     imgui.PopItemWidth()
 end
-function chooseStillBehavior(menuVars)
-    menuVars.stillBehavior = Combo("Still Behavior", STILL_BEHAVIOR_TYPES, menuVars.stillBehavior)
-end
 function chooseStutterDuration(settingVars)
     local oldDuration = settingVars.stutterDuration
     if settingVars.controlLastSV then oldDuration = 100 - oldDuration end
@@ -6814,9 +6792,6 @@ function chooseStutterDuration(settingVars)
     if settingVars.controlLastSV then newDuration = 100 - newDuration end
     settingVars.stutterDuration = newDuration
     return durationChanged
-end
-function chooseStuttersPerSection(settingVars)
-    return BasicInputInt(settingVars, "stuttersPerSection", "Stutters", { 1, 1000 })
 end
 function chooseStyleTheme()
     local oldStyleTheme = globalVars.styleThemeIndex
@@ -6862,12 +6837,6 @@ function chooseUpscroll()
     if (oldUpscroll ~= globalVars.upscroll) then
         write(globalVars)
     end
-end
-function chooseUseDistance(settingVars)
-    BasicCheckbox(settingVars, "useDistance", "Use distance for start SV")
-end
-function chooseHand(settingVars)
-    BasicCheckbox(settingVars, "teleportBeforeHand", "Add teleport before note")
 end
 function chooseDistanceMode(menuVars)
     local oldMode = menuVars.distanceMode
@@ -6926,26 +6895,6 @@ function hexaToRgba(hexa)
     end
     return table.vectorize4(rgbaTable)
 end
-function rgbaToHsva(r, g, b, a)
-    local colPrime = { r / 255, g / 255, b / 255 }
-    local cMax = math.max(table.unpack(colPrime))
-    local cMin = math.min(table.unpack(colPrime))
-    local delta = cMax - cMin
-    local maxIdx = 1
-    local higherVal = colPrime[2]
-    local lowerVal = colPrime[3]
-    for i = 2, 3 do
-        if (colPrime[i] == cMax) then
-            maxIdx = i
-            higherVal = colPrime[i % 3 + 1]
-            lowerVal = colPrime[(i + 1) % 3 + 1]
-        end
-    end
-    local h = 60 * ((higherVal - lowerVal) / delta * (2 * maxIdx - 2)) % 6
-    local s = truthy(cMax) and delta / cMax or 0
-    local v = cMax
-    return vector.New(h, s, v, a)
-end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
     local displacements = { 0 }
@@ -6987,6 +6936,23 @@ function calculateDisplacementsFromSVs(svs, offsets)
     table.remove(svs)
     table.insert(displacements, totalDisplacement)
     return displacements
+end
+function calculateStillDisplacements(stillType, stillDistance, svDisplacements, nsvDisplacements)
+    local finalDisplacements = {}
+    for i = 1, #svDisplacements do
+        local difference = nsvDisplacements[i] - svDisplacements[i]
+        table.insert(finalDisplacements, difference)
+    end
+    local extraDisplacement = stillDistance
+    if stillType == "End" or stillType == "Otua" then
+        extraDisplacement = stillDistance - finalDisplacements[#finalDisplacements]
+    end
+    if stillType ~= "No" then
+        for i = 1, #finalDisplacements do
+            finalDisplacements[i] = finalDisplacements[i] + extraDisplacement
+        end
+    end
+    return finalDisplacements
 end
 --
 --
@@ -7148,6 +7114,77 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
     end
     table.insert(circularSet, avgValue)
     return circularSet
+end
+function generateComboSet(values1, values2, comboPhase, comboType, comboMultiplier1,
+                          comboMultiplier2, dontNormalize, avgValue, verticalShift)
+    local comboValues = {}
+    if comboType == "SV Type 1 Only" then
+        comboValues = table.duplicate(values1)
+    elseif comboType == "SV Type 2 Only" then
+        comboValues = table.duplicate(values2)
+    else
+        local lastValue1 = table.remove(values1)
+        local lastValue2 = table.remove(values2)
+        local endIndex1 = #values1 - comboPhase
+        local startIndex1 = comboPhase + 1
+        local endIndex2 = comboPhase - #values1
+        local startIndex2 = #values1 + #values2 + 1 - comboPhase
+        for i = 1, endIndex1 do
+            table.insert(comboValues, values1[i])
+        end
+        for i = 1, endIndex2 do
+            table.insert(comboValues, values2[i])
+        end
+        if comboType ~= "Remove" then
+            local comboValues1StartIndex = endIndex1 + 1
+            local comboValues1EndIndex = startIndex2 - 1
+            local comboValues2StartIndex = endIndex2 + 1
+            local comboValues2EndIndex = startIndex1 - 1
+            local comboValues1 = {}
+            for i = comboValues1StartIndex, comboValues1EndIndex do
+                table.insert(comboValues1, values1[i])
+            end
+            local comboValues2 = {}
+            for i = comboValues2StartIndex, comboValues2EndIndex do
+                table.insert(comboValues2, values2[i])
+            end
+            for i = 1, #comboValues1 do
+                local comboValue1 = comboValues1[i]
+                local comboValue2 = comboValues2[i]
+                local finalValue
+                if comboType == "Add" then
+                    finalValue = comboMultiplier1 * comboValue1 + comboMultiplier2 * comboValue2
+                elseif comboType == "Cross Multiply" then
+                    finalValue = comboValue1 * comboValue2
+                elseif comboType == "Min" then
+                    finalValue = math.min(comboValue1, comboValue2)
+                elseif comboType == "Max" then
+                    finalValue = math.max(comboValue1, comboValue2)
+                end
+                table.insert(comboValues, finalValue)
+            end
+        end
+        for i = startIndex1, #values2 do
+            table.insert(comboValues, values2[i])
+        end
+        for i = startIndex2, #values1 do
+            table.insert(comboValues, values1[i])
+        end
+        if #comboValues == 0 then table.insert(comboValues, 1) end
+        if (comboPhase - #values2 >= 0) then
+            table.insert(comboValues, lastValue1)
+        else
+            table.insert(comboValues, lastValue2)
+        end
+    end
+    avgValue = avgValue - verticalShift
+    if not dontNormalize then
+        comboValues = table.normalize(comboValues, avgValue, false)
+    end
+    for i = 1, #comboValues do
+        comboValues[i] = comboValues[i] + verticalShift
+    end
+    return comboValues
 end
 function generateCustomSet(values)
     local newValues = table.duplicate(values)
@@ -7462,40 +7499,6 @@ function plotExponentialCurvature(settingVars)
     imgui.PopStyleColor()
     imgui.PopItemWidth()
 end
-function plotSigmoidalCurvature(settingVars)
-    imgui.PushItemWidth(28)
-    imgui.PushStyleColor(imgui_col.FrameBg, 0)
-    local RESOLUTION = 32
-    local values = table.construct()
-    for i = 1, RESOLUTION do
-        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
-        local t = i / RESOLUTION * 2
-        local value = t
-        if (curvature >= 1) then
-            if (t <= 1) then
-                value = t ^ curvature
-            else
-                value = 2 - (2 - t) ^ curvature
-            end
-        else
-            if (t <= 1) then
-                value = (1 - (1 - t) ^ (1 / curvature))
-            else
-                value = (t - 1) ^ (1 / curvature) + 1
-            end
-        end
-        value = value / 2
-        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
-            value = 1 - value
-        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
-            value = 0.5
-        end
-        values:insert(value)
-    end
-    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
-    imgui.PopStyleColor()
-    imgui.PopItemWidth()
-end
 function createFrameTime(thisTime, thisLanes, thisFrame, thisPosition)
     local frameTime = {
         time = thisTime,
@@ -7579,22 +7582,6 @@ function getHypotheticalSVMultiplierAt(svs, offset)
         end
     end
     return 1
-end
----Returns the SV time in a given array of SVs.
----@param svs ScrollVelocity[]
----@param offset number
----@return number
-function getHypotheticalSVTimeAt(svs, offset)
-    if (#svs == 1) then return svs[1].StartTime end
-    local index = #svs
-    while (index >= 1) do
-        if (svs[index].StartTime > offset) then
-            index = index - 1
-        else
-            return svs[index].StartTime
-        end
-    end
-    return -69
 end
 function getSVStartTimeAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
