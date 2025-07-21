@@ -10,20 +10,20 @@ function expect(expr)
     else
         local fn = expr
         return {
-            of = function(expr)
-                if (type(expr) == "table") then
+            of = function(x)
+                if (type(x) == "table") then
                     return {
                         toBe = function(tbl)
-                            if (#tbl ~= #expr) then return false end
+                            if (#tbl ~= #x) then return false end
                             for i = 1, #tbl do
-                                if (not __toBeFunction(tbl[i], fn(expr[i]))) then return false end
+                                if (not __toBeFunction(tbl[i], fn(x[i]))) then return false end
                             end
                             return true
                         end
                     }
                 else
                     return {
-                        toBe = function(x) return __toBeFunction(x, fn(expr)) end
+                        toBe = function(y) return __toBeFunction(x, fn(y)) end
                     }
                 end
             end

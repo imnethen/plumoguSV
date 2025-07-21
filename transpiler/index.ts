@@ -36,6 +36,7 @@ export default async function transpiler(
             .replaceAll(/( *)\<const\> */g, '$1')
             .replaceAll(/\-\-\[\[.*?\-\-\]\][ \r\n]*/gs, '')
             .split('\n')
+            .filter((l) => !l.includes('require('))
             .map((l) =>
                 l.replaceAll(
                     /^([^\-\r\n]*)[\-]{2}([\-]{2,})?[^\-\r\n].+[ \r\n]*/g,

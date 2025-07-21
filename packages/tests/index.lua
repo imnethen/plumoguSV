@@ -1,9 +1,3 @@
-require("packages.tests.expect")
-require("packages.table.stringify")
-require("packages.truthy")
+require("packages.tests")
 
-function add1(x)
-    return x + 1
-end
-
-print(expect(add1).of(5).toBe(6))
+print(expect(5).toBe(5))

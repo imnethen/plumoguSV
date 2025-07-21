@@ -484,10 +484,11 @@ function table.stringify(var)
     return str:sub(1, -2) .. "}"
 end
 ---When given a dictionary and table of keys, returns a new table with only the specified keys and values.
----@param checkList { [string]: any } The base table, which has a list of keys to include in the new table.
----@param tbl { [string]: any } The base table in which to lint the data from.
+---@generic T table
+---@param checkList T The base table, which has a list of keys to include in the new table.
+---@param tbl T The base table in which to lint the data from.
 ---@param extrapolateData? boolean If this is set to true, will fill in missing keys in the new table with values frmo the old table.
----@return { [string]: any } outputTable
+---@return T outputTable
 function table.validate(checkList, tbl, extrapolateData)
     local validKeys = table.keys(checkList)
     local tableKeys = table.keys(tbl)
@@ -545,31 +546,34 @@ function __toBeFunction(obtainedValue, expectedValue)
     return obtainedValue == expectedValue
 end
 function expect(expr)
-    return {
-        toBe = function(x) return __toBeFunction(x, expr) end
-    }
-end
-function expect(func)
-    return {
-        of = function(expr)
-            if (type(expr) == "table") then
-                return {
-                    toBe = function(tbl)
-                        if (#tbl ~= #expr) then return false end
-                        for i = 1, #tbl do
-                            if (not __toBeFunction(tbl[i], func(expr[i]))) then return false end
+    if (type(expr) ~= "function") then
+        return {
+            toBe = function(x) return __toBeFunction(x, expr) end
+        }
+    else
+        local fn = expr
+        return {
+            of = function(x)
+                if (type(x) == "table") then
+                    return {
+                        toBe = function(tbl)
+                            if (#tbl ~= #x) then return false end
+                            for i = 1, #tbl do
+                                if (not __toBeFunction(tbl[i], fn(x[i]))) then return false end
+                            end
+                            return true
                         end
-                        return true
-                    end
-                }
-            else
-                return {
-                    toBe = function(x) return __toBeFunction(x, expr) end
-                }
+                    }
+                else
+                    return {
+                        toBe = function(y) return __toBeFunction(x, fn(y)) end
+                    }
+                end
             end
-        end
-    }
+        }
+    end
 end
+print(expect(5).toBe(5))
 ---Prints a message if creation messages are enabled.
 ---@param type "e!"|"w!"|"i!"|"s!"
 ---@param msg string
@@ -3466,7 +3470,7 @@ end
 ---@param varsTable { [string]: any }The table that is meant to be modified.
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean changed Whether or not the checkbox has changed this frame.
 function BasicCheckbox(varsTable, parameterName, label, tooltipText)
     local oldValue = varsTable[parameterName]
@@ -3477,7 +3481,7 @@ end
 ---Creates a checkbox that directly saves to globalVars and the universal `.yaml` file.
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 function GlobalCheckbox(parameterName, label, tooltipText)
     local oldValue = globalVars[parameterName] ---@cast oldValue boolean
     _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
@@ -3488,7 +3492,7 @@ end
 ---@param varsTable { [string]: any } The table that is meant to be modified.
 ---@param parameterName string The key of the table that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean active Whether or not the code input is currently in edit mode.
 function CodeInput(varsTable, parameterName, label, tooltipText)
     local oldCode = varsTable[parameterName]
@@ -3501,7 +3505,7 @@ end
 ---@param customStyle { [string]: any } The table that is meant to be modified.
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean changed Whether or not the input has changed this frame.
 function ColorInput(customStyle, parameterName, label, tooltipText)
     AddSeparator()
@@ -3623,7 +3627,7 @@ end
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
 ---@param bounds? [number, number] A tuple representing the minimum and maximum bounds this input should have.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean changed Whether or not the checkbox has changed this frame.
 function BasicInputInt(varsTable, parameterName, label, bounds, tooltipText)
     local oldValue = varsTable[parameterName]
@@ -4006,7 +4010,7 @@ DEFAULT_STYLE = {
     plotHistogramHovered =
         vector.New(1.00, 0.60, 0.00, 1.00)
 }
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" } ---@type string[]
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
 globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
@@ -8248,8 +8252,7 @@ function setGlobalVars(tempGlobalVars)
     globalVars.advancedMode = truthy(tempGlobalVars.advancedMode)
     globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
     globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
-    globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
-    globalVars.hotkeyList = table.validate(DEFAULT_HOTKEY_LIST, tempGlobalVars.hotkeyList, true)
+    globalVars.hotkeyList = table.validate(DEFAULT_HOTKEY_LIST, table.duplicate(tempGlobalVars.hotkeyList), true)
     globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
     globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
 end
