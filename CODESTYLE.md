@@ -41,3 +41,4 @@
     - The constant is used in multiple files.
     - The constant is linked to other constants that follow one of the above rules.
     - The constant is a table with functions linking from it, without the table itself being defined.
+- All files that must have higher priority (like defined constants or widespread functions that do not rely on anything within the plugin itself) should be marked using the `*.priority.lua` suffix. As packages are loaded before priority functions, priority functions should not depend on each other, and only rely on the packages. A rare exception of this is state handling for variables.

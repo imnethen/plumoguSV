@@ -1,5 +1,3 @@
-imgui_disable_vector_packing = true
-
 function draw()
     state.SetValue("ComputableInputFloatIndex", 1)
     state.IsWindowHovered = imgui.IsWindowHovered()
@@ -68,7 +66,7 @@ function renderMeasureDataWidget()
         end
         if (#uniqueDict > 2) then return end
     end
-    uniqueDict = table.sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
+    uniqueDict = sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
     local startOffset = uniqueDict[1]
     local endOffset = uniqueDict[2] or uniqueDict[1]
     if (endOffset == startOffset) then return end

@@ -19,18 +19,24 @@ export default async function transpiler(
     let fileCount = 0;
     let output = '';
 
+    const separator = process.platform === 'win32' ? '\\' : '/';
+    const entryPoints = ['draw.lua', 'awake.lua'];
+    const ignoredFiles = ['classes.lua', 'intellisense.lua'];
+    if (!devMode) ignoredFiles.push(`src${separator}dev`);
+
     const files = getFilesRecursively('packages');
     files.push(
-        ...getFilesRecursively('src').sort(
-            (a, b) => +b.includes('priority') - +a.includes('priority')
-        )
-    );
+        ...getFilesRecursively('src')
+            .sort((a, b) => +b.includes('priority') - +a.includes('priority'))
+            .sort(
+                (a, b) =>
+                    +entryPoints.some((e) => a.includes(e)) -
+                    +entryPoints.some((e) => b.includes(e))
+            ) // Force entry points to be towards the bottom.
+    ); // Force priority functions towards the top to avoid hot-reload error.
 
     console.log(files);
-
-    const ignoredFiles = ['classes.lua', 'intellisense.lua'];
-
-    if (!devMode) ignoredFiles.push('src\\dev');
+    console.log(files.slice(-10));
 
     files.forEach((file: string) => {
         if (
