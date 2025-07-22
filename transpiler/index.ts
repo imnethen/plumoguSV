@@ -5,11 +5,11 @@ import {
     existsSync,
     renameSync,
     copyFileSync,
-} from 'fs';
-import { getFilesRecursively } from './getFilesRecursively.js';
-import fuckifyOutput from './fuckify.js';
-import getFunctionList from './getFunctionList.js';
-import getUnusedFunctions from './getUnusedFunctions.js';
+} from "fs";
+import { getFilesRecursively } from "./getFilesRecursively.js";
+import fuckifyOutput from "./fuckify.js";
+import getFunctionList from "./getFunctionList.js";
+import getUnusedFunctions from "./getUnusedFunctions.js";
 
 export default async function transpiler(
     devMode = false,
@@ -17,17 +17,22 @@ export default async function transpiler(
     lint = true
 ) {
     let fileCount = 0;
-    let output = '';
+    let output = "";
 
-    const separator = process.platform === 'win32' ? '\\' : '/';
-    const entryPoints = ['draw.lua', 'awake.lua'];
-    const ignoredFiles = ['classes.lua', 'intellisense.lua', 'init.lua'];
+    const separator = process.platform === "win32" ? "\\" : "/";
+    const entryPoints = ["draw.lua", "awake.lua"];
+    const ignoredFiles = [
+        "classes.lua",
+        "intellisense.lua",
+        "init.lua",
+        `packages${separator}tests`,
+    ];
     if (!devMode) ignoredFiles.push(`src${separator}dev`);
 
-    const files = getFilesRecursively('packages');
+    const files = getFilesRecursively("packages");
     files.push(
-        ...getFilesRecursively('src')
-            .sort((a, b) => +b.includes('priority') - +a.includes('priority'))
+        ...getFilesRecursively("src")
+            .sort((a, b) => +b.includes("priority") - +a.includes("priority"))
             .sort(
                 (a, b) =>
                     +entryPoints.some((e) => a.includes(e)) -
@@ -38,36 +43,36 @@ export default async function transpiler(
     files.forEach((file: string) => {
         if (
             ignoredFiles.some((f) => file.includes(f)) ||
-            !file.endsWith('.lua')
+            !file.endsWith(".lua")
         )
             return;
-        const fileData = readFileSync(file, 'utf-8')
-            .replaceAll(/( *)\<const\> */g, '$1')
-            .replaceAll(/\-\-\[\[.*?\-\-\]\][ \r\n]*/gs, '')
-            .split('\n')
-            .filter((l) => !l.includes('require('))
+        const fileData = readFileSync(file, "utf-8")
+            .replaceAll(/( *)\<const\> */g, "$1")
+            .replaceAll(/\-\-\[\[.*?\-\-\]\][ \r\n]*/gs, "")
+            .split("\n")
+            .filter((l) => !l.includes("require("))
             .map((l) =>
                 l.replaceAll(
                     /^([^\-\r\n]*)[\-]{2}([\-]{2,})?[^\-\r\n].+[ \r\n]*/g,
-                    '$1'
+                    "$1"
                 )
             ); // Removes <const> tag, removes --[[ --]] comments, removes double dash comments (not triple dash) from lines with code
         output = `${output}\n${fileData
-            .map((str) => str.replace(/\s+$/, ''))
+            .map((str) => str.replace(/\s+$/, ""))
             .filter((str) => str)
-            .join('\n')}`;
+            .join("\n")}`;
         fileCount++;
     });
 
     if (fuckify) output = fuckifyOutput(output);
 
-    output = output.replaceAll('\n\n', '\n').trimStart();
+    output = output.replaceAll("\n\n", "\n").trimStart();
     if (lint) {
-        const splitOutput = output.split('\n');
+        const splitOutput = output.split("\n");
 
         let [functions, fnIndices] = getFunctionList(splitOutput);
         functions = functions.filter((fn, idx) => {
-            const cond = fn.startsWith('string') || fn.startsWith('table');
+            const cond = fn.startsWith("string") || fn.startsWith("table");
             if (cond) fnIndices.splice(idx, 1);
             return !cond;
         });
@@ -85,14 +90,14 @@ export default async function transpiler(
             splitOutput.splice(startIdx, endIdx - startIdx + 1);
         });
 
-        output = splitOutput.join('\n');
+        output = splitOutput.join("\n");
     }
 
-    if (existsSync('plugin.lua')) rmSync('plugin.lua');
-    writeFileSync('temp.lua', output);
-    renameSync('temp.lua', 'plugin.lua');
-    if (existsSync('quinsight/intellisense.lua'))
-        copyFileSync('quinsight/intellisense.lua', 'intellisense.lua');
+    if (existsSync("plugin.lua")) rmSync("plugin.lua");
+    writeFileSync("temp.lua", output);
+    renameSync("temp.lua", "plugin.lua");
+    if (existsSync("quinsight/intellisense.lua"))
+        copyFileSync("quinsight/intellisense.lua", "intellisense.lua");
 
     return fileCount;
 }

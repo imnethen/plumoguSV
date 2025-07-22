@@ -39,6 +39,7 @@ globalVars = {
 }
 
 DEFAULT_GLOBAL_VARS = table.duplicate(globalVars)
+globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
 
 function setGlobalVars(tempGlobalVars)
     globalVars.useCustomPulseColor = truthy(tempGlobalVars.useCustomPulseColor)

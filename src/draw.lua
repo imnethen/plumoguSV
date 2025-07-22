@@ -64,7 +64,7 @@ function renderMeasureDataWidget()
         end
         if (#uniqueDict > 2) then return end
     end
-    uniqueDict = sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
+    uniqueDict = sort(uniqueDict, sortAscending) ---@type number[]
     local startOffset = uniqueDict[1]
     local endOffset = uniqueDict[2] or uniqueDict[1]
     if (math.abs(endOffset - startOffset) < 1e-10) then return end

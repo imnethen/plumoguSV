@@ -29,6 +29,13 @@ end
 function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
 end
+---Returns n choose r, or nCr.
+---@param n integer
+---@param r integer
+---@return integer
+function math.binom(n, r)
+    return math.factorial(n) / (math.factorial(r) * math.factorial(n - r))
+end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
 ---@param lowerBound number
@@ -74,6 +81,52 @@ function math.hermite(m1, m2, y2, t)
     return a * t ^ 3 + b * t ^ 2 + c * t
 end
 matrix = {}
+---Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateCircle(p1, p2, p3)
+    local mtrx = {
+        vector.Table(2 * (p2 - p1)),
+        vector.Table(2 * (p3 - p1))
+    }
+    local vctr = {
+        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
+        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
+    }
+    h, k = matrix.solve(mtrx, vctr)
+    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
+    ---@type number, number, number
+    return h, k, r
+end
+---Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateQuadratic(p1, p2, p3)
+    local mtrx = {
+        (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
+        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
+    }
+    local vctr = {
+        (p2 - p1).y,
+        (p3 - p1).y
+    }
+    a, b = matrix.solve(mtrx, vctr)
+    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
+    ---@type number, number, number
+    return a, b, c
+end
+---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
+---@param weight number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.lerp(weight, lowerBound, upperBound)
+    return upperBound * weight + lowerBound * (1 - weight)
+end
 ---Returns the weight of a number between `lowerBound` and `upperBound`.
 ---@param num number
 ---@param lowerBound number
@@ -130,6 +183,11 @@ function matrix.solve(mtrx, vctr)
         end
     end
     return table.unpack(table.property(augMtrx, #mtrx + 1))
+end
+function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
+    local temp = mtrx[rowIdx1]
+    mtrx[rowIdx1] = mtrx[rowIdx2]
+    mtrx[rowIdx2] = temp
 end
 ---Rounds a number to a given amount of decimal places.
 ---@param number number
@@ -569,51 +627,6 @@ function table.vectorize2(tbl)
     if (tbl[1] and tbl[2]) then return vector.New(tbl[1], tbl[2]) end
     return vector.New(tbl.x, tbl.y)
 end
-function __toBeFunction(obtainedValue, expectedValue)
-    if (type(obtainedValue) == "number" and type(expectedValue) == "number") then
-        return math.abs(obtainedValue - expectedValue) < 1e-14
-    end
-    return obtainedValue == expectedValue
-end
-function expect(expr)
-    if (type(expr) ~= "function") then
-        return {
-            toBe = function(x) return __toBeFunction(x, expr), { x, expr } end
-        }
-    else
-        local fn = expr
-        return {
-            of = function(x)
-                if (type(x) == "table") then
-                    return {
-                        toBe = function(tbl)
-                            if (#tbl ~= #x) then return false end
-                            for i = 1, #tbl do
-                                if (not __toBeFunction(tbl[i], fn(x[i]))) then return false, { i, tbl[i], fn(x[i]) } end
-                            end
-                            return true
-                        end
-                    }
-                else
-                    return {
-                        toBe = function(y) return __toBeFunction(x, fn(y)) end
-                    }
-                end
-            end
-        }
-    end
-end
-function id(x) return x end
-runTest("baseline 1", expect(5).toBe(5))
-runTest("baseline 2", expect(id).of({ nil, true, 1, -5, "hi" }).toBe({ nil, true, 1, -5, "hi" }))
-function runTest(testName, expr, res)
-    if (expr) then
-        print("Test " .. testName:upper() .. " was successful.")
-    else
-        print("\nTest " .. testName:upper() .. " failed.\n")
-        print(table.stringify(res))
-    end
-end
 ---Prints a message if creation messages are enabled.
 ---@param type "e!"|"w!"|"i!"|"s!"
 ---@param msg string
@@ -900,10 +913,26 @@ DEFAULT_STYLE = {
         vector.New(1.00, 0.60, 0.00, 1.00)
 }
 DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
-globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
 HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
     "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
     "Execute Vibrato Separately", "Use TG of Selected Note", "Toggle Note Lock Mode" }
+function createSVGraphStats()
+    local svGraphStats = {
+        minScale = 0,
+        maxScale = 0,
+        distMinScale = 0,
+        distMaxScale = 0
+    }
+    return svGraphStats
+end
+function createSVStats()
+    local svStats = {
+        minSV = 0,
+        maxSV = 0,
+        avgSV = 0
+    }
+    return svStats
+end
 ---#### (NOTE: This function is impure and has no return value. This should be changed eventually.)
 ---Gets a list of variables.
 ---@param listName string An identifier to avoid statee collisions.
@@ -934,7 +963,7 @@ function loadDefaultProperties(defaultProperties)
             if (not defaultSetting) then
                 goto skipSetting
             end
-            DEFAULT_STARTING_MENU_VARS[label][settingName] = settingValue
+            DEFAULT_STARTING_MENU_VARS[label][settingName] = defaultSetting
             ::skipSetting::
         end
     end
@@ -947,7 +976,7 @@ function loadDefaultProperties(defaultProperties)
             if (not defaultSetting) then
                 goto skipSetting
             end
-            DEFAULT_STARTING_SETTING_VARS[label][settingName] = settingValue
+            DEFAULT_STARTING_SETTING_VARS[label][settingName] = defaultSetting
             ::skipSetting::
         end
     end
@@ -963,6 +992,10 @@ function parseProperty(v, default)
     if (type(default) == "boolean") then
         return truthy(v)
     end
+    if (type(default) == "string") then
+        return v
+    end
+    return v
 end
 globalVars = {
     stepSize = 5,
@@ -1004,6 +1037,7 @@ globalVars = {
     presets = {}
 }
 DEFAULT_GLOBAL_VARS = table.duplicate(globalVars)
+globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
 function setGlobalVars(tempGlobalVars)
     globalVars.useCustomPulseColor = truthy(tempGlobalVars.useCustomPulseColor)
     globalVars.pulseColor = table.vectorize4(tempGlobalVars.pulseColor)
@@ -4467,6 +4501,8 @@ function Combo(label, list, listIndex, colorList, hiddenGroups)
     imgui.EndCombo()
     return newListIndex
 end
+function BasicInputFloat(label, var, decimalPlaces, suffix, step)
+end
 function ComputableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("ComputableInputFloatIndex") or 1
     local previousValue = var
@@ -4912,6 +4948,9 @@ function addSelectedNoteTimesToList(menuVars)
     end
     menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
     menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)
+end
+function animationPaletteMenu(settingVars)
+    CodeInput(settingVars, "instructions", "", "Write instructions here.")
 end
 function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
@@ -7313,6 +7352,26 @@ function hexaToRgba(hexa)
     end
     return table.vectorize4(rgbaTable)
 end
+function rgbaToHsva(r, g, b, a)
+    local colPrime = { r / 255, g / 255, b / 255 }
+    local cMax = math.max(table.unpack(colPrime))
+    local cMin = math.min(table.unpack(colPrime))
+    local delta = cMax - cMin
+    local maxIdx = 1
+    local higherVal = colPrime[2]
+    local lowerVal = colPrime[3]
+    for i = 2, 3 do
+        if (colPrime[i] == cMax) then
+            maxIdx = i
+            higherVal = colPrime[i % 3 + 1]
+            lowerVal = colPrime[(i + 1) % 3 + 1]
+        end
+    end
+    local h = 60 * ((higherVal - lowerVal) / delta * (2 * maxIdx - 2)) % 6
+    local s = truthy(cMax) and delta / cMax or 0
+    local v = cMax
+    return vector.New(h, s, v, a)
+end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
     local displacements = { 0 }
@@ -7835,23 +7894,6 @@ function createFrameTime(thisTime, thisLanes, thisFrame, thisPosition)
     }
     return frameTime
 end
-function createSVGraphStats()
-    local svGraphStats = {
-        minScale = 0,
-        maxScale = 0,
-        distMinScale = 0,
-        distMaxScale = 0
-    }
-    return svGraphStats
-end
-function createSVStats()
-    local svStats = {
-        minSV = 0,
-        maxSV = 0,
-        avgSV = 0
-    }
-    return svStats
-end
 function exclusiveKeyPressed(keyCombo)
     keyCombo = keyCombo:upper()
     local comboList = {}
@@ -7909,6 +7951,22 @@ function getHypotheticalSVMultiplierAt(svs, offset)
         end
     end
     return 1
+end
+---Returns the SV time in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
+function getHypotheticalSVTimeAt(svs, offset)
+    if (#svs == 1) then return svs[1].StartTime end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index].StartTime
+        end
+    end
+    return -69
 end
 function getSVStartTimeAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
@@ -8214,6 +8272,40 @@ function plotExponentialCurvature(settingVars)
         else
             value = (1 - (1 - t) ^ (1 / curvature))
         end
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 1 - value
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 0.5
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+end
+function plotSigmoidalCurvature(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 32
+    local values = table.construct()
+    for i = 1, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION * 2
+        local value = t
+        if (curvature >= 1) then
+            if (t <= 1) then
+                value = t ^ curvature
+            else
+                value = 2 - (2 - t) ^ curvature
+            end
+        else
+            if (t <= 1) then
+                value = (1 - (1 - t) ^ (1 / curvature))
+            else
+                value = (t - 1) ^ (1 / curvature) + 1
+            end
+        end
+        value = value / 2
         if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 1 - value
         elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
@@ -8714,7 +8806,7 @@ function renderMeasureDataWidget()
         end
         if (#uniqueDict > 2) then return end
     end
-    uniqueDict = sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
+    uniqueDict = sort(uniqueDict, sortAscending) ---@type number[]
     local startOffset = uniqueDict[1]
     local endOffset = uniqueDict[2] or uniqueDict[1]
     if (math.abs(endOffset - startOffset) < 1e-10) then return end

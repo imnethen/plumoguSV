@@ -9,7 +9,7 @@ function loadDefaultProperties(defaultProperties)
             if (not defaultSetting) then
                 goto skipSetting
             end
-            DEFAULT_STARTING_MENU_VARS[label][settingName] = settingValue
+            DEFAULT_STARTING_MENU_VARS[label][settingName] = defaultSetting
             ::skipSetting::
         end
     end
@@ -22,7 +22,7 @@ function loadDefaultProperties(defaultProperties)
             if (not defaultSetting) then
                 goto skipSetting
             end
-            DEFAULT_STARTING_SETTING_VARS[label][settingName] = settingValue
+            DEFAULT_STARTING_SETTING_VARS[label][settingName] = defaultSetting
             ::skipSetting::
         end
     end
@@ -39,4 +39,8 @@ function parseProperty(v, default)
     if (type(default) == "boolean") then
         return truthy(v)
     end
+    if (type(default) == "string") then
+        return v
+    end
+    return v
 end
