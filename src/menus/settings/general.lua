@@ -18,3 +18,12 @@ function showGeneralSettings()
     GlobalCheckbox("equalizeLinear", "Equalize Linear SV",
         "Forces the standard > linear option to have an average sv of 0 if the start and end SVs are equal. For beginners, this should be enabled.")
 end
+
+function chooseUpscroll()
+    local oldUpscroll = globalVars.upscroll
+    globalVars.upscroll = RadioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
+        "Orientation for distance graphs and visuals")
+    if (oldUpscroll ~= globalVars.upscroll) then
+        write(globalVars)
+    end
+end

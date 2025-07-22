@@ -693,15 +693,6 @@ function chooseSVPoints(settingVars, svPointsForce)
     return BasicInputInt(settingVars, "svPoints", "SV Points##regular", { 1, MAX_SV_POINTS })
 end
 
-function chooseUpscroll()
-    local oldUpscroll = globalVars.upscroll
-    globalVars.upscroll = RadioButtons("Scroll Direction:", globalVars.upscroll, { "Down", "Up" }, { false, true },
-        "Orientation for distance graphs and visuals")
-    if (oldUpscroll ~= globalVars.upscroll) then
-        write(globalVars)
-    end
-end
-
 function chooseDistanceMode(menuVars)
     local oldMode = menuVars.distanceMode
     menuVars.distanceMode = Combo("Distance Type", DISTANCE_TYPES, menuVars.distanceMode)
