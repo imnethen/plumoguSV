@@ -1,3 +1,19 @@
+clock = {}
+---Returns true every `interval` ms.
+---@param id string The unique identifier of the clock.
+---@param interval integer The interval at which the clock should run.
+---@return boolean ev True if the clock has reached its interval time.
+function clock.listen(id, interval)
+    local currentTime = state
+        .UnixTime
+    if (not state.GetValue("clock-" .. id)) then state.SetValue("clock-" .. id, currentTime) end
+    local previousExecutionTime = state.GetValue("clock-" .. id)
+    if (currentTime - previousExecutionTime > interval) then
+        state.SetValue("clock-" .. id, currentTime)
+        return true
+    end
+    return false
+end
 ---Evaluates a simplified one-dimensional cubic bezier expression with points (0, p2, p3, 1).
 ---@param p2 number The second point in the cubic bezier.
 ---@param p3 number The third point in the cubic bezier.
@@ -12,6 +28,13 @@ end
 ---@return number qBez The result.
 function math.quadraticBezier(p2, t)
     return 2 * t * (1 - t) * p2 + t ^ 2
+end
+---Returns n choose r, or nCr.
+---@param n integer
+---@param r integer
+---@return integer
+function math.binom(n, r)
+    return math.factorial(n) / (math.factorial(r) * math.factorial(n - r))
 end
 ---Restricts a number to be within a chosen bound.
 ---@param number number
@@ -58,6 +81,52 @@ function math.hermite(m1, m2, y2, t)
     return a * t ^ 3 + b * t ^ 2 + c * t
 end
 matrix = {}
+---Interpolates circular parameters of the form (x-h)^2+(y-k)^2=r^2 with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateCircle(p1, p2, p3)
+    local mtrx = {
+        vector.Table(2 * (p2 - p1)),
+        vector.Table(2 * (p3 - p1))
+    }
+    local vctr = {
+        vector.Length(p2) ^ 2 - vector.Length(p1) ^ 2,
+        vector.Length(p3) ^ 2 - vector.Length(p1) ^ 2
+    }
+    h, k = matrix.solve(mtrx, vctr)
+    r = math.sqrt((p1.x) ^ 2 + (p1.y) ^ 2 + h ^ 2 + k ^ 2 - 2 * h * p1.x - 2 * k * p1.y)
+    ---@type number, number, number
+    return h, k, r
+end
+---Interpolates quadratic parameters of the form y=ax^2+bx+c with three, non-colinear points.
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@return number, number, number
+function math.interpolateQuadratic(p1, p2, p3)
+    local mtrx = {
+        (p2.x) ^ 2 - (p1.x) ^ 2, (p2 - p1).x,
+        (p3.x) ^ 2 - (p1.x) ^ 2, (p3 - p1).x,
+    }
+    local vctr = {
+        (p2 - p1).y,
+        (p3 - p1).y
+    }
+    a, b = matrix.solve(mtrx, vctr)
+    c = p1.y - p1.x * b - (p1.x) ^ 2 * a
+    ---@type number, number, number
+    return a, b, c
+end
+---Returns a number that is `(weight * 100)%` of the way from travelling between `lowerBound` and `upperBound`.
+---@param weight number
+---@param lowerBound number
+---@param upperBound number
+---@return number
+function math.lerp(weight, lowerBound, upperBound)
+    return upperBound * weight + lowerBound * (1 - weight)
+end
 ---Returns the weight of a number between `lowerBound` and `upperBound`.
 ---@param num number
 ---@param lowerBound number
@@ -114,6 +183,11 @@ function matrix.solve(mtrx, vctr)
         end
     end
     return table.unpack(table.property(augMtrx, #mtrx + 1))
+end
+function matrix.swapRows(mtrx, rowIdx1, rowIdx2)
+    local temp = mtrx[rowIdx1]
+    mtrx[rowIdx1] = mtrx[rowIdx2]
+    mtrx[rowIdx2] = temp
 end
 ---Rounds a number to a given amount of decimal places.
 ---@param number number
@@ -899,15 +973,9 @@ function loadDefaultProperties(defaultProperties)
         for settingName, settingValue in pairs(tbl) do
             local defaultTable = DEFAULT_STARTING_MENU_VARS[label]
             if (not defaultTable) then break end
-            local defaultSetting = defaultTable[settingName]
-            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+            local defaultSetting = parseProperty(settingValue, defaultTable[settingName])
+            if (not defaultSetting) then
                 goto skipSetting
-            end
-            if (type(defaultSetting) == "number") then
-                settingValue = math.toNumber(settingValue)
-            end
-            if (type(defaultSetting) == "boolean") then
-                settingValue = truthy(settingValue)
             end
             DEFAULT_STARTING_MENU_VARS[label][settingName] = settingValue
             ::skipSetting::
@@ -918,21 +986,26 @@ function loadDefaultProperties(defaultProperties)
         for settingName, settingValue in pairs(tbl) do
             local defaultTable = DEFAULT_STARTING_SETTING_VARS[label]
             if (not defaultTable) then break end
-            local defaultSetting = defaultTable[settingName]
-            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+            local defaultSetting = parseProperty(settingValue, defaultTable[settingName])
+            if (not defaultSetting) then
                 goto skipSetting
-            end
-            if (type(defaultSetting) == "number") then
-                settingValue = math.toNumber(settingValue)
-            end
-            if (type(defaultSetting) == "boolean") then
-                settingValue = truthy(settingValue)
             end
             DEFAULT_STARTING_SETTING_VARS[label][settingName] = settingValue
             ::skipSetting::
         end
     end
     globalVars.defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
+end
+function parseProperty(v, default)
+    if (not default or type(default) == "table" or type(default) == "userdata") then
+        return nil
+    end
+    if (type(default) == "number") then
+        return math.toNumber(v)
+    end
+    if (type(default) == "boolean") then
+        return truthy(v)
+    end
 end
 globalVars = {
     stepSize = 5,
@@ -3302,6 +3375,13 @@ function drawCapybara312()
     o.AddCircleFilled(p26, eyeRadius, outlineColor, numSements)
     o.AddCircleFilled(p27, eyeRadius, outlineColor, numSements)
 end
+function drawHorizontalPillShape(o, point1, point2, radius, color, circleSegments)
+    o.AddCircleFilled(point1, radius, color, circleSegments)
+    o.AddCircleFilled(point2, radius, color, circleSegments)
+    local rectangleStartCoords = relativePoint(point1, 0, radius)
+    local rectangleEndCoords = relativePoint(point2, 0, -radius)
+    o.AddRectFilled(rectangleStartCoords, rectangleEndCoords, color)
+end
 function drawCursorTrail()
     local o = imgui.GetForegroundDrawList()
     local m = imgui.GetMousePos()
@@ -3320,7 +3400,7 @@ function drawSnakeTrail(o, m, t)
     local snakeTrailPoints = {}
     initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
     getVariables("snakeTrailPoints", snakeTrailPoints)
-    local needTrailUpdate = checkIfFrameChanged(t, globalVars.effectFPS)
+    local needTrailUpdate = clock.listen("snakeTrail", 1000 / globalVars.effectFPS)
     updateSnakeTrailPoints(snakeTrailPoints, needTrailUpdate, m, trailPoints,
         globalVars.snakeSpringConstant)
     saveVariables("snakeTrailPoints", snakeTrailPoints)
@@ -3506,6 +3586,49 @@ function generateParticle(x, y, xRange, yRange, endTime, showParticle)
         showParticle = showParticle
     }
     return particle
+end
+function checkIfMouseMoved(currentMousePosition)
+    local oldMousePosition = vector2(0)
+    getVariables("oldMousePosition", oldMousePosition)
+    local mousePositionChanged = currentMousePosition ~= oldMousePosition
+    saveVariables("oldMousePosition", currentMousePosition)
+    return mousePositionChanged
+end
+function drawEquilateralTriangle(o, centerPoint, size, angle, color)
+    local angle2 = 2 * math.pi / 3 + angle
+    local angle3 = 4 * math.pi / 3 + angle
+    local x1 = centerPoint.x + size * math.cos(angle)
+    local y1 = centerPoint.y + size * math.sin(angle)
+    local x2 = centerPoint.x + size * math.cos(angle2)
+    local y2 = centerPoint.y + size * math.sin(angle2)
+    local x3 = centerPoint.x + size * math.cos(angle3)
+    local y3 = centerPoint.y + size * math.sin(angle3)
+    local p1 = vector.New(x1, y1)
+    local p2 = vector.New(x2, y2)
+    local p3 = vector.New(x3, y3)
+    o.AddTriangleFilled(p1, p2, p3, color)
+end
+function drawGlare(o, coords, size, glareColor, auraColor)
+    local outerRadius = size
+    local innerRadius = outerRadius / 7
+    local innerPoints = {}
+    local outerPoints = {}
+    for i = 1, 4 do
+        local angle = math.pi * ((2 * i + 1) / 4)
+        local innerX = innerRadius * math.cos(angle)
+        local innerY = innerRadius * math.sin(angle)
+        local outerX = outerRadius * innerX
+        local outerY = outerRadius * innerY
+        innerPoints[i] = { innerX + coords.x, innerY + coords.y }
+        outerPoints[i] = { outerX + coords.x, outerY + coords.y }
+    end
+    o.AddQuadFilled(innerPoints[1], outerPoints[2], innerPoints[3], outerPoints[4], glareColor)
+    o.AddQuadFilled(outerPoints[1], innerPoints[2], outerPoints[3], innerPoints[4], glareColor)
+    local circlePoints = 20
+    local circleSize1 = size / 1.2
+    local circleSize2 = size / 3
+    o.AddCircleFilled(coords, circleSize1, auraColor, circlePoints)
+    o.AddCircleFilled(coords, circleSize2, auraColor, circlePoints)
 end
 function setClassicColors()
     local borderColor = vector.New(0.81, 0.88, 1.00, 0.30)
@@ -4387,6 +4510,8 @@ function Combo(label, list, listIndex, colorList, hiddenGroups)
     imgui.EndCombo()
     return newListIndex
 end
+function BasicInputFloat(label, var, decimalPlaces, suffix, step)
+end
 function ComputableInputFloat(label, var, decimalPlaces, suffix)
     local computableStateIndex = state.GetValue("ComputableInputFloatIndex") or 1
     local previousValue = var
@@ -4555,6 +4680,7 @@ function HelpMarker(text)
     imgui.TextDisabled("(?)")
     ToolTip(text)
 end
+devMode = true
 function checkEnoughSelectedNotes(minimumNotes)
     if minimumNotes == 0 then return true end
     local selectedNotes = state.SelectedHitObjects
@@ -4590,71 +4716,10 @@ function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce
     end
 end
 function coordsRelativeToWindow(x, y)
-    local newX = x + imgui.GetWindowPos()[1]
-    local newY = y + imgui.GetWindowPos()[2]
-    return { newX, newY }
+    return vector.New(x, y) + imgui.GetWindowPos()
 end
 function relativePoint(point, xChange, yChange)
     return { point[1] + xChange, point[2] + yChange }
-end
-function checkIfFrameChanged(currentTime, fps)
-    local oldFrameInfo = { frameNumber = 0 }
-    getVariables("oldFrameInfo", oldFrameInfo)
-    local newFrameNumber = math.floor(currentTime * fps) % fps
-    local frameChanged = oldFrameInfo.frameNumber ~= newFrameNumber
-    oldFrameInfo.frameNumber = newFrameNumber
-    saveVariables("oldFrameInfo", oldFrameInfo)
-    return frameChanged
-end
-function checkIfMouseMoved(currentMousePosition)
-    local oldMousePosition = vector2(0)
-    getVariables("oldMousePosition", oldMousePosition)
-    local mousePositionChanged = currentMousePosition ~= oldMousePosition
-    saveVariables("oldMousePosition", currentMousePosition)
-    return mousePositionChanged
-end
-function drawEquilateralTriangle(o, centerPoint, size, angle, color)
-    local angle2 = 2 * math.pi / 3 + angle
-    local angle3 = 4 * math.pi / 3 + angle
-    local x1 = centerPoint.x + size * math.cos(angle)
-    local y1 = centerPoint.y + size * math.sin(angle)
-    local x2 = centerPoint.x + size * math.cos(angle2)
-    local y2 = centerPoint.y + size * math.sin(angle2)
-    local x3 = centerPoint.x + size * math.cos(angle3)
-    local y3 = centerPoint.y + size * math.sin(angle3)
-    local p1 = vector.New(x1, y1)
-    local p2 = vector.New(x2, y2)
-    local p3 = vector.New(x3, y3)
-    o.AddTriangleFilled(p1, p2, p3, color)
-end
-function drawGlare(o, coords, size, glareColor, auraColor)
-    local outerRadius = size
-    local innerRadius = outerRadius / 7
-    local innerPoints = {}
-    local outerPoints = {}
-    for i = 1, 4 do
-        local angle = math.pi * ((2 * i + 1) / 4)
-        local innerX = innerRadius * math.cos(angle)
-        local innerY = innerRadius * math.sin(angle)
-        local outerX = outerRadius * innerX
-        local outerY = outerRadius * innerY
-        innerPoints[i] = { innerX + coords.x, innerY + coords.y }
-        outerPoints[i] = { outerX + coords.x, outerY + coords.y }
-    end
-    o.AddQuadFilled(innerPoints[1], outerPoints[2], innerPoints[3], outerPoints[4], glareColor)
-    o.AddQuadFilled(outerPoints[1], innerPoints[2], outerPoints[3], innerPoints[4], glareColor)
-    local circlePoints = 20
-    local circleSize1 = size / 1.2
-    local circleSize2 = size / 3
-    o.AddCircleFilled(coords, circleSize1, auraColor, circlePoints)
-    o.AddCircleFilled(coords, circleSize2, auraColor, circlePoints)
-end
-function drawHorizontalPillShape(o, point1, point2, radius, color, circleSegments)
-    o.AddCircleFilled(point1, radius, color, circleSegments)
-    o.AddCircleFilled(point2, radius, color, circleSegments)
-    local rectangleStartCoords = relativePoint(point1, 0, radius)
-    local rectangleEndCoords = relativePoint(point2, 0, -radius)
-    o.AddRectFilled(rectangleStartCoords, rectangleEndCoords, color)
 end
 CREATE_TYPES = {
     "Standard",
@@ -4893,6 +4958,9 @@ function addSelectedNoteTimesToList(menuVars)
     end
     menuVars.noteTimes = table.dedupe(menuVars.noteTimes)
     menuVars.noteTimes = sort(menuVars.noteTimes, sortAscending)
+end
+function animationPaletteMenu(settingVars)
+    CodeInput(settingVars, "instructions", "", "Write instructions here.")
 end
 function automateSVMenu(settingVars)
     local copiedSVCount = #settingVars.copiedSVs
@@ -7281,6 +7349,26 @@ function hexaToRgba(hexa)
     end
     return table.vectorize4(rgbaTable)
 end
+function rgbaToHsva(r, g, b, a)
+    local colPrime = { r / 255, g / 255, b / 255 }
+    local cMax = math.max(table.unpack(colPrime))
+    local cMin = math.min(table.unpack(colPrime))
+    local delta = cMax - cMin
+    local maxIdx = 1
+    local higherVal = colPrime[2]
+    local lowerVal = colPrime[3]
+    for i = 2, 3 do
+        if (colPrime[i] == cMax) then
+            maxIdx = i
+            higherVal = colPrime[i % 3 + 1]
+            lowerVal = colPrime[(i + 1) % 3 + 1]
+        end
+    end
+    local h = 60 * ((higherVal - lowerVal) / delta * (2 * maxIdx - 2)) % 6
+    local s = truthy(cMax) and delta / cMax or 0
+    local v = cMax
+    return vector.New(h, s, v, a)
+end
 function calculateDisplacementsFromNotes(noteOffsets, noteSpacing)
     local totalDisplacement = 0
     local displacements = { 0 }
@@ -7878,6 +7966,22 @@ function getHypotheticalSVMultiplierAt(svs, offset)
     end
     return 1
 end
+---Returns the SV time in a given array of SVs.
+---@param svs ScrollVelocity[]
+---@param offset number
+---@return number
+function getHypotheticalSVTimeAt(svs, offset)
+    if (#svs == 1) then return svs[1].StartTime end
+    local index = #svs
+    while (index >= 1) do
+        if (svs[index].StartTime > offset) then
+            index = index - 1
+        else
+            return svs[index].StartTime
+        end
+    end
+    return -69
+end
 function getSVStartTimeAt(offset)
     local sv = map.GetScrollVelocityAt(offset)
     if sv then return sv.StartTime end
@@ -8182,6 +8286,40 @@ function plotExponentialCurvature(settingVars)
         else
             value = (1 - (1 - t) ^ (1 / curvature))
         end
+        if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 1 - value
+        elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then
+            value = 0.5
+        end
+        values:insert(value)
+    end
+    imgui.PlotLines("##CurvaturePlot", values, #values, 0, "", 0, 1)
+    imgui.PopStyleColor()
+    imgui.PopItemWidth()
+end
+function plotSigmoidalCurvature(settingVars)
+    imgui.PushItemWidth(28)
+    imgui.PushStyleColor(imgui_col.FrameBg, 0)
+    local RESOLUTION = 32
+    local values = table.construct()
+    for i = 1, RESOLUTION do
+        local curvature = VIBRATO_CURVATURES[settingVars.curvatureIndex]
+        local t = i / RESOLUTION * 2
+        local value = t
+        if (curvature >= 1) then
+            if (t <= 1) then
+                value = t ^ curvature
+            else
+                value = 2 - (2 - t) ^ curvature
+            end
+        else
+            if (t <= 1) then
+                value = (1 - (1 - t) ^ (1 / curvature))
+            else
+                value = (t - 1) ^ (1 / curvature) + 1
+            end
+        end
+        value = value / 2
         if ((settingVars.startMsx or settingVars.lowerStart) > (settingVars.endMsx or settingVars.lowerEnd)) then
             value = 1 - value
         elseif ((settingVars.startMsx or settingVars.lowerStart) == (settingVars.endMsx or settingVars.lowerEnd)) then

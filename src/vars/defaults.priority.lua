@@ -5,15 +5,9 @@ function loadDefaultProperties(defaultProperties)
         for settingName, settingValue in pairs(tbl) do
             local defaultTable = DEFAULT_STARTING_MENU_VARS[label]
             if (not defaultTable) then break end
-            local defaultSetting = defaultTable[settingName]
-            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+            local defaultSetting = parseProperty(settingValue, defaultTable[settingName])
+            if (not defaultSetting) then
                 goto skipSetting
-            end
-            if (type(defaultSetting) == "number") then
-                settingValue = math.toNumber(settingValue)
-            end
-            if (type(defaultSetting) == "boolean") then
-                settingValue = truthy(settingValue)
             end
             DEFAULT_STARTING_MENU_VARS[label][settingName] = settingValue
             ::skipSetting::
@@ -24,19 +18,25 @@ function loadDefaultProperties(defaultProperties)
         for settingName, settingValue in pairs(tbl) do
             local defaultTable = DEFAULT_STARTING_SETTING_VARS[label]
             if (not defaultTable) then break end
-            local defaultSetting = defaultTable[settingName]
-            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+            local defaultSetting = parseProperty(settingValue, defaultTable[settingName])
+            if (not defaultSetting) then
                 goto skipSetting
-            end
-            if (type(defaultSetting) == "number") then
-                settingValue = math.toNumber(settingValue)
-            end
-            if (type(defaultSetting) == "boolean") then
-                settingValue = truthy(settingValue)
             end
             DEFAULT_STARTING_SETTING_VARS[label][settingName] = settingValue
             ::skipSetting::
         end
     end
     globalVars.defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
+end
+
+function parseProperty(v, default)
+    if (not default or type(default) == "table" or type(default) == "userdata") then
+        return nil
+    end
+    if (type(default) == "number") then
+        return math.toNumber(v)
+    end
+    if (type(default) == "boolean") then
+        return truthy(v)
+    end
 end
