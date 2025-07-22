@@ -280,3 +280,19 @@ function drawCapybara312()
     o.AddCircleFilled(p26, eyeRadius, outlineColor, numSements)
     o.AddCircleFilled(p27, eyeRadius, outlineColor, numSements)
 end
+
+-- Draws a horizontal pill shape
+-- Parameters
+--    o              : imgui overlay drawlist [imgui.GetForegroundDrawList()]
+--    point1         : (x, y) coordiates of the center of the pill's first circle [Table]
+--    point2         : (x, y) coordiates of the center of the pill's second circle [Table]
+--    radius         : radius of the circle of the pill [Int/Float]
+--    color          : color of the pill represented as a uint [Int]
+--    circleSegments : number of segments to draw for the circles in the pill [Int]
+function drawHorizontalPillShape(o, point1, point2, radius, color, circleSegments)
+    o.AddCircleFilled(point1, radius, color, circleSegments)
+    o.AddCircleFilled(point2, radius, color, circleSegments)
+    local rectangleStartCoords = relativePoint(point1, 0, radius)
+    local rectangleEndCoords = relativePoint(point2, 0, -radius)
+    o.AddRectFilled(rectangleStartCoords, rectangleEndCoords, color)
+end

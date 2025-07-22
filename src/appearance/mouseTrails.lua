@@ -309,3 +309,74 @@ function generateParticle(x, y, xRange, yRange, endTime, showParticle)
     }
     return particle
 end
+
+--[[ may implement in the future when making mouse click effects
+function  checkIfMouseClicked()
+    local mouseDownBefore = state.GetValue("wasMouseDown")
+    local mouseDownNow = imgui.IsAnyMouseDown()
+    state.SetValue("wasMouseDown", mouseDownNow)
+    return (not mouseDownBefore) and mouseDownNow
+end
+--]]
+-- Checks and returns whether or not the mouse position has changed [Boolean]
+-- Parameters
+--    currentMousePosition : current (x, y) coordinates of the mouse [Table]
+function checkIfMouseMoved(currentMousePosition)
+    local oldMousePosition = vector2(0)
+    getVariables("oldMousePosition", oldMousePosition)
+    local mousePositionChanged = currentMousePosition ~= oldMousePosition
+    saveVariables("oldMousePosition", currentMousePosition)
+    return mousePositionChanged
+end
+
+-- Draws an equilateral triangle
+-- Parameters
+--    o           : imgui overlay drawlist [imgui.GetForegroundDrawList()]
+--    centerPoint : center point of the triangle [Table]
+--    size        : radius from triangle center to tip [Int/Float]
+--    angle       : rotation angle of the triangle [Int/Float]
+--    color       : color of the triangle represented as a uint [Int]
+function drawEquilateralTriangle(o, centerPoint, size, angle, color)
+    local angle2 = 2 * math.pi / 3 + angle
+    local angle3 = 4 * math.pi / 3 + angle
+    local x1 = centerPoint.x + size * math.cos(angle)
+    local y1 = centerPoint.y + size * math.sin(angle)
+    local x2 = centerPoint.x + size * math.cos(angle2)
+    local y2 = centerPoint.y + size * math.sin(angle2)
+    local x3 = centerPoint.x + size * math.cos(angle3)
+    local y3 = centerPoint.y + size * math.sin(angle3)
+    local p1 = vector.New(x1, y1)
+    local p2 = vector.New(x2, y2)
+    local p3 = vector.New(x3, y3)
+    o.AddTriangleFilled(p1, p2, p3, color)
+end
+
+-- Draws a single glare
+-- Parameters
+--    o          : [imgui overlay drawlist]
+--    coords     : (x, y) coordinates of the glare [Int/Float]
+--    size       : size of the glare [Int/Float]
+--    glareColor : uint color of the glare [Int]
+--    auraColor  : uint color of the aura of the glare [Int]
+function drawGlare(o, coords, size, glareColor, auraColor)
+    local outerRadius = size
+    local innerRadius = outerRadius / 7
+    local innerPoints = {}
+    local outerPoints = {}
+    for i = 1, 4 do
+        local angle = math.pi * ((2 * i + 1) / 4)
+        local innerX = innerRadius * math.cos(angle)
+        local innerY = innerRadius * math.sin(angle)
+        local outerX = outerRadius * innerX
+        local outerY = outerRadius * innerY
+        innerPoints[i] = { innerX + coords.x, innerY + coords.y }
+        outerPoints[i] = { outerX + coords.x, outerY + coords.y }
+    end
+    o.AddQuadFilled(innerPoints[1], outerPoints[2], innerPoints[3], outerPoints[4], glareColor)
+    o.AddQuadFilled(outerPoints[1], innerPoints[2], outerPoints[3], innerPoints[4], glareColor)
+    local circlePoints = 20
+    local circleSize1 = size / 1.2
+    local circleSize2 = size / 3
+    o.AddCircleFilled(coords, circleSize1, auraColor, circlePoints)
+    o.AddCircleFilled(coords, circleSize2, auraColor, circlePoints)
+end
