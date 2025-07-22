@@ -10,7 +10,7 @@ function table.duplicate(tbl)
             table.insert(dupeTbl, type(value) == "table" and table.duplicate(value) or value)
         end
     else
-        for _, key in pairs(table.keys(tbl)) do
+        for _, key in ipairs(table.keys(tbl)) do
             local value = tbl[key]
             dupeTbl[key] = type(value) == "table" and table.duplicate(value) or value
         end

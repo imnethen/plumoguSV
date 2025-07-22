@@ -22,7 +22,7 @@ function svVibrato(menuVars, heightFunc)
             for tp = 1, teleportCount do
                 local x = (tp - 1) / (teleportCount)
                 local offset = next * x + start * (1 - x)
-                local height = heightFunc(((math.floor((tp - 1) / 2) * 2) / (teleportCount - 2)) * posDifference +
+                local height = heightFunc(((math.floor((tp - 1) * 0.5) * 2) / (teleportCount - 2)) * posDifference +
                     startPos, tp)
                 if (tp % 2 == 1) then
                     height = -height

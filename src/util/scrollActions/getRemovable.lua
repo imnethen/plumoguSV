@@ -5,7 +5,7 @@
 --    startOffset   : starting offset to remove after [Int]
 --    endOffset     : end offset to remove before [Int]
 function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, retroactiveSVRemovalTable)
-    for _, sv in pairs(map.ScrollVelocities) do
+    for _, sv in ipairs(map.ScrollVelocities) do
         local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
         if svIsInRange then
             local svIsRemovable = svTimeIsAdded[sv.StartTime]

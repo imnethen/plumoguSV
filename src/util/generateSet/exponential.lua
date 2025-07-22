@@ -10,7 +10,7 @@ function generateExponentialSet(behavior, numValues, avgValue, intensity, vertic
     local exponentialIncrease = (behavior == "Speed up")
     local exponentialSet = {}
     -- reduce intensity scaling to produce more useful/practical values
-    intensity = intensity / 5
+    intensity = intensity * 0.2
     for i = 0, numValues - 1 do
         local x
         if exponentialIncrease then
@@ -31,7 +31,7 @@ end
 function generateExponentialSet2(behavior, numValues, startValue, endValue, intensity)
     local exponentialSet = {}
     -- reduce intensity scaling to produce more useful/practical values
-    intensity = intensity / 5
+    intensity = intensity * 0.2
     if (behavior == "Slow down" and startValue ~= endValue) then
         local temp = startValue
         startValue = endValue

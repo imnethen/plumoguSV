@@ -12,7 +12,7 @@ stars = {}
 function updateStars()
     local dim = imgui.GetWindowSize()
 
-    for _, star in pairs(stars) do
+    for _, star in ipairs(stars) do
         local starWrapped = false
         while (star.pos.x > dim.x + 10) do
             starWrapped = true
@@ -25,9 +25,9 @@ function updateStars()
         if (starWrapped) then
             star.pos.y = math.random() * dim.y
             star.v.x = math.random() * 3 + 1
-            star.size = math.random(3) / 2
+            star.size = math.random(3) * 0.5
         else
-            star.pos = star.pos + star.v * state.DeltaTime / 20 *
+            star.pos = star.pos + star.v * state.DeltaTime * 0.05 *
                 math.clamp(2 * getSVMultiplierAt(state.SongTime), -50, 50)
         end
     end
@@ -46,14 +46,14 @@ function renderBackground()
                 {
                     pos = vector.New(math.random() * 500, math.random() * 500),
                     v = vector.New(math.random() * 3 + 1, 0),
-                    size = math.random(3) / 2
+                    size = math.random(3) * 0.5
                 })
         end
     else
         updateStars()
     end
 
-    for _, star in pairs(stars) do
+    for _, star in ipairs(stars) do
         local progress = star.pos.x / dim.x
         local brightness = math.clamp(-8 * progress * (progress - 1), 0, 1)
         ctx.AddCircleFilled(star.pos + topLeft, star.size, rgbaToUint(255, 255, 255, math.floor(255 * brightness)))
@@ -65,9 +65,9 @@ function renderBackground()
     local darkRed = rgbaToUint(colorValue, 0, 0, 150)
     local transparent = rgbaToUint(0, 0, 0, 0)
 
-    ctx.AddRectFilledMultiColor(topLeft, vector.New(topLeft.x + dim.x / 5, topLeft.y + dim.y), darkPurple, transparent,
+    ctx.AddRectFilledMultiColor(topLeft, vector.New(topLeft.x + dim.x * 0.2, topLeft.y + dim.y), darkPurple, transparent,
         transparent, darkPurple)
 
-    ctx.AddRectFilledMultiColor(topLeft + dim - vector.New(dim.x / 5, dim.y), topLeft + dim, transparent, darkRed,
+    ctx.AddRectFilledMultiColor(topLeft + dim - vector.New(dim.x * 0.2, dim.y), topLeft + dim, transparent, darkRed,
         darkRed, transparent)
 end

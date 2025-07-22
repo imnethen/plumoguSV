@@ -16,9 +16,9 @@ end
 ---@param num integer The number of entries to put into the table.
 ---@return T[] tbl A table with the given entries.
 function table.constructRepeating(item, num)
-    local tbl = table.construct()
+    local tbl = {}
     for _ = 1, num do
-        tbl:insert(item)
+        table.insert(tbl, item)
     end
     return tbl
 end

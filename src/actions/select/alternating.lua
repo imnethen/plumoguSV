@@ -5,7 +5,7 @@ function selectAlternating(menuVars)
     local endOffset = offsets[#offsets]
     local notes = getNotesBetweenOffsets(startOffset, endOffset)
     local times = {}
-    for _, ho in pairs(notes) do
+    for _, ho in ipairs(notes) do
         table.insert(times, ho.StartTime)
     end
     times = table.dedupe(times)
@@ -18,7 +18,7 @@ function selectAlternating(menuVars)
     local notesToSelect = {}
     local currentTime = allowedTimes[1]
     local index = 2
-    for _, note in pairs(notes) do
+    for _, note in ipairs(notes) do
         if (note.StartTime > currentTime and index <= #allowedTimes) then
             currentTime = allowedTimes[index]
             index = index + 1

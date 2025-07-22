@@ -7,7 +7,7 @@
 ---@return V
 function table.reduce(tbl, fn, initialValue)
     local accumulator = initialValue
-    for _, v in pairs(tbl) do
+    for _, v in ipairs(tbl) do
         accumulator = fn(accumulator, v)
     end
 

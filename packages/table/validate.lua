@@ -10,8 +10,8 @@ require("packages.table.contains")
 function table.validate(checkList, tbl, extrapolateData)
     local validKeys = table.keys(checkList)
     local tableKeys = table.keys(tbl)
-    local outputTable = table.construct()
-    for _, key in pairs(validKeys) do
+    local outputTable = {}
+    for _, key in ipairs(validKeys) do
         if (table.contains(tableKeys, key)) then
             outputTable[key] = tbl[key]
         end

@@ -61,7 +61,7 @@ function scaleMultiplySVs(menuVars)
         elseif scaleType == "Absolute Distance" then
             scalingFactor = menuVars.distance / currentDistance
         end
-        for _, sv in pairs(svsBetweenOffsets) do
+        for _, sv in ipairs(svsBetweenOffsets) do
             local newSVMultiplier = scalingFactor * sv.Multiplier
             addSVToList(svsToAdd, sv.StartTime, newSVMultiplier, true)
         end

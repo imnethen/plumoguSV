@@ -5,8 +5,8 @@ require("packages.table.construct")
 ---@param fn fun(element: T): T
 ---@return T[]
 function table.map(tbl, fn)
-    local newTbl = table.construct()
-    for _, v in pairs(tbl) do
+    local newTbl = {}
+    for _, v in ipairs(tbl) do
         table.insert(newTbl, fn(v))
     end
 

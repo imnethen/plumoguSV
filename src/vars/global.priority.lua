@@ -69,7 +69,14 @@ function setGlobalVars(tempGlobalVars)
     globalVars.advancedMode = truthy(tempGlobalVars.advancedMode)
     globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
     globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
+<<<<<<< HEAD:src/vars/global.priority.lua
     globalVars.hotkeyList = table.validate(DEFAULT_HOTKEY_LIST, table.duplicate(tempGlobalVars.hotkeyList), true)
     globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
+=======
+    globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
+    GLOBAL_HOTKEY_LIST = (tempGlobalVars.hotkeyList and truthy(#tempGlobalVars.hotkeyList)) and tempGlobalVars
+        .hotkeyList or table.duplicate(DEFAULT_HOTKEY_LIST)
+    globalVars.customStyle = tempGlobalVars.customStyle or {}
+>>>>>>> performance:src/vars/global.lua
     globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
 end

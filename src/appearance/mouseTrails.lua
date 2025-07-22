@@ -108,7 +108,7 @@ function drawTriangleTrailPoint(o, m, point, cursorTrailSize, color)
     local dx = m.x - point.x
     local dy = m.y - point.y
     if dx == 0 and dy == 0 then return end
-    local angle = math.pi / 2
+    local angle = math.pi * 0.5
     if dx ~= 0 then angle = math.atan(dy / dx) end
     if dx < 0 then angle = angle + math.pi end
     if dx == 0 and dy < 0 then angle = angle + math.pi end

@@ -49,7 +49,7 @@ function scalePercent(settingVars, percent)
         newPercent = b + 1 - math.sqrt(radicand)
     elseif scaleType == "Sine Power" then
         local exponent = math.log(a + 1)
-        local base = math.sin(math.pi * (workingPercent - 1) / 2) + 1
+        local base = math.sin(math.pi * (workingPercent - 1) * 0.5) + 1
         newPercent = workingPercent * (base ^ exponent)
     elseif scaleType == "Arc Sine Power" then
         local exponent = math.log(a + 1)

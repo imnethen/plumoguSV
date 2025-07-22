@@ -7,7 +7,7 @@ function verticalShiftSVs(menuVars)
     local svsToRemove = getSVsBetweenOffsets(startOffset, endOffset)
     local svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
     addStartSVIfMissing(svsBetweenOffsets, startOffset)
-    for _, sv in pairs(svsBetweenOffsets) do
+    for _, sv in ipairs(svsBetweenOffsets) do
         local newSVMultiplier = sv.Multiplier + menuVars.verticalShift
         addSVToList(svsToAdd, sv.StartTime, newSVMultiplier, true)
     end

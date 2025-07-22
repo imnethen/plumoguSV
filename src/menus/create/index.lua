@@ -7,7 +7,7 @@ CREATE_TYPES = { -- general categories of SVs to place
 
 function createSVTab()
     if (globalVars.advancedMode) then chooseCurrentScrollGroup() end
-    choosePlaceSVType()
+    chooseCreateTool()
     local placeType = CREATE_TYPES[globalVars.placeTypeIndex]
     if placeType == "Standard" then placeStandardSVMenu() end
     if placeType == "Special" then placeSpecialSVMenu() end

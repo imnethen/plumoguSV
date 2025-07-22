@@ -18,7 +18,7 @@ function sigmoidalVibratoMenu(menuVars, settingVars, separateWindow)
                     t = (t - 1) ^ (1 / curvature) + 1
                 end
             end
-            t = t / 2
+            t = t * 0.5
         end
         AddSeparator()
 

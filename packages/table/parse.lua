@@ -34,11 +34,11 @@ function table.parse(str)
     end
 
     if (tableType == "arr") then
-        for _, v in pairs(terms) do
+        for _, v in ipairs(terms) do
             table.insert(tbl, table.parse(v))
         end
     else
-        for _, v in pairs(terms) do
+        for _, v in ipairs(terms) do
             local idx = v:find("=")
             tbl[v:sub(1, idx - 1)] = table.parse(v:sub(idx + 1))
         end

@@ -5,7 +5,7 @@
 ---@return number[]
 function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     local noteOffsetsBetween = {}
-    for _, ho in pairs(map.HitObjects) do
+    for _, ho in ipairs(map.HitObjects) do
         if ho.StartTime >= startOffset and ho.StartTime <= endOffset then
             local skipNote = false
             if (state.SelectedScrollGroupId ~= ho.TimingGroup and globalVars.ignoreNotesOutsideTg) then skipNote = true end

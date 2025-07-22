@@ -15,10 +15,10 @@ function changeGroups(menuVars)
 
     local oldGroup = state.SelectedScrollGroupId
 
-    for _, sv in pairs(svsToRemove) do
+    for _, sv in ipairs(svsToRemove) do
         table.insert(svsToAdd, createSV(sv.StartTime, sv.Multiplier))
     end
-    for _, ssf in pairs(ssfsToRemove) do
+    for _, ssf in ipairs(ssfsToRemove) do
         table.insert(ssfsToAdd, createSSF(ssf.StartTime, ssf.Multiplier))
     end
 

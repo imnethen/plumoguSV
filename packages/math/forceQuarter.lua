@@ -3,5 +3,5 @@ require("packages.math.round")
 ---@param number number
 ---@return number
 function math.quarter(number)
-    return math.round(number * 4) / 4
+    return math.round(number * 4) * 0.25
 end

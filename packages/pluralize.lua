@@ -10,19 +10,19 @@ function pluralize(str, val, pos)
         strEnding = str:sub(pos + 1, -1)
         str = str:sub(1, pos)
     end
-    local finalStr = str .. "s"
+    local finalStrTbl = { str, "s" }
     if (val == 1) then return str .. (strEnding or "") end
     local lastLetter = str:sub(-1):upper()
     local secondToLastLetter = str:charAt(-2):upper()
     if (lastLetter == "Y" and table.contains(CONSONANTS, secondToLastLetter)) then
-        finalStr = str:sub(1, -2) .. "ies"
+        finalStrTbl[2] = "ies"
     end
     if (str:sub(-3):lower() == "quy") then
-        finalStr = str:sub(1, -2) .. "ies"
+        finalStrTbl[2] = "ies"
     end
     if (table.contains({ "J", "S", "X", "Z" }, lastLetter) or table.contains({ "SH", "CH" }, str:sub(-2))) then
-        finalStr = str .. "es"
+        finalStrTbl[2] = "es"
     end
 
-    return finalStr .. (strEnding or "")
+    return table.concat(finalStrTbl) .. (strEnding or "")
 end

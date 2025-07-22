@@ -8,7 +8,7 @@ function selectByNoteType(menuVars)
 
     local notesToSelect = {}
 
-    for _, note in pairs(totalNotes) do
+    for _, note in ipairs(totalNotes) do
         if (note.EndTime == 0 and menuVars.rice) then table.insert(notesToSelect, note) end
         if (note.EndTime ~= 0 and menuVars.ln) then table.insert(notesToSelect, note) end
     end

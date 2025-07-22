@@ -26,7 +26,7 @@ REVERSE_COLOR_MAP = {
 function layerSnaps()
     local layerDict = {}
     local layerNames = table.property(map.EditorLayers, "Name")
-    for _, ho in pairs(uniqueNotesBetweenSelected()) do
+    for _, ho in ipairs(uniqueNotesBetweenSelected()) do
         local color = COLOR_MAP[getSnapFromTime(ho.StartTime)]
         if (ho.EditorLayer == 0) then
             layer = { Name = "Default", ColorRgb = "255,255,255", Hidden = false }
@@ -64,8 +64,8 @@ function collapseSnaps()
     local moveNoteActions = {}
     local removeLayerActions = {}
 
-    for _, ho in pairs(map.HitObjects) do
-        for _, tp in pairs(map.TimingPoints) do
+    for _, ho in ipairs(map.HitObjects) do
+        for _, tp in ipairs(map.TimingPoints) do
             if ho.StartTime - snapInterval <= tp.StartTime and tp.StartTime <= ho.StartTime + snapInterval then
                 table.insert(tpsToRemove, tp)
             end
@@ -115,7 +115,7 @@ end
 
 function clearSnappedLayers()
     local removeLayerActions = {}
-    for _, layer in pairs(map.EditorLayers) do
+    for _, layer in ipairs(map.EditorLayers) do
         if layer.Name:find("plumoguSV") then
             table.insert(removeLayerActions, utils.CreateEditorAction(action_type.RemoveLayer, layer))
         end

@@ -5,7 +5,7 @@
 --    avgValue         : average value [Int/Float]
 --    controlLastValue : whether or not the provided SV is the second SV [Boolean]
 function generateStutterSet(stutterValue, stutterDuration, avgValue, controlLastValue)
-    local durationPercent = stutterDuration / 100
+    local durationPercent = stutterDuration * 0.01
     if controlLastValue then durationPercent = 1 - durationPercent end
     local otherValue = (avgValue - stutterValue * durationPercent) / (1 - durationPercent)
     local stutterSet = { stutterValue, otherValue, avgValue }

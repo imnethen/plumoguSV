@@ -1,6 +1,6 @@
 function awake()
     local tempGlobalVars = read()
-    if (not tempGlobalVars) then tempGlobalVars = table.construct() end
+    if (not tempGlobalVars) then tempGlobalVars = {} end
 
     setGlobalVars(tempGlobalVars)
     loadDefaultProperties(tempGlobalVars.defaultProperties)

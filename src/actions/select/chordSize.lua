@@ -8,7 +8,7 @@ function selectByChordSizes(menuVars)
 
     local noteTimeTable = {}
 
-    for _, note in pairs(notes) do
+    for _, note in ipairs(notes) do
         table.insert(noteTimeTable, note.StartTime)
     end
 
@@ -21,10 +21,10 @@ function selectByChordSizes(menuVars)
         {}
     }
 
-    for _, time in pairs(noteTimeTable) do
+    for _, time in ipairs(noteTimeTable) do
         local size = 0
         local totalNotes = {}
-        for _, note in pairs(notes) do
+        for _, note in ipairs(notes) do
             if (math.abs(note.StartTime - time) < 3) then
                 size = size + 1
                 table.insert(totalNotes, note)

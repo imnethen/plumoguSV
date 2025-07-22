@@ -17,7 +17,7 @@ function dynamicScaleSVs(menuVars)
         --]]
         local targetDistance = targetAvgSV * (endOffset - startOffset)
         local scalingFactor = targetDistance / currentDistance
-        for _, sv in pairs(svsBetweenOffsets) do
+        for _, sv in ipairs(svsBetweenOffsets) do
             local newSVMultiplier = scalingFactor * sv.Multiplier
             addSVToList(svsToAdd, sv.StartTime, newSVMultiplier, true)
         end

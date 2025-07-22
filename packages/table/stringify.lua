@@ -10,7 +10,7 @@ function table.stringify(var)
     if (var[1] ~= nil) then
         if (not truthy(#var)) then return "[]" end
         local str = "["
-        for _, v in pairs(var) do
+        for _, v in ipairs(var) do
             str = str .. table.stringify(v) .. ","
         end
         return str:sub(1, -2) .. "]"

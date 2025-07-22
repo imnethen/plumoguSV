@@ -3,7 +3,10 @@
     "lowercase-global",
     "duplicate-set-field",
     "duplicate-doc-alias",
+<<<<<<< HEAD
     "unused-local",
+=======
+>>>>>>> performance
     "duplicate-doc-field"
 ],
 }

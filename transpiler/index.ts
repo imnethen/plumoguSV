@@ -17,7 +17,13 @@ export default async function transpiler(
     lint = true
 ) {
     let fileCount = 0;
+<<<<<<< HEAD
     let output = "";
+=======
+    let rootLocalCount = 0;
+
+    let output = '';
+>>>>>>> performance
 
     const separator = process.platform === "win32" ? "\\" : "/";
     const entryPoints = ["draw.lua", "awake.lua"];
@@ -46,6 +52,7 @@ export default async function transpiler(
             !file.endsWith(".lua")
         )
             return;
+<<<<<<< HEAD
         const fileData = readFileSync(file, "utf-8")
             .replaceAll(/( *)\<const\> */g, "$1")
             .replaceAll(/\-\-\[\[.*?\-\-\]\][ \r\n]*/gs, "")
@@ -57,12 +64,69 @@ export default async function transpiler(
                     "$1"
                 )
             ); // Removes <const> tag, removes --[[ --]] comments, removes double dash comments (not triple dash) from lines with code
+=======
+        let fileData = readFileSync(file, 'utf-8')
+            .replaceAll(/( *)\<const\> */g, '$1')
+            .replaceAll(/\-\-\[\[.*?\-\-\]\][ \r\n]*/gs, '')
+            .split('\n')
+            .map((l) => {
+                l = l.replace(/\s+$/, '');
+                l = l.replaceAll(
+                    /^([^\-\r\n]*)[\-]{2}([\-]{2,})?[^\-\r\n].+[ \r\n]*/g,
+                    '$1'
+                ); // Removes <const> tag, removes --[[ --]] comments, removes double dash comments (not triple dash) from lines with code
+                l = l.replaceAll(
+                    /table\.insert\(([a-zA-Z0-9\[\]_\.]+), ([^,\r\n]+)\)( end)?$/g,
+                    '$1[$1 + 1] = $2$3'
+                ); // Replace table insert for performance
+                l = l.replaceAll(
+                    /^function ([a-zA-Z0-9_]+)\(/g,
+                    'local function $1('
+                ); // Reduce global hashmap size with local root functions
+                l = l.replaceAll(/^(?!local)([a-z0-9_]+) = /g, `local $1 = `); // Reduce global hashmap size with local root variables
+                return l;
+            });
+
+        fileData.forEach((line, idx) => {
+            if (!/^local/.test(line)) return;
+            rootLocalCount++;
+            if (rootLocalCount > 200) {
+                fileData[idx] = line.replace(/^local /, '');
+            }
+        }); // Limit root locals to 200 due to lua restriction
+
+>>>>>>> performance
         output = `${output}\n${fileData
             .map((str) => str.replace(/\s+$/, ""))
             .filter((str) => str)
             .join("\n")}`;
         fileCount++;
     });
+
+    output = output.replaceAll(
+        /\("([^"]+?)" \.\. (.+) \.\. (.+)\)/g,
+        '(table.concat({"$1", $2, $3}))'
+    ); // Remove double string concats with table
+
+    output = output.replaceAll(
+        /\(("[a-z]!"), "([^"]+?)" \.\. (.+) \.\. (.+)\)/g,
+        '($1, table.concat({"$2", $3, $4}))'
+    ); // Same as above, but with notification type parameter
+
+    output = output.replaceAll(
+        /for _, ([a-zA-Z0-9_]+) in ipairs\(([a-zA-Z0-9_\.\(\), ]+)\) do\n( *)/g,
+        'for k = 1, #$2 do\n$3local $1 = $2[k]\n$3'
+    ); // Reduce function overhead by removing ipairs
+
+    for (let i = 2; i <= 9; i++) {
+        const regex = new RegExp(` ([^\\)]) \\^ ${i}`, 'g');
+        output = output.replaceAll(
+            regex,
+            ` $1${Array(i - 1)
+                .fill(' * $1')
+                .join('')}`
+        );
+    } // Remove integer exponentiation and replace with repeated multiplication
 
     if (fuckify) output = fuckifyOutput(output);
 
@@ -72,7 +136,11 @@ export default async function transpiler(
 
         let [functions, fnIndices] = getFunctionList(splitOutput);
         functions = functions.filter((fn, idx) => {
+<<<<<<< HEAD
             const cond = fn.startsWith("string") || fn.startsWith("table");
+=======
+            const cond = fn.startsWith('string') || fn.startsWith('table');
+>>>>>>> performance
             if (cond) fnIndices.splice(idx, 1);
             return !cond;
         });
@@ -87,7 +155,7 @@ export default async function transpiler(
             while (/^---/.test(splitOutput[startIdx - 1]) && startIdx > 0)
                 startIdx--;
             while (!/^end/.test(splitOutput[endIdx])) endIdx++;
-            splitOutput.splice(startIdx, endIdx - startIdx + 1);
+            // splitOutput.splice(startIdx, endIdx - startIdx + 1);
         });
 
         output = splitOutput.join("\n");

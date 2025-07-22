@@ -10,7 +10,7 @@ function generateCircularSet(behavior, arcPercent, avgValue, verticalShift, numV
                              dontNormalize)
     local increaseValues = (behavior == "Speed up")
     avgValue = avgValue - verticalShift
-    local startingAngle = math.pi * (arcPercent / 100)
+    local startingAngle = math.pi * (arcPercent * 0.01)
     local angles = generateLinearSet(startingAngle, 0, numValues)
     local yCoords = {}
     for i = 1, #angles do

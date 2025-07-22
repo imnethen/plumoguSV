@@ -10,7 +10,7 @@ function automateCopySVs(settingVars)
         return
     end
     local firstSVTime = svs[1].StartTime
-    for _, sv in pairs(getSVsBetweenOffsets(startOffset, endOffset)) do
+    for _, sv in ipairs(getSVsBetweenOffsets(startOffset, endOffset)) do
         local copiedSV = {
             relativeOffset = sv.StartTime - firstSVTime,
             multiplier = sv.Multiplier
