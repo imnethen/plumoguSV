@@ -47,6 +47,10 @@ function renderPresetMenu(menuLabel, menuVars, settingVars)
             saveVariables("place" .. preset.menu .. "Menu", preset.data.menuVars)
             globalVars.showPresetMenu = false
         end
+        if (imgui.IsItemClicked("Right")) then
+            table.remove(globalVars.presets, idx)
+            write(globalVars)
+        end
     end
 
     imgui.SetColumnWidth(0, 100)
