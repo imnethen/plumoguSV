@@ -34,7 +34,7 @@ function initializeNoteLockMode()
             if (not table.contains(allowedIndices, actionIndex)) then return end
             action.Undo()
         end
-        if (mode == 3) then         -- Only move notes
+        if (mode == 3) then -- Only move notes
             local allowedIndices = { 2, 5, 6, 7 }
             if (not table.contains(allowedIndices, actionIndex)) then return end
             action.Undo()

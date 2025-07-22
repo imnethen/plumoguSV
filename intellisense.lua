@@ -146,7 +146,6 @@ For more information, please refer to <https://unlicense.org>
 ---#### Undoes the action.
 ---@field Undo fun(): nil
 
-
 ---@class (exact) Vector2
 ---@field x number The first component of the vector.
 ---@field y number The second component of the vector.
@@ -946,8 +945,8 @@ map.ScrollVelocities      = {} ---@type ScrollVelocity[]
 map.ScrollSpeedFactors    = {} ---@type ScrollSpeedFactor[]
 
 ---##### (READ-ONLY)
----#### A table of all [timing groups](lua://ScrollGroup) in the map.
-map.TimingGroups          = {} ---@type ScrollGroup[]
+---#### A table of all [timing groups](lua://ScrollGroup) in the map, where the keys are the identifiers of the scroll group.
+map.TimingGroups          = {} ---@type { [string]: ScrollGroup}
 
 ---##### (READ-ONLY)
 ---#### The default [scroll group](lua://ScrollGroup).

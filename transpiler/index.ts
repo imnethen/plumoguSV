@@ -17,7 +17,6 @@ export default async function transpiler(
     lint = true
 ) {
     let fileCount = 0;
-    let rootLocalCount = 0;
 
     let output = "";
 
@@ -74,8 +73,8 @@ export default async function transpiler(
     });
 
     output = output.replaceAll(
-        /\("([^"]+?)" \.\. (.+) \.\. (.+)\)/g,
-        '(table.concat({"$1", $2, $3}))'
+        /"([^"]+?)" \.\. (.+) \.\. "([^"]+?)"/g,
+        'table.concat({"$1", $2, "$3"})'
     ); // Remove double string concats with table
 
     output = output.replaceAll(
