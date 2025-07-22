@@ -20,7 +20,13 @@ export default async function transpiler(
     let output = '';
 
     const files = getFilesRecursively('packages');
-    files.push(...getFilesRecursively('src'));
+    files.push(
+        ...getFilesRecursively('src').sort(
+            (a, b) => +b.includes('priority') - +a.includes('priority')
+        )
+    );
+
+    console.log(files);
 
     const ignoredFiles = ['classes.lua', 'intellisense.lua'];
 

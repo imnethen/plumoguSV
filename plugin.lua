@@ -484,10 +484,11 @@ function table.stringify(var)
     return str:sub(1, -2) .. "}"
 end
 ---When given a dictionary and table of keys, returns a new table with only the specified keys and values.
----@param checkList { [string]: any } The base table, which has a list of keys to include in the new table.
----@param tbl { [string]: any } The base table in which to lint the data from.
+---@generic T table
+---@param checkList T The base table, which has a list of keys to include in the new table.
+---@param tbl T The base table in which to lint the data from.
 ---@param extrapolateData? boolean If this is set to true, will fill in missing keys in the new table with values frmo the old table.
----@return { [string]: any } outputTable
+---@return T outputTable
 function table.validate(checkList, tbl, extrapolateData)
     local validKeys = table.keys(checkList)
     local tableKeys = table.keys(tbl)
@@ -614,6 +615,788 @@ end
 ---@return Vector2 vctr The resultant vector of style `<n, n>`.
 function vector2(n)
     return vector.New(n, n)
+end
+DEFAULT_WIDGET_HEIGHT = 26
+DEFAULT_WIDGET_WIDTH = 160
+PADDING_WIDTH = 8
+RADIO_BUTTON_SPACING = 7.5
+SAMELINE_SPACING = 5
+ACTION_BUTTON_SIZE = vector.New(253, 42)
+PLOT_GRAPH_SIZE = vector.New(253, 100)
+HALF_ACTION_BUTTON_SIZE = vector.New(125, 42)
+SECONDARY_BUTTON_SIZE = vector.New(48, 24)
+TERTIARY_BUTTON_SIZE = vector.New(21.5, 24)
+EXPORT_BUTTON_SIZE = vector.New(40, 24)
+BEEG_BUTTON_SIZE = vector.New(253, 24)
+MIN_RGB_CYCLE_TIME = 0.1
+MAX_RGB_CYCLE_TIME = 300
+MAX_CURSOR_TRAIL_POINTS = 100
+MAX_SV_POINTS = 1000
+MAX_ANIMATION_FRAMES = 999
+MAX_IMPORT_CHARACTER_LIMIT = 999999
+CHINCHILLA_TYPES = {
+    "Exponential",
+    "Polynomial",
+    "Circular",
+    "Sine Power",
+    "Arc Sine Power",
+    "Inverse Power",
+    "Peter Stock"
+}
+COLOR_THEMES = {
+    "Classic",
+    "Strawberry",
+    "Amethyst",
+    "Tree",
+    "Barbie",
+    "Incognito",
+    "Incognito + RGB",
+    "Tobi's Glass",
+    "Tobi's RGB Glass",
+    "Glass",
+    "Glass + RGB",
+    "RGB Gamer Mode",
+    "edom remag BGR",
+    "BGR + otingocnI",
+    "otingocnI",
+    "CUSTOM"
+}
+COLOR_THEME_COLORS = {
+    "255,255,255",
+    "251,41,67",
+    "153,102,204",
+    "150,111,51",
+    "227,5,173",
+    "150,150,150",
+    "255,0,0",
+    "200,200,200",
+    "0,255,0",
+    "220,220,220",
+    "0,0,255",
+    "255,100,100",
+    "100,255,100",
+    "100,100,255",
+    "255,255,255",
+    "0,0,0",
+}
+COMBO_SV_TYPE = {
+    "Add",
+    "Cross Multiply",
+    "Remove",
+    "Min",
+    "Max",
+    "SV Type 1 Only",
+    "SV Type 2 Only"
+}
+CURSOR_TRAILS = {
+    "None",
+    "Snake",
+    "Dust",
+    "Sparkle"
+}
+DISPLACE_SCALE_SPOTS = {
+    "Start",
+    "End"
+}
+EMOTICONS = {
+    "( - _ - )",
+    "( e . e )",
+    "( * o * )",
+    "( h . m )",
+    "( ~ _ ~ )",
+    "( - . - )",
+    "( C | D )",
+    "( w . w )",
+    "( ^ w ^ )",
+    "( > . < )",
+    "( + x + )",
+    "( o _ 0 )",
+    "[ m w m ]",
+    "( v . ^ )",
+    "( ^ o v )",
+    "( ^ o v )",
+    "( ; A ; )",
+    "[ . _ . ]",
+    "[ ' = ' ]",
+}
+FINAL_SV_TYPES = {
+    "Normal",
+    "Custom",
+    "Override"
+}
+FLICKER_TYPES = {
+    "Normal",
+    "Delayed"
+}
+NOTE_SKIN_TYPES = {
+    "Bar",
+    "Circle"
+}
+RANDOM_TYPES = {
+    "Normal",
+    "Uniform"
+}
+SCALE_TYPES = {
+    "Average SV",
+    "Absolute Distance",
+    "Relative Ratio"
+}
+STANDARD_SVS_NO_COMBO = {
+    "Linear",
+    "Exponential",
+    "Bezier",
+    "Hermite",
+    "Sinusoidal",
+    "Circular",
+    "Random",
+    "Custom",
+    "Chinchilla"
+}
+STILL_TYPES = {
+    "No",
+    "Start",
+    "End",
+    "Auto",
+    "Otua"
+}
+STUTTER_CONTROLS = {
+    "First SV",
+    "Second SV"
+}
+STYLE_THEMES = {
+    "Rounded",
+    "Boxed",
+    "Rounded + Border",
+    "Boxed + Border"
+}
+SV_BEHAVIORS = {
+    "Slow down",
+    "Speed up"
+}
+TRAIL_SHAPES = {
+    "Circles",
+    "Triangles"
+}
+STILL_BEHAVIOR_TYPES = {
+    "Entire Region",
+    "Per Note Group",
+}
+DISTANCE_TYPES = {
+    "Average SV + Shift",
+    "Distance + Shift",
+    "Start / End"
+}
+VIBRATO_TYPES = {
+    "SV (msx)",
+    "SSF (x)",
+}
+VIBRATO_QUALITIES = {
+    "Low",
+    "Medium",
+    "High",
+    "Ultra",
+    "Omega"
+}
+VIBRATO_FRAME_RATES = { 45, 90, 150, 210, 450 }
+VIBRATO_DETAILED_QUALITIES = {}
+for i, v in pairs(VIBRATO_QUALITIES) do
+    table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
+end
+VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
+DEFAULT_STYLE = {
+    windowBg = vector.New(0.00, 0.00, 0.00, 1.00),
+    popupBg = vector.New(0.08, 0.08, 0.08, 0.94),
+    frameBg = vector.New(0.14, 0.24, 0.28, 1.00),
+    frameBgHovered =
+        vector.New(0.24, 0.34, 0.38, 1.00),
+    frameBgActive =
+        vector.New(0.29, 0.39, 0.43, 1.00),
+    titleBg = vector.New(0.14, 0.24, 0.28, 1.00),
+    titleBgActive =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    titleBgCollapsed =
+        vector.New(0.51, 0.58, 0.75, 0.50),
+    checkMark = vector.New(0.81, 0.88, 1.00, 1.00),
+    sliderGrab =
+        vector.New(0.56, 0.63, 0.75, 1.00),
+    sliderGrabActive =
+        vector.New(0.61, 0.68, 0.80, 1.00),
+    button = vector.New(0.31, 0.38, 0.50, 1.00),
+    buttonHovered =
+        vector.New(0.41, 0.48, 0.60, 1.00),
+    buttonActive =
+        vector.New(0.51, 0.58, 0.70, 1.00),
+    tab = vector.New(0.31, 0.38, 0.50, 1.00),
+    tabHovered =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    tabActive =
+        vector.New(0.51, 0.58, 0.75, 1.00),
+    header = vector.New(0.81, 0.88, 1.00, 0.40),
+    headerHovered =
+        vector.New(0.81, 0.88, 1.00, 0.50),
+    headerActive =
+        vector.New(0.81, 0.88, 1.00, 0.54),
+    separator = vector.New(0.81, 0.88, 1.00, 0.30),
+    text = vector.New(1.00, 1.00, 1.00, 1.00),
+    textSelectedBg =
+        vector.New(0.81, 0.88, 1.00, 0.40),
+    scrollbarGrab =
+        vector.New(0.31, 0.38, 0.50, 1.00),
+    scrollbarGrabHovered =
+        vector.New(0.41, 0.48, 0.60, 1.00),
+    scrollbarGrabActive =
+        vector.New(0.51, 0.58, 0.70, 1.00),
+    plotLines =
+        vector.New(0.61, 0.61, 0.61, 1.00),
+    plotLinesHovered =
+        vector.New(1.00, 0.43, 0.35, 1.00),
+    plotHistogram =
+        vector.New(0.90, 0.70, 0.00, 1.00),
+    plotHistogramHovered =
+        vector.New(1.00, 0.60, 0.00, 1.00)
+}
+DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" }
+globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
+HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
+    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
+    "Execute Vibrato Separately", "Use TG of Selected Note", "Toggle Note Lock Mode" }
+function loadDefaultProperties(defaultProperties)
+    if (not defaultProperties) then return end
+    if (not defaultProperties.menu) then goto skipMenu end
+    for label, tbl in pairs(defaultProperties.menu) do
+        for settingName, settingValue in pairs(tbl) do
+            local defaultTable = DEFAULT_STARTING_MENU_VARS[label]
+            if (not defaultTable) then break end
+            local defaultSetting = defaultTable[settingName]
+            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+                goto skipSetting
+            end
+            if (type(defaultSetting) == "number") then
+                settingValue = math.toNumber(settingValue)
+            end
+            if (type(defaultSetting) == "boolean") then
+                settingValue = truthy(settingValue)
+            end
+            DEFAULT_STARTING_MENU_VARS[label][settingName] = settingValue
+            ::skipSetting::
+        end
+    end
+    ::skipMenu::
+    for label, tbl in pairs(defaultProperties.settings) do
+        for settingName, settingValue in pairs(tbl) do
+            local defaultTable = DEFAULT_STARTING_SETTING_VARS[label]
+            if (not defaultTable) then break end
+            local defaultSetting = defaultTable[settingName]
+            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
+                goto skipSetting
+            end
+            if (type(defaultSetting) == "number") then
+                settingValue = math.toNumber(settingValue)
+            end
+            if (type(defaultSetting) == "boolean") then
+                settingValue = truthy(settingValue)
+            end
+            DEFAULT_STARTING_SETTING_VARS[label][settingName] = settingValue
+            ::skipSetting::
+        end
+    end
+    globalVars.defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
+end
+globalVars = {
+    stepSize = 5,
+    dontReplaceSV = false,
+    upscroll = false,
+    colorThemeIndex = 9,
+    styleThemeIndex = 1,
+    effectFPS = 90,
+    cursorTrailIndex = 1,
+    cursorTrailShapeIndex = 1,
+    cursorTrailPoints = 10,
+    cursorTrailSize = 5,
+    snakeSpringConstant = 1,
+    cursorTrailGhost = false,
+    rgbPeriod = 2,
+    drawCapybara = false,
+    drawCapybara2 = false,
+    drawCapybara312 = false,
+    selectTypeIndex = 1,
+    placeTypeIndex = 1,
+    editToolIndex = 1,
+    showPresetMenu = false,
+    scrollGroupIndex = 1,
+    hideSVInfo = false,
+    showVibratoWidget = false,
+    showNoteDataWidget = false,
+    showMeasureDataWidget = false,
+    ignoreNotesOutsideTg = false,
+    advancedMode = false,
+    hideAutomatic = false,
+    pulseCoefficient = 0,
+    pulseColor = {},
+    useCustomPulseColor = false,
+    hotkeyList = {},
+    customStyle = {},
+    dontPrintCreation = false,
+    equalizeLinear = false,
+    defaultProperties = { settings = {}, menu = {} }
+}
+DEFAULT_GLOBAL_VARS = table.duplicate(globalVars)
+function setGlobalVars(tempGlobalVars)
+    globalVars.useCustomPulseColor = truthy(tempGlobalVars.useCustomPulseColor)
+    globalVars.pulseColor = table.vectorize4(tempGlobalVars.pulseColor)
+    globalVars.pulseCoefficient = math.toNumber(tempGlobalVars.pulseCoefficient)
+    globalVars.stepSize = math.toNumber(tempGlobalVars.stepSize)
+    globalVars.dontReplaceSV = truthy(tempGlobalVars.dontReplaceSV)
+    globalVars.upscroll = truthy(tempGlobalVars.upscroll)
+    globalVars.colorThemeIndex = math.toNumber(tempGlobalVars.colorThemeIndex)
+    globalVars.styleThemeIndex = math.toNumber(tempGlobalVars.styleThemeIndex)
+    globalVars.rgbPeriod = math.toNumber(tempGlobalVars.rgbPeriod)
+    globalVars.cursorTrailIndex = math.toNumber(tempGlobalVars.cursorTrailIndex)
+    globalVars.cursorTrailShapeIndex = math.toNumber(tempGlobalVars.cursorTrailShapeIndex)
+    globalVars.effectFPS = math.toNumber(tempGlobalVars.effectFPS)
+    globalVars.cursorTrailPoints = math.toNumber(tempGlobalVars.cursorTrailPoints)
+    globalVars.cursorTrailSize = math.toNumber(tempGlobalVars.cursorTrailSize)
+    globalVars.snakeSpringConstant = math.toNumber(tempGlobalVars.snakeSpringConstant)
+    globalVars.cursorTrailGhost = truthy(tempGlobalVars.cursorTrailGhost)
+    globalVars.drawCapybara = truthy(tempGlobalVars.drawCapybara)
+    globalVars.drawCapybara2 = truthy(tempGlobalVars.drawCapybara2)
+    globalVars.drawCapybara312 = truthy(tempGlobalVars.drawCapybara312)
+    globalVars.ignoreNotes = truthy(tempGlobalVars.ignoreNotesOutsideTg)
+    globalVars.hideSVInfo = truthy(tempGlobalVars.hideSVInfo)
+    globalVars.showVibratoWidget = truthy(tempGlobalVars.showVibratoWidget)
+    globalVars.showNoteDataWidget = truthy(tempGlobalVars.showNoteDataWidget)
+    globalVars.showMeasureDataWidget = truthy(tempGlobalVars.showMeasureDataWidget)
+    globalVars.advancedMode = truthy(tempGlobalVars.advancedMode)
+    globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
+    globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
+    globalVars.hotkeyList = table.validate(DEFAULT_HOTKEY_LIST, table.duplicate(tempGlobalVars.hotkeyList), true)
+    globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
+    globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
+end
+DEFAULT_STARTING_MENU_VARS = {
+    placeStandard = {
+        svTypeIndex = 1,
+        svMultipliers = {},
+        svDistances = {},
+        svGraphStats = createSVGraphStats(),
+        svStats = createSVStats(),
+        interlace = false,
+        interlaceRatio = -0.5,
+        overrideFinal = false
+    },
+    placeSpecial = { svTypeIndex = 1 },
+    placeStill = {
+        svTypeIndex = 1,
+        noteSpacing = 1,
+        stillTypeIndex = 1,
+        stillDistance = 0,
+        stillBehavior = 1,
+        prePlaceDistances = {},
+        svMultipliers = {},
+        svDistances = {},
+        svGraphStats = createSVGraphStats(),
+        svStats = createSVStats(),
+        interlace = false,
+        interlaceRatio = -0.5,
+        overrideFinal = false
+    },
+    placeVibrato = {
+        svTypeIndex = 1,
+        vibratoMode = 1,
+        vibratoQuality = 3,
+        sides = 2
+    },
+    delete = {
+        deleteTable = { true, true, true, true }
+    },
+    addTeleport = {
+        distance = 10727,
+        teleportBeforeHand = false
+    },
+    changeGroups = {
+        designatedTimingGroup = "$Default",
+        changeSVs = true,
+        changeSSFs = true,
+    },
+    convertSVSSF = {
+        conversionDirection = true
+    },
+    copy = {
+        copyTable = { true, true, true, true },
+        copiedLines = {},
+        copiedSVs = {},
+        copiedSSFs = {},
+        copiedBMs = {},
+        tryAlign = true,
+        alignWindow = 3,
+    },
+    directSV = {
+        selectableIndex = 1,
+        startTime = 0,
+        multiplier = 0,
+        pageNumber = 1
+    },
+    displaceNote = {
+        distance = 200,
+        distance1 = 0,
+        distance2 = 200,
+        linearlyChange = false
+    },
+    displaceView = {
+        distance = 200
+    },
+    dynamicScale = {
+        noteTimes = {},
+        svTypeIndex = 1,
+        svMultipliers = {},
+        svDistances = {},
+        svGraphStats = createSVGraphStats(),
+        svStats = createSVStats()
+    },
+    flicker = {
+        flickerTypeIndex = 1,
+        distance = -69420.727,
+        distance1 = 0,
+        distance2 = -69420.727,
+        numFlickers = 1,
+        linearlyChange = false,
+        flickerPosition = 0.5
+    },
+    measure = {
+        unrounded = false,
+        nsvDistance = "",
+        svDistance = "",
+        avgSV = "",
+        startDisplacement = "",
+        endDisplacement = "",
+        avgSVDisplaceless = "",
+        roundedNSVDistance = 0,
+        roundedSVDistance = 0,
+        roundedAvgSV = 0,
+        roundedStartDisplacement = 0,
+        roundedEndDisplacement = 0,
+        roundedAvgSVDisplaceless = 0
+    },
+    reverseScroll = {
+        distance = 400
+    },
+    scaleDisplace = {
+        scaleSpotIndex = 1,
+        scaleTypeIndex = 1,
+        avgSV = 0.6,
+        distance = 100,
+        ratio = 0.6,
+    },
+    scaleMultiply = {
+        scaleTypeIndex = 1,
+        avgSV = 0.6,
+        distance = 100,
+        ratio = 0.6
+    },
+    verticalShift = {
+        verticalShift = 1
+    },
+    selectAlternating = {
+        every = 1,
+        offset = 0
+    },
+    selectChordSize = {
+        single = true,
+        jump = false,
+        hand = false,
+        quad = false
+    },
+    selectNoteType = {
+        rice = true,
+        ln = false
+    },
+    selectBySnap = {
+        snap = 1
+    }
+}
+---Gets the current menu's variables.
+---@param menuType string The menu type.
+---@return table
+function getMenuVars(menuType, optionalLabel)
+    optionalLabel = optionalLabel or ""
+    local menuVars = table.duplicate(DEFAULT_STARTING_MENU_VARS[menuType])
+    local labelText = menuType .. optionalLabel .. "Menu"
+    getVariables(labelText, menuVars)
+    return menuVars
+end
+presets = {}
+function setPresets(presetList)
+    for _, preset in pairs(presetList) do
+        local presetIsValid, presetData = checkPresetValidity(preset)
+        if (not presetIsValid) then goto continue end
+        table.insert(presets, { name = preset.name, type = preset.type, menu = preset.menu, data = presetData })
+        ::continue::
+    end
+end
+function checkPresetValidity(preset)
+    if (not table.contains(CREATE_TYPES, preset.type)) then return false, nil end
+    local validMenus = {}
+    if (preset.type == "Standard" or preset.type == "Still") then
+        validMenus = table.duplicate(STANDARD_SVS)
+    end
+    if (preset.type == "Special") then
+        validMenus = table.duplicate(SPECIAL_SVS)
+    end
+    if (preset.type == "Vibrato") then
+        validMenus = table.duplicate(VIBRATO_SVS)
+    end
+    if (not truthy(#validMenus)) then return false, nil end
+    if (not table.includes(validMenus, preset.menu)) then return false, nil end
+    local menuVars = table.validate(DEFAULT_STARTING_MENU_VARS[preset.type][preset.menu], preset.data.menuVars)
+    local settingVars = table.validate(DEFAULT_STARTING_SETTING_VARS[preset.type][preset.menu], preset.data.settingVars)
+    return true, { menuVars, settingVars }
+end
+DEFAULT_STARTING_SETTING_VARS = {
+    linearVibratoSV = {
+        startMsx = 100,
+        endMsx = 0
+    },
+    exponentialVibratoSV = {
+        startMsx = 100,
+        endMsx = 0,
+        curvatureIndex = 5
+    },
+    sinusoidalVibratoSV = {
+        startMsx = 100,
+        endMsx = 0,
+        verticalShift = 0,
+        periods = 1,
+        periodsShift = 0.25
+    },
+    sigmoidalVibratoSV = {
+        startMsx = 100,
+        endMsx = 0,
+        curvatureIndex = 5
+    },
+    customVibratoSV = {
+        code = [[return function (x)
+    local maxHeight = 150
+    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) / 2) / (31 - 7 * math.sqrt(17)) * 16
+    primaryCoefficient = (x^2 - x^3) * math.exp(2 * x)
+    sinusoidalCoefficient = math.sin(8 * math.pi * x)
+    return heightFactor * primaryCoefficient * sinusoidalCoefficient
+end]]
+    },
+    linearVibratoSSF = {
+        lowerStart = 0.5,
+        lowerEnd = 0.5,
+        higherStart = 1,
+        higherEnd = 1,
+    },
+    exponentialVibratoSSF = {
+        lowerStart = 0.5,
+        lowerEnd = 0.5,
+        higherStart = 1,
+        higherEnd = 1,
+        curvatureIndex = 5
+    },
+    sinusoidalVibratoSSF = {
+        lowerStart = 0.5,
+        lowerEnd = 0.5,
+        higherStart = 1,
+        higherEnd = 1,
+        verticalShift = 0,
+        periods = 1,
+        periodsShift = 0.25,
+        applyToHigher = false,
+    },
+    sigmoidalVibratoSSF = {
+        lowerStart = 0.5,
+        lowerEnd = 0.5,
+        higherStart = 1,
+        higherEnd = 1,
+        curvatureIndex = 5
+    },
+    customVibratoSSF = {
+        code1 = "return function (x) return 0.69 end",
+        code2 = "return function (x) return 1.420 end"
+    },
+    linear = {
+        startSV = 1.5,
+        endSV = 0.5,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    exponential = {
+        behaviorIndex = 1,
+        intensity = 30,
+        verticalShift = 0,
+        distance = 100,
+        startSV = 0.01,
+        endSV = 1,
+        avgSV = 1,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1,
+        distanceMode = 1
+    },
+    bezier = {
+        p1 = vector2(0),
+        p2 = vector2(1),
+        verticalShift = 0,
+        avgSV = 1,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    hermite = {
+        startSV = 0,
+        endSV = 0,
+        verticalShift = 0,
+        avgSV = 1,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    sinusoidal = {
+        startSV = 2,
+        endSV = 2,
+        curveSharpness = 50,
+        verticalShift = 1,
+        periods = 1,
+        periodsShift = 0.25,
+        svsPerQuarterPeriod = 8,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    circular = {
+        behaviorIndex = 1,
+        arcPercent = 50,
+        avgSV = 1,
+        verticalShift = 0,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1,
+        dontNormalize = false
+    },
+    random = {
+        svMultipliers = {},
+        randomTypeIndex = 1,
+        randomScale = 2,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1,
+        dontNormalize = false,
+        avgSV = 1,
+        verticalShift = 0
+    },
+    custom = {
+        svMultipliers = { 0 },
+        selectedMultiplierIndex = 1,
+        svPoints = 1,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    chinchilla = {
+        behaviorIndex = 1,
+        chinchillaTypeIndex = 1,
+        chinchillaIntensity = 0.5,
+        avgSV = 1,
+        verticalShift = 0,
+        svPoints = 16,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    combo = {
+        svType1Index = 1,
+        svType2Index = 2,
+        comboPhase = 0,
+        comboTypeIndex = 1,
+        comboMultiplier1 = 1,
+        comboMultiplier2 = 1,
+        finalSVIndex = 2,
+        customSV = 1,
+        dontNormalize = false,
+        avgSV = 1,
+        verticalShift = 0
+    },
+    code = {
+        code = [[return function (x)
+    local startPeriod = 4
+    local endPeriod = -1
+    local height = 1.5
+    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) / 2 * x^2))
+end]],
+        svPoints = 64,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    stutter = {
+        startSV = 1.5,
+        endSV = 0.5,
+        stutterDuration = 50,
+        stuttersPerSection = 1,
+        avgSV = 1,
+        finalSVIndex = 2,
+        customSV = 1,
+        linearlyChange = false,
+        controlLastSV = false,
+        svMultipliers = {},
+        svDistances = {},
+        svGraphStats = createSVGraphStats(),
+        svMultipliers2 = {},
+        svDistances2 = {},
+        svGraph2Stats = createSVGraphStats()
+    },
+    teleportStutter = {
+        svPercent = 50,
+        svPercent2 = 0,
+        distance = 50,
+        mainSV = 0.5,
+        mainSV2 = 0,
+        useDistance = false,
+        linearlyChange = false,
+        avgSV = 1,
+        finalSVIndex = 2,
+        customSV = 1
+    },
+    framesSetup = {
+        menuStep = 1,
+        numFrames = 5,
+        frameDistance = 2000,
+        distance = 2000,
+        reverseFrameOrder = false,
+        noteSkinTypeIndex = 1,
+        frameTimes = {},
+        selectedTimeIndex = 1,
+        currentFrame = 1
+    },
+    penis = {
+        bWidth = 50,
+        sWidth = 100,
+        sCurvature = 100,
+        bCurvature = 100
+    },
+    automate = {
+        copiedSVs = {},
+        maintainMs = true,
+        ms = 1000,
+        scaleSVs = false,
+        initialSV = 1,
+        optimizeTGs = true,
+    },
+    animationPalette = {
+        instructions = ""
+    }
+}
+---Gets the current menu's setting variables.
+---@param svType string The SV type - that is, the shape of the SV once plotted.
+---@param label string A delineator to separate two categories with similar SV types (Standard/Still, etc).
+---@return table
+function getSettingVars(svType, label)
+    searchTerm = svType:gsub("[%s%(%)#]+", "")
+    searchTerm = searchTerm:charAt(1):lower() .. searchTerm:sub(2)
+    local settingVars = table.duplicate(DEFAULT_STARTING_SETTING_VARS[searchTerm])
+    local labelText = svType .. label .. "Settings"
+    getVariables(labelText, settingVars)
+    return settingVars
 end
 function displaceNotesForAnimationFrames(settingVars)
     local frameDistance = settingVars.frameDistance
@@ -3466,7 +4249,7 @@ end
 ---@param varsTable { [string]: any }The table that is meant to be modified.
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean changed Whether or not the checkbox has changed this frame.
 function BasicCheckbox(varsTable, parameterName, label, tooltipText)
     local oldValue = varsTable[parameterName]
@@ -3477,7 +4260,7 @@ end
 ---Creates a checkbox that directly saves to globalVars and the universal `.yaml` file.
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 function GlobalCheckbox(parameterName, label, tooltipText)
     local oldValue = globalVars[parameterName] ---@cast oldValue boolean
     _, globalVars[parameterName] = imgui.Checkbox(label, oldValue)
@@ -3488,7 +4271,7 @@ end
 ---@param varsTable { [string]: any } The table that is meant to be modified.
 ---@param parameterName string The key of the table that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean active Whether or not the code input is currently in edit mode.
 function CodeInput(varsTable, parameterName, label, tooltipText)
     local oldCode = varsTable[parameterName]
@@ -3501,7 +4284,7 @@ end
 ---@param customStyle { [string]: any } The table that is meant to be modified.
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean changed Whether or not the input has changed this frame.
 function ColorInput(customStyle, parameterName, label, tooltipText)
     AddSeparator()
@@ -3623,7 +4406,7 @@ end
 ---@param parameterName string The key of globalVars that will be used for data storage.
 ---@param label string The label for the input.
 ---@param bounds? [number, number] A tuple representing the minimum and maximum bounds this input should have.
----@param tooltipText string? Optional text for a tooltip that is shown when the element is hovered.
+---@param tooltipText? string Optional text for a tooltip that is shown when the element is hovered.
 ---@return boolean changed Whether or not the checkbox has changed this frame.
 function BasicInputInt(varsTable, parameterName, label, bounds, tooltipText)
     local oldValue = varsTable[parameterName]
@@ -3767,250 +4550,6 @@ function renderMeasureDataWidget()
     state.SetValue("oldStartOffset", startOffset)
     state.SetValue("oldEndOffset", endOffset)
 end
-DEFAULT_WIDGET_HEIGHT = 26
-DEFAULT_WIDGET_WIDTH = 160
-PADDING_WIDTH = 8
-RADIO_BUTTON_SPACING = 7.5
-SAMELINE_SPACING = 5
-ACTION_BUTTON_SIZE = vector.New(253, 42)
-PLOT_GRAPH_SIZE = vector.New(253, 100)
-HALF_ACTION_BUTTON_SIZE = vector.New(125, 42)
-SECONDARY_BUTTON_SIZE = vector.New(48, 24)
-TERTIARY_BUTTON_SIZE = vector.New(21.5, 24)
-EXPORT_BUTTON_SIZE = vector.New(40, 24)
-BEEG_BUTTON_SIZE = vector.New(253, 24)
-MIN_RGB_CYCLE_TIME = 0.1
-MAX_RGB_CYCLE_TIME = 300
-MAX_CURSOR_TRAIL_POINTS = 100
-MAX_SV_POINTS = 1000
-MAX_ANIMATION_FRAMES = 999
-MAX_IMPORT_CHARACTER_LIMIT = 999999
-CHINCHILLA_TYPES = {
-    "Exponential",
-    "Polynomial",
-    "Circular",
-    "Sine Power",
-    "Arc Sine Power",
-    "Inverse Power",
-    "Peter Stock"
-}
-COLOR_THEMES = {
-    "Classic",
-    "Strawberry",
-    "Amethyst",
-    "Tree",
-    "Barbie",
-    "Incognito",
-    "Incognito + RGB",
-    "Tobi's Glass",
-    "Tobi's RGB Glass",
-    "Glass",
-    "Glass + RGB",
-    "RGB Gamer Mode",
-    "edom remag BGR",
-    "BGR + otingocnI",
-    "otingocnI",
-    "CUSTOM"
-}
-COLOR_THEME_COLORS = {
-    "255,255,255",
-    "251,41,67",
-    "153,102,204",
-    "150,111,51",
-    "227,5,173",
-    "150,150,150",
-    "255,0,0",
-    "200,200,200",
-    "0,255,0",
-    "220,220,220",
-    "0,0,255",
-    "255,100,100",
-    "100,255,100",
-    "100,100,255",
-    "255,255,255",
-    "0,0,0",
-}
-COMBO_SV_TYPE = {
-    "Add",
-    "Cross Multiply",
-    "Remove",
-    "Min",
-    "Max",
-    "SV Type 1 Only",
-    "SV Type 2 Only"
-}
-CURSOR_TRAILS = {
-    "None",
-    "Snake",
-    "Dust",
-    "Sparkle"
-}
-DISPLACE_SCALE_SPOTS = {
-    "Start",
-    "End"
-}
-EMOTICONS = {
-    "( - _ - )",
-    "( e . e )",
-    "( * o * )",
-    "( h . m )",
-    "( ~ _ ~ )",
-    "( - . - )",
-    "( C | D )",
-    "( w . w )",
-    "( ^ w ^ )",
-    "( > . < )",
-    "( + x + )",
-    "( o _ 0 )",
-    "[ m w m ]",
-    "( v . ^ )",
-    "( ^ o v )",
-    "( ^ o v )",
-    "( ; A ; )",
-    "[ . _ . ]",
-    "[ ' = ' ]",
-}
-FINAL_SV_TYPES = {
-    "Normal",
-    "Custom",
-    "Override"
-}
-FLICKER_TYPES = {
-    "Normal",
-    "Delayed"
-}
-NOTE_SKIN_TYPES = {
-    "Bar",
-    "Circle"
-}
-RANDOM_TYPES = {
-    "Normal",
-    "Uniform"
-}
-SCALE_TYPES = {
-    "Average SV",
-    "Absolute Distance",
-    "Relative Ratio"
-}
-STANDARD_SVS_NO_COMBO = {
-    "Linear",
-    "Exponential",
-    "Bezier",
-    "Hermite",
-    "Sinusoidal",
-    "Circular",
-    "Random",
-    "Custom",
-    "Chinchilla"
-}
-STILL_TYPES = {
-    "No",
-    "Start",
-    "End",
-    "Auto",
-    "Otua"
-}
-STUTTER_CONTROLS = {
-    "First SV",
-    "Second SV"
-}
-STYLE_THEMES = {
-    "Rounded",
-    "Boxed",
-    "Rounded + Border",
-    "Boxed + Border"
-}
-SV_BEHAVIORS = {
-    "Slow down",
-    "Speed up"
-}
-TRAIL_SHAPES = {
-    "Circles",
-    "Triangles"
-}
-STILL_BEHAVIOR_TYPES = {
-    "Entire Region",
-    "Per Note Group",
-}
-DISTANCE_TYPES = {
-    "Average SV + Shift",
-    "Distance + Shift",
-    "Start / End"
-}
-VIBRATO_TYPES = {
-    "SV (msx)",
-    "SSF (x)",
-}
-VIBRATO_QUALITIES = {
-    "Low",
-    "Medium",
-    "High",
-    "Ultra",
-    "Omega"
-}
-VIBRATO_FRAME_RATES = { 45, 90, 150, 210, 450 }
-VIBRATO_DETAILED_QUALITIES = {}
-for i, v in pairs(VIBRATO_QUALITIES) do
-    table.insert(VIBRATO_DETAILED_QUALITIES, v .. "  (~" .. VIBRATO_FRAME_RATES[i] .. "fps)")
-end
-VIBRATO_CURVATURES = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5 }
-DEFAULT_STYLE = {
-    windowBg = vector.New(0.00, 0.00, 0.00, 1.00),
-    popupBg = vector.New(0.08, 0.08, 0.08, 0.94),
-    frameBg = vector.New(0.14, 0.24, 0.28, 1.00),
-    frameBgHovered =
-        vector.New(0.24, 0.34, 0.38, 1.00),
-    frameBgActive =
-        vector.New(0.29, 0.39, 0.43, 1.00),
-    titleBg = vector.New(0.14, 0.24, 0.28, 1.00),
-    titleBgActive =
-        vector.New(0.51, 0.58, 0.75, 1.00),
-    titleBgCollapsed =
-        vector.New(0.51, 0.58, 0.75, 0.50),
-    checkMark = vector.New(0.81, 0.88, 1.00, 1.00),
-    sliderGrab =
-        vector.New(0.56, 0.63, 0.75, 1.00),
-    sliderGrabActive =
-        vector.New(0.61, 0.68, 0.80, 1.00),
-    button = vector.New(0.31, 0.38, 0.50, 1.00),
-    buttonHovered =
-        vector.New(0.41, 0.48, 0.60, 1.00),
-    buttonActive =
-        vector.New(0.51, 0.58, 0.70, 1.00),
-    tab = vector.New(0.31, 0.38, 0.50, 1.00),
-    tabHovered =
-        vector.New(0.51, 0.58, 0.75, 1.00),
-    tabActive =
-        vector.New(0.51, 0.58, 0.75, 1.00),
-    header = vector.New(0.81, 0.88, 1.00, 0.40),
-    headerHovered =
-        vector.New(0.81, 0.88, 1.00, 0.50),
-    headerActive =
-        vector.New(0.81, 0.88, 1.00, 0.54),
-    separator = vector.New(0.81, 0.88, 1.00, 0.30),
-    text = vector.New(1.00, 1.00, 1.00, 1.00),
-    textSelectedBg =
-        vector.New(0.81, 0.88, 1.00, 0.40),
-    scrollbarGrab =
-        vector.New(0.31, 0.38, 0.50, 1.00),
-    scrollbarGrabHovered =
-        vector.New(0.41, 0.48, 0.60, 1.00),
-    scrollbarGrabActive =
-        vector.New(0.51, 0.58, 0.70, 1.00),
-    plotLines =
-        vector.New(0.61, 0.61, 0.61, 1.00),
-    plotLinesHovered =
-        vector.New(1.00, 0.43, 0.35, 1.00),
-    plotHistogram =
-        vector.New(0.90, 0.70, 0.00, 1.00),
-    plotHistogramHovered =
-        vector.New(1.00, 0.60, 0.00, 1.00)
-}
-DEFAULT_HOTKEY_LIST = { "T", "Shift+T", "S", "N", "R", "B", "M", "V", "G", "Ctrl+Shift+Alt+L" } ---@type string[]
-globalVars.hotkeyList = table.duplicate(DEFAULT_HOTKEY_LIST)
-HOTKEY_LABELS = { "Execute Primary Action", "Execute Secondary Action", "Swap Primary Inputs",
-    "Negate Primary Inputs", "Reset Secondary Input", "Go To Previous Scroll Group", "Go To Next Scroll Group",
-    "Execute Vibrato Separately", "Use TG of Selected Note", "Toggle Note Lock Mode" }
 function showSettingsMenu(currentSVType, settingVars, skipFinalSV, svPointsForce)
     if currentSVType == "Linear" then
         return linearSettingsMenu(settingVars, skipFinalSV, svPointsForce)
@@ -8138,543 +8677,4 @@ function saveVariables(listName, variables)
     for key, value in pairs(variables) do
         state.SetValue(listName .. key, value)
     end
-end
-function loadDefaultProperties(defaultProperties)
-    if (not defaultProperties) then return end
-    if (not defaultProperties.menu) then goto skipMenu end
-    for label, tbl in pairs(defaultProperties.menu) do
-        for settingName, settingValue in pairs(tbl) do
-            local defaultTable = DEFAULT_STARTING_MENU_VARS[label]
-            if (not defaultTable) then break end
-            local defaultSetting = defaultTable[settingName]
-            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
-                goto skipSetting
-            end
-            if (type(defaultSetting) == "number") then
-                settingValue = math.toNumber(settingValue)
-            end
-            if (type(defaultSetting) == "boolean") then
-                settingValue = truthy(settingValue)
-            end
-            DEFAULT_STARTING_MENU_VARS[label][settingName] = settingValue
-            ::skipSetting::
-        end
-    end
-    ::skipMenu::
-    for label, tbl in pairs(defaultProperties.settings) do
-        for settingName, settingValue in pairs(tbl) do
-            local defaultTable = DEFAULT_STARTING_SETTING_VARS[label]
-            if (not defaultTable) then break end
-            local defaultSetting = defaultTable[settingName]
-            if (not defaultSetting or type(defaultSetting) == "table" or type(defaultSetting) == "userdata") then
-                goto skipSetting
-            end
-            if (type(defaultSetting) == "number") then
-                settingValue = math.toNumber(settingValue)
-            end
-            if (type(defaultSetting) == "boolean") then
-                settingValue = truthy(settingValue)
-            end
-            DEFAULT_STARTING_SETTING_VARS[label][settingName] = settingValue
-            ::skipSetting::
-        end
-    end
-    globalVars.defaultProperties = { settings = DEFAULT_STARTING_SETTING_VARS, menu = DEFAULT_STARTING_MENU_VARS }
-end
-globalVars = {
-    stepSize = 5,
-    dontReplaceSV = false,
-    upscroll = false,
-    colorThemeIndex = 9,
-    styleThemeIndex = 1,
-    effectFPS = 90,
-    cursorTrailIndex = 1,
-    cursorTrailShapeIndex = 1,
-    cursorTrailPoints = 10,
-    cursorTrailSize = 5,
-    snakeSpringConstant = 1,
-    cursorTrailGhost = false,
-    rgbPeriod = 2,
-    drawCapybara = false,
-    drawCapybara2 = false,
-    drawCapybara312 = false,
-    selectTypeIndex = 1,
-    placeTypeIndex = 1,
-    editToolIndex = 1,
-    showPresetMenu = false,
-    scrollGroupIndex = 1,
-    hideSVInfo = false,
-    showVibratoWidget = false,
-    showNoteDataWidget = false,
-    showMeasureDataWidget = false,
-    ignoreNotesOutsideTg = false,
-    advancedMode = false,
-    hideAutomatic = false,
-    pulseCoefficient = 0,
-    pulseColor = {},
-    useCustomPulseColor = false,
-    hotkeyList = {},
-    customStyle = {},
-    dontPrintCreation = false,
-    equalizeLinear = false,
-    defaultProperties = { settings = {}, menu = {} }
-}
-DEFAULT_GLOBAL_VARS = table.duplicate(globalVars)
-function setGlobalVars(tempGlobalVars)
-    globalVars.useCustomPulseColor = truthy(tempGlobalVars.useCustomPulseColor)
-    globalVars.pulseColor = table.vectorize4(tempGlobalVars.pulseColor)
-    globalVars.pulseCoefficient = math.toNumber(tempGlobalVars.pulseCoefficient)
-    globalVars.stepSize = math.toNumber(tempGlobalVars.stepSize)
-    globalVars.dontReplaceSV = truthy(tempGlobalVars.dontReplaceSV)
-    globalVars.upscroll = truthy(tempGlobalVars.upscroll)
-    globalVars.colorThemeIndex = math.toNumber(tempGlobalVars.colorThemeIndex)
-    globalVars.styleThemeIndex = math.toNumber(tempGlobalVars.styleThemeIndex)
-    globalVars.rgbPeriod = math.toNumber(tempGlobalVars.rgbPeriod)
-    globalVars.cursorTrailIndex = math.toNumber(tempGlobalVars.cursorTrailIndex)
-    globalVars.cursorTrailShapeIndex = math.toNumber(tempGlobalVars.cursorTrailShapeIndex)
-    globalVars.effectFPS = math.toNumber(tempGlobalVars.effectFPS)
-    globalVars.cursorTrailPoints = math.toNumber(tempGlobalVars.cursorTrailPoints)
-    globalVars.cursorTrailSize = math.toNumber(tempGlobalVars.cursorTrailSize)
-    globalVars.snakeSpringConstant = math.toNumber(tempGlobalVars.snakeSpringConstant)
-    globalVars.cursorTrailGhost = truthy(tempGlobalVars.cursorTrailGhost)
-    globalVars.drawCapybara = truthy(tempGlobalVars.drawCapybara)
-    globalVars.drawCapybara2 = truthy(tempGlobalVars.drawCapybara2)
-    globalVars.drawCapybara312 = truthy(tempGlobalVars.drawCapybara312)
-    globalVars.ignoreNotes = truthy(tempGlobalVars.ignoreNotesOutsideTg)
-    globalVars.hideSVInfo = truthy(tempGlobalVars.hideSVInfo)
-    globalVars.showVibratoWidget = truthy(tempGlobalVars.showVibratoWidget)
-    globalVars.showNoteDataWidget = truthy(tempGlobalVars.showNoteDataWidget)
-    globalVars.showMeasureDataWidget = truthy(tempGlobalVars.showMeasureDataWidget)
-    globalVars.advancedMode = truthy(tempGlobalVars.advancedMode)
-    globalVars.hideAutomatic = truthy(tempGlobalVars.hideAutomatic)
-    globalVars.dontPrintCreation = truthy(tempGlobalVars.dontPrintCreation)
-    globalVars.hotkeyList = table.duplicate(tempGlobalVars.hotkeyList)
-    globalVars.hotkeyList = table.validate(DEFAULT_HOTKEY_LIST, tempGlobalVars.hotkeyList, true)
-    globalVars.customStyle = tempGlobalVars.customStyle or table.construct()
-    globalVars.equalizeLinear = truthy(tempGlobalVars.equalizeLinear)
-end
-DEFAULT_STARTING_MENU_VARS = {
-    placeStandard = {
-        svTypeIndex = 1,
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats(),
-        interlace = false,
-        interlaceRatio = -0.5,
-        overrideFinal = false
-    },
-    placeSpecial = { svTypeIndex = 1 },
-    placeStill = {
-        svTypeIndex = 1,
-        noteSpacing = 1,
-        stillTypeIndex = 1,
-        stillDistance = 0,
-        stillBehavior = 1,
-        prePlaceDistances = {},
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats(),
-        interlace = false,
-        interlaceRatio = -0.5,
-        overrideFinal = false
-    },
-    placeVibrato = {
-        svTypeIndex = 1,
-        vibratoMode = 1,
-        vibratoQuality = 3,
-        sides = 2
-    },
-    delete = {
-        deleteTable = { true, true, true, true }
-    },
-    addTeleport = {
-        distance = 10727,
-        teleportBeforeHand = false
-    },
-    changeGroups = {
-        designatedTimingGroup = "$Default",
-        changeSVs = true,
-        changeSSFs = true,
-    },
-    convertSVSSF = {
-        conversionDirection = true
-    },
-    copy = {
-        copyTable = { true, true, true, true },
-        copiedLines = {},
-        copiedSVs = {},
-        copiedSSFs = {},
-        copiedBMs = {},
-        tryAlign = true,
-        alignWindow = 3,
-    },
-    directSV = {
-        selectableIndex = 1,
-        startTime = 0,
-        multiplier = 0,
-        pageNumber = 1
-    },
-    displaceNote = {
-        distance = 200,
-        distance1 = 0,
-        distance2 = 200,
-        linearlyChange = false
-    },
-    displaceView = {
-        distance = 200
-    },
-    dynamicScale = {
-        noteTimes = {},
-        svTypeIndex = 1,
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svStats = createSVStats()
-    },
-    flicker = {
-        flickerTypeIndex = 1,
-        distance = -69420.727,
-        distance1 = 0,
-        distance2 = -69420.727,
-        numFlickers = 1,
-        linearlyChange = false,
-        flickerPosition = 0.5
-    },
-    measure = {
-        unrounded = false,
-        nsvDistance = "",
-        svDistance = "",
-        avgSV = "",
-        startDisplacement = "",
-        endDisplacement = "",
-        avgSVDisplaceless = "",
-        roundedNSVDistance = 0,
-        roundedSVDistance = 0,
-        roundedAvgSV = 0,
-        roundedStartDisplacement = 0,
-        roundedEndDisplacement = 0,
-        roundedAvgSVDisplaceless = 0
-    },
-    reverseScroll = {
-        distance = 400
-    },
-    scaleDisplace = {
-        scaleSpotIndex = 1,
-        scaleTypeIndex = 1,
-        avgSV = 0.6,
-        distance = 100,
-        ratio = 0.6,
-    },
-    scaleMultiply = {
-        scaleTypeIndex = 1,
-        avgSV = 0.6,
-        distance = 100,
-        ratio = 0.6
-    },
-    verticalShift = {
-        verticalShift = 1
-    },
-    selectAlternating = {
-        every = 1,
-        offset = 0
-    },
-    selectChordSize = {
-        single = true,
-        jump = false,
-        hand = false,
-        quad = false
-    },
-    selectNoteType = {
-        rice = true,
-        ln = false
-    },
-    selectBySnap = {
-        snap = 1
-    }
-}
----Gets the current menu's variables.
----@param menuType string The menu type.
----@return table
-function getMenuVars(menuType, optionalLabel)
-    optionalLabel = optionalLabel or ""
-    local menuVars = table.duplicate(DEFAULT_STARTING_MENU_VARS[menuType])
-    local labelText = menuType .. optionalLabel .. "Menu"
-    getVariables(labelText, menuVars)
-    return menuVars
-end
-presets = {}
-function setPresets(presetList)
-    for _, preset in pairs(presetList) do
-        local presetIsValid, presetData = checkPresetValidity(preset)
-        if (not presetIsValid) then goto continue end
-        table.insert(presets, { name = preset.name, type = preset.type, menu = preset.menu, data = presetData })
-        ::continue::
-    end
-end
-function checkPresetValidity(preset)
-    if (not table.contains(CREATE_TYPES, preset.type)) then return false, nil end
-    local validMenus = {}
-    if (preset.type == "Standard" or preset.type == "Still") then
-        validMenus = table.duplicate(STANDARD_SVS)
-    end
-    if (preset.type == "Special") then
-        validMenus = table.duplicate(SPECIAL_SVS)
-    end
-    if (preset.type == "Vibrato") then
-        validMenus = table.duplicate(VIBRATO_SVS)
-    end
-    if (not truthy(#validMenus)) then return false, nil end
-    if (not table.includes(validMenus, preset.menu)) then return false, nil end
-    local menuVars = table.validate(DEFAULT_STARTING_MENU_VARS[preset.type][preset.menu], preset.data.menuVars)
-    local settingVars = table.validate(DEFAULT_STARTING_SETTING_VARS[preset.type][preset.menu], preset.data.settingVars)
-    return true, { menuVars, settingVars }
-end
-DEFAULT_STARTING_SETTING_VARS = {
-    linearVibratoSV = {
-        startMsx = 100,
-        endMsx = 0
-    },
-    exponentialVibratoSV = {
-        startMsx = 100,
-        endMsx = 0,
-        curvatureIndex = 5
-    },
-    sinusoidalVibratoSV = {
-        startMsx = 100,
-        endMsx = 0,
-        verticalShift = 0,
-        periods = 1,
-        periodsShift = 0.25
-    },
-    sigmoidalVibratoSV = {
-        startMsx = 100,
-        endMsx = 0,
-        curvatureIndex = 5
-    },
-    customVibratoSV = {
-        code = [[return function (x)
-    local maxHeight = 150
-    heightFactor = maxHeight * math.exp((1 - math.sqrt(17)) / 2) / (31 - 7 * math.sqrt(17)) * 16
-    primaryCoefficient = (x^2 - x^3) * math.exp(2 * x)
-    sinusoidalCoefficient = math.sin(8 * math.pi * x)
-    return heightFactor * primaryCoefficient * sinusoidalCoefficient
-end]]
-    },
-    linearVibratoSSF = {
-        lowerStart = 0.5,
-        lowerEnd = 0.5,
-        higherStart = 1,
-        higherEnd = 1,
-    },
-    exponentialVibratoSSF = {
-        lowerStart = 0.5,
-        lowerEnd = 0.5,
-        higherStart = 1,
-        higherEnd = 1,
-        curvatureIndex = 5
-    },
-    sinusoidalVibratoSSF = {
-        lowerStart = 0.5,
-        lowerEnd = 0.5,
-        higherStart = 1,
-        higherEnd = 1,
-        verticalShift = 0,
-        periods = 1,
-        periodsShift = 0.25,
-        applyToHigher = false,
-    },
-    sigmoidalVibratoSSF = {
-        lowerStart = 0.5,
-        lowerEnd = 0.5,
-        higherStart = 1,
-        higherEnd = 1,
-        curvatureIndex = 5
-    },
-    customVibratoSSF = {
-        code1 = "return function (x) return 0.69 end",
-        code2 = "return function (x) return 1.420 end"
-    },
-    linear = {
-        startSV = 1.5,
-        endSV = 0.5,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    exponential = {
-        behaviorIndex = 1,
-        intensity = 30,
-        verticalShift = 0,
-        distance = 100,
-        startSV = 0.01,
-        endSV = 1,
-        avgSV = 1,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1,
-        distanceMode = 1
-    },
-    bezier = {
-        p1 = vector2(0),
-        p2 = vector2(1),
-        verticalShift = 0,
-        avgSV = 1,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    hermite = {
-        startSV = 0,
-        endSV = 0,
-        verticalShift = 0,
-        avgSV = 1,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    sinusoidal = {
-        startSV = 2,
-        endSV = 2,
-        curveSharpness = 50,
-        verticalShift = 1,
-        periods = 1,
-        periodsShift = 0.25,
-        svsPerQuarterPeriod = 8,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    circular = {
-        behaviorIndex = 1,
-        arcPercent = 50,
-        avgSV = 1,
-        verticalShift = 0,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1,
-        dontNormalize = false
-    },
-    random = {
-        svMultipliers = {},
-        randomTypeIndex = 1,
-        randomScale = 2,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1,
-        dontNormalize = false,
-        avgSV = 1,
-        verticalShift = 0
-    },
-    custom = {
-        svMultipliers = { 0 },
-        selectedMultiplierIndex = 1,
-        svPoints = 1,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    chinchilla = {
-        behaviorIndex = 1,
-        chinchillaTypeIndex = 1,
-        chinchillaIntensity = 0.5,
-        avgSV = 1,
-        verticalShift = 0,
-        svPoints = 16,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    combo = {
-        svType1Index = 1,
-        svType2Index = 2,
-        comboPhase = 0,
-        comboTypeIndex = 1,
-        comboMultiplier1 = 1,
-        comboMultiplier2 = 1,
-        finalSVIndex = 2,
-        customSV = 1,
-        dontNormalize = false,
-        avgSV = 1,
-        verticalShift = 0
-    },
-    code = {
-        code = [[return function (x)
-    local startPeriod = 4
-    local endPeriod = -1
-    local height = 1.5
-    return height * math.sin(2 * math.pi * (startPeriod * x + (endPeriod - startPeriod) / 2 * x^2))
-end]],
-        svPoints = 64,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    stutter = {
-        startSV = 1.5,
-        endSV = 0.5,
-        stutterDuration = 50,
-        stuttersPerSection = 1,
-        avgSV = 1,
-        finalSVIndex = 2,
-        customSV = 1,
-        linearlyChange = false,
-        controlLastSV = false,
-        svMultipliers = {},
-        svDistances = {},
-        svGraphStats = createSVGraphStats(),
-        svMultipliers2 = {},
-        svDistances2 = {},
-        svGraph2Stats = createSVGraphStats()
-    },
-    teleportStutter = {
-        svPercent = 50,
-        svPercent2 = 0,
-        distance = 50,
-        mainSV = 0.5,
-        mainSV2 = 0,
-        useDistance = false,
-        linearlyChange = false,
-        avgSV = 1,
-        finalSVIndex = 2,
-        customSV = 1
-    },
-    framesSetup = {
-        menuStep = 1,
-        numFrames = 5,
-        frameDistance = 2000,
-        distance = 2000,
-        reverseFrameOrder = false,
-        noteSkinTypeIndex = 1,
-        frameTimes = {},
-        selectedTimeIndex = 1,
-        currentFrame = 1
-    },
-    penis = {
-        bWidth = 50,
-        sWidth = 100,
-        sCurvature = 100,
-        bCurvature = 100
-    },
-    automate = {
-        copiedSVs = {},
-        maintainMs = true,
-        ms = 1000,
-        scaleSVs = false,
-        initialSV = 1,
-        optimizeTGs = true,
-    },
-    animationPalette = {
-        instructions = ""
-    }
-}
----Gets the current menu's setting variables.
----@param svType string The SV type - that is, the shape of the SV once plotted.
----@param label string A delineator to separate two categories with similar SV types (Standard/Still, etc).
----@return table
-function getSettingVars(svType, label)
-    searchTerm = svType:gsub("[%s%(%)#]+", "")
-    searchTerm = searchTerm:charAt(1):lower() .. searchTerm:sub(2)
-    local settingVars = table.duplicate(DEFAULT_STARTING_SETTING_VARS[searchTerm])
-    local labelText = svType .. label .. "Settings"
-    getVariables(labelText, settingVars)
-    return settingVars
 end
