@@ -22,11 +22,11 @@ Once you open the plugin in the map editor you:
 plumoguSV lets you do 4 general SV actions: select, create, edit, and delete.
 
 ## Special Note
-Thanks to [asterSSH](https://github.com/asterssh) for the banner and other graphic design help. Thanks to [7xbi](https://github.com/7xbi) and [imnethen](https://github.com/imnethen) for PRs which have positively moved this plugin forward.
+Thanks to [asterSSH](https://github.com/asterssh) for the banner and other graphic design help. Thanks to [7xbi](https://github.com/7xbi) and [imnethen](https://github.com/imnethen) for PRs which have moved this plugin forward.
 
 Most of the core ideas and base functionality were taken (stolen) from [iceSV](https://github.com/IceDynamix/iceSV) by [IceDynamix](https://github.com/IceDynamix).
 Other SV ideas also taken (stolen) from [Illuminati-CRAZ](https://github.com/Illuminati-CRAZ)’s SV plugins.
-Without these two people’s contributions to SV plugins in general, plumoguSV would not be as good as it is today or even exist in the first place, so huge thanks to them.
+Without these two and their contributions to SV plugins in general, plumoguSV would not be as good as it is today or even exist in the first place, so huge thanks to them.
 
 Also, some cursor effects were inspired (stolen) from https://github.com/tholman/cursor-effects
 
