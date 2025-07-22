@@ -1,3 +1,4 @@
+require("packages.table.contains")
 ---Converts a string (generated from [table.stringify](lua://table.stringify)) into a table.
 ---@param str string
 ---@return any

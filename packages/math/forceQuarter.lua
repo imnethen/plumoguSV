@@ -1,3 +1,4 @@
+require("packages.math.round")
 ---Forces a number to have a quarterly decimal part.
 ---@param number number
 ---@return number

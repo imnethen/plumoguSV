@@ -1,3 +1,4 @@
+require("packages.truthy")
 ---Converts a table (or any other primitive values) to a string.
 ---@param var any
 ---@return string

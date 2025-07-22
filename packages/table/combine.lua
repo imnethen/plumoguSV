@@ -1,3 +1,4 @@
+require("packages.table.duplicate")
 ---Concatenates two arrays together.
 ---@param t1 any[] The first table.
 ---@param t2 any[] The second table.
