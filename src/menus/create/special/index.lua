@@ -7,7 +7,7 @@ SPECIAL_SVS = { -- types of special SVs
 }
 
 function placeSpecialSVMenu()
-    presetButton()
+    PresetButton()
     local menuVars = getMenuVars("placeSpecial")
     chooseSpecialSVType(menuVars)
 

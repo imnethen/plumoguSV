@@ -7,7 +7,7 @@ VIBRATO_SVS = { -- types of vibrato SVs
 }
 
 function placeVibratoSVMenu(separateWindow)
-    presetButton()
+    PresetButton()
     local menuVars = getMenuVars("placeVibrato")
     chooseVibratoSVType(menuVars)
 

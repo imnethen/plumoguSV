@@ -13,7 +13,7 @@ STANDARD_SVS = {
 }
 
 function placeStandardSVMenu()
-    presetButton()
+    PresetButton()
     local menuVars = getMenuVars("placeStandard")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate

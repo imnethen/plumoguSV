@@ -1,5 +1,5 @@
 function placeStillSVMenu()
-    presetButton()
+    PresetButton()
     local menuVars = getMenuVars("placeStill")
     local needSVUpdate = #menuVars.svMultipliers == 0
     needSVUpdate = chooseStandardSVType(menuVars, false) or needSVUpdate

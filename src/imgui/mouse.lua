@@ -10,16 +10,9 @@ end
 -- Parameters
 --    currentMousePosition : current (x, y) coordinates of the mouse [Table]
 function checkIfMouseMoved(currentMousePosition)
-    local oldMousePosition = {
-        x = 0,
-        y = 0
-    }
+    local oldMousePosition = vector2(0)
     getVariables("oldMousePosition", oldMousePosition)
-    local xChanged = currentMousePosition.x ~= oldMousePosition.x
-    local yChanged = currentMousePosition.y ~= oldMousePosition.y
-    local mousePositionChanged = xChanged or yChanged
-    oldMousePosition.x = currentMousePosition.x
-    oldMousePosition.y = currentMousePosition.y
-    saveVariables("oldMousePosition", oldMousePosition)
+    local mousePositionChanged = currentMousePosition ~= oldMousePosition
+    saveVariables("oldMousePosition", currentMousePosition)
     return mousePositionChanged
 end
