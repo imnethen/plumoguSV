@@ -40,34 +40,5 @@ Also, some cursor effects were inspired (stolen) from https://github.com/tholman
 * [mulch](https://github.com/Emik03/mulch) by Emik03
 
 ## TO-DO
-* ~~Automate TG effects~~
-* ~~Separate settings tab~~
-* ~~Move to vector system~~
-* ~~Fix all syntax errors in intellisense~~
-* ~~Migrate affine vibrato~~
-* ~~Add three sided vibrato algorithm~~
-* ~~Add code based ssf vibrato~~
-* ~~Custom vibrato with sv and lua eval~~
-* ~~Map statistics~~
-* ~~Custom theme maker~~
-* ~~Dynamic automation~~
-* ~~Flicker duration option~~
-* ~~Fix align timing lines bug~~
-* ~~Finish snap editor~~
-* ~~Customizable default page settings~~
-* ~~Preset menu~~
-* ~~Refactor custom theme settings~~
-* ~~Add import/export custom theme~~
-* ~~Add tooltips to settings~~
-* ~~Add nsv measure tool~~
-* ~~Fix merge inefficiency~~
-* Animation palette generator
-* ~~Rework bezier backend to use vectors~~
-* ~~automate optimizations~~
-* ~~Use sliderint instead of clamped dragint as much as possible~~
-* ~~Fix automate TGs being hidden breaking stuff~~
-* ~~Make globalVars.... actually global so i don't have to fucking pass it down everywhere~~
-* ~~Remove passing globalVars to children~~
-* ~~Update radio buttons to use new radio button constructor~~
-* ~~note lock hotkey (with horizontal and vertical movement independently restricted)~~
+* Animation palette generator (v2.1)
 * Allow for dynamic sv fps instead of static sv points (v2.1)
