@@ -1,6 +1,9 @@
 import chalk = require('chalk');
 
-export default function checkDuplicatedLines(plugin: string[]) {
+export default function checkDuplicatedLines(
+    plugin: string[],
+    toleratedLength: number
+) {
     const hashmap = {};
     let failedTests = 0;
     let testCount = 0;
@@ -56,7 +59,7 @@ export default function checkDuplicatedLines(plugin: string[]) {
         if (idx === pluginCursor + 1) {
             savedLines.push(lines[trueIdx]);
         } else {
-            if (savedLines.length >= 7) {
+            if (savedLines.length > toleratedLength) {
                 dupeArr.push(savedLines.join('\n'));
                 failedTests++;
             }
