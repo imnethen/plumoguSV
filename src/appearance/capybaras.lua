@@ -1,3 +1,9 @@
+function drawCapybaraParent()
+    drawCapybara()
+    drawCapybara2()
+    drawCapybara312()
+end
+
 function drawCapybara()
     if not globalVars.drawCapybara then return end
     local o = imgui.GetForegroundDrawList()

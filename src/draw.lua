@@ -2,13 +2,11 @@ function draw()
     state.SetValue("ComputableInputFloatIndex", 1)
     state.IsWindowHovered = imgui.IsWindowHovered()
 
-    drawCapybara()
-    drawCapybara2()
-    drawCapybara312()
+    drawCapybaraParent()
     drawCursorTrail()
     setPluginAppearance()
 
-    startNextWindowNotCollapsed("plumoguSVAutoOpen")
+    startNextWindowNotCollapsed("plumoguSV-autoOpen")
     imgui.Begin("plumoguSV-dev", imgui_window_flags.AlwaysAutoResize)
 
     renderBackground()
@@ -69,7 +67,7 @@ function renderMeasureDataWidget()
     uniqueDict = sort(uniqueDict, sortAscending) ---@cast uniqueDict number[]
     local startOffset = uniqueDict[1]
     local endOffset = uniqueDict[2] or uniqueDict[1]
-    if (endOffset == startOffset) then return end
+    if (math.abs(endOffset - startOffset) < 1e-10) then return end
     if (endOffset ~= state.GetValue("oldEndOffset", -69) or startOffset ~= state.GetValue("oldStartOffset", -69)) then
         svsBetweenOffsets = getSVsBetweenOffsets(startOffset, endOffset)
         nsvDistance = endOffset - startOffset
