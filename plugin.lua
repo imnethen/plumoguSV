@@ -373,8 +373,7 @@ function table.duplicate(tbl)
             dupeTbl[#dupeTbl + 1] = type(value) == "table" and table.duplicate(value) or value
         end
     else
-        for k = 1, #table.keys(tbl) do
-            local key = table.keys(tbl)[k]
+        for _, key in ipairs(table.keys(tbl)) do
             local value = tbl[key]
             dupeTbl[key] = type(value) == "table" and table.duplicate(value) or value
         end
@@ -1602,8 +1601,7 @@ function automateSVs(settingVars)
                 neededIds[idName] = { hos = {}, svs = {} }
             end
             neededIds[idName].hos[#neededIds[idName].hos + 1] = ho
-            for k = 1, #settingVars.copiedSVs do
-                local sv = settingVars.copiedSVs[k]
+            for _, sv in ipairs(settingVars.copiedSVs) do
                 local maxRelativeOffset = settingVars.copiedSVs[#settingVars.copiedSVs].relativeOffset
                 local progress = 1 - sv.relativeOffset / maxRelativeOffset
                 if (settingVars.scaleSVs) then
@@ -2159,8 +2157,7 @@ function alignTimingLines()
     local mspb = 60000 / bpm
     local msptl = mspb * signature
     local noteTimes = {}
-    for k = 1, #map.HitObjects do
-        local n = map.HitObjects[k]
+    for _, n in ipairs(map.HitObjects) do
         noteTimes[#noteTimes + 1] = n.StartTime
     end
     local times = {}
@@ -2377,8 +2374,7 @@ function pasteItems(menuVars)
         local pasteOffset = offsets[i]
         local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
         local ignoranceTolerance = 0.01
-        for k = 1, #menuVars.copiedLines do
-            local line = menuVars.copiedLines[k]
+        for _, line in ipairs(menuVars.copiedLines) do
             local timeToPasteLine = pasteOffset + line.relativeOffset
             if (math.abs(timeToPasteLine - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip1
@@ -2386,8 +2382,7 @@ function pasteItems(menuVars)
             table.insert(linesToAdd, utils.CreateTimingPoint(timeToPasteLine, line.bpm, line.signature, line.hidden))
             ::skip1::
         end
-        for k = 1, #menuVars.copiedSVs do
-            local sv = menuVars.copiedSVs[k]
+        for _, sv in ipairs(menuVars.copiedSVs) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
             if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip2
@@ -2398,8 +2393,7 @@ function pasteItems(menuVars)
             table.insert(svsToAdd, createSV(timeToPasteSV, sv.multiplier))
             ::skip2::
         end
-        for k = 1, #menuVars.copiedSSFs do
-            local ssf = menuVars.copiedSSFs[k]
+        for _, ssf in ipairs(menuVars.copiedSSFs) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
             if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip3
@@ -2407,8 +2401,7 @@ function pasteItems(menuVars)
             table.insert(ssfsToAdd, createSSF(timeToPasteSSF, ssf.multiplier))
             ::skip3::
         end
-        for k = 1, #menuVars.copiedBMs do
-            local bm = menuVars.copiedBMs[k]
+        for _, bm in ipairs(menuVars.copiedBMs) do
             local timeToPasteBM = pasteOffset + bm.relativeOffset
             if (math.abs(timeToPasteBM - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip4
@@ -2570,8 +2563,7 @@ function fixFlippedLNEnds()
     local svTimeIsAdded = {}
     local lnEndTimeFixed = {}
     local fixedLNEndsCount = 0
-    for k = 1, #map.HitObjects do
-        local ho = map.HitObjects[k]
+    for _, ho in ipairs(map.HitObjects) do
         local lnEndTime = ho.EndTime
         local isLN = lnEndTime ~= 0
         local endHasNegativeSV = (getSVMultiplierAt(lnEndTime) <= 0)
@@ -2713,10 +2705,8 @@ function collapseSnaps()
     local baseBpm = 60000 / snapInterval
     local moveNoteActions = {}
     local removeLayerActions = {}
-    for k = 1, #map.HitObjects do
-        local ho = map.HitObjects[k]
-        for k = 1, #map.TimingPoints do
-            local tp = map.TimingPoints[k]
+    for _, ho in ipairs(map.HitObjects) do
+        for _, tp in ipairs(map.TimingPoints) do
             if ho.StartTime - snapInterval <= tp.StartTime and tp.StartTime <= ho.StartTime + snapInterval then
                 tpsToRemove[#tpsToRemove + 1] = tp
             end
@@ -2763,8 +2753,7 @@ function collapseSnaps()
 end
 function clearSnappedLayers()
     local removeLayerActions = {}
-    for k = 1, #map.EditorLayers do
-        local layer = map.EditorLayers[k]
+    for _, layer in ipairs(map.EditorLayers) do
         if layer.Name:find("plumoguSV") then
             table.insert(removeLayerActions, utils.CreateEditorAction(action_type.RemoveLayer, layer))
         end
@@ -2819,8 +2808,7 @@ function mergeSVs()
     local endOffset = offsets[#offsets]
     local svTimeDict = {}
     local svsToRemove = {}
-    for k = 1, #table.reverse(getSVsBetweenOffsets(startOffset, endOffset, true, true)) do
-        local sv = table.reverse(getSVsBetweenOffsets(startOffset, endOffset, true, true))[k]
+    for _, sv in ipairs(table.reverse(getSVsBetweenOffsets(startOffset, endOffset, true, true))) do
         if (svTimeDict[sv.StartTime]) then
             svsToRemove[#svsToRemove + 1] = sv
         else
@@ -3017,6 +3005,7 @@ function initializeNoteLockMode()
         if (mode == 2) then
             local allowedIndices = { 0, 1, 3, 4, 8, 9 }
             if (not table.contains(allowedIndices, actionIndex)) then return end
+            print(action)
             action.Undo()
         end
         if (mode == 3) then
@@ -6169,8 +6158,7 @@ function stringifyCustomStyle(customStyle)
 end
 function setCustomStyleString(str)
     local keyIdDict = {}
-    for k = 1, #table.keys(DEFAULT_STYLE) do
-        local key = table.keys(DEFAULT_STYLE)[k]
+    for _, key in ipairs(table.keys(DEFAULT_STYLE)) do
         keyIdDict[key] = convertStrToShort(key)
     end
     local customStyle = {}
@@ -8065,8 +8053,7 @@ end
 ---@return HitObject[] objs All of the [hit objects](lua://HitObject) within the area.
 function getNotesBetweenOffsets(startOffset, endOffset)
     local notesBetweenOffsets = {} ---@type HitObject[]
-    for k = 1, #map.HitObjects do
-        local note = map.HitObjects[k]
+    for _, note in ipairs(map.HitObjects) do
         local noteIsInRange = note.StartTime >= startOffset and note.StartTime <= endOffset
         if noteIsInRange then notesBetweenOffsets[#notesBetweenOffsets + 1] = note end
     end
@@ -8078,8 +8065,7 @@ end
 ---@return TimingPoint[] tps All of the [timing points](lua://TimingPoint) within the area.
 function getLinesBetweenOffsets(startOffset, endOffset)
     local linesBetweenoffsets = {} ---@type TimingPoint[]
-    for k = 1, #map.TimingPoints do
-        local line = map.TimingPoints[k]
+    for _, line in ipairs(map.TimingPoints) do
         local lineIsInRange = line.StartTime >= startOffset and line.StartTime < endOffset
         if lineIsInRange then linesBetweenoffsets[#linesBetweenoffsets + 1] = line end
     end
@@ -8093,8 +8079,7 @@ end
 ---@return ScrollVelocity[] svs All of the [scroll velocities](lua://ScrollVelocity) within the area.
 function getSVsBetweenOffsets(startOffset, endOffset, includeEnd, dontSort)
     local svsBetweenOffsets = {} ---@type ScrollVelocity[]
-    for k = 1, #map.ScrollVelocities do
-        local sv = map.ScrollVelocities[k]
+    for _, sv in ipairs(map.ScrollVelocities) do
         local svIsInRange = sv.StartTime >= startOffset and sv.StartTime < endOffset
         if (includeEnd and sv.StartTime == endOffset) then svIsInRange = true end
         if svIsInRange then svsBetweenOffsets[#svsBetweenOffsets + 1] = sv end
@@ -8108,8 +8093,7 @@ end
 ---@return Bookmark[] bms All of the [bookmarks](lua://Bookmark) within the area.
 function getBookmarksBetweenOffsets(startOffset, endOffset)
     local bookmarksBetweenOffsets = {} ---@type Bookmark[]
-    for k = 1, #map.Bookmarks do
-        local bm = map.Bookmarks[k]
+    for _, bm in ipairs(map.Bookmarks) do
         local bmIsInRange = bm.StartTime >= startOffset and bm.StartTime < endOffset
         if bmIsInRange then bookmarksBetweenOffsets[#bookmarksBetweenOffsets + 1] = bm end
     end
@@ -8139,8 +8123,7 @@ function getSSFsBetweenOffsets(startOffset, endOffset, includeEnd)
     if (ssfs == nil) then
         ssfs = {}
     else
-        for k = 1, #map.ScrollSpeedFactors do
-            local ssf = map.ScrollSpeedFactors[k]
+        for _, ssf in ipairs(map.ScrollSpeedFactors) do
             local ssfIsInRange = ssf.StartTime >= startOffset and ssf.StartTime < endOffset
             if (includeEnd and ssf.StartTime == endOffset) then ssfIsInRange = true end
             if ssfIsInRange then ssfsBetweenOffsets[#ssfsBetweenOffsets + 1] = ssf end
@@ -8155,8 +8138,7 @@ end
 ---@return number[]
 function uniqueNoteOffsetsBetween(startOffset, endOffset, includeLN)
     local noteOffsetsBetween = {}
-    for k = 1, #map.HitObjects do
-        local ho = map.HitObjects[k]
+    for _, ho in ipairs(map.HitObjects) do
         if ho.StartTime >= startOffset and ho.StartTime <= endOffset then
             local skipNote = false
             if (state.SelectedScrollGroupId ~= ho.TimingGroup and globalVars.ignoreNotesOutsideTg) then skipNote = true end
@@ -8519,8 +8501,7 @@ function addSSFToList(ssfList, offset, multiplier, endOfList)
     table.insert(ssfList, 1, newSSF)
 end
 function getRemovableSVs(svsToRemove, svTimeIsAdded, startOffset, endOffset, retroactiveSVRemovalTable)
-    for k = 1, #map.ScrollVelocities do
-        local sv = map.ScrollVelocities[k]
+    for _, sv in ipairs(map.ScrollVelocities) do
         local svIsInRange = sv.StartTime >= startOffset - 1 and sv.StartTime <= endOffset + 1
         if svIsInRange then
             local svIsRemovable = svTimeIsAdded[sv.StartTime]
@@ -8878,8 +8859,7 @@ end
 function renderMeasureDataWidget()
     if #state.SelectedHitObjects < 2 then return end
     local uniqueDict = {}
-    for k = 1, #state.SelectedHitObjects do
-        local ho = state.SelectedHitObjects[k]
+    for _, ho in ipairs(state.SelectedHitObjects) do
         if (not table.contains(uniqueDict, ho.StartTime)) then
             uniqueDict[#uniqueDict + 1] = ho.StartTime
         end
