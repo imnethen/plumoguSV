@@ -1140,12 +1140,15 @@ DEFAULT_STARTING_MENU_VARS = {
     },
     copy = {
         copyTable = { true, true, true, true },
-        copiedLines = {},
-        copiedSVs = {},
-        copiedSSFs = {},
-        copiedBMs = {},
+        copied = {
+            lines = {{}},
+            SVs = {{}},
+            SSFs = {{}},
+            BMs = {{}},
+        },
         tryAlign = true,
         alignWindow = 3,
+        curSlot = 1,
     },
     directSV = {
         selectableIndex = 1,
@@ -2280,10 +2283,7 @@ function convertSVSSF(menuVars)
     toggleablePrint("w!", "Successfully converted.")
 end
 function copyItems(menuVars)
-    menuVars.copiedLines = {}
-    menuVars.copiedSVs = {}
-    menuVars.copiedSSFs = {}
-    menuVars.copiedBMs = {}
+    clearCopiedItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
@@ -2297,7 +2297,7 @@ function copyItems(menuVars)
             signature = line.Signature,
             hidden = line.Hidden,
         }
-        menuVars.copiedLines[#menuVars.copiedLines + 1] = copiedLine
+        menuVars.copied.lines[menuVars.curSlot][#menuVars.copied.lines[menuVars.curSlot] + 1] = copiedLine
     end
     ::continue1::
     if (not menuVars.copyTable[2]) then goto continue2 end
@@ -2307,7 +2307,7 @@ function copyItems(menuVars)
             relativeOffset = sv.StartTime - startOffset,
             multiplier = sv.Multiplier
         }
-        menuVars.copiedSVs[#menuVars.copiedSVs + 1] = copiedSV
+        menuVars.copied.SVs[menuVars.curSlot][#menuVars.copied.SVs[menuVars.curSlot] + 1] = copiedSV
     end
     ::continue2::
     if (not menuVars.copyTable[3]) then goto continue3 end
@@ -2317,7 +2317,7 @@ function copyItems(menuVars)
             relativeOffset = ssf.StartTime - startOffset,
             multiplier = ssf.Multiplier
         }
-        menuVars.copiedSSFs[#menuVars.copiedSSFs + 1] = copiedSSF
+        menuVars.copied.SSFs[menuVars.curSlot][#menuVars.copied.SSFs[menuVars.curSlot] + 1] = copiedSSF
     end
     ::continue3::
     if (not menuVars.copyTable[4]) then goto continue4 end
@@ -2327,29 +2327,31 @@ function copyItems(menuVars)
             relativeOffset = bm.StartTime - startOffset,
             note = bm.Note
         }
-        menuVars.copiedBMs[#menuVars.copiedBMs + 1] = copiedBM
+        menuVars.copied.BMs[menuVars.curSlot][#menuVars.copied.BMs[menuVars.curSlot] + 1] = copiedBM
     end
     ::continue4::
-    if (#menuVars.copiedBMs > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedBMs, " Bookmarks."})) end
-    if (#menuVars.copiedSSFs > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedSSFs, " SSFs."})) end
-    if (#menuVars.copiedSVs > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedSVs, " SVs."})) end
-    if (#menuVars.copiedLines > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copiedLines, " Lines."})) end
+    if (#menuVars.copied.BMs[menuVars.curSlot] > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copied.BMs[menuVars.curSlot], " Bookmarks."})) end
+    if (#menuVars.copied.SSFs[menuVars.curSlot] > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copied.SSFs[menuVars.curSlot], " SSFs."})) end
+    if (#menuVars.copied.SVs[menuVars.curSlot] > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copied.SVs[menuVars.curSlot], " SVs."})) end
+    if (#menuVars.copied.lines[menuVars.curSlot] > 0) then toggleablePrint("s!", table.concat({"Copied ", #menuVars.copied.lines[menuVars.curSlot], " Lines."})) end
 end
 function clearCopiedItems(menuVars)
-    menuVars.copiedLines = {}
-    menuVars.copiedSVs = {}
-    menuVars.copiedSSFs = {}
-    menuVars.copiedBMs = {}
+    local newCopied = table.duplicate(menuVars.copied)
+    newCopied.lines[menuVars.curSlot] = {}
+    newCopied.SVs[menuVars.curSlot] = {}
+    newCopied.SSFs[menuVars.curSlot] = {}
+    newCopied.BMs[menuVars.curSlot] = {}
+    menuVars.copied = newCopied
 end
 function pasteItems(menuVars)
     local offsets = uniqueSelectedNoteOffsets()
     if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
-    local lastCopiedLine = menuVars.copiedLines[#menuVars.copiedLines]
-    local lastCopiedSV = menuVars.copiedSVs[#menuVars.copiedSVs]
-    local lastCopiedSSF = menuVars.copiedSSFs[#menuVars.copiedSSFs]
-    local lastCopiedBM = menuVars.copiedBMs[#menuVars.copiedBMs]
+    local lastCopiedLine = menuVars.copied.lines[menuVars.curSlot][#menuVars.copied.lines[menuVars.curSlot]]
+    local lastCopiedSV = menuVars.copied.SVs[menuVars.curSlot][#menuVars.copied.SVs[menuVars.curSlot]]
+    local lastCopiedSSF = menuVars.copied.SSFs[menuVars.curSlot][#menuVars.copied.SSFs[menuVars.curSlot]]
+    local lastCopiedBM = menuVars.copied.BMs[menuVars.curSlot][#menuVars.copied.BMs[menuVars.curSlot]]
     local lastCopiedValue = lastCopiedSV
     if (lastCopiedValue == nil) then
         lastCopiedValue = lastCopiedSSF or lastCopiedLine or lastCopiedBM or { relativeOffset = 0 }
@@ -2374,7 +2376,7 @@ function pasteItems(menuVars)
         local pasteOffset = offsets[i]
         local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
         local ignoranceTolerance = 0.01
-        for _, line in ipairs(menuVars.copiedLines) do
+        for _, line in ipairs(menuVars.copied.lines[menuVars.curSlot]) do
             local timeToPasteLine = pasteOffset + line.relativeOffset
             if (math.abs(timeToPasteLine - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip1
@@ -2382,7 +2384,7 @@ function pasteItems(menuVars)
             table.insert(linesToAdd, utils.CreateTimingPoint(timeToPasteLine, line.bpm, line.signature, line.hidden))
             ::skip1::
         end
-        for _, sv in ipairs(menuVars.copiedSVs) do
+        for _, sv in ipairs(menuVars.copied.SVs[menuVars.curSlot]) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
             if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip2
@@ -2393,7 +2395,7 @@ function pasteItems(menuVars)
             table.insert(svsToAdd, createSV(timeToPasteSV, sv.multiplier))
             ::skip2::
         end
-        for _, ssf in ipairs(menuVars.copiedSSFs) do
+        for _, ssf in ipairs(menuVars.copied.SSFs[menuVars.curSlot]) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
             if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip3
@@ -2401,7 +2403,7 @@ function pasteItems(menuVars)
             table.insert(ssfsToAdd, createSSF(timeToPasteSSF, ssf.multiplier))
             ::skip3::
         end
-        for _, bm in ipairs(menuVars.copiedBMs) do
+        for _, bm in ipairs(menuVars.copied.BMs[menuVars.curSlot]) do
             local timeToPasteBM = pasteOffset + bm.relativeOffset
             if (math.abs(timeToPasteBM - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip4
@@ -5481,7 +5483,19 @@ function copyNPasteMenu()
     imgui.SameLine(0, SAMELINE_SPACING + 3.5)
     _, menuVars.copyTable[4] = imgui.Checkbox("Copy Bookmarks", menuVars.copyTable[4])
     AddSeparator()
-    local copiedItemCount = #menuVars.copiedLines + #menuVars.copiedSVs + #menuVars.copiedSSFs + #menuVars.copiedBMs
+    local _ = BasicInputInt(menuVars, "curSlot", "Current slot", { 1, 999 })
+    if #menuVars.copied.lines < menuVars.curSlot then
+        local newCopied = table.duplicate(menuVars.copied)
+        while #newCopied.lines < menuVars.curSlot do
+            newCopied.lines[#newCopied.lines + 1] = {}
+            newCopied.SVs[#newCopied.SVs + 1] = {}
+            newCopied.SSFs[#newCopied.SSFs + 1] = {}
+            newCopied.BMs[#newCopied.BMs + 1] = {}
+        end
+        menuVars.copied = newCopied
+    end
+    AddSeparator()
+    local copiedItemCount = #menuVars.copied.lines[menuVars.curSlot] + #menuVars.copied.SVs[menuVars.curSlot] + #menuVars.copied.SSFs[menuVars.curSlot] + #menuVars.copied.BMs[menuVars.curSlot]
     if (copiedItemCount == 0) then
         simpleActionMenu("Copy items between selected notes", 2, copyItems, menuVars)
     else
