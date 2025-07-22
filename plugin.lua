@@ -3005,8 +3005,6 @@ function initializeNoteLockMode()
         if (mode == 2) then
             local allowedIndices = { 0, 1, 3, 4, 8, 9 }
             if (not table.contains(allowedIndices, actionIndex)) then return end
-            print(action)
-            action.Undo()
         end
         if (mode == 3) then
             local allowedIndices = { 2, 5, 6, 7 }

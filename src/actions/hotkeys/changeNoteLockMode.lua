@@ -32,8 +32,8 @@ function initializeNoteLockMode()
         if (mode == 2) then -- Only place and delete notes
             local allowedIndices = { 0, 1, 3, 4, 8, 9 }
             if (not table.contains(allowedIndices, actionIndex)) then return end
-            print(action)
-            action.Undo()
+            -- action.Undo()
+            -- must undo each one manually.
         end
         if (mode == 3) then -- Only move notes
             local allowedIndices = { 2, 5, 6, 7 }
