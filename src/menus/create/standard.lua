@@ -22,7 +22,7 @@ function placeStandardSVMenu()
     local currentSVType = STANDARD_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Standard")
     if globalVars.showPresetMenu then
-        renderPresetMenu(menuVars, settingVars)
+        renderPresetMenu("Standard", menuVars, settingVars)
         return
     end
 

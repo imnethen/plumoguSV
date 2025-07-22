@@ -15,7 +15,7 @@ function placeSpecialSVMenu()
     local currentSVType = SPECIAL_SVS[menuVars.svTypeIndex]
     local settingVars = getSettingVars(currentSVType, "Special")
     if globalVars.showPresetMenu then
-        renderPresetMenu(menuVars, settingVars)
+        renderPresetMenu("Special", menuVars, settingVars)
         return
     end
 

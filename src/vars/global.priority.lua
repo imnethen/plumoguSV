@@ -34,7 +34,8 @@ globalVars = {
     customStyle = {},
     dontPrintCreation = false,
     equalizeLinear = false,
-    defaultProperties = { settings = {}, menu = {} }
+    defaultProperties = { settings = {}, menu = {} },
+    presets = {}
 }
 
 DEFAULT_GLOBAL_VARS = table.duplicate(globalVars)

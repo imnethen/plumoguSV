@@ -4,7 +4,7 @@ function awake()
 
     setGlobalVars(tempGlobalVars)
     loadDefaultProperties(tempGlobalVars.defaultProperties)
-    setPresets(table.map(tempGlobalVars.presets or {}, table.parse))
+    setPresets(tempGlobalVars.presets or {})
     initializeNoteLockMode()
 
     state.SelectedScrollGroupId = "$Default" or map.GetTimingGroupIds()[1]
