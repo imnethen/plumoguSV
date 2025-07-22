@@ -2991,13 +2991,15 @@ function changeNoteLockMode()
         print("e", "Notes have been fully locked. To change the lock mode, press " .. globalVars.hotkeyList[10])
     end
     if (mode == 2) then
-        print("w", "Notes can no longer be placed, only moved. To change the lock mode, press" .. globalVars.hotkeyList[10])
+        print("w",
+            "Notes can no longer be placed, only moved. To change the lock mode, press" .. globalVars.hotkeyList[10])
     end
     if (mode == 3) then
         print("w",
             "Notes can no longer be moved, only placed and deleted. To change the lock mode, press" ..
             globalVars.hotkeyList[10])
     end
+    state.SetValue("note-lock-mode", mode)
 end
 function initializeNoteLockMode()
     state.SetValue("note-lock-mode", 0)
@@ -3010,12 +3012,12 @@ function initializeNoteLockMode()
             action.Undo()
         end
         if (mode == 2) then
-            local allowedIndices = { 2, 5, 6, 7 }
+            local allowedIndices = { 0, 1, 3, 4, 8, 9 }
             if (not table.contains(allowedIndices, actionIndex)) then return end
             action.Undo()
         end
         if (mode == 3) then
-            local allowedIndices = { 0, 1, 3, 4, 8, 9 }
+            local allowedIndices = { 2, 5, 6, 7 }
             if (not table.contains(allowedIndices, actionIndex)) then return end
             action.Undo()
         end
