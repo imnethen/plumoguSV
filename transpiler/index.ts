@@ -21,7 +21,7 @@ export default async function transpiler(
 
     const separator = process.platform === 'win32' ? '\\' : '/';
     const entryPoints = ['draw.lua', 'awake.lua'];
-    const ignoredFiles = ['classes.lua', 'intellisense.lua'];
+    const ignoredFiles = ['classes.lua', 'intellisense.lua', 'init.lua'];
     if (!devMode) ignoredFiles.push(`src${separator}dev`);
 
     const files = getFilesRecursively('packages');
