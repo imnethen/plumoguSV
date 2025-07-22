@@ -34,6 +34,8 @@ function updateStars()
 end
 
 function renderBackground()
+    local stars = stars
+
     local ctx = imgui.GetWindowDrawList()
     local topLeft = imgui.GetWindowPos()
     local dim = imgui.GetWindowSize()
