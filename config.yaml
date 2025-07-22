@@ -17,10 +17,7 @@ drawCapybara312: false
 selectTypeIndex: 1
 placeTypeIndex: 1
 editToolIndex: 1
-showPresetMenu: false
-importData: ''
-exportCustomSVData: ''
-exportData: ''
+showPresetMenu: true
 scrollGroupIndex: 1
 hideSVInfo: true
 showVibratoWidget: true
@@ -46,6 +43,7 @@ hotkeyList:
 - M
 - V
 - G
+- Ctrl+Shift+Alt+L
 customStyle:
   windowBg:
   - 0
@@ -214,6 +212,10 @@ defaultProperties:
       verticalShift: 0
       periods: 1
       periodsShift: 0.25
+    sigmoidalVibratoSV:
+      startMsx: 100
+      endMsx: 0
+      curvatureIndex: 5
     customVibratoSV:
       code: >-
         return function (x)
@@ -243,6 +245,12 @@ defaultProperties:
       periods: 1
       periodsShift: 0.25
       applyToHigher: false
+    sigmoidalVibratoSSF:
+      lowerStart: 0.5
+      lowerEnd: 0.5
+      higherStart: 1
+      higherEnd: 1
+      curvatureIndex: 5
     customVibratoSSF:
       code1: return function (x) return 0.69 end
       code2: return function (x) return 1.420 end
@@ -498,6 +506,8 @@ defaultProperties:
       - 
       copiedBMs:
       - 
+      tryAlign: true
+      alignWindow: 3
     directSV:
       selectableIndex: 1
       startTime: 0
@@ -577,4 +587,9 @@ defaultProperties:
       ln: false
     selectBySnap:
       snap: 1
+presets:
+- name: kkk
+  data: '{menuVars={svTypeIndex=2,svMultipliers=[19.057269276023103,9.978071094604111,5.224353044863457,2.735384873348303,1.4322022920520832,0.7498774396775922,0.3926234287278822,0.2055711355342498,0.1076336475939898,0.05635519823480782,0.029506650002836372,0.015449194070124487,0.008088942573739358,0.004235236586728041,0.0022174998502020224,0.0011610462567912616,1],svDistances=[40,20.942730723976897,10.964659629372786,5.740306584509329,3.0049217111610265,1.5727194191089433,0.8228419794313511,0.4302185507034689,0.22464741516921916,0.11701376757522935,0.06065856934042154,0.03115191933758517,0.015702725267460683,0.007613782693721325,0.003378546106993284,0.0011610462567912616,0],svGraphStats={minScale=0,maxScale=19.057269276023103,distMinScale=0,distMaxScale=40},svStats={minSV=0,maxSV=19.06,avgSV=2.5},interlace=FALSE,interlaceRatio="-0.5",overrideFinal=FALSE},settingVars={behaviorIndex=1,intensity=55,verticalShift=0,distance=100,startSV=0.01,endSV=1,avgSV=2.5,svPoints=16,finalSVIndex=2,customSV=1,distanceMode=1}}'
+  type: Standard
+  menu: Exponential
 ignoreNotes: false

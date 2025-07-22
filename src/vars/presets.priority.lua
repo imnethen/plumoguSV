@@ -24,8 +24,7 @@ function checkPresetValidity(preset)
     if (not truthy(#validMenus)) then return false, nil end
     if (not table.includes(validMenus, preset.menu)) then return false, nil end
 
-    local menuVars = table.validate(DEFAULT_STARTING_MENU_VARS[preset.type][preset.menu], preset.data.menuVars)
-    local settingVars = table.validate(DEFAULT_STARTING_SETTING_VARS[preset.type][preset.menu], preset.data.settingVars)
+    local realType = "place" .. preset.type
 
-    return true, { menuVars, settingVars }
+    return true, preset.data
 end
