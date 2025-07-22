@@ -21,7 +21,7 @@ function drawSnakeTrail(o, m, t)
     local snakeTrailPoints = {}
     initializeSnakeTrailPoints(snakeTrailPoints, m, MAX_CURSOR_TRAIL_POINTS)
     getVariables("snakeTrailPoints", snakeTrailPoints)
-    local needTrailUpdate = checkIfFrameChanged(t, globalVars.effectFPS)
+    local needTrailUpdate = clock.listen("snakeTrail", 1000 / globalVars.effectFPS)
     updateSnakeTrailPoints(snakeTrailPoints, needTrailUpdate, m, trailPoints,
         globalVars.snakeSpringConstant)
     saveVariables("snakeTrailPoints", snakeTrailPoints)

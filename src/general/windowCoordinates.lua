@@ -14,17 +14,3 @@ end
 function relativePoint(point, xChange, yChange)
     return { point[1] + xChange, point[2] + yChange }
 end
-
--- Checks and returns whether or not the frame number has changed [Boolean]
--- Parameters
---    currentTime : current in-game time of the plugin [Int/Float]
---    fps         : frames per second set by the user/plugin [Int]
-function checkIfFrameChanged(currentTime, fps)
-    local oldFrameInfo = { frameNumber = 0 }
-    getVariables("oldFrameInfo", oldFrameInfo)
-    local newFrameNumber = math.floor(currentTime * fps) % fps
-    local frameChanged = oldFrameInfo.frameNumber ~= newFrameNumber
-    oldFrameInfo.frameNumber = newFrameNumber
-    saveVariables("oldFrameInfo", oldFrameInfo)
-    return frameChanged
-end
