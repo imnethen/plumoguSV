@@ -35,9 +35,6 @@ export default async function transpiler(
             ) // Force entry points to be towards the bottom.
     ); // Force priority functions towards the top to avoid hot-reload error.
 
-    console.log(files);
-    console.log(files.slice(-10));
-
     files.forEach((file: string) => {
         if (
             ignoredFiles.some((f) => file.includes(f)) ||
