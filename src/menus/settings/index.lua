@@ -47,6 +47,19 @@ function showPluginSettingsWindow()
         ---@diagnostic disable-next-line: param-type-mismatch
         imgui.Text(nil)
     end
+    local text = state.GetValue("crazy", "Crazy?")
+    local full =
+    " I was crazy once. They put me in a map. A ranked map. A ranked map with no SV. And no SV makes me crazy. Crazy?"
+    if (imgui.Button(text)) then
+        state.SetValue("activateCrazy", true)
+    end
+    if (state.GetValue("activateCrazy")) then
+        local curIdx = state.GetValue("crazyIdx", 1)
+        if (curIdx > #full) then curIdx = curIdx - #full end
+        text = text .. full:charAt(curIdx)
+        state.Setvalue("crazyIdx", curIdx + 1)
+        state.SetValue("crazy", text)
+    end
     imgui.EndChild()
     imgui.NextColumn()
 
