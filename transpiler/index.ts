@@ -120,7 +120,7 @@ export default async function transpiler(
             while (/^---/.test(splitOutput[startIdx - 1]) && startIdx > 0)
                 startIdx--;
             while (!/^end/.test(splitOutput[endIdx])) endIdx++;
-            // splitOutput.splice(startIdx, endIdx - startIdx + 1);
+            splitOutput.splice(startIdx, endIdx - startIdx + 1);
         });
 
         output = splitOutput.join("\n");
