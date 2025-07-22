@@ -53,12 +53,18 @@ function showPluginSettingsWindow()
     if (imgui.Button(text)) then
         state.SetValue("activateCrazy", true)
     end
-    if (state.GetValue("activateCrazy") and clock.listen("crazy", 20)) then
-        local curIdx = state.GetValue("crazyIdx", 1)
-        if (curIdx > #full) then curIdx = curIdx - #full end
-        text = text .. full:charAt(curIdx)
-        state.Setvalue("crazyIdx", curIdx + 1)
-        state.SetValue("crazy", text)
+    if (state.GetValue("activateCrazy")) then
+        imgui.TextWrapped(text)
+        if (clock.listen("crazy", 10 + 10 * math.exp(- #text / 10))) then
+            local curIdx = state.GetValue("crazyIdx", 1)
+            if (curIdx > #full) then curIdx = curIdx - #full end
+            text = text .. full:charAt(curIdx)
+            state.SetValue("crazyIdx", curIdx + 1)
+            state.SetValue("crazy", text)
+        end
+        if (imgui.GetScrollMaxY() > imgui.GetScrollY()) then
+            imgui.SetScrollHereY(1)
+        end
     end
     imgui.EndChild()
     imgui.NextColumn()
@@ -90,6 +96,9 @@ function showPluginSettingsWindow()
     if (not settingsOpened) then
         state.SetValue("showSettingsWindow", false)
         state.SetValue("settings_typeIndex", 1)
+        state.SetValue("crazy", "Crazy?")
+        state.SetValue("activateCrazy", false)
+        state.SetValue("crazyIdx", 1)
     end
     imgui.PopStyleColor(41)
     setPluginAppearanceColors(COLOR_THEMES[globalVars.colorThemeIndex])
