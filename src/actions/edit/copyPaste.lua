@@ -12,7 +12,7 @@ function copyItems(menuVars)
             signature = line.Signature,
             hidden = line.Hidden,
         }
-        table.insert(menuVars.copiedLines[menuVars.curSlot], copiedLine)
+        table.insert(menuVars.copied.lines[menuVars.curSlot], copiedLine)
     end
     ::continue1::
     if (not menuVars.copyTable[2]) then goto continue2 end
@@ -21,7 +21,7 @@ function copyItems(menuVars)
             relativeOffset = sv.StartTime - startOffset,
             multiplier = sv.Multiplier
         }
-        table.insert(menuVars.copiedSVs[menuVars.curSlot], copiedSV)
+        table.insert(menuVars.copied.SVs[menuVars.curSlot], copiedSV)
     end
     ::continue2::
     if (not menuVars.copyTable[3]) then goto continue3 end
@@ -30,7 +30,7 @@ function copyItems(menuVars)
             relativeOffset = ssf.StartTime - startOffset,
             multiplier = ssf.Multiplier
         }
-        table.insert(menuVars.copiedSSFs[menuVars.curSlot], copiedSSF)
+        table.insert(menuVars.copied.SSFs[menuVars.curSlot], copiedSSF)
     end
     ::continue3::
     if (not menuVars.copyTable[4]) then goto continue4 end
@@ -39,28 +39,22 @@ function copyItems(menuVars)
             relativeOffset = bm.StartTime - startOffset,
             note = bm.Note
         }
-        table.insert(menuVars.copiedBMs[menuVars.curSlot], copiedBM)
+        table.insert(menuVars.copied.BMs[menuVars.curSlot], copiedBM)
     end
     ::continue4::
-    if (#menuVars.copiedBMs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedBMs[menuVars.curSlot] .. " Bookmarks.") end
-    if (#menuVars.copiedSSFs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSSFs[menuVars.curSlot] .. " SSFs.") end
-    if (#menuVars.copiedSVs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedSVs[menuVars.curSlot] .. " SVs.") end
-    if (#menuVars.copiedLines[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copiedLines[menuVars.curSlot] .. " Lines.") end
+    if (#menuVars.copied.BMs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copied.BMs[menuVars.curSlot] .. " Bookmarks.") end
+    if (#menuVars.copied.SSFs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copied.SSFs[menuVars.curSlot] .. " SSFs.") end
+    if (#menuVars.copied.SVs[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copied.SVs[menuVars.curSlot] .. " SVs.") end
+    if (#menuVars.copied.lines[menuVars.curSlot] > 0) then toggleablePrint("s!", "Copied " .. #menuVars.copied.lines[menuVars.curSlot] .. " Lines.") end
 end
 
 function clearCopiedItems(menuVars)
-    local newCopiedLines = table.duplicate(menuVars.copiedLines)
-    newCopiedLines[menuVars.curSlot] = {}
-    menuVars.copiedLines = newCopiedLines
-    local newCopiedSVs   = table.duplicate(menuVars.copiedSVs)
-    newCopiedSVs[menuVars.curSlot] = {}
-    menuVars.copiedSVs = newCopiedSVs
-    local newCopiedSSFs  = table.duplicate(menuVars.copiedSSFs)
-    newCopiedSSFs[menuVars.curSlot] = {}
-    menuVars.copiedSSFs = newCopiedSSFs
-    local newCopiedBMs   = table.duplicate(menuVars.copiedBMs)
-    newCopiedBMs[menuVars.curSlot] = {}
-    menuVars.copiedBMs = newCopiedBMs
+    local newCopied = table.duplicate(menuVars.copied)
+    newCopied.lines[menuVars.curSlot] = {}
+    newCopied.SVs[menuVars.curSlot] = {}
+    newCopied.SSFs[menuVars.curSlot] = {}
+    newCopied.BMs[menuVars.curSlot] = {}
+    menuVars.copied = newCopied
 end
 
 function pasteItems(menuVars)
@@ -68,10 +62,10 @@ function pasteItems(menuVars)
     if (not truthy(offsets)) then return end
     local startOffset = offsets[1]
     local endOffset = offsets[#offsets]
-    local lastCopiedLine = menuVars.copiedLines[menuVars.curSlot][#menuVars.copiedLines[menuVars.curSlot]]
-    local lastCopiedSV = menuVars.copiedSVs[menuVars.curSlot][#menuVars.copiedSVs[menuVars.curSlot]]
-    local lastCopiedSSF = menuVars.copiedSSFs[menuVars.curSlot][#menuVars.copiedSSFs[menuVars.curSlot]]
-    local lastCopiedBM = menuVars.copiedBMs[menuVars.curSlot][#menuVars.copiedBMs[menuVars.curSlot]]
+    local lastCopiedLine = menuVars.copied.lines[menuVars.curSlot][#menuVars.copied.lines[menuVars.curSlot]]
+    local lastCopiedSV = menuVars.copied.SVs[menuVars.curSlot][#menuVars.copied.SVs[menuVars.curSlot]]
+    local lastCopiedSSF = menuVars.copied.SSFs[menuVars.curSlot][#menuVars.copied.SSFs[menuVars.curSlot]]
+    local lastCopiedBM = menuVars.copied.BMs[menuVars.curSlot][#menuVars.copied.BMs[menuVars.curSlot]]
 
     local lastCopiedValue = lastCopiedSV
     if (lastCopiedValue == nil) then
@@ -98,7 +92,7 @@ function pasteItems(menuVars)
         local pasteOffset = offsets[i]
         local nextOffset = offsets[math.clamp(i + 1, 1, #offsets)]
         local ignoranceTolerance = 0.01
-        for _, line in ipairs(menuVars.copiedLines[menuVars.curSlot]) do
+        for _, line in ipairs(menuVars.copied.lines[menuVars.curSlot]) do
             local timeToPasteLine = pasteOffset + line.relativeOffset
             if (math.abs(timeToPasteLine - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip1
@@ -106,7 +100,7 @@ function pasteItems(menuVars)
             table.insert(linesToAdd, utils.CreateTimingPoint(timeToPasteLine, line.bpm, line.signature, line.hidden))
             ::skip1::
         end
-        for _, sv in ipairs(menuVars.copiedSVs[menuVars.curSlot]) do
+        for _, sv in ipairs(menuVars.copied.SVs[menuVars.curSlot]) do
             local timeToPasteSV = pasteOffset + sv.relativeOffset
             if (math.abs(timeToPasteSV - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip2
@@ -117,7 +111,7 @@ function pasteItems(menuVars)
             table.insert(svsToAdd, createSV(timeToPasteSV, sv.multiplier))
             ::skip2::
         end
-        for _, ssf in ipairs(menuVars.copiedSSFs[menuVars.curSlot]) do
+        for _, ssf in ipairs(menuVars.copied.SSFs[menuVars.curSlot]) do
             local timeToPasteSSF = pasteOffset + ssf.relativeOffset
             if (math.abs(timeToPasteSSF - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip3
@@ -125,7 +119,7 @@ function pasteItems(menuVars)
             table.insert(ssfsToAdd, createSSF(timeToPasteSSF, ssf.multiplier))
             ::skip3::
         end
-        for _, bm in ipairs(menuVars.copiedBMs[menuVars.curSlot]) do
+        for _, bm in ipairs(menuVars.copied.BMs[menuVars.curSlot]) do
             local timeToPasteBM = pasteOffset + bm.relativeOffset
             if (math.abs(timeToPasteBM - nextOffset) < ignoranceTolerance and i ~= #offsets) then
                 goto skip4
