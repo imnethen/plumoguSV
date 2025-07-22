@@ -34,7 +34,6 @@ function renderPresetMenu(menuLabel, menuVars, settingVars)
     imgui.NextColumn()
 
     imgui.Separator()
-<<<<<<< HEAD
     for idx, preset in pairs(globalVars.presets) do
         imgui.Text(preset.name)
         imgui.NextColumn()
@@ -52,10 +51,6 @@ function renderPresetMenu(menuLabel, menuVars, settingVars)
             table.remove(globalVars.presets, idx)
             write(globalVars)
         end
-=======
-    for _, preset in ipairs(presets) do
-
->>>>>>> performance
     end
 
     imgui.SetColumnWidth(0, 100)

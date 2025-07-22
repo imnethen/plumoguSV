@@ -61,23 +61,10 @@ export default async function transpiler(
                 ); // Removes <const> tag, removes --[[ --]] comments, removes double dash comments (not triple dash) from lines with code
                 l = l.replaceAll(
                     /table\.insert\(([a-zA-Z0-9\[\]_\.]+), ([^,\r\n]+)\)( end)?$/g,
-                    "$1[$1 + 1] = $2$3"
+                    "$1[#$1 + 1] = $2$3"
                 ); // Replace table insert for performance
-                l = l.replaceAll(
-                    /^function ([a-zA-Z0-9_]+)\(/g,
-                    "local function $1("
-                ); // Reduce global hashmap size with local root functions
-                l = l.replaceAll(/^(?!local)([a-z0-9_]+) = /g, `local $1 = `); // Reduce global hashmap size with local root variables
                 return l;
             });
-
-        fileData.forEach((line, idx) => {
-            if (!/^local/.test(line)) return;
-            rootLocalCount++;
-            if (rootLocalCount > 200) {
-                fileData[idx] = line.replace(/^local /, "");
-            }
-        }); // Limit root locals to 200 due to lua restriction
 
         output = `${output}\n${fileData
             .map((str) => str.replace(/\s+$/, ""))

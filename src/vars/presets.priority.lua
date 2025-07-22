@@ -1,10 +1,6 @@
 function setPresets(presetList)
-<<<<<<< HEAD:src/vars/presets.priority.lua
     globalVars.presets = {}
     for _, preset in pairs(presetList) do
-=======
-    for _, preset in ipairs(presetList) do
->>>>>>> performance:src/vars/presets.lua
         local presetIsValid, presetData = checkPresetValidity(preset)
         if (not presetIsValid) then goto continue end
         table.insert(globalVars.presets,

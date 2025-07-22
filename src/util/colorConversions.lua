@@ -9,11 +9,7 @@ function rgbaToHexa(r, g, b, a)
     local flr = math.floor
     local hexaStr = ""
     for _, col in ipairs({ r, g, b, a }) do
-<<<<<<< HEAD
         hexaStr = hexaStr .. HEXADECIMAL[math.floor(col / 16) + 1] .. HEXADECIMAL[flr(col) % 16 + 1]
-=======
-        hexaStr = hexaStr .. HEXADECIMAL[math.floor(col / 16) + 1] .. HEXADECIMAL[col % 16 + 1]
->>>>>>> performance
     end
     return hexaStr
 end
@@ -26,7 +22,6 @@ function hexaToRgba(hexa)
     end
     return table.vectorize4(rgbaTable)
 end
-<<<<<<< HEAD
 
 function rgbaToHsva(r, g, b, a)
     local colPrime = { r / 255, g / 255, b / 255 }
@@ -53,5 +48,3 @@ function rgbaToHsva(r, g, b, a)
 
     return vector.New(h, s, v, a)
 end
-=======
->>>>>>> performance
