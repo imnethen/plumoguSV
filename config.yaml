@@ -17,8 +17,8 @@ drawCapybara312: false
 selectTypeIndex: 1
 placeTypeIndex: 1
 editToolIndex: 1
-showPresetMenu: true
-scrollGroupIndex: 1
+showPresetMenu: false
+scrollGroupIndex: 3
 hideSVInfo: true
 showVibratoWidget: true
 showNoteDataWidget: true
@@ -71,20 +71,20 @@ customStyle:
   - 0.42745098471641541
   - 1
   titleBg:
-  - 0.13725490868091583
-  - 0.23921568691730499
-  - 0.27843138575553894
-  - 1
+  - 0
+  - 0
+  - 0
+  - 0.94901961088180542
   titleBgActive:
-  - 0.50980395078659058
-  - 0.57647061347961426
-  - 0.74901962280273438
+  - 0.11937450617551804
+  - 0.016241420060396194
+  - 0.27407407760620117
   - 1
   titleBgCollapsed:
   - 0.50980395078659058
   - 0.57647061347961426
   - 0.74901962280273438
-  - 0.49803921580314636
+  - 0.38823530077934265
   checkMark:
   - 0.80784314870834351
   - 0.87843137979507446
