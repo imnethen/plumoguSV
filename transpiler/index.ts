@@ -109,10 +109,11 @@ export default async function transpiler(
             if (cond) fnIndices.splice(idx, 1);
             return !cond;
         });
-        const [_, unusedIndexes] = getUnusedFunctions(splitOutput, [
+        const [_, unusedIndexes] = getUnusedFunctions(
+            splitOutput,
             functions,
-            fnIndices,
-        ]);
+            fnIndices
+        );
 
         unusedIndexes.reverse().forEach((idx) => {
             let startIdx = idx;

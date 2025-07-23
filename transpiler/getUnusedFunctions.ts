@@ -1,19 +1,22 @@
 export default function getUnusedFunctions(
     file: string[],
-    functions: [string[], number[]]
+    functionNames: string[],
+    functionIndices: number[]
 ) {
-    const globals = ['awake', 'draw'];
+    const globals = ["awake", "draw"];
+
+    const totalFile = file.join("\n");
 
     const unusedFunctions = [];
     const unusedIndexes = [];
-    functions[0].forEach((fn, idx) => {
+    functionNames.forEach((fn, idx) => {
         if (
-            file.join('\n').match(new RegExp(String.raw`${fn}[\(,\)]`, 'gd'))
+            totalFile.match(new RegExp(String.raw`${fn}[\(,\)]`, "gd"))
                 ?.length == 1 &&
             !globals.includes(fn)
         ) {
-            unusedFunctions.push(functions[0][idx]);
-            unusedIndexes.push(functions[1][idx]);
+            unusedFunctions.push(functionNames[idx]);
+            unusedIndexes.push(functionIndices[idx]);
         }
     });
     return [unusedFunctions, unusedIndexes];
