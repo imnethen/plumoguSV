@@ -23,7 +23,7 @@ function ssfVibrato(menuVars, func1, func2)
         time = time + 2 * delta
     end
 
-    addFinalSSF(ssfs, endTime, map.GetScrollSpeedFactorAt(endTime, state.SelectedScrollGroupId).Multiplier)
+    addFinalSSF(ssfs, endTime, (map.GetScrollSpeedFactorAt(endTime, state.SelectedScrollGroupId) or { Multiplier = 1 }).Multiplier)
 
     actions.PerformBatch({
         utils.CreateEditorAction(action_type.AddScrollSpeedFactorBatch, ssfs)
